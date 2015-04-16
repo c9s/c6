@@ -24,6 +24,13 @@ func TestLexerNext(t *testing.T) {
 	assert.Equal(t, 't', r)
 }
 
+func TestLexerMatch(t *testing.T) {
+	l := NewLexerWithString(`.foo {  }`)
+	assert.NotNil(t, l)
+	assert.False(t, l.match(".bar"))
+	assert.True(t, l.match(".foo"))
+}
+
 func TestLexerAccept(t *testing.T) {
 	l := NewLexerWithString(`.foo {  }`)
 	assert.NotNil(t, l)
