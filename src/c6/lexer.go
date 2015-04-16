@@ -160,9 +160,25 @@ func (l *Lexer) ignore() {
 	l.Start = l.Offset
 }
 
+// lookahead match method to match a string
+func (l *Lexer) match(str string) bool {
+	var r rune
+	var width = 0
+	for _, sc := range str {
+		r = l.next()
+		width += l.Width
+		if sc != r {
+			l.Offset -= width
+			return false
+		}
+	}
+	l.Offset -= width
+	return true
+}
+
 func (self *Lexer) lexComment() *Token {
-	var c = self.peek()
-	_ = c
+	var r = self.peek()
+	_ = r
 
 	/*
 		if p+1 < len(self.Input) && self.Input[p] == '/' && self.Input[p+1] == '/' {
