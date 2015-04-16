@@ -41,9 +41,13 @@ func (parser *Parser) parseFile(path string) error {
 	return nil
 }
 
-func (parser *Parser) parseScss(code string) {
+func (self *Parser) peek() {
+
 }
 
-func (parser *Parser) parseSass(code string) {
+func (self *Parser) parseScss(code string) {
+}
+
+func (self *Parser) parseSass(code string) {
 
 }
