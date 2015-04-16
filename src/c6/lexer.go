@@ -98,9 +98,12 @@ func (l *Lexer) rollback() {
 	l.Offset = l.RollbackOffset
 }
 
-// test the next character, if it's not matched, go back to the original offset
-func (l *Lexer) accept(valid string) bool {
-	if strings.IndexRune(valid, l.next()) >= 0 {
+// test the next character, if it's not matched, go back to the original
+// offset.
+// Note, this method only match the first character
+func (l *Lexer) accept(valid byte) bool {
+	var r rune = l.next()
+	if strings.IndexRune(string(valid), r) >= 0 {
 		return true
 	}
 	l.backup()
