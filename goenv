@@ -1,0 +1,72 @@
+#!/bin/bash
+# source goenv
+GOLIB=$(pwd)
+GOVENDOR=$(pwd)/vendor
+
+echo "Adding $GOLIB to GOPATH..."
+export GOPATH=$GOLIB
+
+
+echo "Checking go project directory structure..."
+for subd in src bin pkg doc bin ; do
+    [[ ! -e $subd ]] && (mkdir -p $subd ; echo -e "\tcreate $subd")
+done
+
+
+if [[ -n $GOVENDOR ]] ; then
+    export GOPATH=$GOVENDOR:$GOPATH
+    for subd in src bin pkg doc bin ; do
+        [[ ! -e $GOVENDOR/$subd ]] && ( mkdir -p $GOVENDOR/$subd ; echo -e "\tcreate $GOVENDOR/$subd")
+    done
+fi
+
+# export GOPATH=$GOLIB
+export PATH=$GOLIB/bin:$PATH
+if [[ -e golang ]] ; then 
+    export PATH=$(pwd)/golang/go/bin:$PATH
+fi
+echo "Done"
+
+function clean() {
+    echo "Cleaning..."
+    rm -rf pkg
+}
+
+function get() {
+    repo=$1
+    go get -x -u $repo
+}
+
+function git_install() {
+  installdir=$(echo $GOPATH | cut -d: -f1)
+  repo=$1
+  target=$installdir/src/$2
+  branch=$3
+  currentdir=$(pwd)
+
+  if [[ -z $branch ]] ; then
+    branch=master
+  fi
+
+  mkdir -p $(dirname $target)
+
+  echo "===> Sync $repo => $target..."
+  if [[ ! -e $target ]] ; then
+    echo "Cloning..."
+    git clone --branch $branch $repo $target
+  else
+    echo "Fetching..."
+    GITCMD="git --work-tree $target --git-dir $target/.git"
+    if [[ -z `$GITCMD diff` ]] ; then
+      $GITCMD pull -q --rebase origin HEAD
+    else
+      $GITCMD fetch -q
+    fi
+
+    if [[ -n `$GITCMD log @{u}..` ]] ; then
+        echo "Pushing commits..."
+        $GITCMD push origin HEAD
+    fi
+    cd $target && go install && cd $currentdir
+  fi
+}
