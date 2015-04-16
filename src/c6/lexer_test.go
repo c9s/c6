@@ -24,6 +24,20 @@ func TestLexerNext(t *testing.T) {
 	assert.Equal(t, 't', r)
 }
 
+func TestLexerIgnoreSpace(t *testing.T) {
+	l := NewLexerWithString(`       .test {  }`)
+	assert.NotNil(t, l)
+
+	l.ignoreSpaces()
+
+	var r rune
+	r = l.next()
+	assert.Equal(t, '.', r)
+
+	l.backup()
+	assert.True(t, l.accept(".test"))
+}
+
 func TestLexer(t *testing.T) {
 	l := NewLexerWithString(`.test {  }`)
 	assert.NotNil(t, l)

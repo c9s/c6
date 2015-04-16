@@ -1,13 +1,15 @@
 package c6
 
+type TokenType int
+
 type Token struct {
-	Type int
+	Type TokenType
 	Str  string
 	Pos  int
 	Line int
 }
 
 const (
-	TokenClassSelector = iota
-	TokenSpace
+	T_CLASS_SELECTOR = iota
+	T_SPACE
 )

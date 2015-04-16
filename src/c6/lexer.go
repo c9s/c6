@@ -98,12 +98,6 @@ func (l *Lexer) rollback() {
 	l.Offset = l.RollbackOffset
 }
 
-// backup steps back one rune.
-// Can be called only once per call of next.
-func (l *Lexer) backup() {
-	l.Offset -= l.Width
-}
-
 // test the next character, if it's not matched, go back to the original offset
 func (l *Lexer) accept(valid string) bool {
 	if strings.IndexRune(valid, l.next()) >= 0 {
@@ -124,12 +118,23 @@ func (l *Lexer) next() (r rune) {
 	return r
 }
 
+// backup steps back one rune.
+// Can be called only once per call of next.
+func (l *Lexer) backup() {
+	l.Offset -= l.Width
+}
+
 // peek returns but does not consume
 // the next rune in the input.
 func (l *Lexer) peek() (r rune) {
 	r = l.next()
 	l.backup()
 	return r
+}
+
+// advance offset by specific width
+func (l *Lexer) advance(w int) {
+	l.Offset += w
 }
 
 // peek more characters
@@ -144,7 +149,7 @@ func (l *Lexer) peekMore(p int) (r rune) {
 }
 
 // emit a token to the channel
-func (l *Lexer) emit(tokenType int) {
+func (l *Lexer) emit(tokenType TokenType) {
 	// l.lastTokenType = t
 	l.Output <- &Token{
 		Type: tokenType,
@@ -176,6 +181,19 @@ func (l *Lexer) match(str string) bool {
 	return true
 }
 
+func (l *Lexer) ignoreSpaces() {
+	for {
+		var r rune = l.peek()
+		if r == ' ' || r == '\t' {
+			l.next()
+		} else {
+			break
+		}
+	}
+	// Update the token start offset to latest offset
+	l.Start = l.Offset
+}
+
 func (self *Lexer) lexComment() *Token {
 	var r = self.peek()
 	_ = r
@@ -191,7 +209,7 @@ func (self *Lexer) lexComment() *Token {
 		if p > self.Offset {
 			self.Offset = p
 			return &Token{
-				Type: TokenSpace,
+				Type: T_SPACE,
 				Str:  "",
 				Pos:  self.Offset,
 				Line: self.Line,
@@ -219,27 +237,6 @@ func (self *Lexer) peek() {
 			}
 		}
 	}
-}
-*/
-
-/*
-func (self *Lexer) lexSpace() *Token {
-	var p = self.Offset
-	for self.Input[p] == ' ' || self.Input[p] == '\t' || self.Input[p] == '\n' || self.Input[p] == '\r' {
-		if self.Input[p] == '\n' {
-			self.Line++
-		}
-		p++
-	}
-	if p > self.Offset {
-		return &Token{
-			Type: TokenSpace,
-			Str:  "",
-			Pos:  self.Offset,
-			Line: self.Line,
-		}
-	}
-	return nil
 }
 */
 
