@@ -52,8 +52,96 @@ func (l *Lexer) emitIfKeywordMatches() bool {
 	return false
 }
 
-func lexStartLine(l *Lexer) stateFn {
-	// default start state.
+func lexComment(l *Lexer) stateFn {
+	var r = l.next()
+
+	if r == '/' {
+		r = l.next()
+		if r == '/' {
+			for {
+				r = l.next()
+				if r == '\n' || r == '\r' {
+					l.emit(T_COMMENT_LINE)
+					return lexStart
+				}
+			}
+		} else if r == '*' {
+
+			for {
+				r = l.next()
+				if r == '*' && l.peek() == '/' {
+					l.next()
+					l.emit(T_COMMENT_BLOCK)
+					return lexStart
+				}
+			}
+		} else {
+			l.backup()
+		}
+	}
+	l.backup()
+	return nil
+}
+
+func lexString(l *Lexer) stateFn {
+	var r = l.next()
+	if r == '"' {
+		// string start
+		l.next()
+		for {
+			r = l.next()
+			if r == '"' {
+				l.next()
+				l.emit(T_QQ_STRING)
+				return lexStart
+			} else if r == '\\' {
+				// skip the escape character
+				l.next()
+			} else if r == eof {
+				panic("Expecting end of string")
+			}
+		}
+		return lexStart
+
+	} else if r == '\'' {
+
+		return lexStart
+
+	}
+	l.backup()
+	return nil
+}
+
+func lexAtRule(l *Lexer) stateFn {
+	t := l.next()
+	if t == '@' {
+		if l.match("import") {
+			l.emit(T_AT_IMPORT)
+			return lexSpaces
+		}
+	}
+	l.backup()
+	return nil
+}
+
+func lexStatement(l *Lexer) stateFn {
+	var t = l.peek()
+	if t == '/' {
+		return lexComment
+	} else if t == '@' {
+
+	}
+	return nil
+}
+
+func lexSpaces(l *Lexer) stateFn {
+	for {
+		var t = l.next()
+		if t != ' ' {
+			l.backup()
+			return nil
+		}
+	}
 	return lexStart
 }
 

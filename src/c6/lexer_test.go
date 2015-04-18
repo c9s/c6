@@ -56,9 +56,45 @@ func TestLexerIgnoreSpace(t *testing.T) {
 	assert.True(t, l.match(".test"))
 }
 
-func TestLexer(t *testing.T) {
-	l := NewLexerWithString(`.test {  }`)
+func TestLexerString(t *testing.T) {
+	l := NewLexerWithString(`   "foo"`)
+	output := l.getOutput()
 	assert.NotNil(t, l)
+	l.til("\"")
+	lexString(l)
+	token := <-output
+	assert.Equal(t, T_QQ_STRING, token.Type)
+}
+
+func TestLexerTil(t *testing.T) {
+	l := NewLexerWithString(`"foo"`)
+	assert.NotNil(t, l)
+	l.til("\"")
+	assert.Equal(t, 0, l.Offset)
+	l.next() // skip the quote
+
+	l.til("\"")
+	assert.Equal(t, 4, l.Offset)
+}
+
+func TestLexerAtRule(t *testing.T) {
+	l := NewLexerWithString(`@import "test.css"`)
+	assert.NotNil(t, l)
+	lexStart(l)
+}
+
+func TestLexerSimpleRule(t *testing.T) {
+	l := NewLexerWithString(`.test { color: #fff; }`)
+	assert.NotNil(t, l)
+	// lexStart(l)
+	/*
+		output := l.getOutput()
+		if output != nil {
+			var tok = <-output
+			assert.NotNil(t, tok)
+		}
+	*/
+
 	/*
 		var r rune
 		r = l.next()

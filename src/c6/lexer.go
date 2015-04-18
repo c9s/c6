@@ -23,7 +23,13 @@ type Lexer struct {
 	Start int
 
 	// byte width of the current rune (utf8 character has more than one bytes)
+	// The width will be updated by 'next()` method
+	// `backup()` use Width to go back to the last offset.
 	Width int
+
+	// After the next() is called, the original width is backed up in
+	// LastWidth
+	LastWidth int
 
 	// rollback offset for token
 	RollbackOffset int
@@ -37,6 +43,7 @@ type Lexer struct {
 	// current line number of the input
 	Line int
 
+	// the token output channel
 	Output chan *Token
 }
 
@@ -44,13 +51,14 @@ type Lexer struct {
 Create a lexer object with bytes
 */
 func NewLexerWithBytes(data []byte) *Lexer {
-	return &Lexer{
+	l := &Lexer{
 		File:   "{anonymous}",
 		Offset: 0,
 		Line:   0,
 		Input:  string(data),
 		State:  StateRoot,
 	}
+	return l
 }
 
 /**
@@ -85,6 +93,14 @@ func NewLexerWithFile(file string) (*Lexer, error) {
 	}, nil
 }
 
+func (l *Lexer) getOutput() chan *Token {
+	if l.Output != nil {
+		return l.Output
+	}
+	l.Output = make(chan *Token, 20)
+	return l.Output
+}
+
 // remember the current offset, can be rolled back by using the `rollback`
 // method
 func (l *Lexer) remember() int {
@@ -113,9 +129,11 @@ func (l *Lexer) accept(valid byte) bool {
 // next returns the next rune in the input.
 func (l *Lexer) next() (r rune) {
 	if l.Offset >= len(l.Input) {
+		l.LastWidth = l.Width
 		l.Width = 0
 		return eof
 	}
+	l.LastWidth = l.Width
 	r, l.Width = utf8.DecodeRuneInString(l.Input[l.Offset:])
 	l.Offset += l.Width
 	return r
@@ -125,6 +143,12 @@ func (l *Lexer) next() (r rune) {
 // Can be called only once per call of next.
 func (l *Lexer) backup() {
 	l.Offset -= l.Width
+}
+
+// backup steps back one rune.
+// Can be called only once per call of next.
+func (l *Lexer) backupByWidth(w int) {
+	l.Offset -= w
 }
 
 // peek returns but does not consume
@@ -163,6 +187,17 @@ func (l *Lexer) emit(tokenType TokenType) {
 	l.Start = l.Offset
 }
 
+func (l *Lexer) til(str string) rune {
+	for {
+		r := l.next()
+		if strings.Contains(str, string(r)) || r == eof {
+			l.backup()
+			return r
+		}
+	}
+	return rune(0)
+}
+
 // ignore skips over the pending input before this point.
 func (l *Lexer) ignore() {
 	l.Start = l.Offset
@@ -195,32 +230,6 @@ func (l *Lexer) ignoreSpaces() {
 	}
 	// Update the token start offset to latest offset
 	l.Start = l.Offset
-}
-
-func (self *Lexer) lexComment() *Token {
-	var r = self.peek()
-	_ = r
-
-	/*
-		if p+1 < len(self.Input) && self.Input[p] == '/' && self.Input[p+1] == '/' {
-			p++
-			p++
-			for ; p < len(self.Input) && !IsNewLine(self.Input[p]); p++ {
-
-			}
-		}
-		if p > self.Offset {
-			self.Offset = p
-			return &Token{
-				Type: T_SPACE,
-				Str:  "",
-				Pos:  self.Offset,
-				Line: self.Line,
-			}
-		}
-		return nil
-	*/
-	return nil
 }
 
 /*
