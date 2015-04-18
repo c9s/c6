@@ -125,21 +125,21 @@ func lexString(l *Lexer) stateFn {
 }
 
 func lexAtRule(l *Lexer) stateFn {
-	t := l.next()
+	t := l.peek()
 	// fmt.Printf("%c", t)
 	if t == '@' {
+		l.next()
 		if l.match("import") {
 			// fmt.Printf("match @import")
 			l.emit(T_IMPORT)
-			return lexSpaces
+			return lexStart
 		} else if l.match("charset") {
 			l.emit(T_CHARSET)
-			return lexSpaces
+			return lexStart
 		} else {
 			panic("unknown at-rule directive")
 		}
 	}
-	l.backup()
 	return nil
 }
 
@@ -164,6 +164,19 @@ func lexSpaces(l *Lexer) stateFn {
 	return lexStart
 }
 
+func lexTagName(l *Lexer) stateFn {
+	var t = l.peek()
+	if !unicode.IsLetter(t) {
+		return lexStart
+	}
+	for unicode.IsLetter(t) {
+		t = l.next()
+	}
+	l.backup()
+	l.emit(T_TAGNAME)
+	return lexStart
+}
+
 func lexStart(l *Lexer) stateFn {
 	l.ignoreSpaces()
 
@@ -179,6 +192,12 @@ func lexStart(l *Lexer) stateFn {
 		return lexStart
 	} else if r == '@' {
 		return lexAtRule
+	} else if unicode.IsLetter(r) {
+		return lexTagName
+	} else if r == ' ' {
+		return lexSpaces
+	} else if r == '"' || r == '\'' {
+		return lexString
 	}
 	return nil
 

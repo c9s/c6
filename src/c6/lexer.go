@@ -209,7 +209,6 @@ func (l *Lexer) match(str string) bool {
 			return false
 		}
 	}
-	l.Offset -= width
 	return true
 }
 
@@ -227,6 +226,10 @@ func (l *Lexer) ignoreSpaces() {
 }
 
 func (l *Lexer) run() {
+	if l.Output == nil {
+		l.Output = make(tokenChannel, 10)
+	}
+
 	for l.State = lexStart; l.State != nil; {
 		fn := l.State(l)
 		if fn != nil {

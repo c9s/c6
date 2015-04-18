@@ -82,10 +82,19 @@ func TestLexerAtRule(t *testing.T) {
 	assert.NotNil(t, l)
 
 	output := l.getOutput()
-	lexAtRule(l)
+	l.run()
 
-	token := <-output
+	var token *Token
+
+	token = <-output
+	assert.NotNil(t, token)
 	assert.Equal(t, T_IMPORT, token.Type)
+
+	token = <-output
+	assert.NotNil(t, token)
+	assert.Equal(t, T_QQ_STRING, token.Type)
+
+	l.close()
 }
 
 func TestLexerSimpleRule(t *testing.T) {
