@@ -70,3 +70,5 @@ function git_install() {
     cd $target && go install && cd $currentdir
   fi
 }
+
+get golang.org/x/tools/cmd/stringer

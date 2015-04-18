@@ -1,5 +1,6 @@
 package c6
 
+//go:generate stringer -type=TokenType
 type TokenType int
 
 const LF = '\r'
@@ -13,14 +14,15 @@ type Token struct {
 }
 
 const (
-	T_SPACE = iota
+	T_SPACE TokenType = iota
 	T_COMMENT_LINE
 	T_COMMENT_BLOCK
 	T_SEMICOLON
 	T_ID_SELECTOR
 	T_CLASS_SELECTOR
-	T_TAGNAME
 	T_TAGNAME_SELECTOR
+	T_BRACE_START
+	T_BRACE_END
 	T_VARIABLE
 	T_IMPORT
 	T_CHARSET

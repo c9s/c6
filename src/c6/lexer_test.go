@@ -78,22 +78,18 @@ func TestLexerTil(t *testing.T) {
 }
 
 func TestLexerAtRule(t *testing.T) {
-	l := NewLexerWithString(`@import "test.css"`)
+	l := NewLexerWithString(`@import "test.css";`)
 	assert.NotNil(t, l)
-
-	output := l.getOutput()
 	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_IMPORT, T_QQ_STRING, T_SEMICOLON})
+	l.close()
+}
 
-	var token *Token
-
-	token = <-output
-	assert.NotNil(t, token)
-	assert.Equal(t, T_IMPORT, token.Type)
-
-	token = <-output
-	assert.NotNil(t, token)
-	assert.Equal(t, T_QQ_STRING, token.Type)
-
+func TestLexerClassNameSelector(t *testing.T) {
+	l := NewLexerWithString(`.class {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_CLASS_SELECTOR, T_BRACE_START, T_BRACE_END})
 	l.close()
 }
 

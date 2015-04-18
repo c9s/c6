@@ -1,7 +1,8 @@
 package c6
 
 import "unicode"
-import _ "fmt"
+
+import "fmt"
 
 var LexKeywords = map[string]int{
 /*
@@ -85,16 +86,14 @@ func lexString(l *Lexer) stateFn {
 	var r = l.next()
 	if r == '"' {
 		// string start
-		l.next()
 		for {
 			r = l.next()
 			if r == '"' {
-				l.next()
 				l.emit(T_QQ_STRING)
 				return lexStart
 			} else if r == '\\' {
 				// skip the escape character
-				l.next()
+				continue
 			} else if r == eof {
 				panic("Expecting end of string")
 			}
@@ -118,8 +117,8 @@ func lexString(l *Lexer) stateFn {
 			}
 		}
 		return lexStart
-
 	}
+
 	l.backup()
 	return nil
 }
@@ -143,16 +142,6 @@ func lexAtRule(l *Lexer) stateFn {
 	return nil
 }
 
-func lexStatement(l *Lexer) stateFn {
-	var t = l.peek()
-	if t == '/' {
-		return lexComment
-	} else if t == '@' {
-
-	}
-	return nil
-}
-
 func lexSpaces(l *Lexer) stateFn {
 	for {
 		var t = l.next()
@@ -164,6 +153,27 @@ func lexSpaces(l *Lexer) stateFn {
 	return lexStart
 }
 
+func lexClassName(l *Lexer) stateFn {
+	var t = l.peek()
+	if t == '.' {
+		l.next()
+		t = l.next()
+
+		if !unicode.IsLetter(t) {
+			panic("Expecting letter")
+			return nil
+		}
+
+		for unicode.IsLetter(t) || t == '-' {
+			t = l.next()
+		}
+		l.backup()
+		l.emit(T_CLASS_SELECTOR)
+		return lexStart
+	}
+	return nil
+}
+
 func lexTagName(l *Lexer) stateFn {
 	var t = l.peek()
 	if !unicode.IsLetter(t) {
@@ -173,7 +183,7 @@ func lexTagName(l *Lexer) stateFn {
 		t = l.next()
 	}
 	l.backup()
-	l.emit(T_TAGNAME)
+	l.emit(T_TAGNAME_SELECTOR)
 	return lexStart
 }
 
@@ -191,25 +201,40 @@ func lexStart(l *Lexer) stateFn {
 	l.ignoreSpaces()
 
 	var r rune = l.peek()
-
 	if r == '(' {
 		l.next()
 		l.emit(T_PAREN_START)
 		return lexStart
-	} else if r == '(' {
+	} else if r == ')' {
 		l.next()
 		l.emit(T_PAREN_END)
+		return lexStart
+	} else if r == '{' {
+		l.next()
+		l.emit(T_BRACE_START)
+		return lexStart
+	} else if r == '}' {
+		l.next()
+		l.emit(T_BRACE_END)
+		return lexStart
+	} else if r == ';' {
+		l.next()
+		l.emit(T_SEMICOLON)
 		return lexStart
 	} else if r == '@' {
 		return lexAtRule
 	} else if unicode.IsLetter(r) {
 		return lexTagName
+	} else if r == '.' {
+		return lexClassName
 	} else if r == ' ' {
 		return lexSpaces
 	} else if r == '"' || r == '\'' {
 		return lexString
-	} else if r == ';' {
-		return lexSemiColon
+	} else if r == eof {
+		return nil
+	} else {
+		panic(fmt.Sprintf("%s", r))
 	}
 	return nil
 
