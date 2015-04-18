@@ -80,7 +80,12 @@ func TestLexerTil(t *testing.T) {
 func TestLexerAtRule(t *testing.T) {
 	l := NewLexerWithString(`@import "test.css"`)
 	assert.NotNil(t, l)
-	lexStart(l)
+
+	output := l.getOutput()
+	lexAtRule(l)
+
+	token := <-output
+	assert.Equal(t, T_IMPORT, token.Type)
 }
 
 func TestLexerSimpleRule(t *testing.T) {

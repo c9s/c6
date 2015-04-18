@@ -1,9 +1,7 @@
 package c6
 
-import (
-	// "fmt"
-	"unicode"
-)
+import "unicode"
+import _ "fmt"
 
 var LexKeywords = map[string]int{
 /*
@@ -128,10 +126,17 @@ func lexString(l *Lexer) stateFn {
 
 func lexAtRule(l *Lexer) stateFn {
 	t := l.next()
+	// fmt.Printf("%c", t)
 	if t == '@' {
 		if l.match("import") {
-			l.emit(T_AT_IMPORT)
+			// fmt.Printf("match @import")
+			l.emit(T_IMPORT)
 			return lexSpaces
+		} else if l.match("charset") {
+			l.emit(T_CHARSET)
+			return lexSpaces
+		} else {
+			panic("unknown at-rule directive")
 		}
 	}
 	l.backup()
@@ -161,7 +166,22 @@ func lexSpaces(l *Lexer) stateFn {
 
 func lexStart(l *Lexer) stateFn {
 	l.ignoreSpaces()
-	// var r rune = l.peek()
+
+	var r rune = l.peek()
+
+	if r == '(' {
+		l.next()
+		l.emit(T_PAREN_START)
+		return lexStart
+	} else if r == '(' {
+		l.next()
+		l.emit(T_PAREN_END)
+		return lexStart
+	} else if r == '@' {
+		return lexAtRule
+	}
+	return nil
+
 	/*
 		if unicode.IsDigit(c) {
 			return lexNumber
