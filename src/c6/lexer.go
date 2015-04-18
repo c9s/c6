@@ -38,7 +38,7 @@ type Lexer struct {
 	File string
 
 	// current lexer state
-	State int
+	State stateFn
 
 	// current line number of the input
 	Line int
@@ -56,7 +56,6 @@ func NewLexerWithBytes(data []byte) *Lexer {
 		Offset: 0,
 		Line:   0,
 		Input:  string(data),
-		State:  StateRoot,
 	}
 	return l
 }
@@ -70,7 +69,6 @@ func NewLexerWithString(body string) *Lexer {
 		Offset: 0,
 		Line:   0,
 		Input:  body,
-		State:  StateRoot,
 	}
 }
 
@@ -89,7 +87,6 @@ func NewLexerWithFile(file string) (*Lexer, error) {
 		Offset: 0,
 		Line:   0,
 		Input:  string(data),
-		State:  StateRoot,
 	}, nil
 }
 
@@ -230,6 +227,24 @@ func (l *Lexer) ignoreSpaces() {
 	}
 	// Update the token start offset to latest offset
 	l.Start = l.Offset
+}
+
+func (l *Lexer) run() {
+	for l.State = lexStart; l.State != nil; {
+		fn := l.State(l)
+		if fn != nil {
+			l.State = fn
+		} else {
+			break
+		}
+	}
+	l.Output <- nil
+}
+
+func (l *Lexer) close() {
+	if l.Output != nil {
+		close(l.Output)
+	}
 }
 
 /*

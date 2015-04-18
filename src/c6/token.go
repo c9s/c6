@@ -2,6 +2,9 @@ package c6
 
 type TokenType int
 
+const LF = '\r'
+const CR = '\n'
+
 type Token struct {
 	Type TokenType
 	Str  string
