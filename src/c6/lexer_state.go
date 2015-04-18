@@ -177,6 +177,16 @@ func lexTagName(l *Lexer) stateFn {
 	return lexStart
 }
 
+func lexSemiColon(l *Lexer) stateFn {
+	var r rune = l.peek()
+	if r == ';' {
+		l.next()
+		l.emit(T_SEMICOLON)
+		return lexStart
+	}
+	return nil
+}
+
 func lexStart(l *Lexer) stateFn {
 	l.ignoreSpaces()
 
@@ -198,6 +208,8 @@ func lexStart(l *Lexer) stateFn {
 		return lexSpaces
 	} else if r == '"' || r == '\'' {
 		return lexString
+	} else if r == ';' {
+		return lexSemiColon
 	}
 	return nil
 
