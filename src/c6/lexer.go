@@ -5,10 +5,7 @@ import "unicode/utf8"
 import "strings"
 
 type stateFn func(*Lexer) stateFn
-
-const (
-	StateRoot = iota
-)
+type tokenChannel chan *Token
 
 const eof = -1
 
