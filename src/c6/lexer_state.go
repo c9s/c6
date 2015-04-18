@@ -1,7 +1,7 @@
 package c6
 
 import "unicode"
-
+import "strings"
 import "fmt"
 
 var LexKeywords = map[string]int{
@@ -197,9 +197,115 @@ func lexSemiColon(l *Lexer) stateFn {
 	return nil
 }
 
-func lexStart(l *Lexer) stateFn {
+func lexExpansionStart(l *Lexer) stateFn {
+
+	return nil
+}
+
+func lexHexColor(l *Lexer) stateFn {
+	l.ignoreSpaces()
+	l.remember()
+
+	var r rune = l.next()
+	if r == '#' {
+		l.next()
+		for l.accept("0123456789abcdefABCDEF") {
+			l.next()
+		}
+		if (l.Offset-l.Start) != 4 && (l.Offset-l.Start) != 7 {
+			panic("Invalid hex color length")
+		}
+		l.emit(T_HEX_COLOR)
+		return lexPropertyValue
+	}
+
+	return nil
+}
+
+func lexDigits(l *Lexer) stateFn {
+	var r = l.next()
+	for unicode.IsDigit(r) {
+		l.next()
+	}
+	l.backup()
+	l.emit(T_DIGITS)
+	return nil
+}
+
+// lex for: `center`, `auto`, `top`, `none`
+func lexConstant(l *Lexer) stateFn {
+	var r = l.next()
+	for unicode.IsLetter(r) {
+		r = l.next()
+	}
+	l.backup()
+	l.emit(T_CONSTANT)
+	return lexPropertyValue
+}
+
+func lexPropertyValue(l *Lexer) stateFn {
 	l.ignoreSpaces()
 
+	var r rune = l.peek()
+	if r == '#' && l.peekMore(2) == '{' {
+		return lexExpansionStart
+	} else if r == '#' {
+		return lexHexColor
+	} else if unicode.IsDigit(r) {
+		return lexDigits
+	} else if unicode.IsLetter(r) {
+		return lexConstant
+	} else if r == ' ' {
+		l.next()
+		l.ignore()
+		return lexPropertyValue
+	} else if r == ';' {
+		l.next()
+		l.emit(T_SEMICOLON)
+		return lexStatementOrProperty
+	} else {
+		panic(fmt.Sprintf("can't lex rune: %+v", string(r)))
+	}
+}
+
+func lexPropertyName(l *Lexer) stateFn {
+	var r rune = l.next()
+	for r == '-' || unicode.IsLetter(r) {
+		r = l.next()
+	}
+
+	// correct stop
+	if r != ':' {
+		panic("invalid property name")
+	}
+	l.backup()
+	l.emit(T_PROPERTY_NAME)
+	l.next() // skip ":"
+	return lexPropertyValue
+}
+
+// there is a possibility that a statement start with "width:", "input{", "input {"
+func lexStatementOrProperty(l *Lexer) stateFn {
+	l.ignoreSpaces()
+
+	// var r rune = l.peek()
+	var str = l.lookaheadTil(" ,:;{")
+	// fmt.Println("lexStatementOrProperty", str)
+
+	// looks like property
+	if strings.HasSuffix(str, ":") {
+		l.Offset += len(str)
+		l.emit(T_PROPERTY_NAME)
+		return lexPropertyValue
+	} else {
+		return lexStatement
+	}
+	return nil
+
+}
+
+func lexStatement(l *Lexer) stateFn {
+	l.ignoreSpaces()
 	var r rune = l.peek()
 	if r == '(' {
 		l.next()
@@ -212,18 +318,18 @@ func lexStart(l *Lexer) stateFn {
 	} else if r == '{' {
 		l.next()
 		l.emit(T_BRACE_START)
-		return lexStart
+		return lexStatementOrProperty
 	} else if r == '}' {
 		l.next()
 		l.emit(T_BRACE_END)
-		return lexStart
+		return lexStatement
 	} else if r == ';' {
 		l.next()
 		l.emit(T_SEMICOLON)
 		return lexStart
 	} else if r == '@' {
 		return lexAtRule
-	} else if unicode.IsLetter(r) {
+	} else if unicode.IsLetter(r) { // it maybe -vendor- property or a property name
 		return lexTagName
 	} else if r == '.' {
 		return lexClassName
@@ -234,10 +340,12 @@ func lexStart(l *Lexer) stateFn {
 	} else if r == eof {
 		return nil
 	} else {
-		panic(fmt.Sprintf("%s", r))
+		panic(fmt.Sprintf("can't lex rune: %+v", string(r)))
 	}
-	return nil
+}
 
+func lexStart(l *Lexer) stateFn {
+	return lexStatement
 	/*
 		if unicode.IsDigit(c) {
 			return lexNumber

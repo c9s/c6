@@ -34,12 +34,12 @@ func TestLexerMatch(t *testing.T) {
 func TestLexerAccept(t *testing.T) {
 	l := NewLexerWithString(`.foo {  }`)
 	assert.NotNil(t, l)
-	assert.True(t, l.accept('.'))
-	assert.True(t, l.accept('f'))
-	assert.True(t, l.accept('o'))
-	assert.True(t, l.accept('o'))
-	assert.True(t, l.accept(' '))
-	assert.True(t, l.accept('{'))
+	assert.True(t, l.accept("."))
+	assert.True(t, l.accept("f"))
+	assert.True(t, l.accept("o"))
+	assert.True(t, l.accept("o"))
+	assert.True(t, l.accept(" "))
+	assert.True(t, l.accept("{"))
 }
 
 func TestLexerIgnoreSpace(t *testing.T) {
@@ -86,7 +86,7 @@ func TestLexerAtRule(t *testing.T) {
 }
 
 func TestLexerClassNameSelector(t *testing.T) {
-	l := NewLexerWithString(`.class {  }`)
+	l := NewLexerWithString(`.class { }`)
 	assert.NotNil(t, l)
 	l.run()
 	AssertTokenSequence(t, l, []TokenType{T_CLASS_SELECTOR, T_BRACE_START, T_BRACE_END})
@@ -96,18 +96,7 @@ func TestLexerClassNameSelector(t *testing.T) {
 func TestLexerSimpleRule(t *testing.T) {
 	l := NewLexerWithString(`.test { color: #fff; }`)
 	assert.NotNil(t, l)
-	// lexStart(l)
-	/*
-		output := l.getOutput()
-		if output != nil {
-			var tok = <-output
-			assert.NotNil(t, tok)
-		}
-	*/
-
-	/*
-		var r rune
-		r = l.next()
-		assert.Equal(t, '.', r)
-	*/
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_CLASS_SELECTOR, T_BRACE_START, T_PROPERTY_NAME, T_HEX_COLOR, T_SEMICOLON, T_BRACE_END})
+	l.close()
 }

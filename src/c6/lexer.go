@@ -111,9 +111,9 @@ func (l *Lexer) rollback() {
 // test the next character, if it's not matched, go back to the original
 // offset.
 // Note, this method only match the first character
-func (l *Lexer) accept(valid byte) bool {
+func (l *Lexer) accept(valid string) bool {
 	var r rune = l.next()
-	if strings.IndexRune(string(valid), r) >= 0 {
+	if strings.IndexRune(valid, r) >= 0 {
 		return true
 	}
 	l.backup()
@@ -169,6 +169,10 @@ func (l *Lexer) peekMore(p int) (r rune) {
 	return r
 }
 
+func (l *Lexer) take() string {
+	return l.Input[l.Start:l.Offset]
+}
+
 // emit a token to the channel
 func (l *Lexer) emit(tokenType TokenType) {
 	// l.lastTokenType = t
@@ -181,15 +185,28 @@ func (l *Lexer) emit(tokenType TokenType) {
 	l.Start = l.Offset
 }
 
-func (l *Lexer) til(str string) rune {
+// lookahead a string til {string}
+func (l *Lexer) lookaheadTil(stop string) string {
+	l.remember()
 	for {
-		r := l.next()
-		if strings.Contains(str, string(r)) || r == eof {
-			l.backup()
-			return r
+		var r = l.next()
+		if strings.Contains(stop, string(r)) || r == eof {
+			break
 		}
 	}
-	return rune(0)
+	var str = l.take()
+	l.rollback()
+	return str
+}
+
+func (l *Lexer) til(str string) {
+	for {
+		var r = l.next()
+		if strings.Contains(str, string(r)) || r == eof {
+			break
+		}
+	}
+	l.backup()
 }
 
 // ignore skips over the pending input before this point.
