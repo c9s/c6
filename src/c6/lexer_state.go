@@ -105,6 +105,20 @@ func lexString(l *Lexer) stateFn {
 
 	} else if r == '\'' {
 
+		l.next()
+		for {
+			r = l.next()
+			if r == '\'' {
+				l.next()
+				l.emit(T_Q_STRING)
+				return lexStart
+			} else if r == '\\' {
+				// skip the escape character
+				l.next()
+			} else if r == eof {
+				panic("Expecting end of string")
+			}
+		}
 		return lexStart
 
 	}

@@ -19,4 +19,5 @@ const (
 	T_VARIABLE
 	T_AT_IMPORT
 	T_QQ_STRING
+	T_Q_STRING
 )
