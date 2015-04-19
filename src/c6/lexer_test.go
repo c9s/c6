@@ -344,11 +344,11 @@ func TestLexerVariableWithPxValue(t *testing.T) {
 }
 
 func TestLexerVariableWithEmValue(t *testing.T) {
-	l := NewLexerWithString(`$foo: 10em;`)
+	l := NewLexerWithString(`$foo: 0.3em;`)
 	assert.NotNil(t, l)
 	l.run()
 	AssertTokenSequence(t, l, []TokenType{
-		T_VARIABLE, T_COLON, T_INTEGER, T_UNIT_EM, T_SEMICOLON,
+		T_VARIABLE, T_COLON, T_FLOAT, T_UNIT_EM, T_SEMICOLON,
 	})
 	l.close()
 }
