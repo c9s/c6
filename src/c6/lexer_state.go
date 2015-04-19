@@ -214,10 +214,19 @@ func lexAttributeSelector(l *Lexer) stateFn {
 		l.backup()
 		l.emit(T_ATTRIBUTE_NAME)
 
+		r = l.peek() // peek here again to avoid bugs
 		if r == '=' {
 			l.next()
 			l.emit(T_EQUAL)
 
+			r = l.peek()
+			if r == '"' {
+				lexString(l)
+			} else {
+				lexUnquoteString(l)
+			}
+		} else if l.match("~=") {
+			l.emit(T_CONTAINS)
 			r = l.peek()
 			if r == '"' {
 				lexString(l)

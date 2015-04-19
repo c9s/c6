@@ -158,6 +158,14 @@ func TestLexerRuleWithAttributeSelectorEqualToQQString(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleWithAttributeSelectorContainsQQString(t *testing.T) {
+	l := NewLexerWithString(`[lang~="en"] {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_ATTRIBUTE_START, T_ATTRIBUTE_NAME, T_CONTAINS, T_QQ_STRING, T_ATTRIBUTE_END, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
 func TestLexerRuleWithTagNameAndClassSelector(t *testing.T) {
 	l := NewLexerWithString(`a.foo {  }`)
 	assert.NotNil(t, l)
