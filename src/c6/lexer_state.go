@@ -267,8 +267,12 @@ func lexClassSelector(l *Lexer) stateFn {
 		// there is a class name selector after this one.
 		if r == '.' {
 			l.emit(T_AND_SELECTOR)
+			return lexClassSelector
+		} else if r == '[' {
+			l.emit(T_AND_SELECTOR)
+			return lexAttributeSelector
 		}
-		return lexStart
+		return lexSelector
 	}
 	return nil
 }
@@ -323,11 +327,22 @@ func lexPseudoSelector(l *Lexer) stateFn {
 }
 
 func lexUniversalSelector(l *Lexer) stateFn {
-	var r = l.peek()
+	var r = l.next()
 	if r == '*' {
-		l.next()
 		l.emit(T_UNIVERSAL_SELECTOR)
-		return lexStatement
+
+		r = l.peek()
+		if r == '.' {
+			l.emit(T_AND_SELECTOR)
+			return lexClassSelector
+		} else if r == '[' {
+			l.emit(T_AND_SELECTOR)
+			return lexAttributeSelector
+		} else if r == ':' {
+			l.emit(T_AND_SELECTOR)
+			return lexPseudoSelector
+		}
+		return lexSelector
 	}
 	l.error("Unexpected token '%s' for universal selector.", r)
 	return nil
@@ -335,9 +350,8 @@ func lexUniversalSelector(l *Lexer) stateFn {
 
 // Dispath selector lexing method
 func lexSelector(l *Lexer) stateFn {
-	l.ignoreSpaces()
-
 	var r = l.peek()
+
 	if unicode.IsLetter(r) {
 		return lexTagNameSelector
 	} else if r == '[' {
@@ -370,7 +384,11 @@ func lexSelector(l *Lexer) stateFn {
 		l.emit(T_ADJACENT_SELECTOR)
 		return lexSelector
 	} else if r == ' ' {
-		l.ignoreSpaces()
+		for r == ' ' {
+			r = l.next()
+		}
+		l.backup()
+		l.ignore()
 		return lexSelector
 	} else if r == '{' {
 		return lexStatement
