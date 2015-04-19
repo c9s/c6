@@ -129,3 +129,19 @@ func TestLexerRuleWithVendorPrefixPropertyName(t *testing.T) {
 		T_BRACE_END})
 	l.close()
 }
+
+func TestLexerRuleWithSubRule(t *testing.T) {
+	l := NewLexerWithString(`.test { -webkit-transition: none;   .foo { color: #fff; } }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{
+		T_CLASS_SELECTOR,
+		T_BRACE_START,
+		T_PROPERTY_NAME, T_COLON, T_CONSTANT, T_SEMICOLON,
+		T_CLASS_SELECTOR,
+		T_BRACE_START,
+		T_PROPERTY_NAME, T_COLON, T_HEX_COLOR, T_SEMICOLON,
+		T_BRACE_END,
+		T_BRACE_END})
+	l.close()
+}
