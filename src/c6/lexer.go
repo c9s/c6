@@ -9,7 +9,7 @@ type tokenChannel chan *Token
 
 const TOKEN_CHANNEL_BUFFER = 1024
 
-const eof = -1
+const EOF = -1
 
 const DEBUG_EMIT = true
 
@@ -131,7 +131,7 @@ func (l *Lexer) next() (r rune) {
 	if l.Offset >= len(l.Input) {
 		l.LastWidth = l.Width
 		l.Width = 0
-		return eof
+		return EOF
 	}
 	l.LastWidth = l.Width
 	r, l.Width = utf8.DecodeRuneInString(l.Input[l.Offset:])
@@ -202,7 +202,7 @@ func (l *Lexer) lookaheadTil(stop string) string {
 	l.remember()
 	for {
 		var r = l.next()
-		if strings.Contains(stop, string(r)) || r == eof {
+		if strings.Contains(stop, string(r)) || r == EOF {
 			break
 		}
 	}
@@ -214,7 +214,7 @@ func (l *Lexer) lookaheadTil(stop string) string {
 func (l *Lexer) til(str string) {
 	for {
 		var r = l.next()
-		if strings.Contains(str, string(r)) || r == eof {
+		if strings.Contains(str, string(r)) || r == EOF {
 			break
 		}
 	}

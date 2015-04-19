@@ -41,7 +41,7 @@ func (l *Lexer) emitIfKeywordMatches() bool {
 	next_keyword:
 		for _, sc := range keyword {
 			c := l.next()
-			if c == eof {
+			if c == EOF {
 				match = false
 				break next_keyword
 			}
@@ -52,7 +52,7 @@ func (l *Lexer) emitIfKeywordMatches() bool {
 		}
 		if match {
 			c := l.next()
-			if c == '\n' || c == eof || c == ' ' || c == '\t' || unicode.IsSymbol(c) {
+			if c == '\n' || c == EOF || c == ' ' || c == '\t' || unicode.IsSymbol(c) {
 				l.backup()
 				l.emit(TokenType(typ))
 				return true
@@ -106,7 +106,7 @@ func lexString(l *Lexer) stateFn {
 			} else if r == '\\' {
 				// skip the escape character
 				continue
-			} else if r == eof {
+			} else if r == EOF {
 				panic("Expecting end of string")
 			}
 		}
@@ -124,7 +124,7 @@ func lexString(l *Lexer) stateFn {
 			} else if r == '\\' {
 				// skip the escape character
 				l.next()
-			} else if r == eof {
+			} else if r == EOF {
 				panic("Expecting end of string")
 			}
 		}
@@ -351,7 +351,7 @@ func lexStatement(l *Lexer) stateFn {
 		return lexVariable
 	} else if r == '@' {
 		return lexAtRule
-	} else if unicode.IsLetter(r) { // it maybe -vendor- property or a property name
+	} else if r == '-' || unicode.IsLetter(r) { // it maybe -vendor- property or a property name
 		l.remember()
 
 		// if it starts with a letter, it's possible to have two kinds of syntax here:
@@ -388,10 +388,10 @@ func lexStatement(l *Lexer) stateFn {
 		return lexSpaces
 	} else if r == '"' || r == '\'' {
 		return lexString
-	} else if r == eof {
+	} else if r == EOF {
 		return nil
 	} else {
-		panic(fmt.Sprintf("can't lex rune: %+v", string(r)))
+		l.error("can't lex rune: %+v", r)
 	}
 	return nil
 }
