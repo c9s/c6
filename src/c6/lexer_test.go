@@ -126,6 +126,38 @@ func TestLexerRuleWithTagNameSelector(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleWithTagNameSelectorForDiv(t *testing.T) {
+	l := NewLexerWithString(`div {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_TAGNAME_SELECTOR, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
+func TestLexerRuleWithAttributeSelector(t *testing.T) {
+	l := NewLexerWithString(`[href] {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_ATTRIBUTE_START, T_ATTRIBUTE_NAME, T_ATTRIBUTE_END, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
+func TestLexerRuleWithAttributeSelectorEqualToUnquoteString(t *testing.T) {
+	l := NewLexerWithString(`[lang=en] {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_ATTRIBUTE_START, T_ATTRIBUTE_NAME, T_EQUAL, T_UNQUOTE_STRING, T_ATTRIBUTE_END, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
+func TestLexerRuleWithAttributeSelectorEqualToQQString(t *testing.T) {
+	l := NewLexerWithString(`[lang="en"] {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_ATTRIBUTE_START, T_ATTRIBUTE_NAME, T_EQUAL, T_QQ_STRING, T_ATTRIBUTE_END, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
 func TestLexerRuleWithTagNameAndClassSelector(t *testing.T) {
 	l := NewLexerWithString(`a.foo {  }`)
 	assert.NotNil(t, l)

@@ -190,6 +190,54 @@ func lexIdentifier(l *Lexer) stateFn {
 	return lexStatement
 }
 
+func lexUnquoteString(l *Lexer) stateFn {
+	var r = l.next()
+	for unicode.IsLetter(r) {
+		r = l.next()
+	}
+	l.backup()
+	l.emit(T_UNQUOTE_STRING)
+	return nil
+}
+
+func lexAttributeSelector(l *Lexer) stateFn {
+	var r = l.next()
+	if r == '[' {
+		l.emit(T_ATTRIBUTE_START)
+		r = l.next()
+		if !unicode.IsLetter(r) {
+			l.error("Unexpected token for attribute name. Got '%s'", r)
+		}
+		for unicode.IsLetter(r) {
+			r = l.next()
+		}
+		l.backup()
+		l.emit(T_ATTRIBUTE_NAME)
+
+		if r == '=' {
+			l.next()
+			l.emit(T_EQUAL)
+
+			r = l.peek()
+			if r == '"' {
+				lexString(l)
+			} else {
+				lexUnquoteString(l)
+			}
+		}
+
+		r = l.peek()
+		if r == ']' {
+			l.next()
+			l.emit(T_ATTRIBUTE_END)
+			return lexStatement
+		}
+
+	}
+	l.error("Unexpected token for attribute selector. Got '%s'", r)
+	return nil
+}
+
 func lexClassName(l *Lexer) stateFn {
 	var r = l.peek()
 	if r == '.' {
@@ -429,6 +477,8 @@ func lexStatement(l *Lexer) stateFn {
 		l.next()
 		l.emit(T_BRACE_END)
 		return lexStatement
+	} else if r == '[' {
+		return lexAttributeSelector
 	} else if r == ';' {
 		l.next()
 		l.emit(T_SEMICOLON)
