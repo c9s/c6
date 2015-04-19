@@ -93,10 +93,27 @@ func TestLexerClassNameSelector(t *testing.T) {
 	l.close()
 }
 
-func TestLexerSimpleRule(t *testing.T) {
+func TestLexerRuleWithOneProperty(t *testing.T) {
 	l := NewLexerWithString(`.test { color: #fff; }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []TokenType{T_CLASS_SELECTOR, T_BRACE_START, T_PROPERTY_NAME, T_HEX_COLOR, T_SEMICOLON, T_BRACE_END})
+	AssertTokenSequence(t, l, []TokenType{
+		T_CLASS_SELECTOR,
+		T_BRACE_START,
+		T_PROPERTY_NAME, T_COLON, T_HEX_COLOR, T_SEMICOLON,
+		T_BRACE_END})
+	l.close()
+}
+
+func TestLexerRuleWithTwoProperty(t *testing.T) {
+	l := NewLexerWithString(`.test { color: #fff; background: #fff; }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{
+		T_CLASS_SELECTOR,
+		T_BRACE_START,
+		T_PROPERTY_NAME, T_COLON, T_HEX_COLOR, T_SEMICOLON,
+		T_PROPERTY_NAME, T_COLON, T_HEX_COLOR, T_SEMICOLON,
+		T_BRACE_END})
 	l.close()
 }

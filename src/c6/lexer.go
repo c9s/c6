@@ -3,11 +3,15 @@ package c6
 import "io/ioutil"
 import "unicode/utf8"
 import "strings"
+import "fmt"
 
-type stateFn func(*Lexer) stateFn
 type tokenChannel chan *Token
 
+const TOKEN_CHANNEL_BUFFER = 1024
+
 const eof = -1
+
+const DEBUG_EMIT = true
 
 type Lexer struct {
 	// lex input
@@ -42,6 +46,8 @@ type Lexer struct {
 
 	// the token output channel
 	Output chan *Token
+
+	Tokens []Token
 }
 
 /**
@@ -91,7 +97,7 @@ func (l *Lexer) getOutput() chan *Token {
 	if l.Output != nil {
 		return l.Output
 	}
-	l.Output = make(chan *Token, 20)
+	l.Output = make(chan *Token, TOKEN_CHANNEL_BUFFER)
 	return l.Output
 }
 
@@ -175,13 +181,19 @@ func (l *Lexer) take() string {
 
 // emit a token to the channel
 func (l *Lexer) emit(tokenType TokenType) {
-	// l.lastTokenType = t
-	l.Output <- &Token{
+	token := Token{
 		Type: tokenType,
 		Str:  l.Input[l.Start:l.Offset],
 		Pos:  l.Start,
 		Line: l.Line,
 	}
+
+	if DEBUG_EMIT {
+		fmt.Println("emit", token)
+	}
+
+	l.Tokens = append(l.Tokens, token)
+	l.Output <- &token
 	l.Start = l.Offset
 }
 
@@ -232,7 +244,7 @@ func (l *Lexer) match(str string) bool {
 func (l *Lexer) ignoreSpaces() {
 	for {
 		var r rune = l.peek()
-		if r == ' ' || r == '\t' {
+		if r == ' ' || r == '\t' || r == '\n' || r == '\r' {
 			l.next()
 		} else {
 			break
@@ -244,7 +256,7 @@ func (l *Lexer) ignoreSpaces() {
 
 func (l *Lexer) run() {
 	if l.Output == nil {
-		l.Output = make(tokenChannel, 10)
+		l.Output = make(tokenChannel, TOKEN_CHANNEL_BUFFER)
 	}
 
 	for l.State = lexStart; l.State != nil; {

@@ -1,8 +1,15 @@
 package c6
 
 import "unicode"
-import "strings"
+
+// import "strings"
 import "fmt"
+import "errors"
+
+type stateFn func(*Lexer) stateFn
+
+const LETTERS = "zxcvbnmasdfghjklqwertyuiop"
+const DIGITS = "1234567890"
 
 var LexKeywords = map[string]int{
 /*
@@ -20,6 +27,11 @@ var LexKeywords = map[string]int{
 	"new":     T_NEW,
 	"clone":   T_CLONE,
 */
+}
+
+func (l *Lexer) error(msg string, r rune) {
+	var err = errors.New(fmt.Sprintf(msg, string(r)))
+	panic(err)
 }
 
 func (l *Lexer) emitIfKeywordMatches() bool {
@@ -188,17 +200,39 @@ func lexTagName(l *Lexer) stateFn {
 }
 
 func lexSemiColon(l *Lexer) stateFn {
-	var r rune = l.peek()
+	l.ignoreSpaces()
+	var r rune = l.next()
 	if r == ';' {
-		l.next()
 		l.emit(T_SEMICOLON)
-		return lexStart
+		return lexStatement
 	}
+	l.backup()
 	return nil
+}
+
+func lexVariable(l *Lexer) stateFn {
+	var r = l.next()
+	if r != '$' {
+		l.error("Unexpected token %s for lexVariable", r)
+	}
+
+	r = l.next()
+	if !unicode.IsLetter(r) {
+		fmt.Printf("The first character of a variable must be letter.")
+	}
+	r = l.next()
+	for unicode.IsLetter(r) || unicode.IsDigit(r) {
+		l.next()
+	}
+	l.backup()
+	l.emit(T_VARIABLE)
+	lexColon(l)
+	return lexPropertyValue
 }
 
 func lexExpansionStart(l *Lexer) stateFn {
 
+	// TODO
 	return nil
 }
 
@@ -208,9 +242,7 @@ func lexHexColor(l *Lexer) stateFn {
 
 	var r rune = l.next()
 	if r == '#' {
-		l.next()
 		for l.accept("0123456789abcdefABCDEF") {
-			l.next()
 		}
 		if (l.Offset-l.Start) != 4 && (l.Offset-l.Start) != 7 {
 			panic("Invalid hex color length")
@@ -218,7 +250,7 @@ func lexHexColor(l *Lexer) stateFn {
 		l.emit(T_HEX_COLOR)
 		return lexPropertyValue
 	}
-
+	l.error("expecting hex color", r)
 	return nil
 }
 
@@ -245,8 +277,8 @@ func lexConstant(l *Lexer) stateFn {
 
 func lexPropertyValue(l *Lexer) stateFn {
 	l.ignoreSpaces()
-
 	var r rune = l.peek()
+	fmt.Printf("lexPropertyValue: %s\n", string(r))
 	if r == '#' && l.peekMore(2) == '{' {
 		return lexExpansionStart
 	} else if r == '#' {
@@ -255,6 +287,8 @@ func lexPropertyValue(l *Lexer) stateFn {
 		return lexDigits
 	} else if unicode.IsLetter(r) {
 		return lexConstant
+	} else if r == '$' {
+		return lexVariable
 	} else if r == ' ' {
 		l.next()
 		l.ignore()
@@ -262,10 +296,20 @@ func lexPropertyValue(l *Lexer) stateFn {
 	} else if r == ';' {
 		l.next()
 		l.emit(T_SEMICOLON)
-		return lexStatementOrProperty
+		return lexStatement
 	} else {
 		panic(fmt.Sprintf("can't lex rune: %+v", string(r)))
 	}
+}
+
+func lexColon(l *Lexer) stateFn {
+	var r = l.next()
+	if r == ':' {
+		l.emit(T_COLON)
+	} else {
+		l.error("Expecting ':' token, Got '%s'", r)
+	}
+	return nil
 }
 
 func lexPropertyName(l *Lexer) stateFn {
@@ -273,40 +317,16 @@ func lexPropertyName(l *Lexer) stateFn {
 	for r == '-' || unicode.IsLetter(r) {
 		r = l.next()
 	}
-
-	// correct stop
-	if r != ':' {
-		panic("invalid property name")
-	}
 	l.backup()
 	l.emit(T_PROPERTY_NAME)
-	l.next() // skip ":"
+	lexColon(l)
 	return lexPropertyValue
-}
-
-// there is a possibility that a statement start with "width:", "input{", "input {"
-func lexStatementOrProperty(l *Lexer) stateFn {
-	l.ignoreSpaces()
-
-	// var r rune = l.peek()
-	var str = l.lookaheadTil(" ,:;{")
-	// fmt.Println("lexStatementOrProperty", str)
-
-	// looks like property
-	if strings.HasSuffix(str, ":") {
-		l.Offset += len(str)
-		l.emit(T_PROPERTY_NAME)
-		return lexPropertyValue
-	} else {
-		return lexStatement
-	}
-	return nil
-
 }
 
 func lexStatement(l *Lexer) stateFn {
 	l.ignoreSpaces()
 	var r rune = l.peek()
+
 	if r == '(' {
 		l.next()
 		l.emit(T_PAREN_START)
@@ -318,7 +338,7 @@ func lexStatement(l *Lexer) stateFn {
 	} else if r == '{' {
 		l.next()
 		l.emit(T_BRACE_START)
-		return lexStatementOrProperty
+		return lexStatement
 	} else if r == '}' {
 		l.next()
 		l.emit(T_BRACE_END)
@@ -327,10 +347,41 @@ func lexStatement(l *Lexer) stateFn {
 		l.next()
 		l.emit(T_SEMICOLON)
 		return lexStart
+	} else if r == '$' {
+		return lexVariable
 	} else if r == '@' {
 		return lexAtRule
 	} else if unicode.IsLetter(r) { // it maybe -vendor- property or a property name
-		return lexTagName
+		l.remember()
+
+		// if it starts with a letter, it's possible to have two kinds of syntax here:
+		//   a { }
+		//   a{}
+		//   a:hover {  }
+		//   color: red;
+		//   background-color: ...
+		//   -webkit-transition: ...
+
+		// lex the property name (or tag name)
+		for l.accept(LETTERS + "-") {
+		}
+		// ignore spaces and colon
+		l.accept(": ")
+
+		var r = l.next()
+		for unicode.IsLetter(r) || unicode.IsDigit(r) || unicode.IsSpace(r) {
+			r = l.next()
+		}
+
+		// it's a selector, so we end with a brace '{'
+		l.rollback()
+		if r == '{' {
+			return lexTagName
+		} else if r == ';' {
+			return lexPropertyName
+		} else {
+			return lexPropertyName
+		}
 	} else if r == '.' {
 		return lexClassName
 	} else if r == ' ' {
@@ -342,99 +393,9 @@ func lexStatement(l *Lexer) stateFn {
 	} else {
 		panic(fmt.Sprintf("can't lex rune: %+v", string(r)))
 	}
+	return nil
 }
 
 func lexStart(l *Lexer) stateFn {
 	return lexStatement
-	/*
-		if unicode.IsDigit(c) {
-			return lexNumber
-		} else if l.emitIfMatch("->", T_FUNCTION_GLYPH) {
-			return lexStart
-		} else if l.emitIfMatch("::", T_FUNCTION_PROTOTYPE) {
-			return lexStart
-		} else if l.consumeIfMatch("//") {
-			return lexOnelineComment
-		} else if l.consumeIfMatch("/*") {
-			return lexComment
-		} else if c == '-' {
-			l.next()
-			l.emit(TokenType(c))
-			return lexStart
-		} else if c == ' ' || c == '\t' {
-			// return lexSpaces
-			return lexIgnoreSpaces
-		} else if c == '\n' || c == '\r' {
-			// if there is a new line, check the next line is indent or outdent,
-			// if there is no spaces/indent in the next line, then it should be outdent.
-			l.Line++
-			c = l.next() // take the the line break char
-
-			// skip multiple newline at one time
-			// sometimes we wrote:
-			// --->a = 3$
-			// $
-			// --->b = 10$
-			// and this should be in the same block.
-			for c == '\n' {
-				c = l.next()
-			}
-			l.backup()
-
-			// c = l.peek()
-			if c == eof {
-				return lexStart
-			}
-
-			// reset space info
-			l.lastSpace = l.space
-			l.space = 0
-
-			// calculate spaces
-			c = l.next()
-			for c == ' ' || c == '\t' {
-				l.space++
-				c = l.next()
-			}
-			l.backup()
-			if l.space == l.lastSpace {
-				l.emit(T_NEWLINE)
-			} else if l.space < l.lastSpace {
-				l.emit(T_OUTDENT)
-				l.emit(T_NEWLINE) // means end of statement
-				l.IndentLevel--
-			} else if l.space > l.lastSpace {
-				l.IndentLevel++
-				l.emit(T_INDENT)
-			}
-			return lexStart
-		} else if l.emitIfMatch("&&", T_BOOLEAN_AND) || l.emitIfMatch("||", T_BOOLEAN_OR) {
-			return lexStart
-		} else if l.emitIfMatch("==", T_EQUAL) || l.emitIfMatch(">=", T_GT_EQUAL) || l.emitIfMatch("<=", T_LT_EQUAL) {
-			return lexStart
-		} else if l.emitIfKeywordMatches() {
-			return lexStart
-		} else if l.accept("+-*|&[]{}()<>,=@") {
-			l.emit(TokenType(c))
-			return lexStart
-		} else if l.lastTokenType == T_NUMBER && l.emitIfMatch("..", T_RANGE_OPERATOR) {
-			return lexStart
-		} else if c == '"' || c == '\'' {
-			return lexString
-		} else if unicode.IsLetter(c) {
-			return lexIdentifier
-		} else if c == eof {
-			if l.IndentLevel > 0 {
-				for i := 0; i < l.IndentLevel; i++ {
-					l.emit(T_OUTDENT)
-					l.emit(T_NEWLINE)
-				}
-			}
-			return nil
-		} else {
-			panic(fmt.Errorf("unknown token %c\n", c))
-			return nil
-		}
-	*/
-	return nil
 }
