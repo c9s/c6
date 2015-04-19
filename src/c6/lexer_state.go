@@ -289,14 +289,46 @@ func lexHexColor(l *Lexer) stateFn {
 	return nil
 }
 
-func lexDigits(l *Lexer) stateFn {
+func lexNumberUnit(l *Lexer) stateFn {
+	var r = l.peek()
+	var r2 = l.peekMore(2)
+
+	if r == 'p' && r2 == 'x' {
+		l.advance(2)
+		l.emit(T_UNIT_PX)
+	} else if r == 'p' && r2 == 't' {
+		l.advance(2)
+		l.emit(T_UNIT_PT)
+	} else if r == 'e' && r2 == 'm' {
+		l.advance(2)
+		l.emit(T_UNIT_EM)
+	}
+	return lexPropertyValue
+}
+
+func lexNumber(l *Lexer) stateFn {
 	var r = l.next()
+
+	var floatPoint = false
+
 	for unicode.IsDigit(r) {
-		l.next()
+		r = l.next()
+		if r == '.' {
+			floatPoint = true
+			r = l.next()
+			if !unicode.IsDigit(r) {
+				l.error("Expecting at least one digit after the floating point, got '%s'", r)
+			}
+		}
 	}
 	l.backup()
-	l.emit(T_DIGITS)
-	return nil
+
+	if floatPoint {
+		l.emit(T_FLOAT)
+	} else {
+		l.emit(T_INTEGER)
+	}
+	return lexNumberUnit
 }
 
 // lex for: `center`, `auto`, `top`, `none`
@@ -319,7 +351,7 @@ func lexPropertyValue(l *Lexer) stateFn {
 	} else if r == '#' {
 		return lexHexColor
 	} else if unicode.IsDigit(r) {
-		return lexDigits
+		return lexNumber
 	} else if unicode.IsLetter(r) {
 		return lexConstant
 	} else if r == '$' {
@@ -332,8 +364,10 @@ func lexPropertyValue(l *Lexer) stateFn {
 		l.next()
 		l.emit(T_SEMICOLON)
 		return lexStatement
+	} else if r == EOF {
+		l.error("Unexpected end of file", r)
 	} else {
-		l.error("can't lex rune: '%s'", r)
+		l.error("can't lex rune for property value: '%s'", r)
 	}
 	return nil
 }

@@ -190,6 +190,47 @@ func TestLexerVariableAssignment(t *testing.T) {
 	l.close()
 }
 
+func TestLexerVariableWithPtValue(t *testing.T) {
+	l := NewLexerWithString(`$foo: 10pt;`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{
+		T_VARIABLE, T_COLON, T_INTEGER, T_UNIT_PT, T_SEMICOLON,
+	})
+	l.close()
+}
+
+func TestLexerVariableWithPxValue(t *testing.T) {
+	l := NewLexerWithString(`$foo: 10px;`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{
+		T_VARIABLE, T_COLON, T_INTEGER, T_UNIT_PX, T_SEMICOLON,
+	})
+	l.close()
+}
+
+func TestLexerVariableWithEmValue(t *testing.T) {
+	l := NewLexerWithString(`$foo: 10em;`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{
+		T_VARIABLE, T_COLON, T_INTEGER, T_UNIT_EM, T_SEMICOLON,
+	})
+	l.close()
+}
+
+func TestLexerMultipleVariableAssignment(t *testing.T) {
+	l := NewLexerWithString(`$favorite: #fff; $foo: 10em;`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{
+		T_VARIABLE, T_COLON, T_HEX_COLOR, T_SEMICOLON,
+		T_VARIABLE, T_COLON, T_INTEGER, T_UNIT_EM, T_SEMICOLON,
+	})
+	l.close()
+}
+
 func TestLexerRuleWithSubRule(t *testing.T) {
 	l := NewLexerWithString(`.test { -webkit-transition: none;   .foo { color: #fff; } }`)
 	assert.NotNil(t, l)

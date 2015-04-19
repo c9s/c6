@@ -12,9 +12,9 @@ func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []TokenType) {
 		assert.NotNil(t, token)
 
 		if expectingToken == token.Type {
-			fmt.Printf("ok %s '%s'\n", token.Type.String(), token.Str)
+			fmt.Printf("\033[32mok %s '%s'\033[0m\n", token.Type.String(), token.Str)
 		} else {
-			fmt.Printf("not ok ---- got %s '%s' expecting %s\n", token.Type.String(), token.Str, expectingToken.String())
+			fmt.Printf("\033[31mnot ok ---- got %s '%s' expecting %s\033[0m\n", token.Type.String(), token.Str, expectingToken.String())
 		}
 		assert.Equal(t, expectingToken, token.Type)
 	}
