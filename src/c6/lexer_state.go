@@ -285,7 +285,7 @@ func lexParentSelector(l *Lexer) stateFn {
 }
 
 func lexChildSelector(l *Lexer) stateFn {
-	var r = l.peek()
+	var r = l.next()
 	if r == '>' {
 		l.emit(T_CHILD_SELECTOR)
 		return lexSelector

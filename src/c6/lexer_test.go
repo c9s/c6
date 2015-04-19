@@ -208,6 +208,18 @@ func TestLexerRuleWithTagNameAndClassSelector(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleChildSelector(t *testing.T) {
+	l := NewLexerWithString(`div.posts > a.foo {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{
+		T_TAGNAME_SELECTOR, T_AND_SELECTOR, T_CLASS_SELECTOR,
+		T_CHILD_SELECTOR,
+		T_TAGNAME_SELECTOR, T_AND_SELECTOR, T_CLASS_SELECTOR,
+		T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
 func TestLexerRuleWithTagNameAndPseudoSelector(t *testing.T) {
 	l := NewLexerWithString(`a:hover {  }`)
 	assert.NotNil(t, l)
