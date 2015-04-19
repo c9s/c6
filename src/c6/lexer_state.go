@@ -345,7 +345,7 @@ func lexSelector(l *Lexer) stateFn {
 	} else if r == '.' {
 		return lexClassSelector
 	} else if r == '#' && l.peekMore(2) == '{' {
-		lexExpansion(l)
+		lexInterpolation(l)
 		return lexSelector
 	} else if r == '#' {
 		return lexIdentifierSelector
@@ -480,13 +480,13 @@ func lexVariable(l *Lexer) stateFn {
 	return lexStatement
 }
 
-func lexExpansion(l *Lexer) stateFn {
+func lexInterpolation(l *Lexer) stateFn {
 	l.remember()
 	var r rune = l.next()
 	if r == '#' {
 		r = l.next()
 		if r == '{' {
-			l.emit(T_EXPANSION_START)
+			l.emit(T_INTERPOLATION_START)
 			r = l.next()
 			for r != '}' {
 				r = l.next()
@@ -495,7 +495,7 @@ func lexExpansion(l *Lexer) stateFn {
 			l.ignore()
 
 			l.next() // for '}'
-			l.emit(T_EXPANSION_END)
+			l.emit(T_INTERPOLATION_END)
 			return nil
 		}
 	}
@@ -577,7 +577,7 @@ func lexPropertyValue(l *Lexer) stateFn {
 	var r rune = l.peek()
 
 	if r == '#' && l.peekMore(2) == '{' {
-		return lexExpansion
+		return lexInterpolation
 	} else if r == '#' {
 		return lexHexColor
 	} else if unicode.IsDigit(r) {
@@ -736,7 +736,7 @@ func lexStatement(l *Lexer) stateFn {
 	} else if r == EOF {
 		return nil
 	} else {
-		l.error("Can't lex rune: '%s'", r)
+		l.error("Can't lex rune in lexStatement: '%s'", r)
 	}
 	return nil
 }

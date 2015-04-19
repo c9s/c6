@@ -326,7 +326,7 @@ func TestLexerSelectorWithExpansion(t *testing.T) {
 	l := NewLexerWithString(`#myPost#{ abc } {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []TokenType{T_ID_SELECTOR, T_EXPANSION_START, T_EXPANSION_END, T_BRACE_START, T_BRACE_END})
+	AssertTokenSequence(t, l, []TokenType{T_ID_SELECTOR, T_INTERPOLATION_START, T_INTERPOLATION_END, T_BRACE_START, T_BRACE_END})
 	l.close()
 }
 
