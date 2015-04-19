@@ -208,6 +208,14 @@ func TestLexerRuleWithTagNameAndClassSelector(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleWithTagNameAndPseudoSelector(t *testing.T) {
+	l := NewLexerWithString(`a:hover {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_TAGNAME_SELECTOR, T_AND_SELECTOR, T_PSEUDO_SELECTOR, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
 func TestLexerRuleWithIdSelector(t *testing.T) {
 	l := NewLexerWithString(`#myPost {  }`)
 	assert.NotNil(t, l)

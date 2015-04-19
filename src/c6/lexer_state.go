@@ -284,6 +284,36 @@ func lexParentSelector(l *Lexer) stateFn {
 	return nil
 }
 
+func lexChildSelector(l *Lexer) stateFn {
+	var r = l.peek()
+	if r == '>' {
+		l.emit(T_CHILD_SELECTOR)
+		return lexSelector
+	}
+	l.error("Unexpected token '%s' for child selector.", r)
+	return nil
+}
+
+func lexPseudoSelector(l *Lexer) stateFn {
+	var r = l.next()
+	if r == ':' {
+		r = l.next()
+
+		if !unicode.IsLetter(r) {
+			l.error("charater '%s' is not allowed in pseudo selector", r)
+		}
+
+		for unicode.IsLetter(r) || r == '-' {
+			r = l.next()
+		}
+		l.backup()
+		l.emit(T_PSEUDO_SELECTOR)
+		return lexStatement
+	}
+	l.error("Unexpected token '%s' for pseudo selector.", r)
+	return nil
+}
+
 func lexUniversalSelector(l *Lexer) stateFn {
 	var r = l.peek()
 	if r == '*' {
@@ -297,6 +327,8 @@ func lexUniversalSelector(l *Lexer) stateFn {
 
 // Dispath selector lexing method
 func lexSelector(l *Lexer) stateFn {
+	l.ignoreSpaces()
+
 	var r = l.peek()
 	if unicode.IsLetter(r) {
 		return lexTagNameSelector
@@ -306,8 +338,16 @@ func lexSelector(l *Lexer) stateFn {
 		return lexClassSelector
 	} else if r == '#' {
 		return lexIdentifierSelector
+	} else if r == '>' {
+		return lexChildSelector
+	} else if r == ':' {
+		return lexPseudoSelector
+	} else if r == '&' {
+		return lexParentSelector
+	} else if r == '*' {
+		return lexUniversalSelector
 	} else {
-		l.error("Unexpected token for selector", r)
+		l.error("Unexpected token '%s' for selector.", r)
 	}
 	return nil
 }
@@ -324,10 +364,20 @@ func lexTagNameSelector(l *Lexer) stateFn {
 	l.emit(T_TAGNAME_SELECTOR)
 
 	// predicate and inject the and selector for class name, identifier after the tagName
-	if r == '.' || r == '#' || r == '[' {
+	if r == '.' || r == '#' || r == '[' || r == ':' {
 		l.emit(T_AND_SELECTOR)
 	}
-	return lexStart
+	switch r {
+	case ':':
+		return lexPseudoSelector
+	case '[':
+		return lexAttributeSelector
+	case '#':
+		return lexIdentifierSelector
+	case '.':
+		return lexClassSelector
+	}
+	return lexStatement
 }
 
 func lexSemiColon(l *Lexer) stateFn {
@@ -525,13 +575,8 @@ func lexStatement(l *Lexer) stateFn {
 		l.next()
 		l.emit(T_BRACE_END)
 		return lexStatement
-	} else if r == '[' {
-		return lexAttributeSelector
-	} else if r == '*' {
-		return lexUniversalSelector
-	} else if r == '&' {
-		// Note that the parent selector is only allowed for subrules
-		return lexParentSelector
+	} else if r == '[' || r == '*' || r == '>' || r == '&' {
+		return lexSelector
 	} else if r == ';' {
 		l.next()
 		l.emit(T_SEMICOLON)
@@ -607,7 +652,7 @@ func lexStatement(l *Lexer) stateFn {
 	} else if r == EOF {
 		return nil
 	} else {
-		l.error("can't lex rune: '%s'", r)
+		l.error("Can't lex rune: '%s'", r)
 	}
 	return nil
 }
