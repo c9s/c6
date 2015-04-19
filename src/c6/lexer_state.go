@@ -285,7 +285,7 @@ func lexTagName(l *Lexer) stateFn {
 	l.emit(T_TAGNAME_SELECTOR)
 
 	// predicate and inject the and selector for class name, identifier after the tagName
-	if r == '.' || r == '#' {
+	if r == '.' || r == '#' || r == '[' {
 		l.emit(T_AND_SELECTOR)
 	}
 	return lexStart
@@ -518,9 +518,24 @@ func lexStatement(l *Lexer) stateFn {
 		// lex the property name (or tag name)
 		for l.accept(LETTERS + "-") {
 		}
+
+		r = l.peek()
+		var isSelector = false
+		for r == '[' {
+			// ignore the attribute strings
+			for {
+				if r == ']' {
+					isSelector = true
+					break
+				}
+				r = l.next()
+			}
+		}
+
 		// ignore spaces and colon
 		l.accept(": ")
 
+		// skip the :state selector (if any)
 		var r = l.next()
 		for unicode.IsLetter(r) || unicode.IsDigit(r) || unicode.IsSpace(r) {
 			r = l.next()
@@ -528,7 +543,7 @@ func lexStatement(l *Lexer) stateFn {
 
 		// it's a selector, so we end with a brace '{'
 		l.rollback()
-		if r == '{' {
+		if r == '{' || isSelector {
 			return lexTagName
 		} else if r == '.' {
 			// if it stops here, it means there is a class selector after the tag name selector

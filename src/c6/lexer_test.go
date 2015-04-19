@@ -166,6 +166,32 @@ func TestLexerRuleWithAttributeSelectorContainsQQString(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleWithAttributeSelectorAfterTagNameContainsQQString2(t *testing.T) {
+	l := NewLexerWithString(`a[rel~="copyright"] {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_TAGNAME_SELECTOR, T_AND_SELECTOR, T_ATTRIBUTE_START, T_ATTRIBUTE_NAME, T_CONTAINS, T_QQ_STRING, T_ATTRIBUTE_END, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
+func TestLexerRuleWithMultipleAttributeSelector(t *testing.T) {
+	l := NewLexerWithString(`span[hello="Cleveland"][goodbye="Columbus"] { color: blue; }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{
+		T_TAGNAME_SELECTOR,
+		T_AND_SELECTOR,
+		T_ATTRIBUTE_START, T_ATTRIBUTE_NAME, T_EQUAL, T_QQ_STRING, T_ATTRIBUTE_END,
+		T_ATTRIBUTE_START, T_ATTRIBUTE_NAME, T_EQUAL, T_QQ_STRING, T_ATTRIBUTE_END,
+		T_BRACE_START,
+		T_PROPERTY_NAME,
+		T_COLON,
+		T_CONSTANT,
+		T_SEMICOLON,
+		T_BRACE_END})
+	l.close()
+}
+
 func TestLexerRuleWithTagNameAndClassSelector(t *testing.T) {
 	l := NewLexerWithString(`a.foo {  }`)
 	assert.NotNil(t, l)
