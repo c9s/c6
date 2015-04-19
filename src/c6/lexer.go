@@ -50,6 +50,10 @@ type Lexer struct {
 	Tokens []Token
 }
 
+func (l *Lexer) lastToken() Token {
+	return l.Tokens[len(self.Tokens)-1]
+}
+
 /**
 Create a lexer object with bytes
 */
@@ -187,7 +191,6 @@ func (l *Lexer) emit(tokenType TokenType) {
 		Pos:  l.Start,
 		Line: l.Line,
 	}
-
 	if DEBUG_EMIT {
 		fmt.Println("emit", token)
 	}
