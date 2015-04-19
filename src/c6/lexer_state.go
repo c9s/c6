@@ -273,6 +273,17 @@ func lexClassSelector(l *Lexer) stateFn {
 	return nil
 }
 
+func lexParentSelector(l *Lexer) stateFn {
+	var r = l.peek()
+	if r == '&' {
+		l.next()
+		l.emit(T_PARENT_SELECTOR)
+		return lexStatement
+	}
+	l.error("Unexpected token '%s' for universal selector.", r)
+	return nil
+}
+
 func lexUniversalSelector(l *Lexer) stateFn {
 	var r = l.peek()
 	if r == '*' {
@@ -518,6 +529,9 @@ func lexStatement(l *Lexer) stateFn {
 		return lexAttributeSelector
 	} else if r == '*' {
 		return lexUniversalSelector
+	} else if r == '&' {
+		// Note that the parent selector is only allowed for subrules
+		return lexParentSelector
 	} else if r == ';' {
 		l.next()
 		l.emit(T_SEMICOLON)
