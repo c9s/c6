@@ -250,6 +250,17 @@ func TestLexerRuleChildSelector(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleWithPseudoSelector(t *testing.T) {
+	var testCases = []string{`:hover {  }`, `:link {  }`, `:visited {  }`}
+	for _, scss := range testCases {
+		l := NewLexerWithString(scss)
+		assert.NotNil(t, l)
+		l.run()
+		AssertTokenSequence(t, l, []TokenType{T_PSEUDO_SELECTOR, T_BRACE_START, T_BRACE_END})
+		l.close()
+	}
+}
+
 func TestLexerRuleWithTagNameAndPseudoSelector(t *testing.T) {
 	var testCases = []string{`a:hover {  }`, `a:link {  }`, `a:visited {  }`}
 	for _, scss := range testCases {
@@ -259,7 +270,6 @@ func TestLexerRuleWithTagNameAndPseudoSelector(t *testing.T) {
 		AssertTokenSequence(t, l, []TokenType{T_TAGNAME_SELECTOR, T_AND_SELECTOR, T_PSEUDO_SELECTOR, T_BRACE_START, T_BRACE_END})
 		l.close()
 	}
-
 }
 
 func TestLexerRuleLangPseudoSelector(t *testing.T) {
