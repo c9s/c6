@@ -182,6 +182,11 @@ func lexIdentifier(l *Lexer) stateFn {
 	}
 	l.backup()
 	l.emit(T_ID_SELECTOR)
+
+	// for selector like "#myID.foo"
+	if r == '.' {
+		l.emit(T_AND_SELECTOR)
+	}
 	return lexStatement
 }
 
