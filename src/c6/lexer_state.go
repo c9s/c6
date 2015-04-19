@@ -256,9 +256,20 @@ func lexVariable(l *Lexer) stateFn {
 	return lexStatement
 }
 
-func lexExpansionStart(l *Lexer) stateFn {
-
-	// TODO
+func lexExpansion(l *Lexer) stateFn {
+	l.remember()
+	var r rune = l.next()
+	if r == '#' {
+		r = l.next()
+		if r == '{' {
+			r = l.next()
+			for r != '}' {
+				r = l.next()
+			}
+			return nil
+		}
+	}
+	l.rollback()
 	return nil
 }
 
@@ -304,7 +315,7 @@ func lexPropertyValue(l *Lexer) stateFn {
 	var r rune = l.peek()
 
 	if r == '#' && l.peekMore(2) == '{' {
-		return lexExpansionStart
+		return lexExpansion
 	} else if r == '#' {
 		return lexHexColor
 	} else if unicode.IsDigit(r) {
