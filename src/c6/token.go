@@ -22,6 +22,7 @@ const (
 	T_ID_SELECTOR
 	T_CLASS_SELECTOR
 	T_TAGNAME_SELECTOR
+	T_UNIVERSAL_SELECTOR
 	T_PARENT_SELECTOR // SASS parent selector
 	T_AND_SELECTOR    // {parent-selector}{child-selector} { }
 	T_STATE_SELECTOR  // a:state {  }

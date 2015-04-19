@@ -134,6 +134,14 @@ func TestLexerRuleWithTagNameSelectorForDiv(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleWithUniversalSelector(t *testing.T) {
+	l := NewLexerWithString(`* {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_UNIVERSAL_SELECTOR, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
 func TestLexerRuleWithAttributeSelector(t *testing.T) {
 	l := NewLexerWithString(`[href] {  }`)
 	assert.NotNil(t, l)

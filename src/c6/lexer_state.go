@@ -273,6 +273,17 @@ func lexClassSelector(l *Lexer) stateFn {
 	return nil
 }
 
+func lexUniversalSelector(l *Lexer) stateFn {
+	var r = l.peek()
+	if r == '*' {
+		l.next()
+		l.emit(T_UNIVERSAL_SELECTOR)
+		return lexStatement
+	}
+	l.error("Unexpected token '%s' for universal selector.", r)
+	return nil
+}
+
 // Dispath selector lexing method
 func lexSelector(l *Lexer) stateFn {
 	var r = l.peek()
@@ -505,6 +516,8 @@ func lexStatement(l *Lexer) stateFn {
 		return lexStatement
 	} else if r == '[' {
 		return lexAttributeSelector
+	} else if r == '*' {
+		return lexUniversalSelector
 	} else if r == ';' {
 		l.next()
 		l.emit(T_SEMICOLON)
@@ -554,7 +567,8 @@ func lexStatement(l *Lexer) stateFn {
 			isSelector = true
 		}
 
-		// ignore spaces and colon
+		// Ignore spaces and colon.
+		// This is for property name and state selector
 		l.accept(": ")
 
 		// skip the :state selector (if any)
