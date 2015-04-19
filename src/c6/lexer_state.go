@@ -344,6 +344,9 @@ func lexSelector(l *Lexer) stateFn {
 		return lexAttributeSelector
 	} else if r == '.' {
 		return lexClassSelector
+	} else if r == '#' && l.peekMore(2) == '{' {
+		lexExpansion(l)
+		return lexSelector
 	} else if r == '#' {
 		return lexIdentifierSelector
 	} else if r == '>' {
@@ -366,8 +369,11 @@ func lexSelector(l *Lexer) stateFn {
 		l.next()
 		l.emit(T_ADJACENT_SELECTOR)
 		return lexSelector
+	} else if r == ' ' {
+		l.ignoreSpaces()
+		return lexSelector
 	} else if r == '{' {
-		return nil
+		return lexStatement
 	} else {
 		l.error("Unexpected token '%s' for selector.", r)
 	}
@@ -480,10 +486,16 @@ func lexExpansion(l *Lexer) stateFn {
 	if r == '#' {
 		r = l.next()
 		if r == '{' {
+			l.emit(T_EXPANSION_START)
 			r = l.next()
 			for r != '}' {
 				r = l.next()
 			}
+			l.backup()
+			l.ignore()
+
+			l.next() // for '}'
+			l.emit(T_EXPANSION_END)
 			return nil
 		}
 	}
@@ -660,6 +672,15 @@ func lexStatement(l *Lexer) stateFn {
 			if !unicode.IsLetter(r) && r != '-' {
 				break
 			}
+
+			if r == '#' && l.peekMore(2) == '{' {
+				r = l.next()
+				// find the matching brace
+				for r != '}' {
+					r = l.next()
+				}
+			}
+
 			// for unicode.IsLetter(r) || r == '-' || r == ' ' {
 			r = l.next()
 		}
@@ -698,8 +719,6 @@ func lexStatement(l *Lexer) stateFn {
 				l.backup()
 			}
 			r = l.next()
-
-			fmt.Println(string(r))
 		}
 	end_guess:
 
