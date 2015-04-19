@@ -302,12 +302,20 @@ func lexPseudoSelector(l *Lexer) stateFn {
 		if !unicode.IsLetter(r) {
 			l.error("charater '%s' is not allowed in pseudo selector", r)
 		}
-
 		for unicode.IsLetter(r) || r == '-' {
 			r = l.next()
 		}
 		l.backup()
 		l.emit(T_PSEUDO_SELECTOR)
+
+		if r == '(' {
+			l.next()
+			lexLang(l)
+			r = l.next()
+			if r != ')' {
+				l.error("Unexpected token '%s' for pseudo lang selector", r)
+			}
+		}
 		return lexStatement
 	}
 	l.error("Unexpected token '%s' for pseudo selector.", r)
@@ -346,6 +354,20 @@ func lexSelector(l *Lexer) stateFn {
 		return lexParentSelector
 	} else if r == '*' {
 		return lexUniversalSelector
+	} else if r == ',' {
+
+		l.next()
+		l.emit(T_COMMA)
+
+		// lex next selector
+		return lexSelector
+
+	} else if r == '+' {
+		l.next()
+		l.emit(T_ADJACENT_SELECTOR)
+		return lexSelector
+	} else if r == '{' {
+		return nil
 	} else {
 		l.error("Unexpected token '%s' for selector.", r)
 	}
@@ -378,6 +400,41 @@ func lexTagNameSelector(l *Lexer) stateFn {
 		return lexClassSelector
 	}
 	return lexStatement
+}
+
+func lexLang(l *Lexer) stateFn {
+	/*
+		html:lang(fr-ca) { quotes: '« ' ' »' }
+		html:lang(de) { quotes: '»' '«' '\2039' '\203A' }
+		:lang(fr) > Q { quotes: '« ' ' »' }
+		:lang(de) > Q { quotes: '»' '«' '\2039' '\203A' }
+	*/
+	// [a-z]{2} - [a-z]{2}
+	// [a-z]{2}
+	var r = l.next()
+	if !unicode.IsLetter(r) {
+		l.error("Unexpected language token. Got '%s'", r)
+	}
+
+	r = l.next()
+	if !unicode.IsLetter(r) {
+		l.error("Unexpected language token. Got '%s'", r)
+	}
+
+	r = l.peek()
+	if r == '-' {
+		l.next() // skip '-'
+		r = l.next()
+		if !unicode.IsLetter(r) {
+			l.error("Unexpected language token. Got '%s'", r)
+		}
+		r = l.next()
+		if !unicode.IsLetter(r) {
+			l.error("Unexpected language token. Got '%s'", r)
+		}
+	}
+	l.emit(T_LANG_CODE)
+	return nil
 }
 
 func lexSemiColon(l *Lexer) stateFn {
@@ -575,7 +632,10 @@ func lexStatement(l *Lexer) stateFn {
 		l.next()
 		l.emit(T_BRACE_END)
 		return lexStatement
-	} else if r == '[' || r == '*' || r == '>' || r == '&' {
+	} else if r == '$' { // it's a variable assignment statement
+		return lexVariableAssignment
+	} else if r == '[' || r == '*' || r == '>' || r == '&' || r == '#' || r == '.' || r == '+' {
+
 		return lexSelector
 	} else if r == ';' {
 		l.next()
@@ -585,63 +645,68 @@ func lexStatement(l *Lexer) stateFn {
 		l.next()
 		l.emit(T_COMMA)
 		return lexStart
-	} else if r == '$' { // it's a variable assignment statement
-		return lexVariableAssignment
 	} else if r == '@' {
 		return lexAtRule
-	} else if r == '#' {
-		return lexIdentifierSelector
-	} else if r == '.' {
-		return lexClassSelector
 	} else if r == '-' || unicode.IsLetter(r) { // it maybe -vendor- property or a property name
 		l.remember()
 
-		// if it starts with a letter, it's possible to have two kinds of syntax here:
-		//   a { }
-		//   a{}
-		//   a:hover {  }
-		//   color: red;
-		//   background-color: ...
-		//   -webkit-transition: ...
+		isSelector := false
 
-		// lex the property name (or tag name)
-		for l.accept(LETTERS + "-") {
-		}
-
-		r = l.peek()
-		var isSelector = false
-		for r == '[' {
-			// ignore the attribute strings
-			for {
-				if r == ']' {
-					isSelector = true
-					break
-				}
-				r = l.next()
+		r = l.next()
+		for {
+			if r == EOF {
+				break
 			}
-		}
-
-		// found .class selector.  "." is not allowed in property name
-		if r == '.' {
-			isSelector = true
-		}
-
-		// Ignore spaces and colon.
-		// This is for property name and state selector
-		l.accept(": ")
-
-		// skip the :state selector (if any)
-		var r = l.next()
-		for unicode.IsLetter(r) || unicode.IsDigit(r) || unicode.IsSpace(r) {
+			if !unicode.IsLetter(r) && r != '-' {
+				break
+			}
+			// for unicode.IsLetter(r) || r == '-' || r == ' ' {
 			r = l.next()
 		}
 
+		for r == ' ' {
+			r = l.next()
+		}
+		if r == '{' {
+			isSelector = true
+			goto end_guess
+		}
+
+		if r != ':' {
+			isSelector = true
+			goto end_guess
+		}
+
+		r = l.next()
+		// ignore space
+		for r == ' ' {
+			r = l.next()
+		}
+		for {
+			if r == '{' {
+				isSelector = true
+				goto end_guess
+			} else if r == ';' {
+				isSelector = false
+				goto end_guess
+			} else if r == '#' && l.peekMore(2) == '{' {
+				// skip expansion
+				r = l.next()
+				for r != '}' {
+					r = l.next()
+				}
+				l.backup()
+			}
+			r = l.next()
+
+			fmt.Println(string(r))
+		}
+	end_guess:
+
 		// it's a selector, so we end with a brace '{'
 		l.rollback()
-		if isSelector || r == '{' || r == '.' {
+		if isSelector {
 			return lexSelector
-		} else if r == ';' {
-			return lexPropertyName
 		} else {
 			return lexPropertyName
 		}

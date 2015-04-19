@@ -23,12 +23,13 @@ const (
 	T_CLASS_SELECTOR
 	T_TAGNAME_SELECTOR
 	T_UNIVERSAL_SELECTOR
-	T_PARENT_SELECTOR // SASS parent selector
-	T_CHILD_SELECTOR  // '>'
-	T_PSEUDO_SELECTOR // :hover, :visited , ...
-	T_AND_SELECTOR    // {parent-selector}{child-selector} { }
-	T_STATE_SELECTOR  // a:state {  }
+	T_PARENT_SELECTOR   // SASS parent selector
+	T_CHILD_SELECTOR    // '>'
+	T_PSEUDO_SELECTOR   // :hover, :visited , ...
+	T_AND_SELECTOR      // {parent-selector}{child-selector} { }
+	T_ADJACENT_SELECTOR // '+'
 	T_BRACE_START
+	T_LANG_CODE // 'en', 'fr', 'fr-ca'
 	T_ATTRIBUTE_START
 	T_ATTRIBUTE_NAME
 	T_ATTRIBUTE_END

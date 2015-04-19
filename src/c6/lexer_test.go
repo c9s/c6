@@ -216,6 +216,15 @@ func TestLexerRuleWithTagNameAndPseudoSelector(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleLangPseudoSelector(t *testing.T) {
+	// html:lang(fr-ca) { quotes: '« ' ' »' }
+	l := NewLexerWithString(`html:lang(fr-ca) {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_TAGNAME_SELECTOR, T_AND_SELECTOR, T_PSEUDO_SELECTOR, T_LANG_CODE, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
 func TestLexerRuleWithIdSelector(t *testing.T) {
 	l := NewLexerWithString(`#myPost {  }`)
 	assert.NotNil(t, l)
