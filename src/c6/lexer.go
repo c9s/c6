@@ -11,7 +11,7 @@ const TOKEN_CHANNEL_BUFFER = 1024
 
 const EOF = -1
 
-const DEBUG_EMIT = false
+const DEBUG_EMIT = true
 
 type Lexer struct {
 	// lex input
@@ -254,12 +254,8 @@ func (l *Lexer) ignoreSpaces() {
 	l.Start = l.Offset
 }
 
-func (l *Lexer) run() {
-	if l.Output == nil {
-		l.Output = make(tokenChannel, TOKEN_CHANNEL_BUFFER)
-	}
-
-	for l.State = lexStart; l.State != nil; {
+func (l *Lexer) dispatchFn(fn stateFn) stateFn {
+	for l.State = fn; l.State != nil; {
 		fn := l.State(l)
 		if fn != nil {
 			l.State = fn
@@ -267,6 +263,14 @@ func (l *Lexer) run() {
 			break
 		}
 	}
+	return l.State
+}
+
+func (l *Lexer) run() {
+	if l.Output == nil {
+		l.Output = make(tokenChannel, TOKEN_CHANNEL_BUFFER)
+	}
+	l.dispatchFn(lexStart)
 	l.Output <- nil
 }
 

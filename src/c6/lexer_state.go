@@ -230,24 +230,30 @@ func lexSemiColon(l *Lexer) stateFn {
 	return nil
 }
 
+func lexVariableAssignment(l *Lexer) stateFn {
+	lexVariable(l)
+	lexColon(l)
+	fn := lexPropertyValue(l)
+	return l.dispatchFn(fn)
+}
+
 func lexVariable(l *Lexer) stateFn {
 	var r = l.next()
 	if r != '$' {
 		l.error("Unexpected token %s for lexVariable", r)
 	}
-
 	r = l.next()
 	if !unicode.IsLetter(r) {
 		l.error("The first character of a variable must be letter. Got '%s'", r)
 	}
+
 	r = l.next()
 	for unicode.IsLetter(r) || unicode.IsDigit(r) {
-		l.next()
+		r = l.next()
 	}
 	l.backup()
 	l.emit(T_VARIABLE)
-	lexColon(l)
-	return lexPropertyValue
+	return lexStatement
 }
 
 func lexExpansionStart(l *Lexer) stateFn {
@@ -258,8 +264,6 @@ func lexExpansionStart(l *Lexer) stateFn {
 
 func lexHexColor(l *Lexer) stateFn {
 	l.ignoreSpaces()
-	l.remember()
-
 	var r rune = l.next()
 	if r == '#' {
 		for l.accept("0123456789abcdefABCDEF") {
@@ -270,7 +274,7 @@ func lexHexColor(l *Lexer) stateFn {
 		l.emit(T_HEX_COLOR)
 		return lexPropertyValue
 	}
-	l.error("expecting hex color", r)
+	l.error("Expecting hex color, got '%s'", r)
 	return nil
 }
 
@@ -298,6 +302,7 @@ func lexConstant(l *Lexer) stateFn {
 func lexPropertyValue(l *Lexer) stateFn {
 	l.ignoreSpaces()
 	var r rune = l.peek()
+
 	if r == '#' && l.peekMore(2) == '{' {
 		return lexExpansionStart
 	} else if r == '#' {
@@ -317,11 +322,13 @@ func lexPropertyValue(l *Lexer) stateFn {
 		l.emit(T_SEMICOLON)
 		return lexStatement
 	} else {
-		panic(fmt.Sprintf("can't lex rune: %+v", string(r)))
+		l.error("can't lex rune: '%s'", r)
 	}
+	return nil
 }
 
 func lexColon(l *Lexer) stateFn {
+	l.ignoreSpaces()
 	var r = l.next()
 	if r == ':' {
 		l.emit(T_COLON)
@@ -370,12 +377,14 @@ func lexStatement(l *Lexer) stateFn {
 		l.next()
 		l.emit(T_COMMA)
 		return lexStart
-	} else if r == '$' {
-		return lexVariable
+	} else if r == '$' { // it's a variable assignment statement
+		return lexVariableAssignment
 	} else if r == '@' {
 		return lexAtRule
 	} else if r == '#' {
 		return lexIdentifier
+	} else if r == '.' {
+		return lexClassName
 	} else if r == '-' || unicode.IsLetter(r) { // it maybe -vendor- property or a property name
 		l.remember()
 
@@ -410,8 +419,6 @@ func lexStatement(l *Lexer) stateFn {
 		} else {
 			return lexPropertyName
 		}
-	} else if r == '.' {
-		return lexClassName
 	} else if r == ' ' {
 		return lexSpaces
 	} else if r == '"' || r == '\'' {
@@ -419,7 +426,7 @@ func lexStatement(l *Lexer) stateFn {
 	} else if r == EOF {
 		return nil
 	} else {
-		l.error("can't lex rune: %+v", r)
+		l.error("can't lex rune: '%s'", r)
 	}
 	return nil
 }

@@ -170,6 +170,26 @@ func TestLexerRuleWithVendorPrefixPropertyName(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleWithVariableAsPropertyValue(t *testing.T) {
+	l := NewLexerWithString(`.test { color: $favorite; }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{
+		T_CLASS_SELECTOR,
+		T_BRACE_START,
+		T_PROPERTY_NAME, T_COLON, T_VARIABLE, T_SEMICOLON,
+		T_BRACE_END})
+	l.close()
+}
+
+func TestLexerVariableAssignment(t *testing.T) {
+	l := NewLexerWithString(`$favorite: #fff;`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_VARIABLE, T_COLON, T_HEX_COLOR, T_SEMICOLON})
+	l.close()
+}
+
 func TestLexerRuleWithSubRule(t *testing.T) {
 	l := NewLexerWithString(`.test { -webkit-transition: none;   .foo { color: #fff; } }`)
 	assert.NotNil(t, l)
