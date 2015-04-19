@@ -165,7 +165,7 @@ func lexSpaces(l *Lexer) stateFn {
 	return lexStart
 }
 
-func lexIdentifier(l *Lexer) stateFn {
+func lexIdentifierSelector(l *Lexer) stateFn {
 	var r = l.next()
 	if r != '#' {
 		l.error("Expecting '#' for lexing identifier, Got '%s'", r)
@@ -247,7 +247,7 @@ func lexAttributeSelector(l *Lexer) stateFn {
 	return nil
 }
 
-func lexClassName(l *Lexer) stateFn {
+func lexClassSelector(l *Lexer) stateFn {
 	var r = l.peek()
 	if r == '.' {
 		l.next()
@@ -273,7 +273,24 @@ func lexClassName(l *Lexer) stateFn {
 	return nil
 }
 
-func lexTagName(l *Lexer) stateFn {
+// Dispath selector lexing method
+func lexSelector(l *Lexer) stateFn {
+	var r = l.peek()
+	if unicode.IsLetter(r) {
+		return lexTagNameSelector
+	} else if r == '[' {
+		return lexAttributeSelector
+	} else if r == '.' {
+		return lexClassSelector
+	} else if r == '#' {
+		return lexIdentifierSelector
+	} else {
+		l.error("Unexpected token for selector", r)
+	}
+	return nil
+}
+
+func lexTagNameSelector(l *Lexer) stateFn {
 	var r = l.peek()
 	if !unicode.IsLetter(r) {
 		return lexStart
@@ -501,9 +518,9 @@ func lexStatement(l *Lexer) stateFn {
 	} else if r == '@' {
 		return lexAtRule
 	} else if r == '#' {
-		return lexIdentifier
+		return lexIdentifierSelector
 	} else if r == '.' {
-		return lexClassName
+		return lexClassSelector
 	} else if r == '-' || unicode.IsLetter(r) { // it maybe -vendor- property or a property name
 		l.remember()
 
@@ -532,6 +549,11 @@ func lexStatement(l *Lexer) stateFn {
 			}
 		}
 
+		// found .class selector.  "." is not allowed in property name
+		if r == '.' {
+			isSelector = true
+		}
+
 		// ignore spaces and colon
 		l.accept(": ")
 
@@ -543,11 +565,8 @@ func lexStatement(l *Lexer) stateFn {
 
 		// it's a selector, so we end with a brace '{'
 		l.rollback()
-		if r == '{' || isSelector {
-			return lexTagName
-		} else if r == '.' {
-			// if it stops here, it means there is a class selector after the tag name selector
-			return lexTagName
+		if isSelector || r == '{' || r == '.' {
+			return lexSelector
 		} else if r == ';' {
 			return lexPropertyName
 		} else {
