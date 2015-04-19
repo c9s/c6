@@ -130,7 +130,7 @@ func TestLexerRuleWithTagNameAndClassSelector(t *testing.T) {
 	l := NewLexerWithString(`a.foo {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []TokenType{T_TAGNAME_SELECTOR, T_CLASS_SELECTOR, T_BRACE_START, T_BRACE_END})
+	AssertTokenSequence(t, l, []TokenType{T_TAGNAME_SELECTOR, T_AND_SELECTOR, T_CLASS_SELECTOR, T_BRACE_START, T_BRACE_END})
 	l.close()
 }
 

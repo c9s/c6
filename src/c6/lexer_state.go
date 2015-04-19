@@ -186,36 +186,46 @@ func lexIdentifier(l *Lexer) stateFn {
 }
 
 func lexClassName(l *Lexer) stateFn {
-	var t = l.peek()
-	if t == '.' {
+	var r = l.peek()
+	if r == '.' {
 		l.next()
-		t = l.next()
+		r = l.next()
 
-		if !unicode.IsLetter(t) {
+		if !unicode.IsLetter(r) {
 			panic("Expecting letter")
 			return nil
 		}
 
-		for unicode.IsLetter(t) || t == '-' {
-			t = l.next()
+		for unicode.IsLetter(r) || r == '-' {
+			r = l.next()
 		}
 		l.backup()
 		l.emit(T_CLASS_SELECTOR)
+
+		// there is a class name selector after this one.
+		if r == '.' {
+			l.emit(T_AND_SELECTOR)
+		}
 		return lexStart
 	}
 	return nil
 }
 
 func lexTagName(l *Lexer) stateFn {
-	var t = l.peek()
-	if !unicode.IsLetter(t) {
+	var r = l.peek()
+	if !unicode.IsLetter(r) {
 		return lexStart
 	}
-	for unicode.IsLetter(t) {
-		t = l.next()
+	for unicode.IsLetter(r) {
+		r = l.next()
 	}
 	l.backup()
 	l.emit(T_TAGNAME_SELECTOR)
+
+	// predicate and inject the and selector for class name, identifier after the tagName
+	if r == '.' || r == '#' {
+		l.emit(T_AND_SELECTOR)
+	}
 	return lexStart
 }
 
