@@ -118,6 +118,46 @@ func TestLexerRuleWithTwoProperty(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleWithTagNameSelector(t *testing.T) {
+	l := NewLexerWithString(`a {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_TAGNAME_SELECTOR, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
+func TestLexerRuleWithTagNameAndClassSelector(t *testing.T) {
+	l := NewLexerWithString(`a.foo {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_TAGNAME_SELECTOR, T_CLASS_SELECTOR, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
+func TestLexerRuleWithIdSelector(t *testing.T) {
+	l := NewLexerWithString(`#myPost {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_ID_SELECTOR, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
+func TestLexerRuleWithIdSelectorWithDigits(t *testing.T) {
+	l := NewLexerWithString(`#foo123 {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_ID_SELECTOR, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
+func TestLexerRuleWithMultipleSelector(t *testing.T) {
+	l := NewLexerWithString(`#foo123, .foo {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_ID_SELECTOR, T_COMMA, T_CLASS_SELECTOR, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
 func TestLexerRuleWithVendorPrefixPropertyName(t *testing.T) {
 	l := NewLexerWithString(`.test { -webkit-transition: none; }`)
 	assert.NotNil(t, l)

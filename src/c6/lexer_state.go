@@ -165,6 +165,26 @@ func lexSpaces(l *Lexer) stateFn {
 	return lexStart
 }
 
+func lexIdentifier(l *Lexer) stateFn {
+	var r = l.next()
+	if r != '#' {
+		l.error("Expecting '#' for lexing identifier, Got '%s'", r)
+	}
+
+	r = l.next()
+	if !unicode.IsLetter(r) {
+		l.error("An identifier should start with at least a letter, Got '%s'", r)
+	}
+
+	r = l.next()
+	for unicode.IsLetter(r) || unicode.IsDigit(r) {
+		r = l.next()
+	}
+	l.backup()
+	l.emit(T_ID_SELECTOR)
+	return lexStatement
+}
+
 func lexClassName(l *Lexer) stateFn {
 	var t = l.peek()
 	if t == '.' {
@@ -218,7 +238,7 @@ func lexVariable(l *Lexer) stateFn {
 
 	r = l.next()
 	if !unicode.IsLetter(r) {
-		fmt.Printf("The first character of a variable must be letter.")
+		l.error("The first character of a variable must be letter. Got '%s'", r)
 	}
 	r = l.next()
 	for unicode.IsLetter(r) || unicode.IsDigit(r) {
@@ -278,7 +298,6 @@ func lexConstant(l *Lexer) stateFn {
 func lexPropertyValue(l *Lexer) stateFn {
 	l.ignoreSpaces()
 	var r rune = l.peek()
-	fmt.Printf("lexPropertyValue: %s\n", string(r))
 	if r == '#' && l.peekMore(2) == '{' {
 		return lexExpansionStart
 	} else if r == '#' {
@@ -347,10 +366,16 @@ func lexStatement(l *Lexer) stateFn {
 		l.next()
 		l.emit(T_SEMICOLON)
 		return lexStart
+	} else if r == ',' {
+		l.next()
+		l.emit(T_COMMA)
+		return lexStart
 	} else if r == '$' {
 		return lexVariable
 	} else if r == '@' {
 		return lexAtRule
+	} else if r == '#' {
+		return lexIdentifier
 	} else if r == '-' || unicode.IsLetter(r) { // it maybe -vendor- property or a property name
 		l.remember()
 
@@ -376,6 +401,9 @@ func lexStatement(l *Lexer) stateFn {
 		// it's a selector, so we end with a brace '{'
 		l.rollback()
 		if r == '{' {
+			return lexTagName
+		} else if r == '.' {
+			// if it stops here, it means there is a class selector after the tag name selector
 			return lexTagName
 		} else if r == ';' {
 			return lexPropertyName
