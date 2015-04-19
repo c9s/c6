@@ -50,8 +50,11 @@ type Lexer struct {
 	Tokens []Token
 }
 
-func (l *Lexer) lastToken() Token {
-	return l.Tokens[len(self.Tokens)-1]
+func (l *Lexer) lastToken() *Token {
+	if len(l.Tokens) > 0 {
+		return &l.Tokens[len(l.Tokens)-1]
+	}
+	return nil
 }
 
 /**
