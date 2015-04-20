@@ -25,8 +25,9 @@ type Parser struct {
 	Input chan *Token
 
 	// integer for counting token
-	Pos    int
-	Tokens []Token
+	Pos         int
+	RollbackPos int
+	Tokens      []Token
 }
 
 func NewParser() *Parser {
@@ -49,6 +50,18 @@ func (parser *Parser) parseFile(path string) error {
 	return nil
 }
 
+func (self *Parser) backup() {
+	self.Pos--
+}
+
+func (self *Parser) remember() {
+	self.RollbackPos = self.Pos
+}
+
+func (self *Parser) rollback() {
+	self.Pos = self.RollbackPos
+}
+
 func (self *Parser) next() *Token {
 	var p = self.Pos
 	self.Pos++
@@ -57,6 +70,21 @@ func (self *Parser) next() *Token {
 	} else if token := <-self.Input; token != nil {
 		self.Tokens = append(self.Tokens, *token)
 		return token
+	}
+	return nil
+}
+
+func (self *Parser) peekBy(offset int) *Token {
+	if self.Pos+offset < len(self.Tokens) {
+		return &self.Tokens[self.Pos+offset]
+	}
+	token := <-self.Input
+	for token != nil {
+		self.Tokens = append(self.Tokens, *token)
+		if self.Pos+offset < len(self.Tokens) {
+			return &self.Tokens[self.Pos+offset]
+		}
+		token = <-self.Input
 	}
 	return nil
 }
