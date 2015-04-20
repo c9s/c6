@@ -252,18 +252,16 @@ func lexHexColor(l *Lexer) stateFn {
 }
 
 func lexNumberUnit(l *Lexer) stateFn {
-	var r = l.peek()
-	var r2 = l.peekMore(2)
-
-	if r == 'p' && r2 == 'x' {
-		l.advance(2)
+	if l.match("px") {
 		l.emit(T_UNIT_PX)
-	} else if r == 'p' && r2 == 't' {
-		l.advance(2)
+	} else if l.match("pt") {
 		l.emit(T_UNIT_PT)
-	} else if r == 'e' && r2 == 'm' {
-		l.advance(2)
+	} else if l.match("em") {
 		l.emit(T_UNIT_EM)
+	} else if l.match("deg") {
+		l.emit(T_UNIT_DEG)
+	} else {
+		// no unit provided
 	}
 	return lexPropertyValue
 }

@@ -3,9 +3,6 @@ package c6
 import "unicode"
 
 // import "strings"
-import "fmt"
-import "errors"
-
 func lexPropertyName(l *Lexer) stateFn {
 	var r rune = l.next()
 	for r == '-' || unicode.IsLetter(r) {
@@ -41,7 +38,7 @@ func lexPropertyValue(l *Lexer) stateFn {
 	} else if unicode.IsLetter(r) {
 		return lexConstantString
 	} else if r == '$' {
-		return lexVariable
+		return lexVariableName
 	} else if r == ' ' {
 		l.next()
 		l.ignore()
