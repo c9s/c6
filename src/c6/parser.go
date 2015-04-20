@@ -122,6 +122,7 @@ func (self *Parser) parseScss(code string) {
 
 	if self.isSelector() {
 		rule := Rule{}
+		_ = rule
 	}
 }
 

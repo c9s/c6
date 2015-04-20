@@ -189,8 +189,7 @@ func lexSemiColon(l *Lexer) stateFn {
 func lexVariableAssignment(l *Lexer) stateFn {
 	lexVariableName(l)
 	lexColon(l)
-	fn := lexPropertyValue(l)
-	return l.dispatchFn(fn)
+	return lexPropertyValue(l)
 }
 
 func lexVariableName(l *Lexer) stateFn {
@@ -386,7 +385,13 @@ func lexStatement(l *Lexer) stateFn {
 			if r == '{' {
 				isSelector = true
 				goto end_guess
+			} else if r == '}' {
+				isSelector = false
+				goto end_guess
 			} else if r == ';' {
+				isSelector = false
+				goto end_guess
+			} else if r == EOF {
 				isSelector = false
 				goto end_guess
 			} else if r == '#' && l.peekMore(2) == '{' {

@@ -219,6 +219,26 @@ func TestLexerRuleWithIdSelectorWithDigits(t *testing.T) {
 	l.close()
 }
 
+func TestLexerPropertyEmValueMul(t *testing.T) {
+	l := NewLexerWithString(`.foo { width: 1.3em * 10.2em }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_CLASS_SELECTOR, T_BRACE_START,
+		T_PROPERTY_NAME, T_COLON, T_FLOAT, T_UNIT_EM, T_MUL, T_FLOAT, T_UNIT_EM,
+		T_BRACE_END})
+	l.close()
+}
+
+func TestLexerPropertyPxValueMul(t *testing.T) {
+	l := NewLexerWithString(`.foo { width: 1px * 3px }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_CLASS_SELECTOR, T_BRACE_START,
+		T_PROPERTY_NAME, T_COLON, T_INTEGER, T_UNIT_PX, T_MUL, T_INTEGER, T_UNIT_PX,
+		T_BRACE_END})
+	l.close()
+}
+
 func TestLexerRuleWithMultipleSelector(t *testing.T) {
 	l := NewLexerWithString(`#foo123, .foo {  }`)
 	assert.NotNil(t, l)

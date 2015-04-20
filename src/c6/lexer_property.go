@@ -37,6 +37,14 @@ func lexPropertyValue(l *Lexer) stateFn {
 		return lexNumber
 	} else if unicode.IsLetter(r) {
 		return lexConstantString
+	} else if r == '/' {
+		l.next()
+		l.emit(T_DIV)
+		return lexPropertyValue
+	} else if r == '*' {
+		l.next()
+		l.emit(T_MUL)
+		return lexPropertyValue
 	} else if r == '$' {
 		return lexVariableName
 	} else if r == ' ' {
@@ -47,6 +55,10 @@ func lexPropertyValue(l *Lexer) stateFn {
 		l.next()
 		l.emit(T_SEMICOLON)
 		return lexStatement
+	} else if r == '}' {
+		l.next()
+		l.emit(T_BRACE_END)
+		return lexStart
 	} else if r == EOF {
 		l.error("Unexpected end of file", r)
 	} else {
