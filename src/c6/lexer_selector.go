@@ -5,7 +5,7 @@ import "unicode"
 func lexAttributeSelector(l *Lexer) stateFn {
 	var r = l.next()
 	if r == '[' {
-		l.emit(T_ATTRIBUTE_START)
+		l.emit(T_BRACKET_LEFT)
 		r = l.next()
 		if !unicode.IsLetter(r) {
 			l.error("Unexpected token for attribute name. Got '%s'", r)
@@ -17,18 +17,22 @@ func lexAttributeSelector(l *Lexer) stateFn {
 		l.emit(T_ATTRIBUTE_NAME)
 
 		r = l.peek() // peek here again to avoid bugs
+
+		var attrOp = false
+
 		if r == '=' {
 			l.next()
 			l.emit(T_EQUAL)
-
-			r = l.peek()
-			if r == '"' {
-				lexString(l)
-			} else {
-				lexUnquoteString(l)
-			}
+			attrOp = true
 		} else if l.match("~=") {
-			l.emit(T_CONTAINS)
+			l.emit(T_TILDE_EQUAL)
+			attrOp = true
+		} else if l.match("|=") {
+			l.emit(T_PIPE_EQUAL)
+			attrOp = true
+		}
+
+		if attrOp {
 			r = l.peek()
 			if r == '"' {
 				lexString(l)
@@ -40,7 +44,7 @@ func lexAttributeSelector(l *Lexer) stateFn {
 		r = l.peek()
 		if r == ']' {
 			l.next()
-			l.emit(T_ATTRIBUTE_END)
+			l.emit(T_BRACKET_RIGHT)
 			return lexStatement
 		}
 
@@ -98,7 +102,7 @@ func lexParentSelector(l *Lexer) stateFn {
 func lexChildSelector(l *Lexer) stateFn {
 	var r = l.next()
 	if r == '>' {
-		l.emit(T_CHILD_SELECTOR)
+		l.emit(T_GT)
 		return lexSelector
 	}
 	l.error("Unexpected token '%s' for child selector.", r)
@@ -193,7 +197,7 @@ func lexSelector(l *Lexer) stateFn {
 
 	} else if r == '+' {
 		l.next()
-		l.emit(T_ADJACENT_SELECTOR)
+		l.emit(T_PLUS)
 		return lexSelector
 	} else if r == ' ' {
 		for r == ' ' {

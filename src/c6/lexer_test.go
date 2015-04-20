@@ -146,7 +146,7 @@ func TestLexerRuleWithAttributeSelector(t *testing.T) {
 	l := NewLexerWithString(`[href] {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []TokenType{T_ATTRIBUTE_START, T_ATTRIBUTE_NAME, T_ATTRIBUTE_END, T_BRACE_START, T_BRACE_END})
+	AssertTokenSequence(t, l, []TokenType{T_BRACKET_LEFT, T_ATTRIBUTE_NAME, T_BRACKET_RIGHT, T_BRACE_START, T_BRACE_END})
 	l.close()
 }
 
@@ -154,7 +154,7 @@ func TestLexerRuleWithAttributeSelectorEqualToUnquoteString(t *testing.T) {
 	l := NewLexerWithString(`[lang=en] {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []TokenType{T_ATTRIBUTE_START, T_ATTRIBUTE_NAME, T_EQUAL, T_UNQUOTE_STRING, T_ATTRIBUTE_END, T_BRACE_START, T_BRACE_END})
+	AssertTokenSequence(t, l, []TokenType{T_BRACKET_LEFT, T_ATTRIBUTE_NAME, T_EQUAL, T_UNQUOTE_STRING, T_BRACKET_RIGHT, T_BRACE_START, T_BRACE_END})
 	l.close()
 }
 
@@ -162,7 +162,7 @@ func TestLexerRuleWithAttributeSelectorEqualToQQString(t *testing.T) {
 	l := NewLexerWithString(`[lang="en"] {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []TokenType{T_ATTRIBUTE_START, T_ATTRIBUTE_NAME, T_EQUAL, T_QQ_STRING, T_ATTRIBUTE_END, T_BRACE_START, T_BRACE_END})
+	AssertTokenSequence(t, l, []TokenType{T_BRACKET_LEFT, T_ATTRIBUTE_NAME, T_EQUAL, T_QQ_STRING, T_BRACKET_RIGHT, T_BRACE_START, T_BRACE_END})
 	l.close()
 }
 
@@ -170,7 +170,7 @@ func TestLexerRuleWithAttributeSelectorContainsQQString(t *testing.T) {
 	l := NewLexerWithString(`[lang~="en"] {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []TokenType{T_ATTRIBUTE_START, T_ATTRIBUTE_NAME, T_CONTAINS, T_QQ_STRING, T_ATTRIBUTE_END, T_BRACE_START, T_BRACE_END})
+	AssertTokenSequence(t, l, []TokenType{T_BRACKET_LEFT, T_ATTRIBUTE_NAME, T_TILDE_EQUAL, T_QQ_STRING, T_BRACKET_RIGHT, T_BRACE_START, T_BRACE_END})
 	l.close()
 }
 
@@ -178,7 +178,7 @@ func TestLexerRuleWithAttributeSelectorAfterTagNameContainsQQString2(t *testing.
 	l := NewLexerWithString(`a[rel~="copyright"] {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []TokenType{T_TAGNAME_SELECTOR, T_AND_SELECTOR, T_ATTRIBUTE_START, T_ATTRIBUTE_NAME, T_CONTAINS, T_QQ_STRING, T_ATTRIBUTE_END, T_BRACE_START, T_BRACE_END})
+	AssertTokenSequence(t, l, []TokenType{T_TAGNAME_SELECTOR, T_AND_SELECTOR, T_BRACKET_LEFT, T_ATTRIBUTE_NAME, T_TILDE_EQUAL, T_QQ_STRING, T_BRACKET_RIGHT, T_BRACE_START, T_BRACE_END})
 	l.close()
 }
 
@@ -189,8 +189,8 @@ func TestLexerRuleWithMultipleAttributeSelector(t *testing.T) {
 	AssertTokenSequence(t, l, []TokenType{
 		T_TAGNAME_SELECTOR,
 		T_AND_SELECTOR,
-		T_ATTRIBUTE_START, T_ATTRIBUTE_NAME, T_EQUAL, T_QQ_STRING, T_ATTRIBUTE_END,
-		T_ATTRIBUTE_START, T_ATTRIBUTE_NAME, T_EQUAL, T_QQ_STRING, T_ATTRIBUTE_END,
+		T_BRACKET_LEFT, T_ATTRIBUTE_NAME, T_EQUAL, T_QQ_STRING, T_BRACKET_RIGHT,
+		T_BRACKET_LEFT, T_ATTRIBUTE_NAME, T_EQUAL, T_QQ_STRING, T_BRACKET_RIGHT,
 		T_BRACE_START,
 		T_PROPERTY_NAME,
 		T_COLON,
@@ -217,11 +217,11 @@ func TestLexerRuleUniversalSelectorPlusClassSelectorPlusAttributeSelector(t *tes
 		T_AND_SELECTOR,
 		T_CLASS_SELECTOR,
 		T_AND_SELECTOR,
-		T_ATTRIBUTE_START,
+		T_BRACKET_LEFT,
 		T_ATTRIBUTE_NAME,
 		T_EQUAL,
 		T_QQ_STRING,
-		T_ATTRIBUTE_END,
+		T_BRACKET_RIGHT,
 		T_BRACE_START, T_BRACE_END})
 	l.close()
 }
@@ -244,7 +244,7 @@ func TestLexerRuleChildSelector(t *testing.T) {
 	l.run()
 	AssertTokenSequence(t, l, []TokenType{
 		T_TAGNAME_SELECTOR, T_AND_SELECTOR, T_CLASS_SELECTOR,
-		T_CHILD_SELECTOR,
+		T_GT,
 		T_TAGNAME_SELECTOR, T_AND_SELECTOR, T_CLASS_SELECTOR,
 		T_BRACE_START, T_BRACE_END})
 	l.close()
