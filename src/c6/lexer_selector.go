@@ -226,17 +226,18 @@ func lexTagNameSelector(l *Lexer) stateFn {
 	l.emit(T_TAGNAME_SELECTOR)
 
 	// predicate and inject the and selector for class name, identifier after the tagName
-	if r == '.' || r == '#' || r == '[' || r == ':' {
-		l.emit(T_AND_SELECTOR)
-	}
 	switch r {
 	case ':':
+		l.emit(T_AND_SELECTOR)
 		return lexPseudoSelector
 	case '[':
+		l.emit(T_AND_SELECTOR)
 		return lexAttributeSelector
 	case '#':
+		l.emit(T_AND_SELECTOR)
 		return lexIdentifierSelector
 	case '.':
+		l.emit(T_AND_SELECTOR)
 		return lexClassSelector
 	}
 	return lexStatement
