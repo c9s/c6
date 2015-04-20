@@ -19,3 +19,13 @@ func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []TokenType) {
 		assert.Equal(t, expectingToken, token.Type)
 	}
 }
+
+func AssertToken(t *testing.T, tokenType TokenType, token *Token) {
+	assert.NotNil(t, token)
+	if tokenType != token.Type {
+		fmt.Printf("\033[31mnot ok - expecting %s. Got %s '%s'\033[0m\n", tokenType.String(), token.Type.String(), token.Str)
+	} else {
+		fmt.Printf("\033[32mok - expecting %s. Got %s '%s'\033[0m\n", tokenType.String(), token.Type.String(), token.Str)
+	}
+	assert.Equal(t, tokenType, token.Type)
+}
