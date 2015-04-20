@@ -260,6 +260,8 @@ func lexNumberUnit(l *Lexer) stateFn {
 		l.emit(T_UNIT_EM)
 	} else if l.match("deg") {
 		l.emit(T_UNIT_DEG)
+	} else if l.match("%") {
+		l.emit(T_UNIT_PERCENT)
 	} else if l.peek() == ';' {
 		return lexStatement
 	}

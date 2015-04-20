@@ -178,6 +178,16 @@ func TestLexerVariableWithEmValue(t *testing.T) {
 	l.close()
 }
 
+func TestLexerVariableWithPercent(t *testing.T) {
+	l := NewLexerWithString(`width: 20%;`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{
+		T_PROPERTY_NAME, T_COLON, T_INTEGER, T_UNIT_PERCENT, T_SEMICOLON,
+	})
+	l.close()
+}
+
 func TestLexerMultipleVariableAssignment(t *testing.T) {
 	l := NewLexerWithString(`$favorite: #fff; $foo: 10em;`)
 	assert.NotNil(t, l)
