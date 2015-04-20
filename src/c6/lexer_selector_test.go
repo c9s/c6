@@ -89,6 +89,21 @@ func TestLexerRuleSimpleSelectorGrouping(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleAttributeSelectorGrouping(t *testing.T) {
+	l := NewLexerWithString(`[type=text], [type=password], [type=checkbox] {}`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{
+
+		T_BRACKET_LEFT, T_ATTRIBUTE_NAME, T_EQUAL, T_UNQUOTE_STRING, T_BRACKET_RIGHT, T_COMMA,
+		T_BRACKET_LEFT, T_ATTRIBUTE_NAME, T_EQUAL, T_UNQUOTE_STRING, T_BRACKET_RIGHT, T_COMMA,
+		T_BRACKET_LEFT, T_ATTRIBUTE_NAME, T_EQUAL, T_UNQUOTE_STRING, T_BRACKET_RIGHT,
+
+		T_BRACE_START,
+		T_BRACE_END})
+	l.close()
+}
+
 func TestLexerRuleWithCombinedAttributeSelector(t *testing.T) {
 	l := NewLexerWithString(`span[hello="Cleveland"][goodbye="Columbus"] { color: blue; }`)
 	assert.NotNil(t, l)
