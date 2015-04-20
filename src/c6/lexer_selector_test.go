@@ -226,3 +226,21 @@ func TestLexerRuleWithMultipleSelector(t *testing.T) {
 	AssertTokenSequence(t, l, []TokenType{T_ID_SELECTOR, T_COMMA, T_CLASS_SELECTOR, T_BRACE_START, T_BRACE_END})
 	l.close()
 }
+
+func TestLexerRuleWithSubRuleWithParentSelector(t *testing.T) {
+	l := NewLexerWithString(`.test { -webkit-transition: none;   &.foo { color: #fff; } }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{
+		T_CLASS_SELECTOR,
+		T_BRACE_START,
+		T_PROPERTY_NAME, T_COLON, T_CONSTANT, T_SEMICOLON,
+		T_PARENT_SELECTOR,
+		T_AND_SELECTOR,
+		T_CLASS_SELECTOR,
+		T_BRACE_START,
+		T_PROPERTY_NAME, T_COLON, T_HEX_COLOR, T_SEMICOLON,
+		T_BRACE_END,
+		T_BRACE_END})
+	l.close()
+}
