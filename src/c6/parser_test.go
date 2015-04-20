@@ -50,3 +50,20 @@ func TestParserPeekBy(t *testing.T) {
 	token = parser.next()
 	AssertToken(t, T_BRACE_END, token)
 }
+
+func TestParseNestedRule(t *testing.T) {
+	code := `
+#main p {
+  color: #00ff00;
+  width: 97%;
+
+  .redbox {
+    background-color: #ff0000;
+    color: #000000;
+  }
+}
+`
+	p := NewParser()
+	assert.NotNil(t, p)
+	p.parseScss(code)
+}

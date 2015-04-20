@@ -101,12 +101,38 @@ func (self *Parser) peek() *Token {
 	return nil
 }
 
+func (self *Parser) isSelector() bool {
+	var tok = self.peek()
+	if tok.Type == T_ID_SELECTOR ||
+		tok.Type == T_TAGNAME_SELECTOR ||
+		tok.Type == T_CLASS_SELECTOR ||
+		tok.Type == T_PSEUDO_SELECTOR ||
+		tok.Type == T_PARENT_SELECTOR {
+		return true
+	} else if tok.Type == T_BRACKET_LEFT {
+		return true
+	}
+	return false
+}
+
 func (self *Parser) parseScss(code string) {
 	l := NewLexerWithString(code)
 	l.run()
 	self.Input = l.getOutput()
+
+	if self.isSelector() {
+		rule := Rule{}
+	}
 }
 
-func (self *Parser) parseSass(code string) {
+func (self *Parser) parseStatement() {
+
+}
+
+func (self *Parser) parseAtRule() {
+
+}
+
+func (self *Parser) parseRule() {
 
 }

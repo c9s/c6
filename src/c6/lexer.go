@@ -11,7 +11,7 @@ const TOKEN_CHANNEL_BUFFER = 1024
 
 const EOF = -1
 
-const DEBUG_EMIT = true
+const DEBUG_EMIT = false
 
 type Lexer struct {
 	// lex input
@@ -285,58 +285,3 @@ func (l *Lexer) close() {
 		close(l.Output)
 	}
 }
-
-/*
-func (self *Lexer) peek() {
-	var p = self.Offset
-	if self.State == StateRoot {
-		if self.Input[p] == '.' {
-			p++
-			for {
-				var c = self.Input[p]
-				if c == ' ' || c == '{' {
-					break
-				}
-				if !unicode.IsLetter(c) && c != '-' {
-					break
-				}
-			}
-		}
-	}
-}
-*/
-
-/*
-func (self *Lexer) lexSelector() *Token {
-	return self.lexClassSelector()
-}
-*/
-
-/*
-func (self *Lexer) lexClassSelector() *Token {
-	var p = self.Offset
-	if self.Input[p] == '.' {
-		p++
-
-		// TODO: Prevent p to overflow here
-		for {
-			var c = self.Input[p]
-			// if it's the end of a .class selector
-			if c == ' ' || c == '{' {
-				return &Token{
-					Type: TokenClassSelector,
-					Str:  self.Input[self.Offset : p-1],
-					Pos:  self.Offset,
-				}
-				break
-			}
-			if !unicode.IsLetter(c) && c != '-' {
-				// Raise error here
-				break
-			}
-			p++
-		}
-	}
-	return nil
-}
-*/
