@@ -30,7 +30,10 @@ type Parser struct {
 }
 
 func NewParser() *Parser {
-	return &Parser{}
+	p := Parser{}
+	p.Pos = 0
+	p.Tokens = []Token{}
+	return &p
 }
 
 func (parser *Parser) parseFile(path string) error {
@@ -47,9 +50,10 @@ func (parser *Parser) parseFile(path string) error {
 }
 
 func (self *Parser) next() *Token {
+	var p = self.Pos
 	self.Pos++
-	if self.Pos+1 < len(self.Tokens) {
-		return &self.Tokens[self.Pos]
+	if p < len(self.Tokens) {
+		return &self.Tokens[p]
 	} else if token := <-self.Input; token != nil {
 		self.Tokens = append(self.Tokens, *token)
 		return token
@@ -58,11 +62,15 @@ func (self *Parser) next() *Token {
 }
 
 func (self *Parser) peek() *Token {
-	token := <-self.Input
-	if token != nil {
-		self.Tokens = append(self.Tokens, *token)
+	if self.Pos < len(self.Tokens) {
+		return &self.Tokens[self.Pos]
 	}
-	return token
+
+	if token := <-self.Input; token != nil {
+		self.Tokens = append(self.Tokens, *token)
+		return token
+	}
+	return nil
 }
 
 func (self *Parser) parseScss(code string) {
