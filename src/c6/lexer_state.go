@@ -260,8 +260,8 @@ func lexNumberUnit(l *Lexer) stateFn {
 		l.emit(T_UNIT_EM)
 	} else if l.match("deg") {
 		l.emit(T_UNIT_DEG)
-	} else {
-		// no unit provided
+	} else if l.peek() == ';' {
+		return lexStatement
 	}
 	return lexPropertyValue
 }
