@@ -22,6 +22,11 @@ func getFileTypeByExtension(extension string) uint {
 }
 
 type Parser struct {
+	Input chan *Token
+
+	// integer for counting token
+	Pos    int
+	Tokens []Token
 }
 
 func NewParser() *Parser {
@@ -41,11 +46,29 @@ func (parser *Parser) parseFile(path string) error {
 	return nil
 }
 
-func (self *Parser) peek() {
+func (self *Parser) next() *Token {
+	self.Pos++
+	if self.Pos+1 < len(self.Tokens) {
+		return &self.Tokens[self.Pos]
+	} else if token := <-self.Input; token != nil {
+		self.Tokens = append(self.Tokens, *token)
+		return token
+	}
+	return nil
+}
 
+func (self *Parser) peek() *Token {
+	token := <-self.Input
+	if token != nil {
+		self.Tokens = append(self.Tokens, *token)
+	}
+	return token
 }
 
 func (self *Parser) parseScss(code string) {
+	l := NewLexerWithString(code)
+	l.run()
+	self.Input = l.getOutput()
 }
 
 func (self *Parser) parseSass(code string) {
