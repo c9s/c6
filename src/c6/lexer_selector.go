@@ -219,7 +219,7 @@ func lexTagNameSelector(l *Lexer) stateFn {
 	if !unicode.IsLetter(r) {
 		return lexStart
 	}
-	for unicode.IsLetter(r) {
+	for unicode.IsLetter(r) || unicode.IsDigit(r) {
 		r = l.next()
 	}
 	l.backup()

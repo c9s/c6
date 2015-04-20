@@ -75,7 +75,21 @@ func TestLexerRuleWithAttributeSelectorAfterTagNameContainsQQString2(t *testing.
 	l.close()
 }
 
-func TestLexerRuleWithMultipleAttributeSelector(t *testing.T) {
+func TestLexerRuleSimpleSelectorGrouping(t *testing.T) {
+	l := NewLexerWithString(`h1, h2, h3 { color: blue; }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{
+		T_TAGNAME_SELECTOR, T_COMMA, T_TAGNAME_SELECTOR, T_COMMA, T_TAGNAME_SELECTOR, T_BRACE_START,
+		T_PROPERTY_NAME,
+		T_COLON,
+		T_CONSTANT,
+		T_SEMICOLON,
+		T_BRACE_END})
+	l.close()
+}
+
+func TestLexerRuleWithCombinedAttributeSelector(t *testing.T) {
 	l := NewLexerWithString(`span[hello="Cleveland"][goodbye="Columbus"] { color: blue; }`)
 	assert.NotNil(t, l)
 	l.run()
