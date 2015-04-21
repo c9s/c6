@@ -145,6 +145,14 @@ func TestLexerRuleForDescendantClassSelector(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleForDescendantClassSelectorAndTagNameSelector(t *testing.T) {
+	l := NewLexerWithString(`div.foo span.bar {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_TAGNAME_SELECTOR, T_CLASS_SELECTOR, T_DESCENDANT_SELECTOR, T_TAGNAME_SELECTOR, T_CLASS_SELECTOR, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
 func TestLexerRuleUniversalSelectorPlusClassSelectorPlusAttributeSelector(t *testing.T) {
 	l := NewLexerWithString(`*.posts[href="http://google.com"] {  }`)
 	assert.NotNil(t, l)
