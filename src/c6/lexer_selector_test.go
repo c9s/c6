@@ -157,12 +157,11 @@ func TestLexerRuleAttributeSelectorWithInterpolationInAttributeName(t *testing.T
 	l := NewLexerWithString(`[#{ $foo }] {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []TokenType{
-		T_BRACKET_LEFT,
-		T_ATTRIBUTE_NAME,
-		T_BRACKET_RIGHT,
-		T_BRACE_START, T_BRACE_END})
-	l.close()
+	output := l.getOutput()
+	var token = <-output
+	token = <-output
+	assert.True(t, token.ContainsInterpolation)
+	close(output)
 }
 
 func TestLexerRuleAttributeSelectorWithInterpolationInAttributeName2(t *testing.T) {
