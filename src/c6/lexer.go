@@ -188,7 +188,7 @@ func (l *Lexer) take() string {
 
 func (l *Lexer) emitToken(token *Token) {
 	if DEBUG_EMIT {
-		fmt.Println("emit", token)
+		fmt.Printf("emit: %+v\n", token)
 	}
 
 	l.Tokens = append(l.Tokens, *token)
@@ -207,9 +207,11 @@ func (l *Lexer) createTokenWith0Offset(tokenType TokenType) *Token {
 }
 
 func (l *Lexer) createToken(tokenType TokenType) *Token {
-	if l.Offset >= len(l.Input) {
-		panic(fmt.Sprintf("out of range: offset %d, length %d", l.Offset, len(l.Input)))
-	}
+	/*
+		if l.Offset > len(l.Input) {
+			panic(fmt.Sprintf("out of range at '%s': start:%d, offset:%d, length: %d", l.Input[l.Start:], l.Start, l.Offset, len(l.Input)))
+		}
+	*/
 	var token = Token{
 		Type: tokenType,
 		Str:  l.Input[l.Start:l.Offset],
@@ -292,6 +294,10 @@ func (l *Lexer) dispatchFn(fn stateFn) stateFn {
 		}
 	}
 	return l.State
+}
+
+func (l *Lexer) dump() {
+	fmt.Printf("Lexer: %+v\n", l)
 }
 
 func (l *Lexer) run() {

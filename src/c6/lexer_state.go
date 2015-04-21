@@ -290,7 +290,12 @@ func lexConstantString(l *Lexer) stateFn {
 func lexStatement(l *Lexer) stateFn {
 	// strip the leading spaces of a statement
 	l.ignoreSpaces()
+
 	var r rune = l.peek()
+
+	if r == EOF {
+		return nil
+	}
 
 	if r == '(' {
 		l.next()
@@ -401,8 +406,6 @@ func lexStatement(l *Lexer) stateFn {
 		} else {
 			return lexPropertyName
 		}
-	} else if r == ' ' {
-		return lexSpaces
 	} else if r == '"' || r == '\'' {
 		return lexString
 	} else if r == EOF {

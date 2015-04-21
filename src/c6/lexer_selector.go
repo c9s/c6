@@ -6,6 +6,11 @@ func isInterpolationStartToken(r rune, r2 rune) bool {
 	return r == '#' && r2 == '{'
 }
 
+// does not test ' '
+func isSelectorOperatorToken(r rune) bool {
+	return r == '>' || r == '+' || r == ','
+}
+
 func isSelector(t TokenType) bool {
 	return t == T_CLASS_SELECTOR ||
 		t == T_ID_SELECTOR ||
@@ -13,8 +18,7 @@ func isSelector(t TokenType) bool {
 		t == T_TAGNAME_SELECTOR ||
 		t == T_UNIVERSAL_SELECTOR ||
 		t == T_PARENT_SELECTOR || // SASS parent selector
-		t == T_PSEUDO_SELECTOR || // :hover, :visited , ...
-		t == T_INTERPOLATION_SELECTOR // selector contains interpolation: '#{ ... }'
+		t == T_PSEUDO_SELECTOR // :hover, :visited , ...
 }
 
 /**
@@ -110,100 +114,98 @@ func lexClassSelector(l *Lexer) stateFn {
 }
 
 func lexParentSelector(l *Lexer) stateFn {
-	var r = l.peek()
-	if r == '&' {
-		l.next()
-		l.emit(T_PARENT_SELECTOR)
-
-		if l.accept(".:[") {
-			l.backup()
-			l.emit(T_AND_SELECTOR)
-		}
-		return lexSelectors
+	var r = l.next()
+	if r != '&' {
+		l.error("Unexpected token '%s' for universal selector.", r)
 	}
-	l.error("Unexpected token '%s' for universal selector.", r)
-	return nil
+	l.emit(T_PARENT_SELECTOR)
+	return lexSelectors
 }
 
 func lexChildSelector(l *Lexer) stateFn {
 	var r = l.next()
-	if r == '>' {
-		l.emit(T_GT)
-		return lexSelectors
+	if r != '>' {
+		l.error("Unexpected token '%s' for child selector.", r)
 	}
-	l.error("Unexpected token '%s' for child selector.", r)
-	return nil
+	l.emit(T_GT)
+	return lexSelectors
 }
 
 func lexPseudoSelector(l *Lexer) stateFn {
 	var r = l.next()
-	if r == ':' {
-		r = l.next()
-
-		if !unicode.IsLetter(r) {
-			l.error("charater '%s' is not allowed in pseudo selector", r)
-		}
-		for unicode.IsLetter(r) || r == '-' {
-			r = l.next()
-		}
-		l.backup()
-		l.emit(T_PSEUDO_SELECTOR)
-
-		if r == '(' {
-			l.next()
-			l.ignore()
-			lexLang(l)
-			r = l.next()
-			if r != ')' {
-				l.error("Unexpected token '%s' for pseudo lang selector", r)
-			}
-			l.ignore()
-		}
-		return lexSelectors
+	if r != ':' {
+		l.error("Unexpected token '%s' for pseudo selector.", r)
 	}
-	l.error("Unexpected token '%s' for pseudo selector.", r)
-	return nil
+	r = l.next()
+
+	if !unicode.IsLetter(r) {
+		l.error("charater '%s' is not allowed in pseudo selector", r)
+	}
+	for unicode.IsLetter(r) || r == '-' {
+		r = l.next()
+	}
+	l.backup()
+	l.emit(T_PSEUDO_SELECTOR)
+
+	if r == '(' {
+		l.next()
+		l.ignore()
+		lexLang(l)
+		r = l.next()
+		if r != ')' {
+			l.error("Unexpected token '%s' for pseudo lang selector", r)
+		}
+		l.ignore()
+	}
+	return lexSelectors
 }
 
 func lexUniversalSelector(l *Lexer) stateFn {
 	var r = l.next()
-	if r == '*' {
-		l.emit(T_UNIVERSAL_SELECTOR)
-
-		r = l.peek()
-		if r == '.' {
-			l.emit(T_AND_SELECTOR)
-			return lexClassSelector
-		} else if r == '[' {
-			l.emit(T_AND_SELECTOR)
-			return lexAttributeSelector
-		} else if r == ':' {
-			l.emit(T_AND_SELECTOR)
-			return lexPseudoSelector
-		} else if r == '#' {
-			l.emit(T_AND_SELECTOR)
-			return lexIdentifierSelector
-		}
-		return lexSelectors
+	if r != '*' {
+		l.error("Unexpected token '%s' for universal selector.", r)
 	}
-	l.error("Unexpected token '%s' for universal selector.", r)
-	return nil
+	l.emit(T_UNIVERSAL_SELECTOR)
+
+	r = l.peek()
+	if r == '.' {
+		return lexClassSelector
+	} else if r == '[' {
+		return lexAttributeSelector
+	} else if r == ':' {
+		return lexPseudoSelector
+	} else if r == '#' {
+		return lexIdentifierSelector
+	}
+	return lexSelectors
 }
 
 // Dispath selector lexing method
 func lexSelectors(l *Lexer) stateFn {
-	var r = l.peek()
+	var r rune
+	// T_INTERPOLATION_SELECTOR
 
 	// space between selector means descendant selector
 	if tok := l.lastToken(); tok != nil && isSelector(tok.Type) {
+		var foundSpace = false
+		r = l.next()
 		for r == ' ' {
 			r = l.next()
+			foundSpace = true
 		}
 		l.backup()
-		if r != '{' {
+		if r == EOF {
+			return nil
+		}
+		if foundSpace && r != '{' && !isSelectorOperatorToken(r) {
 			l.emit(T_DESCENDANT_SELECTOR)
+		} else {
+			l.ignore()
 		}
 	}
+
+	// re-peek again
+	r = l.peek()
 
 	// lex the first selector
 	if unicode.IsLetter(r) {
@@ -270,23 +272,24 @@ func lexSelectors(l *Lexer) stateFn {
 	} else if r == '{' {
 		return lexStatement
 	} else {
-		l.error("Unexpected token '%s' for selector.", r)
+		l.error("Unexpected token '%s' for lexing selector.", r)
 	}
 	return nil
 }
 
 func lexTagNameSelector(l *Lexer) stateFn {
-	var r = l.peek()
-	var foundInterpolation = false
+	var r = l.next()
 	if !unicode.IsLetter(r) && !isInterpolationStartToken(r, l.peekMore(2)) {
 		l.error("Expecting letter token for tag name selector. got %s", r)
 	}
+
+	var foundInterpolation = false
+	r = l.next()
 	for {
 		if isInterpolationStartToken(r, l.peekMore(2)) {
-			lexInterpolation(l, true)
+			lexInterpolation(l, false)
 			foundInterpolation = true
-		}
-		if !unicode.IsLetter(r) && !unicode.IsDigit(r) {
+		} else if !unicode.IsLetter(r) && !unicode.IsDigit(r) {
 			break
 		}
 		r = l.next()
@@ -299,21 +302,19 @@ func lexTagNameSelector(l *Lexer) stateFn {
 		l.emit(T_TAGNAME_SELECTOR)
 	}
 
+	r = l.peek()
+
 	// predicate and inject the and selector for class name, identifier after the tagName
 	switch r {
 	case ':':
-		l.emit(T_AND_SELECTOR)
 		return lexPseudoSelector
 	case '[':
-		l.emit(T_AND_SELECTOR)
 		return lexAttributeSelector
 	case '#':
 		if l.peekMore(2) != '{' {
-			l.emit(T_AND_SELECTOR)
 			return lexIdentifierSelector
 		}
 	case '.':
-		l.emit(T_AND_SELECTOR)
 		return lexClassSelector
 	case '{':
 		return lexStatement
@@ -373,10 +374,5 @@ func lexIdentifierSelector(l *Lexer) stateFn {
 	}
 	l.backup()
 	l.emit(T_ID_SELECTOR)
-
-	// for selector like "#myID.foo"
-	if r == '.' {
-		l.emit(T_AND_SELECTOR)
-	}
 	return lexStatement
 }
