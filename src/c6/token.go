@@ -61,4 +61,5 @@ const (
 	T_INTERPOLATION_END
 	T_DIV
 	T_MUL
+	T_MINUS
 )

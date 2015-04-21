@@ -36,7 +36,25 @@ func lexPropertyValue(l *Lexer) stateFn {
 	} else if unicode.IsDigit(r) {
 		return lexNumber
 	} else if unicode.IsLetter(r) {
+
+		l.remember()
+
+		r = l.next()
+
 		return lexConstantString
+
+	} else if r == '-' {
+
+		l.next()
+		l.emit(T_MINUS)
+		return lexPropertyValue
+
+	} else if r == '+' {
+
+		l.next()
+		l.emit(T_PLUS)
+		return lexPropertyValue
+
 	} else if r == '/' {
 		l.next()
 		l.emit(T_DIV)
