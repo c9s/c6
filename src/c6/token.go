@@ -11,7 +11,7 @@ type Token struct {
 	Str                   string
 	Pos                   int
 	Line                  int
-	ContainsInterpolation int
+	ContainsInterpolation bool
 }
 
 const (

@@ -153,6 +153,20 @@ func TestLexerRuleForDescendantClassSelectorAndTagNameSelector(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleAttributeSelectorWithInterpolation(t *testing.T) {
+	l := NewLexerWithString(`[#{ $foo }="http://google.com"] {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{
+		T_BRACKET_LEFT,
+		T_ATTRIBUTE_NAME,
+		T_EQUAL,
+		T_QQ_STRING,
+		T_BRACKET_RIGHT,
+		T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
 func TestLexerRuleUniversalSelectorPlusClassSelectorPlusAttributeSelector(t *testing.T) {
 	l := NewLexerWithString(`*.posts[href="http://google.com"] {  }`)
 	assert.NotNil(t, l)

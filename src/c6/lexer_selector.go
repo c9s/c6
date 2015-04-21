@@ -46,15 +46,29 @@ func lexAttributeSelector(l *Lexer) stateFn {
 	var r = l.next()
 	if r == '[' {
 		l.emit(T_BRACKET_LEFT)
+
+		var foundInterpolation = false
+
 		r = l.next()
-		if !unicode.IsLetter(r) {
+
+		if !unicode.IsLetter(r) && !isInterpolationStartToken(r, l.peek()) {
 			l.error("Unexpected token for attribute name. Got '%s'", r)
 		}
-		for unicode.IsLetter(r) {
+		for {
+			if isInterpolationStartToken(r, l.peek()) {
+				l.backup()
+				lexInterpolation(l, false)
+				foundInterpolation = true
+			} else if !unicode.IsLetter(r) && r != '-' && r != '_' {
+				break
+			}
 			r = l.next()
 		}
 		l.backup()
-		l.emit(T_ATTRIBUTE_NAME)
+
+		token := l.createToken(T_ATTRIBUTE_NAME)
+		token.ContainsInterpolation = foundInterpolation
+		l.emitToken(token)
 
 		r = l.peek() // peek here again to avoid bugs
 
@@ -265,7 +279,7 @@ func lexSelectors(l *Lexer) stateFn {
 
 			// the suffix of the selector.
 			var token = l.createToken(T_INTERPOLATION_SELECTOR)
-			token.ContainsInterpolation = 1
+			token.ContainsInterpolation = true
 			l.emitToken(token)
 			return lexSelectors
 		}
