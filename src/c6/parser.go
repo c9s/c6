@@ -104,7 +104,7 @@ func (self *Parser) peek() *Token {
 func (self *Parser) isSelector() bool {
 	var tok = self.peek()
 	if tok.Type == T_ID_SELECTOR ||
-		tok.Type == T_TAGNAME_SELECTOR ||
+		tok.Type == T_TYPE_SELECTOR ||
 		tok.Type == T_CLASS_SELECTOR ||
 		tok.Type == T_PSEUDO_SELECTOR ||
 		tok.Type == T_PARENT_SELECTOR {

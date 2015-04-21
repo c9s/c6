@@ -15,7 +15,7 @@ func isSelector(t TokenType) bool {
 	return t == T_CLASS_SELECTOR ||
 		t == T_ID_SELECTOR ||
 		t == T_CLASS_SELECTOR ||
-		t == T_TAGNAME_SELECTOR ||
+		t == T_TYPE_SELECTOR ||
 		t == T_UNIVERSAL_SELECTOR ||
 		t == T_PARENT_SELECTOR || // SASS parent selector
 		t == T_PSEUDO_SELECTOR // :hover, :visited , ...
@@ -209,7 +209,7 @@ func lexSelectors(l *Lexer) stateFn {
 
 	// lex the first selector
 	if unicode.IsLetter(r) {
-		return lexTagNameSelector
+		return lexTypeSelector
 	} else if r == '[' {
 		return lexAttributeSelector
 	} else if r == '.' {
@@ -277,7 +277,7 @@ func lexSelectors(l *Lexer) stateFn {
 	return nil
 }
 
-func lexTagNameSelector(l *Lexer) stateFn {
+func lexTypeSelector(l *Lexer) stateFn {
 	var r = l.next()
 	if !unicode.IsLetter(r) && !isInterpolationStartToken(r, l.peekMore(2)) {
 		l.error("Expecting letter token for tag name selector. got %s", r)
@@ -299,7 +299,7 @@ func lexTagNameSelector(l *Lexer) stateFn {
 	if foundInterpolation {
 		l.emit(T_INTERPOLATION_SELECTOR)
 	} else {
-		l.emit(T_TAGNAME_SELECTOR)
+		l.emit(T_TYPE_SELECTOR)
 	}
 
 	r = l.peek()

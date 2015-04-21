@@ -24,7 +24,7 @@ const (
 	// selector tokens
 	T_ID_SELECTOR
 	T_CLASS_SELECTOR
-	T_TAGNAME_SELECTOR
+	T_TYPE_SELECTOR
 	T_UNIVERSAL_SELECTOR
 	T_PARENT_SELECTOR        // SASS parent selector
 	T_PSEUDO_SELECTOR        // :hover, :visited , ...
