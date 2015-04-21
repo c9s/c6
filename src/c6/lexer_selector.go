@@ -1,6 +1,7 @@
 package c6
 
 import "unicode"
+import _ "fmt"
 
 func isInterpolationStartToken(r rune, r2 rune) bool {
 	return r == '#' && r2 == '{'
@@ -132,20 +133,34 @@ func lexChildSelector(l *Lexer) stateFn {
 }
 
 func lexPseudoSelector(l *Lexer) stateFn {
+	var foundInterpolation = false
+
 	var r = l.next()
 	if r != ':' {
 		l.error("Unexpected token '%s' for pseudo selector.", r)
 	}
-	r = l.next()
 
-	if !unicode.IsLetter(r) {
+	r = l.next()
+	if !unicode.IsLetter(r) && !(r == '#' && l.peek() == '{') {
 		l.error("charater '%s' is not allowed in pseudo selector", r)
 	}
-	for unicode.IsLetter(r) || r == '-' {
+	for {
+		if isInterpolationStartToken(r, l.peek()) {
+			l.backup()
+			lexInterpolation(l, false)
+			foundInterpolation = true
+		} else if !unicode.IsLetter(r) && r != '-' {
+			break
+		}
 		r = l.next()
 	}
 	l.backup()
-	l.emit(T_PSEUDO_SELECTOR)
+
+	if foundInterpolation {
+		l.emit(T_INTERPOLATION_SELECTOR)
+	} else {
+		l.emit(T_PSEUDO_SELECTOR)
+	}
 
 	if r == '(' {
 		l.next()
@@ -197,7 +212,7 @@ func lexSelectors(l *Lexer) stateFn {
 		if r == EOF {
 			return nil
 		}
-		if foundSpace && r != '{' && !isSelectorOperatorToken(r) {
+		if foundSpace && r != ',' && r != '{' && !isSelectorOperatorToken(r) {
 			l.emit(T_DESCENDANT_SELECTOR)
 		} else {
 			l.ignore()
@@ -223,6 +238,7 @@ func lexSelectors(l *Lexer) stateFn {
 	} else if r == '#' {
 		// for selector syntax like:
 		//    '#{  }  {  }'
+		//    '#{ a }foo#{ b } {  }'
 		//    '#{  }.something {  }'
 		//    '#{  } .something {  }'
 		//    '#{  }#myId {  }'
@@ -232,18 +248,17 @@ func lexSelectors(l *Lexer) stateFn {
 			}
 
 			lexInterpolation(l, false)
+			// end of interpolation
 
 			// find stop point of a selector.
 			r = l.next()
-			for unicode.IsLetter(r) || unicode.IsDigit(r) || r == '-' || r == '_' {
-				r = l.next()
-			}
-			l.backup()
-
-			r = l.next()
-			for !isSelectorStopToken(r) &&
-				!isDescendantSelectorSeparator(r) &&
-				isInterpolationStartToken(r, l.peekMore(2)) {
+			for {
+				if isInterpolationStartToken(r, l.peek()) {
+					l.backup()
+					lexInterpolation(l, false)
+				} else if !unicode.IsLetter(r) && !unicode.IsDigit(r) && r != '-' && r != '_' || isSelectorStopToken(r) || isDescendantSelectorSeparator(r) {
+					break
+				}
 				r = l.next()
 			}
 			l.backup()
@@ -293,7 +308,8 @@ func lexTypeSelector(l *Lexer) stateFn {
 	var foundInterpolation = false
 	r = l.next()
 	for {
-		if isInterpolationStartToken(r, l.peekMore(2)) {
+		if isInterpolationStartToken(r, l.peek()) {
+			l.backup()
 			lexInterpolation(l, false)
 			foundInterpolation = true
 		} else if !unicode.IsLetter(r) && !unicode.IsDigit(r) {
@@ -365,21 +381,37 @@ func lexLang(l *Lexer) stateFn {
 }
 
 func lexIdentifierSelector(l *Lexer) stateFn {
+	var foundInterpolation = false
 	var r = l.next()
 	if r != '#' {
 		l.error("Expecting '#' for lexing identifier, Got '%s'", r)
 	}
-
 	r = l.next()
-	if !unicode.IsLetter(r) {
+	if !unicode.IsLetter(r) && r != '#' && l.peek() != '{' {
 		l.error("An identifier should start with at least a letter, Got '%s'", r)
 	}
+	for {
+		if isInterpolationStartToken(r, l.peek()) {
+			l.backup()
+			lexInterpolation(l, false)
+			foundInterpolation = true
+		} else if !unicode.IsLetter(r) && !unicode.IsDigit(r) {
+			break
+		}
+		r = l.next()
+	}
+	l.backup()
 
 	r = l.next()
 	for unicode.IsLetter(r) || unicode.IsDigit(r) {
 		r = l.next()
 	}
 	l.backup()
-	l.emit(T_ID_SELECTOR)
-	return lexStatement
+
+	if foundInterpolation {
+		l.emit(T_INTERPOLATION_SELECTOR)
+	} else {
+		l.emit(T_ID_SELECTOR)
+	}
+	return lexSelectors
 }
