@@ -50,7 +50,6 @@ func lexAttributeSelector(l *Lexer) stateFn {
 		var foundInterpolation = false
 
 		r = l.next()
-
 		if !unicode.IsLetter(r) && !isInterpolationStartToken(r, l.peek()) {
 			l.error("Unexpected token for attribute name. Got '%s'", r)
 		}

@@ -97,19 +97,29 @@ func lexComment(l *Lexer) stateFn {
 func lexString(l *Lexer) stateFn {
 	var r = l.next()
 	if r == '"' {
+		var containsInterpolation = false
+
 		// string start
+		r = l.next()
 		for {
-			r = l.next()
 			if r == '"' {
-				l.emit(T_QQ_STRING)
+				token := l.createToken(T_QQ_STRING)
+				token.ContainsInterpolation = containsInterpolation
+				l.emitToken(token)
 				return lexStart
 			} else if r == '\\' {
 				// skip the escape character
 				continue
+			} else if isInterpolationStartToken(r, l.peek()) {
+				l.backup()
+				lexInterpolation(l, false)
+				containsInterpolation = true
 			} else if r == EOF {
 				panic("Expecting end of string")
 			}
+			r = l.next()
 		}
+		l.backup()
 		return lexStart
 
 	} else if r == '\'' {
