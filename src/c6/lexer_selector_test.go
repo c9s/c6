@@ -231,6 +231,14 @@ func TestLexerRuleWithIdSelector(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleWithTypeSelectorAndIdSelector(t *testing.T) {
+	l := NewLexerWithString(`div#myPost {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_TYPE_SELECTOR, T_ID_SELECTOR, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
 func TestLexerRuleWithIdSelectorWithDigits(t *testing.T) {
 	l := NewLexerWithString(`#foo123 {  }`)
 	assert.NotNil(t, l)

@@ -235,7 +235,15 @@ func lexSelectors(l *Lexer) stateFn {
 
 			// find stop point of a selector.
 			r = l.next()
-			for !isSelectorStopToken(r) && !isDescendantSelectorSeparator(r) && isInterpolationStartToken(r, l.peekMore(2)) {
+			for unicode.IsLetter(r) || unicode.IsDigit(r) || r == '-' || r == '_' {
+				r = l.next()
+			}
+			l.backup()
+
+			r = l.next()
+			for !isSelectorStopToken(r) &&
+				!isDescendantSelectorSeparator(r) &&
+				isInterpolationStartToken(r, l.peekMore(2)) {
 				r = l.next()
 			}
 			l.backup()
@@ -244,7 +252,6 @@ func lexSelectors(l *Lexer) stateFn {
 			var token = l.createToken(T_INTERPOLATION_SELECTOR)
 			token.ContainsInterpolation = 1
 			l.emitToken(token)
-			// lext next selector
 			return lexSelectors
 		}
 		return lexIdentifierSelector
