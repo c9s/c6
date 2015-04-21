@@ -295,7 +295,14 @@ func lexNumber(l *Lexer) stateFn {
 // lex for: `center`, `auto`, `top`, `none`
 func lexConstantString(l *Lexer) stateFn {
 	var r = l.next()
-	for unicode.IsLetter(r) {
+
+	// first char should be letter
+	if !unicode.IsLetter(r) {
+		l.error("Unexpected token for constant string. Got '%s'", r)
+	}
+
+	r = l.next()
+	for unicode.IsLetter(r) || r == '-' {
 		r = l.next()
 	}
 	l.backup()

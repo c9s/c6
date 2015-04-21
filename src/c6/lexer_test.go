@@ -116,6 +116,18 @@ func TestLexerRuleWithTwoProperty(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleWithPropertyValueComma(t *testing.T) {
+	l := NewLexerWithString(`.test { font-family: Arial, sans-serif }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{
+		T_CLASS_SELECTOR,
+		T_BRACE_START,
+		T_PROPERTY_NAME, T_COLON, T_CONSTANT, T_COMMA, T_CONSTANT,
+		T_BRACE_END})
+	l.close()
+}
+
 func TestLexerRuleWithVendorPrefixPropertyName(t *testing.T) {
 	l := NewLexerWithString(`.test { -webkit-transition: none; }`)
 	assert.NotNil(t, l)

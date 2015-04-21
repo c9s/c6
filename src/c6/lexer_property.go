@@ -25,6 +25,16 @@ func lexColon(l *Lexer) stateFn {
 	return nil
 }
 
+/*
+Possible property value syntax:
+
+   width: 10px;        // numeric
+   width: 10px + 10px; // expression
+   border: 1px #{solid} #000;   // interpolation
+   color: rgba( 0, 0, 255, 1.0);  // rgba function
+   width: auto;    // string constant
+
+*/
 func lexPropertyValue(l *Lexer) stateFn {
 	l.ignoreSpaces()
 	var r rune = l.peek()
@@ -62,6 +72,10 @@ func lexPropertyValue(l *Lexer) stateFn {
 	} else if r == '*' {
 		l.next()
 		l.emit(T_MUL)
+		return lexPropertyValue
+	} else if r == ',' {
+		l.next()
+		l.emit(T_COMMA)
 		return lexPropertyValue
 	} else if r == '$' {
 		return lexVariableName
