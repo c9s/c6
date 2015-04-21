@@ -40,7 +40,8 @@ func lexPropertyValue(l *Lexer) stateFn {
 	var r rune = l.peek()
 
 	if r == '#' && l.peekMore(2) == '{' {
-		return lexInterpolation
+		lexInterpolation(l, true)
+		return lexPropertyValue
 	} else if r == '#' {
 		return lexHexColor
 	} else if unicode.IsDigit(r) {

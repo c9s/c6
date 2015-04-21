@@ -211,29 +211,6 @@ func lexVariableName(l *Lexer) stateFn {
 	return lexStatement
 }
 
-func lexInterpolation(l *Lexer) stateFn {
-	l.remember()
-	var r rune = l.next()
-	if r == '#' {
-		r = l.next()
-		if r == '{' {
-			l.emit(T_INTERPOLATION_START)
-			r = l.next()
-			for r != '}' {
-				r = l.next()
-			}
-			l.backup()
-			l.ignore()
-
-			l.next() // for '}'
-			l.emit(T_INTERPOLATION_END)
-			return nil
-		}
-	}
-	l.rollback()
-	return nil
-}
-
 func lexHexColor(l *Lexer) stateFn {
 	l.ignoreSpaces()
 	var r rune = l.next()
@@ -311,6 +288,7 @@ func lexConstantString(l *Lexer) stateFn {
 }
 
 func lexStatement(l *Lexer) stateFn {
+	// strip the leading spaces of a statement
 	l.ignoreSpaces()
 	var r rune = l.peek()
 
@@ -333,7 +311,7 @@ func lexStatement(l *Lexer) stateFn {
 	} else if r == '$' { // it's a variable assignment statement
 		return lexVariableAssignment
 	} else if r == '[' || r == '*' || r == '>' || r == '&' || r == '#' || r == '.' || r == '+' || r == ':' {
-		return lexSelector
+		return lexSelectors
 	} else if r == ';' {
 		l.next()
 		l.emit(T_SEMICOLON)
@@ -345,6 +323,8 @@ func lexStatement(l *Lexer) stateFn {
 	} else if r == '@' {
 		return lexAtRule
 	} else if r == '-' || unicode.IsLetter(r) { // it maybe -vendor- property or a property name
+
+		// detect selector syntax
 		l.remember()
 
 		isSelector := false
@@ -358,6 +338,7 @@ func lexStatement(l *Lexer) stateFn {
 				break
 			}
 
+			// ignore interpolation
 			if r == '#' && l.peekMore(2) == '{' {
 				r = l.next()
 				// find the matching brace
@@ -392,7 +373,7 @@ func lexStatement(l *Lexer) stateFn {
 			if r == '{' {
 				isSelector = true
 				goto end_guess
-			} else if r == '}' {
+			} else if r == '}' { // end of property
 				isSelector = false
 				goto end_guess
 			} else if r == ';' {
@@ -416,7 +397,7 @@ func lexStatement(l *Lexer) stateFn {
 		// it's a selector, so we end with a brace '{'
 		l.rollback()
 		if isSelector {
-			return lexSelector
+			return lexSelectors
 		} else {
 			return lexPropertyName
 		}

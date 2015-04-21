@@ -7,10 +7,11 @@ const LF = '\r'
 const CR = '\n'
 
 type Token struct {
-	Type TokenType
-	Str  string
-	Pos  int
-	Line int
+	Type                  TokenType
+	Str                   string
+	Pos                   int
+	Line                  int
+	ContainsInterpolation int
 }
 
 const (
@@ -19,15 +20,24 @@ const (
 	T_COMMENT_BLOCK
 	T_SEMICOLON
 	T_COMMA
+
+	// selector tokens
 	T_ID_SELECTOR
 	T_CLASS_SELECTOR
 	T_TAGNAME_SELECTOR
 	T_UNIVERSAL_SELECTOR
-	T_PARENT_SELECTOR // SASS parent selector
-	T_PSEUDO_SELECTOR // :hover, :visited , ...
-	T_AND_SELECTOR    // {parent-selector}{child-selector} { }
-	T_PLUS            // E '+' F
-	T_GT              // E '>' F
+	T_PARENT_SELECTOR        // SASS parent selector
+	T_PSEUDO_SELECTOR        // :hover, :visited , ...
+	T_INTERPOLATION_SELECTOR // selector with interpolation: '#{ ... }'
+	T_CONCAT                 // used to concat selectors and interpolation
+
+	// Selector relationship
+	T_AND_SELECTOR        // {parent-selector}{child-selector} { }
+	T_DESCENDANT_SELECTOR // 'E' 'F'
+	T_CHILD_SELECTOR
+
+	T_PLUS // E '+' F
+	T_GT   // E '>' F
 	T_BRACE_START
 	T_BRACE_END
 	T_LANG_CODE // 'en', 'fr', 'fr-ca'
@@ -58,6 +68,7 @@ const (
 	T_HEX_COLOR
 	T_COLON
 	T_INTERPOLATION_START
+	T_INTERPOLATION_INNER
 	T_INTERPOLATION_END
 	T_DIV
 	T_MUL

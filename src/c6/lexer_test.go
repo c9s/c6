@@ -211,11 +211,19 @@ func TestLexerMultipleVariableAssignment(t *testing.T) {
 	l.close()
 }
 
-func TestLexerSelectorWithExpansion(t *testing.T) {
+func TestLexerSelectorInterpolationSuffix(t *testing.T) {
 	l := NewLexerWithString(`#myPost#{ abc } {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []TokenType{T_ID_SELECTOR, T_INTERPOLATION_START, T_INTERPOLATION_END, T_BRACE_START, T_BRACE_END})
+	AssertTokenSequence(t, l, []TokenType{T_ID_SELECTOR, T_CONCAT, T_INTERPOLATION_START, T_INTERPOLATION_INNER, T_INTERPOLATION_END, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
+func TestLexerSelectorInterpolationPrefix(t *testing.T) {
+	l := NewLexerWithString(`#{ abc }#myPost {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_INTERPOLATION_START, T_INTERPOLATION_INNER, T_INTERPOLATION_END, T_AND_SELECTOR, T_ID_SELECTOR, T_BRACE_START, T_BRACE_END})
 	l.close()
 }
 

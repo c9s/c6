@@ -186,21 +186,43 @@ func (l *Lexer) take() string {
 	return l.Input[l.Start:l.Offset]
 }
 
-// emit a token to the channel
-func (l *Lexer) emit(tokenType TokenType) {
-	token := Token{
+func (l *Lexer) emitToken(token *Token) {
+	if DEBUG_EMIT {
+		fmt.Println("emit", token)
+	}
+
+	l.Tokens = append(l.Tokens, *token)
+	l.Output <- token
+	l.Start = l.Offset
+}
+
+func (l *Lexer) createTokenWith0Offset(tokenType TokenType) *Token {
+	var token = Token{
+		Type: tokenType,
+		Str:  "",
+		Pos:  l.Start,
+		Line: l.Line,
+	}
+	return &token
+}
+
+func (l *Lexer) createToken(tokenType TokenType) *Token {
+	if l.Offset >= len(l.Input) {
+		panic(fmt.Sprintf("out of range: offset %d, length %d", l.Offset, len(l.Input)))
+	}
+	var token = Token{
 		Type: tokenType,
 		Str:  l.Input[l.Start:l.Offset],
 		Pos:  l.Start,
 		Line: l.Line,
 	}
-	if DEBUG_EMIT {
-		fmt.Println("emit", token)
-	}
+	return &token
+}
 
-	l.Tokens = append(l.Tokens, token)
-	l.Output <- &token
-	l.Start = l.Offset
+// emit a token to the channel
+func (l *Lexer) emit(tokenType TokenType) {
+	token := l.createToken(tokenType)
+	l.emitToken(token)
 }
 
 // lookahead a string til {string}
