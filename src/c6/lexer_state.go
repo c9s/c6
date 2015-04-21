@@ -202,18 +202,43 @@ func lexVariableAssignment(l *Lexer) stateFn {
 	return lexPropertyValue(l)
 }
 
+// $var-rgba(255,255,0)
 func lexVariableName(l *Lexer) stateFn {
 	var r = l.next()
 	if r != '$' {
 		l.error("Unexpected token %s for lexVariable", r)
 	}
+
 	r = l.next()
 	if !unicode.IsLetter(r) {
-		l.error("The first character of a variable must be letter. Got '%s'", r)
+		l.error("The first character of a variable name must be letter. Got '%s'", r)
 	}
 
 	r = l.next()
-	for unicode.IsLetter(r) || unicode.IsDigit(r) {
+	for {
+		if r == '-' {
+			var r2 = l.peek()
+			if unicode.IsLetter(r2) { // $a-b is a valid variable name.
+				l.next()
+			} else if unicode.IsDigit(r2) { // $a-3 should be $a '-' 3
+				l.backup()
+				l.emit(T_VARIABLE)
+				return lexExpression
+			} else {
+				break
+			}
+		} else if r == ':' {
+			break
+		} else if !unicode.IsLetter(r) && !unicode.IsDigit(r) {
+			break
+		} else if r == '}' {
+			l.backup()
+			l.emit(T_VARIABLE)
+			return lexStatement
+			break
+		} else if r == EOF || r == ' ' || r == ';' {
+			break
+		}
 		r = l.next()
 	}
 	l.backup()

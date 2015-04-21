@@ -300,6 +300,14 @@ func (l *Lexer) dump() {
 	fmt.Printf("Lexer: %+v\n", l)
 }
 
+func (l *Lexer) runFrom(fn stateFn) {
+	if l.Output == nil {
+		l.Output = make(tokenChannel, TOKEN_CHANNEL_BUFFER)
+	}
+	l.dispatchFn(fn)
+	l.Output <- nil
+}
+
 func (l *Lexer) run() {
 	if l.Output == nil {
 		l.Output = make(tokenChannel, TOKEN_CHANNEL_BUFFER)

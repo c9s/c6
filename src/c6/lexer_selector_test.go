@@ -164,6 +164,17 @@ func TestLexerRuleAttributeSelectorWithInterpolationInAttributeName(t *testing.T
 	close(output)
 }
 
+func TestLexerRuleAttributeSelectorWithInterpolationInAttributeNameInTheMiddle(t *testing.T) {
+	l := NewLexerWithString(`[data-#{ $foo }-type] {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	output := l.getOutput()
+	var token = <-output
+	token = <-output
+	assert.True(t, token.ContainsInterpolation)
+	close(output)
+}
+
 func TestLexerRuleAttributeSelectorWithInterpolationInAttributeName2(t *testing.T) {
 	l := NewLexerWithString(`[#{ $foo }="http://google.com"] {  }`)
 	assert.NotNil(t, l)
