@@ -11,6 +11,13 @@ func TestLexerExpression(t *testing.T) {
 	l.close()
 }
 
+func TestLexerExpressionVariableNameWithDashSeparator(t *testing.T) {
+	l := NewLexerWithString(`$a-b + 3px`)
+	l.runFrom(lexExpression)
+	AssertTokenSequence(t, l, []TokenType{T_VARIABLE, T_PLUS, T_INTEGER, T_UNIT_PX})
+	l.close()
+}
+
 func TestLexerExpressionMinus3(t *testing.T) {
 	l := NewLexerWithString(`$foo - 3`)
 	l.runFrom(lexExpression)
