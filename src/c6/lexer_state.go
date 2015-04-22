@@ -269,6 +269,8 @@ func lexNumberUnit(l *Lexer) stateFn {
 		l.emit(T_UNIT_PT)
 	} else if l.match("em") {
 		l.emit(T_UNIT_EM)
+	} else if l.match("rem") {
+		l.emit(T_UNIT_REM)
 	} else if l.match("deg") {
 		l.emit(T_UNIT_DEG)
 	} else if l.match("%") {
