@@ -348,6 +348,13 @@ func lexStatement(l *Lexer) stateFn {
 		l.next()
 		l.emit(T_BRACE_END)
 		return lexStatement
+	} else if r == '/' && l.peekMore(2) == '/' {
+		l.next()
+		r = l.next()
+		for r != '\r' && r != '\n' && r != EOF {
+			l.next()
+		}
+
 	} else if r == '$' { // it's a variable assignment statement
 		return lexVariableAssignment
 	} else if r == '[' || r == '*' || r == '>' || r == '&' || r == '#' || r == '.' || r == '+' || r == ':' {

@@ -49,6 +49,9 @@ func lexExpression(l *Lexer) stateFn {
 		lexVariableName(l)
 		return lexExpression
 
+	} else if r == EOF {
+		// panic("Unexpected end of file")
+		return nil
 	}
 	return nil
 }
