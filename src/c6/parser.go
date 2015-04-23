@@ -119,11 +119,12 @@ func (self *Parser) parseScss(code string) {
 	l := NewLexerWithString(code)
 	l.run()
 	self.Input = l.getOutput()
-
-	if self.isSelector() {
-		rule := Rule{}
-		_ = rule
-	}
+	/*
+		if self.isSelector() {
+			rule := Rule{}
+			_ = rule
+		}
+	*/
 }
 
 /*
