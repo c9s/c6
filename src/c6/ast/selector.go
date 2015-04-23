@@ -15,7 +15,13 @@ ClassSelector
 IdSelector
 AdjacentSelector
 AttributeSelector
+
 */
+
+const ChildSelectorOp = " > "
+const DescendantSelectorOp = " "
+const AdjacentSelectorOp = " + "
+
 type Selector interface {
 	String() string
 }
@@ -26,6 +32,18 @@ type UniversalSelector struct{}
 
 func (self UniversalSelector) String() string {
 	return "*"
+}
+
+type PseudoSelector struct {
+	PseudoClass string
+	C           string
+}
+
+func (self PseudoSelector) String() (out string) {
+	if self.C != "" {
+		return ":" + self.PseudoClass + "(" + self.C + ")"
+	}
+	return ":" + self.PseudoClass
 }
 
 /**
@@ -53,6 +71,19 @@ type ClassSelector struct {
 
 func (self ClassSelector) String() string {
 	return "." + self.ClassName
+}
+
+type AttributeSelector struct {
+	Name    string
+	Op      string
+	Pattern string
+}
+
+func (self AttributeSelector) String() (out string) {
+	if self.Op != "" && self.Pattern != "" {
+		return "[" + self.Name + self.Op + self.Pattern + "]"
+	}
+	return "[" + self.Name + "]"
 }
 
 type CombinedSelector struct {
