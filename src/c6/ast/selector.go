@@ -16,13 +16,15 @@ IdSelector
 AdjacentSelector
 AttributeSelector
 */
-type Selector interface{}
+type Selector interface {
+	String() string
+}
 
 type CodeGen interface{}
 
 type UniversalSelector struct{}
 
-func (self *UniversalSelector) String() string {
+func (self UniversalSelector) String() string {
 	return "*"
 }
 
@@ -33,7 +35,7 @@ type TypeSelector struct {
 	Type string
 }
 
-func (self *TypeSelector) String() string {
+func (self TypeSelector) String() string {
 	return self.Type
 }
 
@@ -41,7 +43,7 @@ type IdSelector struct {
 	Id string
 }
 
-func (self *IdSelector) String() string {
+func (self IdSelector) String() string {
 	return "#" + self.Id
 }
 
@@ -49,7 +51,7 @@ type ClassSelector struct {
 	ClassName string
 }
 
-func (self *ClassSelector) String() string {
+func (self ClassSelector) String() string {
 	return "." + self.ClassName
 }
 
@@ -62,10 +64,10 @@ func (self *CombinedSelector) addSelector(sel Selector) {
 	self.Selectors = append(self.Selectors, sel)
 }
 
-func (self *CombinedSelector) String() string {
+func (self CombinedSelector) String() string {
 	var out []string = []string{}
 	for _, sel := range self.Selectors {
 		out = append(out, sel.String())
 	}
-	return strings.Join(self.Op, out)
+	return strings.Join(out, self.Op)
 }
