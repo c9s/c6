@@ -1,8 +1,30 @@
 package ast
 
 type RuleSet struct {
-	selectors SelectorGroup
-	block     DeclarationBlock
+	Selectors *CombinedSelector
+	Block     *DeclarationBlock
 }
 
-type DeclarationBlock struct{}
+type Property struct{}
+
+/*
+DeclarationBlock.
+
+.foo {
+	property-name: property-value;
+}
+
+*/
+type DeclarationBlock struct {
+	Properties []Property
+	SubRules   []RuleSet
+}
+
+func (self DeclarationBlock) String() string {
+	/*
+		for _, property := range self.Properties {
+
+		}
+	*/
+	return ""
+}
