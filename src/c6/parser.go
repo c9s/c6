@@ -126,6 +126,42 @@ func (self *Parser) parseScss(code string) {
 	}
 }
 
+/*
+Statement := RuleSet | At-Rule | Mixin-Statement | FunctionStatement
+
+
+At-Rule := '@' T_IDENTITY ';'
+
+RuleSet := Rule | RuleSet
+
+Property := PropertyName ':' PropertyValue
+
+PropertyValue := Expr ';'
+		       | ConstantList ';'
+
+ConstantList := T_CONSTANT | T_CONSTANT ConstantList
+
+SelectorList := Selector | Selector ',' SelectorList
+
+Rule := SelectorList '{'
+			RuleSet
+		'}'
+
+Expr := Expr '+' Expr
+      | Expr '-' Expr
+      | Expr '*' Expr
+      | Expr '/' Expr
+	  | '(' Expr ')'
+	  | Scalar
+	  | Variable
+
+Variable := T_VARIABLE
+
+Scalar := T_NUMBER | T_NUMBER Unit
+
+Unit := T_UNIT_PX | T_UNIT_PT | T_UNIT_EM | T_UNIT_PERCENT | T_UNIT_DEG
+*/
+
 func (self *Parser) parseStatement() {
 
 }
