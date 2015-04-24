@@ -11,10 +11,34 @@ func TestLexerExpression(t *testing.T) {
 	l.close()
 }
 
-func TestLexerExpressionFunction(t *testing.T) {
+func TestLexerFunctionCall(t *testing.T) {
 	l := NewLexerWithString(`rgba(0,0,0,0)`)
 	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []TokenType{T_IDENT, T_PAREN_START, T_INTEGER, T_COMMA, T_INTEGER, T_COMMA, T_INTEGER, T_COMMA, T_INTEGER, T_PAREN_END})
+	AssertTokenSequence(t, l, []TokenType{T_IDENT, T_PAREN_START,
+		T_INTEGER, T_COMMA,
+		T_INTEGER, T_COMMA,
+		T_INTEGER, T_COMMA,
+		T_INTEGER,
+		T_PAREN_END})
+	l.close()
+}
+
+func TestLexerExpressionFunction(t *testing.T) {
+	l := NewLexerWithString(`rgba(0,0,0,0) - rgba(255,255,255,0)`)
+	l.runFrom(lexExpression)
+	AssertTokenSequence(t, l, []TokenType{
+		T_IDENT, T_PAREN_START,
+		T_INTEGER, T_COMMA,
+		T_INTEGER, T_COMMA,
+		T_INTEGER, T_COMMA,
+		T_INTEGER, T_PAREN_END,
+		T_MINUS,
+		T_IDENT, T_PAREN_START,
+		T_INTEGER, T_COMMA,
+		T_INTEGER, T_COMMA,
+		T_INTEGER, T_COMMA,
+		T_INTEGER, T_PAREN_END,
+	})
 	l.close()
 }
 
