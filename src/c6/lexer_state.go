@@ -140,19 +140,48 @@ func lexString(l *Lexer) stateFn {
 		}
 		return lexStart
 	}
-
 	l.backup()
 	return nil
 }
 
+func lexUrl(l *Lexer) {
+	if l.match("url") {
+		l.emit(T_IDENT)
+
+		l.match("(")
+		l.emit(T_PAREN_START)
+
+		var q = l.peek()
+		if q == '"' || q == '\'' {
+			lexString(l)
+		} else {
+			lexUnquoteStringStopAt(l, ')')
+		}
+		l.match(")")
+		l.emit(T_PAREN_END)
+
+	} else {
+		var r = l.peek()
+		if r == '"' || r == '\'' {
+			lexString(l)
+		} else {
+			l.error("Unexpected token for @import rule. Got %s", r)
+		}
+	}
+}
+
 func lexAtRule(l *Lexer) stateFn {
 	t := l.peek()
+
 	// fmt.Printf("%c", t)
 	if t == '@' {
 		l.next()
 		if l.match("import") {
-			// fmt.Printf("match @import")
+			fmt.Println("@import")
 			l.emit(T_IMPORT)
+			l.next()
+			l.ignore()
+			lexUrl(l)
 			return lexStart
 		} else if l.match("charset") {
 			l.emit(T_CHARSET)
@@ -175,9 +204,19 @@ func lexSpaces(l *Lexer) stateFn {
 	return lexStart
 }
 
+func lexUnquoteStringStopAt(l *Lexer, stop rune) stateFn {
+	var r = l.next()
+	for r != stop {
+		r = l.next()
+	}
+	l.backup()
+	l.emit(T_UNQUOTE_STRING)
+	return nil
+}
+
 func lexUnquoteString(l *Lexer) stateFn {
 	var r = l.next()
-	for unicode.IsLetter(r) {
+	for unicode.IsLetter(r) || unicode.IsDigit(r) {
 		r = l.next()
 	}
 	l.backup()
@@ -334,7 +373,9 @@ func lexStatement(l *Lexer) stateFn {
 		return nil
 	}
 
-	if r == '(' {
+	if r == '@' {
+		return lexAtRule
+	} else if r == '(' {
 		l.next()
 		l.emit(T_PAREN_START)
 		return lexStart
@@ -369,8 +410,6 @@ func lexStatement(l *Lexer) stateFn {
 		l.next()
 		l.emit(T_COMMA)
 		return lexStart
-	} else if r == '@' {
-		return lexAtRule
 	} else if r == '-' || unicode.IsLetter(r) { // it maybe -vendor- property or a property name
 
 		// detect selector syntax

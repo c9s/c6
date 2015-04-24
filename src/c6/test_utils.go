@@ -6,6 +6,8 @@ import "fmt"
 
 func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []TokenType) {
 	fmt.Printf("Input: %s\n", l.Input)
+
+	var failure = false
 	for _, expectingToken := range tokenList {
 
 		var token = <-l.Output
@@ -14,9 +16,13 @@ func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []TokenType) {
 		if expectingToken == token.Type {
 			fmt.Printf("\033[32mok %s '%s'\033[0m\n", token.Type.String(), token.Str)
 		} else {
+			failure = true
 			fmt.Printf("\033[31mnot ok ---- got %s '%s' expecting %s\033[0m\n", token.Type.String(), token.Str, expectingToken.String())
 		}
 		assert.Equal(t, expectingToken, token.Type)
+	}
+	if failure {
+		t.FailNow()
 	}
 }
 
