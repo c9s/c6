@@ -11,6 +11,13 @@ func TestLexerExpression(t *testing.T) {
 	l.close()
 }
 
+func TestLexerExpressionFunction(t *testing.T) {
+	l := NewLexerWithString(`rgba(0,0,0,0)`)
+	l.runFrom(lexExpression)
+	AssertTokenSequence(t, l, []TokenType{T_IDENT, T_PAREN_START, T_INTEGER, T_COMMA, T_INTEGER, T_COMMA, T_INTEGER, T_COMMA, T_INTEGER, T_PAREN_END})
+	l.close()
+}
+
 func TestLexerExpressionVariableMinusVariable(t *testing.T) {
 	l := NewLexerWithString(`$foo - $bar`)
 	l.runFrom(lexExpression)

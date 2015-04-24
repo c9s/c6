@@ -131,7 +131,7 @@ func (self *Parser) parseScss(code string) {
 Statement := RuleSet | At-Rule | Mixin-Statement | FunctionStatement
 
 
-At-Rule := '@' T_IDENTITY ';'
+At-Rule := '@' T_IDENT ';'
 
 RuleSet := Rule | RuleSet
 

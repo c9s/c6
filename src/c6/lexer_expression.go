@@ -8,7 +8,15 @@ func lexIdentifier(l *Lexer) stateFn {
 		panic("An identifier needs to start with a letter")
 	}
 	r = l.next()
-	for unicode.IsLetter(r) || unicode.IsDigit(r) {
+	for unicode.IsLetter(r) || unicode.IsDigit(r) || r == '-' {
+
+		if r == '-' {
+			if !unicode.IsLetter(l.peek()) {
+				l.backup()
+				return lexExpression
+			}
+		}
+
 		r = l.next()
 	}
 	l.backup()
