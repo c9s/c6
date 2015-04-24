@@ -20,6 +20,7 @@ const (
 	T_COMMENT_BLOCK
 	T_SEMICOLON
 	T_COMMA
+	T_IDENT
 
 	// selector tokens
 	T_ID_SELECTOR

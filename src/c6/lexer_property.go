@@ -39,10 +39,11 @@ func lexPropertyValue(l *Lexer) stateFn {
 	l.ignoreSpaces()
 	var r rune = l.peek()
 
-	if r == '#' && l.peekMore(2) == '{' {
-		lexInterpolation(l, true)
-		return lexPropertyValue
-	} else if r == '#' {
+	if r == '#' {
+		if l.peekMore(2) == '{' {
+			lexInterpolation(l, true)
+			return lexPropertyValue
+		}
 		return lexHexColor
 	} else if unicode.IsDigit(r) {
 		return lexNumber
