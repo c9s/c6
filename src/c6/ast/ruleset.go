@@ -13,6 +13,10 @@ type Property struct {
 	Values []PropertyValue
 }
 
+func (self Property) addValue(value PropertyValue) {
+	self.Values = append(self.Values, value)
+}
+
 /*
 A declaration can be a property or a ruleset
 */
