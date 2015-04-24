@@ -5,7 +5,18 @@ type RuleSet struct {
 	Block     *DeclarationBlock
 }
 
-type Property struct{}
+type PropertyName struct{}
+type PropertyValue struct{}
+
+type Property struct {
+	Name   PropertyName
+	Values []PropertyValue
+}
+
+/*
+A declaration can be a property or a ruleset
+*/
+type Declaration interface{}
 
 /*
 DeclarationBlock.
@@ -13,11 +24,9 @@ DeclarationBlock.
 .foo {
 	property-name: property-value;
 }
-
 */
 type DeclarationBlock struct {
-	Properties []Property
-	SubRules   []RuleSet
+	Declarations []Declaration
 }
 
 func (self DeclarationBlock) String() string {
