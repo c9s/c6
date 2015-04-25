@@ -79,10 +79,26 @@ func lexExpression(l *Lexer) stateFn {
 		l.emit(ast.T_PAREN_END)
 		return lexExpression
 
+	} else if r == ' ' {
+
+		l.next()
+		l.ignore()
+		return lexExpression
+
 	} else if r == ',' {
 
 		l.next()
 		l.emit(ast.T_COMMA)
+		return lexExpression
+
+	} else if r == '#' {
+
+		if l.peekBy(2) == '{' {
+			lexInterpolation(l, true)
+			return lexExpression
+		}
+
+		lexHexColor(l)
 		return lexExpression
 
 	} else if r == '$' {
@@ -94,6 +110,18 @@ func lexExpression(l *Lexer) stateFn {
 
 		lexIdentifier(l)
 		return lexExpression
+
+	} else if r == ';' {
+
+		l.next()
+		l.emit(ast.T_SEMICOLON)
+		return lexStatement
+
+	} else if r == '}' {
+
+		l.next()
+		l.emit(ast.T_BRACE_END)
+		return lexStatement
 
 	} else if r == EOF {
 		// panic("Unexpected end of file")

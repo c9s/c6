@@ -69,13 +69,17 @@ func lexPropertyValue(l *Lexer) stateFn {
 		return lexPropertyValue
 
 	} else if r == '/' {
+
 		l.next()
 		l.emit(ast.T_DIV)
 		return lexPropertyValue
+
 	} else if r == '*' {
+
 		l.next()
 		l.emit(ast.T_MUL)
 		return lexPropertyValue
+
 	} else if r == ',' {
 		l.next()
 		l.emit(ast.T_COMMA)

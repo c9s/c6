@@ -1,7 +1,12 @@
 package ast
 
 type Property struct {
-	Name   PropertyName
+	Name PropertyName
+	/**
+	property value can be something like:
+
+		`padding: 3px 3px;`
+	*/
 	Values []PropertyValue
 }
 
@@ -19,7 +24,8 @@ type PropertyValue interface {
 }
 
 type PropertyName struct {
-	String        string
+	String string
+	// If there is an interpolation in the property name
 	Interpolation bool
 }
 type ConstantValue string

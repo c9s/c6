@@ -281,8 +281,23 @@ func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.Dec
 	for tok.Type != ast.T_BRACE_END {
 
 		if tok.Type == ast.T_PROPERTY_NAME {
+
 			var name = ast.PropertyName{tok.Str, tok.ContainsInterpolation}
 			_ = name
+
+			nextTok := parser.next()
+
+			// Check if the property value is an expression or
+			if nextTok.Type == ast.T_PROPERTY_VALUE {
+
+			} else if nextTok.Type == ast.T_CONSTANT {
+
+			} else if nextTok.Type == ast.T_IDENT {
+
+			}
+
+			property := ast.Property{name, []ast.PropertyValue{}}
+			_ = property
 
 		} else if tok.IsSelector() {
 			// parse subrule
