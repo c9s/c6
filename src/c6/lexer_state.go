@@ -266,7 +266,7 @@ func lexSemiColon(l *Lexer) stateFn {
 func lexVariableAssignment(l *Lexer) stateFn {
 	lexVariableName(l)
 	lexColon(l)
-	return lexPropertyValue(l)
+	return lexExpression(l)
 }
 
 // $var-rgba(255,255,0)
@@ -323,7 +323,7 @@ func lexHexColor(l *Lexer) stateFn {
 			panic("Invalid hex color length")
 		}
 		l.emit(ast.T_HEX_COLOR)
-		return lexPropertyValue
+		return lexExpression
 	}
 	l.error("Expecting hex color, got '%s'", r)
 	return nil
@@ -349,7 +349,7 @@ func lexNumberUnit(l *Lexer) stateFn {
 	} else if l.peek() == ';' {
 		return lexStatement
 	}
-	return lexPropertyValue
+	return lexExpression
 }
 
 func lexNumber(l *Lexer) stateFn {
