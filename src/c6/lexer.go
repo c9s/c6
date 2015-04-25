@@ -133,6 +133,30 @@ func (l *Lexer) accept(valid string) bool {
 	return false
 }
 
+// Accept letter runes continuously
+// Return true if there are some letters.
+// Retunr false if there is no letter.
+func (l *Lexer) acceptLetters() bool {
+	var r rune = l.next()
+	for unicode.IsLetter(r) {
+		r = l.next()
+	}
+	l.backup()
+	return l.Offset > l.Start
+}
+
+// Accept letter|digits runes continuously
+// Return true if there are some letters.
+// Retunr false if there is no letter.
+func (l *Lexer) acceptLettersAndDigits() bool {
+	var r rune = l.next()
+	for unicode.IsLetter(r) || unicode.IsDigit(r) {
+		r = l.next()
+	}
+	l.backup()
+	return l.Offset > l.Start
+}
+
 // next returns the next rune in the input.
 func (l *Lexer) next() (r rune) {
 	if l.Offset >= len(l.Input) {
