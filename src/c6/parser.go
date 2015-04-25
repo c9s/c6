@@ -171,7 +171,7 @@ func (parser *Parser) parseScss(code string) *ast.Block {
 
 	block := ast.Block{}
 	for !parser.eof() {
-		stm := parser.ParseStatement()
+		stm := parser.ParseStatement(nil)
 		if stm != nil {
 			block.AppendStatement(stm)
 		}
@@ -214,18 +214,18 @@ Scalar := T_NUMBER | T_NUMBER Unit
 
 Unit := T_UNIT_PX | T_UNIT_PT | T_UNIT_EM | T_UNIT_PERCENT | T_UNIT_DEG
 */
-func (parser *Parser) ParseStatement() ast.Statement {
+func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
 	var token = parser.peek()
 
 	if token.Type == T_IMPORT {
 		return parser.ParseImportStatement()
 	} else if token.IsSelector() {
-		return parser.ParseRuleSet()
+		return parser.ParseRuleSet(parentRuleSet)
 	}
 	return nil
 }
 
-func (parser *Parser) ParseRuleSet() ast.Statement {
+func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 	var ruleset = ast.RuleSet{}
 	var tok = parser.next()
 
@@ -247,7 +247,7 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 			ruleset.AppendSelector(sel)
 		case T_PARENT_SELECTOR:
 			// XXX: pass parent ruleset here...
-			sel := ast.ParentSelector{}
+			sel := ast.ParentSelector{parentRuleSet}
 			ruleset.AppendSelector(sel)
 		case T_PSEUDO_SELECTOR:
 			sel := ast.PseudoSelector{tok.Str, ""}
@@ -267,7 +267,6 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 
 	// parse declaration block
 	ruleset.DeclarationBlock = parser.ParseDeclarationBlock()
-
 	return &ruleset
 }
 
