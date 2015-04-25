@@ -229,12 +229,11 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 	var ruleset = ast.RuleSet{}
 	var tok = parser.next()
 
-	_ = tok
-	/*
-		for tok.IsSelector() {
-			ruleset.AddSelector(tok.Str)
-		}
-	*/
+	for tok.IsSelector() {
+		tok = parser.next()
+		// ruleset.AppendSelector(tok.Str)
+	}
+	parser.backup()
 
 	return &ruleset
 }

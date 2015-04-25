@@ -129,9 +129,15 @@ func TestLexerRuleWithTagNameAndClassSelector(t *testing.T) {
 	l.close()
 }
 
+func TestLexerRuleForDescendantTagNameSelectorWithoutSpace(t *testing.T) {
+	l := NewLexerWithString(`div input{}`)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_TYPE_SELECTOR, T_DESCENDANT_SELECTOR, T_TYPE_SELECTOR, T_BRACE_START, T_BRACE_END})
+	l.close()
+}
+
 func TestLexerRuleForDescendantTagNameSelector(t *testing.T) {
 	l := NewLexerWithString(`div input {  }`)
-	assert.NotNil(t, l)
 	l.run()
 	AssertTokenSequence(t, l, []TokenType{T_TYPE_SELECTOR, T_DESCENDANT_SELECTOR, T_TYPE_SELECTOR, T_BRACE_START, T_BRACE_END})
 	l.close()
