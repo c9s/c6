@@ -280,15 +280,6 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 	return &ruleset
 }
 
-func (parser *Parser) PushPropertyConstantStrings(property *ast.Property) {
-	rightTok := parser.next()
-	for rightTok.Type == ast.T_IDENT {
-		property.AppendValue(ast.ConstantString{rightTok.Str, *rightTok})
-		rightTok = parser.next()
-	}
-	parser.backup()
-}
-
 /**
 This method returns objects with ast.Number interface
 
@@ -325,23 +316,36 @@ func (parser *Parser) ReduceNumber() ast.Number {
 	return number
 }
 
-func (parser *Parser) ReduceFunctionCall() {
+func (parser *Parser) ReduceFunctionCall() *ast.FunctionCall {
 	var ident = parser.next()
+	var fcall = ast.NewFunctionCall(ident.Str, *ident)
 
 	if tok := parser.accept(ast.T_PAREN_START); tok == nil {
 		panic("Expecting parenthesis after ident")
 	}
 	var argTok = parser.peek()
 	for argTok.Type != ast.T_PAREN_END {
-		parser.ReduceFactor()
+		var arg = parser.ReduceFactor()
+		fcall.AppendArgument(arg)
 		argTok = parser.peek()
 	}
+	_ = fcall
 	_ = ident
-
-	// Construct a FunctionCall AST Node
+	return fcall
 }
 
-func (parser *Parser) ReduceFactor() {
+func (parser *Parser) ReduceIdent() *ast.Ident {
+	var tok = parser.accept(ast.T_IDENT)
+	if tok == nil {
+		panic("Invalid token for ident.")
+	}
+	return ast.NewIdent(tok.Str, *tok)
+}
+
+/**
+The ReduceFactor must return an Expression interface compatible object
+*/
+func (parser *Parser) ReduceFactor() ast.Expression {
 	var tok = parser.peek()
 
 	if tok.Type == ast.T_PAREN_START {
@@ -349,18 +353,25 @@ func (parser *Parser) ReduceFactor() {
 		parser.accept(ast.T_PAREN_START)
 		parser.ParseExpression()
 		parser.accept(ast.T_PAREN_END)
+		return nil
 		// _ = expr
 	} else if tok.Type == ast.T_INTEGER || tok.Type == ast.T_FLOAT {
+
 		// reduce number
-		parser.ReduceNumber()
+		var number = parser.ReduceNumber()
+		return ast.Expression(number)
+
 	} else if tok.Type == ast.T_IDENT {
-		if tok2 := parser.peekBy(2); tok2.Type == ast.T_PAREN_START {
-			parser.ReduceFunctionCall()
+		// check if it's a function call
+		if parenTok := parser.peekBy(2); parenTok.Type == ast.T_PAREN_START {
+			var fcall = parser.ReduceFunctionCall()
+			return ast.Expression(*fcall)
 		} else {
-			// take the ident as an factor (we should check the term expression)
-			parser.next()
+			var ident = parser.ReduceIdent()
+			return ast.Expression(ident)
 		}
 	}
+	return nil
 
 }
 
@@ -382,7 +393,7 @@ We here treat the property values as expressions:
 	margin: {expression};
 
 */
-func (parser *Parser) ParseExpression() {
+func (parser *Parser) ParseExpression() ast.Expression {
 	// plus or minus. this creates an unary expression that holds the later term.
 	parser.acceptTypes([]ast.TokenType{ast.T_PLUS, ast.T_MINUS})
 
@@ -391,6 +402,7 @@ func (parser *Parser) ParseExpression() {
 		// reduce another term
 		parser.ReduceTerm()
 	}
+	return nil
 }
 
 /**
@@ -398,7 +410,7 @@ The returned Expression is an interface
 */
 func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *ast.Property) {
 	tok := parser.peek()
-	for tok.Type != ast.T_SEMICOLON {
+	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
 		parser.ParseExpression()
 		tok = parser.peek()
 	}
@@ -425,28 +437,12 @@ func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.Dec
 
 			tok := parser.peek()
 
-			// Check if the property value is an expression or
-			if tok.Type == ast.T_IDENT {
-
-				parser.ParsePropertyValue(parentRuleSet, &property)
-				property.AppendValue(ast.UnaryExpression{tok.Str, *tok})
-				declBlock.Append(property)
-
-				/*
-					tok2 := parser.peek()
-					if tok2.Type == ast.T_SEMICOLON {
-						parser.advance()
-						// construct the normal property value since we meet semicolon
-						property.AppendValue(ast.UnaryExpression{tok.Str, *tok})
-						declBlock.Append(property)
-
-					} else if tok2.Type == ast.T_PAREN_START { // looks like a function
-
-						panic("unimplemented function expression")
-					}
-				*/
-
+			for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
+				parser.ParseExpression()
+				tok = parser.peek()
 			}
+			_ = property
+			_ = propertyName
 
 		} else if tok.IsSelector() {
 			// parse subrule

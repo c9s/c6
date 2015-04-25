@@ -25,5 +25,3 @@ type PropertyName struct {
 	Interpolation bool
 	Token         Token
 }
-
-func (self ConstantString) CanBeExpression() {}

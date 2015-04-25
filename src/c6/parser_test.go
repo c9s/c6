@@ -44,6 +44,22 @@ func TestParserParseImportRuleWithMediaList(t *testing.T) {
 	_ = block
 }
 
+func TestParserMassiveRules(t *testing.T) {
+	parser := NewParser()
+	parser.parseScss(`div { width: auto; }`)
+	parser.parseScss(`div { width: 100px }`)
+	parser.parseScss(`div { width: 100pt }`)
+	parser.parseScss(`div { width: 100em }`)
+	parser.parseScss(`div { width: 100rem }`)
+	parser.parseScss(`div { padding: 10px 10px; }`)
+	parser.parseScss(`div { padding: 10px 10px 20px 30px; }`)
+	parser.parseScss(`div { padding: 10px + 10px; }`)
+	parser.parseScss(`div { padding: 10px + 10px * 3; }`)
+	parser.parseScss(`div { color: red; }`)
+	parser.parseScss(`div { color: rgb(255,255,255); }`)
+	parser.parseScss(`div { color: rgba(255,255,255,0); }`)
+}
+
 func TestParserParseTypeSelectorRule(t *testing.T) {
 	parser := NewParser()
 	block := parser.parseScss(`div { width: auto; }`)
