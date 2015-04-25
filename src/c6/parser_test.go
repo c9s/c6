@@ -8,7 +8,7 @@ func TestParserParseoImportRuleWithUrl(t *testing.T) {
 	parser := NewParser()
 	block := parser.parseScss(`@import url("foo.css");`)
 
-	rule, ok := block.Statements[0].(*ast.AtRuleImport)
+	rule, ok := block.Statements[0].(*ast.ImportStatement)
 	assert.True(t, ok)
 	assert.NotNil(t, rule)
 

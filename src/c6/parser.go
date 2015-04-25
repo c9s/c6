@@ -222,7 +222,7 @@ func (parser *Parser) ParseStatement() ast.Statement {
 	case T_IMPORT:
 		parser.advance()
 
-		var rule = ast.AtRuleImport{}
+		var rule = ast.ImportStatement{}
 
 		var tok = parser.peek()
 		// expecting url(..)
@@ -244,7 +244,7 @@ func (parser *Parser) ParseStatement() ast.Statement {
 				panic("expecting parenthesis after url")
 			}
 
-		} else if tok.Type == T_QQ_STRING || tok.Type == T_UNQUOTE_STRING {
+		} else if tok.IsString() {
 			parser.advance()
 			rule.Url = ast.RelativeUrl(tok.Str)
 		}

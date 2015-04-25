@@ -1,6 +1,6 @@
 package c6
 
-//go:generate stringer -type=TokenType
+//go:generate stringer -type=TokenType token.go
 type TokenType int
 
 const LF = '\r'
@@ -12,6 +12,10 @@ type Token struct {
 	Pos                   int
 	Line                  int
 	ContainsInterpolation bool
+}
+
+func (tok Token) IsString() bool {
+	return tok.Type == T_QQ_STRING || tok.Type == T_Q_STRING || tok.Type == T_UNQUOTE_STRING
 }
 
 const (
