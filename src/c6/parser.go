@@ -201,7 +201,6 @@ Property := PropertyName ':' PropertyValue
 PropertyValue := Expr ';'
 		       | ConstantList ';'
 
-ConstantList := T_CONSTANT | T_CONSTANT ConstantList
 
 SelectorList := Selector | Selector ',' SelectorList
 
