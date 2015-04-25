@@ -4,7 +4,7 @@ import "testing"
 import "c6/ast"
 import "github.com/stretchr/testify/assert"
 
-func TestParserParseoImportRuleWithUrl(t *testing.T) {
+func TestParserParseImportRuleWithUrl(t *testing.T) {
 	parser := NewParser()
 	block := parser.parseScss(`@import url("http://foo.com/bar.css");`)
 
@@ -22,7 +22,7 @@ func TestParserParseoImportRuleWithUrl(t *testing.T) {
 	assert.Equal(t, "http://foo.com/bar.css", url)
 }
 
-func TestParserParseoImportRuleWithString(t *testing.T) {
+func TestParserParseImportRuleWithString(t *testing.T) {
 	parser := NewParser()
 	block := parser.parseScss(`@import "foo.css";`)
 
@@ -38,9 +38,15 @@ func TestParserParseoImportRuleWithString(t *testing.T) {
 	assert.Equal(t, "foo.css", url)
 }
 
-func TestParserParseoImportRuleWithMediaList(t *testing.T) {
+func TestParserParseImportRuleWithMediaList(t *testing.T) {
 	parser := NewParser()
 	block := parser.parseScss(`@import url("foo.css") screen;`)
+	_ = block
+}
+
+func TestParserParseTypeSelectorRule(t *testing.T) {
+	parser := NewParser()
+	block := parser.parseScss(`div { }`)
 	_ = block
 }
 

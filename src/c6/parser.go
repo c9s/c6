@@ -262,11 +262,27 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 		case T_DESCENDANT_SELECTOR:
 			ruleset.AppendSelector(ast.DescendantSelector{})
 		}
-
 	}
 	parser.backup()
 
+	// parse declaration block
+	ruleset.DeclarationBlock = parser.ParseDeclarationBlock()
+
 	return &ruleset
+}
+
+func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
+	var tok = parser.next() // should be '{'
+	if tok.Type != T_BRACE_START {
+		panic(ParserError{"(", tok.Str})
+	}
+
+	tok = parser.next()
+	for tok.Type != T_BRACE_END {
+		tok = parser.next()
+	}
+
+	return &ast.DeclarationBlock{}
 }
 
 func (parser *Parser) ParseImportStatement() ast.Statement {
