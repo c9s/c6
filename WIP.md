@@ -50,12 +50,11 @@ Parse a scss file and save the syntax tree, symbol table in the memory.
 #### Client
 
 
+- [ ] Supporting SASS comments
+- [ ] Supporting pseudo elements:  ::first-line Pseudo-element
+- [ ] Supporting more length unit:
 
-
-
-### Lengths
-
-http://www.w3.org/TR/2011/REC-CSS2-20110607/syndata.html#lengths
+    http://www.w3.org/TR/2011/REC-CSS2-20110607/syndata.html#lengths
 
     in: inches — 1in is equal to 2.54cm.
     cm: centimeters
