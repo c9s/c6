@@ -1,6 +1,7 @@
 package c6
 
 import "unicode"
+import "c6/ast"
 
 // import "strings"
 func lexPropertyName(l *Lexer) stateFn {
@@ -9,7 +10,7 @@ func lexPropertyName(l *Lexer) stateFn {
 		r = l.next()
 	}
 	l.backup()
-	l.emit(T_PROPERTY_NAME)
+	l.emit(ast.T_PROPERTY_NAME)
 	lexColon(l)
 	return lexPropertyValue
 }
@@ -18,7 +19,7 @@ func lexColon(l *Lexer) stateFn {
 	l.ignoreSpaces()
 	var r = l.next()
 	if r == ':' {
-		l.emit(T_COLON)
+		l.emit(ast.T_COLON)
 	} else {
 		l.error("Expecting ':' token, Got '%s'", r)
 	}
@@ -58,26 +59,26 @@ func lexPropertyValue(l *Lexer) stateFn {
 	} else if r == '-' {
 
 		l.next()
-		l.emit(T_MINUS)
+		l.emit(ast.T_MINUS)
 		return lexPropertyValue
 
 	} else if r == '+' {
 
 		l.next()
-		l.emit(T_PLUS)
+		l.emit(ast.T_PLUS)
 		return lexPropertyValue
 
 	} else if r == '/' {
 		l.next()
-		l.emit(T_DIV)
+		l.emit(ast.T_DIV)
 		return lexPropertyValue
 	} else if r == '*' {
 		l.next()
-		l.emit(T_MUL)
+		l.emit(ast.T_MUL)
 		return lexPropertyValue
 	} else if r == ',' {
 		l.next()
-		l.emit(T_COMMA)
+		l.emit(ast.T_COMMA)
 		return lexPropertyValue
 	} else if r == '$' {
 		return lexVariableName
@@ -87,11 +88,11 @@ func lexPropertyValue(l *Lexer) stateFn {
 		return lexPropertyValue
 	} else if r == ';' {
 		l.next()
-		l.emit(T_SEMICOLON)
+		l.emit(ast.T_SEMICOLON)
 		return lexStatement
 	} else if r == '}' {
 		l.next()
-		l.emit(T_BRACE_END)
+		l.emit(ast.T_BRACE_END)
 		return lexStart
 	} else if r == EOF {
 		l.error("Unexpected end of file", r)

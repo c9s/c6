@@ -3,11 +3,12 @@ package c6
 import "github.com/stretchr/testify/assert"
 import "testing"
 import "fmt"
+import "c6/ast"
 
-func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []TokenType) []Token {
+func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []ast.TokenType) []ast.Token {
 	fmt.Printf("Input: %s\n", l.Input)
 
-	var tokens = []Token{}
+	var tokens = []ast.Token{}
 	var failure = false
 	for _, expectingToken := range tokenList {
 
@@ -31,7 +32,7 @@ func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []TokenType) []Token 
 	return tokens
 }
 
-func AssertToken(t *testing.T, tokenType TokenType, token *Token) {
+func AssertToken(t *testing.T, tokenType ast.TokenType, token *ast.Token) {
 	assert.NotNil(t, token)
 	if tokenType != token.Type {
 		fmt.Printf("\033[31mnot ok - expecting %s. Got %s '%s'\033[0m\n", tokenType.String(), token.Type.String(), token.Str)

@@ -5,29 +5,14 @@ import "unicode"
 // import "strings"
 import "fmt"
 import "errors"
+import "c6/ast"
 
 type stateFn func(*Lexer) stateFn
 
 const LETTERS = "zxcvbnmasdfghjklqwertyuiop"
 const DIGITS = "1234567890"
 
-var LexKeywords = map[string]int{
-/*
-	"if":      T_IF,
-	"class":   T_CLASS,
-	"for":     T_FOR,
-	"foreach": T_FOREACH,
-	"else":    T_ELSE,
-	"elseif":  T_ELSEIF,
-	"echo":    T_ECHO,
-	"is":      T_IS,
-	"return":  T_RETURN,
-	"extends": T_EXTENDS,
-	"does":    T_DOES,
-	"new":     T_NEW,
-	"clone":   T_CLONE,
-*/
-}
+var LexKeywords = map[string]int{}
 
 func (l *Lexer) error(msg string, r rune) {
 	var err = errors.New(fmt.Sprintf(msg, string(r)))
@@ -54,7 +39,7 @@ func (l *Lexer) emitIfKeywordMatches() bool {
 			c := l.next()
 			if c == '\n' || c == EOF || c == ' ' || c == '\t' || unicode.IsSymbol(c) {
 				l.backup()
-				l.emit(TokenType(typ))
+				l.emit(ast.TokenType(typ))
 				return true
 			}
 		}
@@ -72,7 +57,7 @@ func lexComment(l *Lexer) stateFn {
 			for {
 				r = l.next()
 				if r == '\n' || r == '\r' {
-					l.emit(T_COMMENT_LINE)
+					l.emit(ast.T_COMMENT_LINE)
 					return lexStart
 				}
 			}
@@ -82,7 +67,7 @@ func lexComment(l *Lexer) stateFn {
 				r = l.next()
 				if r == '*' && l.peek() == '/' {
 					l.next()
-					l.emit(T_COMMENT_BLOCK)
+					l.emit(ast.T_COMMENT_BLOCK)
 					return lexStart
 				}
 			}
@@ -104,7 +89,7 @@ func lexString(l *Lexer) stateFn {
 		for {
 			if r == '"' {
 				l.backup()
-				token := l.createToken(T_QQ_STRING)
+				token := l.createToken(ast.T_QQ_STRING)
 				token.ContainsInterpolation = containsInterpolation
 				l.emitToken(token)
 				l.next()
@@ -133,7 +118,7 @@ func lexString(l *Lexer) stateFn {
 			r = l.next()
 			if r == '\'' {
 				l.backup()
-				l.emit(T_Q_STRING)
+				l.emit(ast.T_Q_STRING)
 				l.next()
 				l.ignore()
 				return lexStart
@@ -152,9 +137,9 @@ func lexString(l *Lexer) stateFn {
 
 func lexUrl(l *Lexer) {
 	if l.match("url") {
-		l.emit(T_IDENT)
+		l.emit(ast.T_IDENT)
 		l.match("(")
-		l.emit(T_PAREN_START)
+		l.emit(ast.T_PAREN_START)
 
 		var q = l.peek()
 		if q == '"' || q == '\'' {
@@ -163,7 +148,7 @@ func lexUrl(l *Lexer) {
 			lexUnquoteStringStopAt(l, ')')
 		}
 		l.match(")")
-		l.emit(T_PAREN_END)
+		l.emit(ast.T_PAREN_END)
 
 	} else {
 		var r = l.peek()
@@ -211,7 +196,7 @@ func lexAtRule(l *Lexer) stateFn {
 	if t == '@' {
 		l.next()
 		if l.match("import") {
-			l.emit(T_IMPORT)
+			l.emit(ast.T_IMPORT)
 			l.ignoreSpaces()
 
 			lexUrl(l)
@@ -222,11 +207,11 @@ func lexAtRule(l *Lexer) stateFn {
 				l.next()
 			}
 			if l.precedeStartOffset() {
-				l.emit(T_MEDIA)
+				l.emit(ast.T_MEDIA)
 			}
 			return lexStatement
 		} else if l.match("charset") {
-			l.emit(T_CHARSET)
+			l.emit(ast.T_CHARSET)
 			l.ignoreSpaces()
 			return lexStatement
 		} else {
@@ -253,7 +238,7 @@ func lexUnquoteStringStopAt(l *Lexer, stop rune) stateFn {
 		r = l.next()
 	}
 	l.backup()
-	l.emit(T_UNQUOTE_STRING)
+	l.emit(ast.T_UNQUOTE_STRING)
 	return nil
 }
 
@@ -263,7 +248,7 @@ func lexUnquoteString(l *Lexer) stateFn {
 		r = l.next()
 	}
 	l.backup()
-	l.emit(T_UNQUOTE_STRING)
+	l.emit(ast.T_UNQUOTE_STRING)
 	return nil
 }
 
@@ -271,7 +256,7 @@ func lexSemiColon(l *Lexer) stateFn {
 	l.ignoreSpaces()
 	var r rune = l.next()
 	if r == ';' {
-		l.emit(T_SEMICOLON)
+		l.emit(ast.T_SEMICOLON)
 		return lexStatement
 	}
 	l.backup()
@@ -304,7 +289,7 @@ func lexVariableName(l *Lexer) stateFn {
 				l.next()
 			} else if unicode.IsDigit(r2) { // $a-3 should be $a '-' 3
 				l.backup()
-				l.emit(T_VARIABLE)
+				l.emit(ast.T_VARIABLE)
 				return lexExpression
 			} else {
 				break
@@ -315,7 +300,7 @@ func lexVariableName(l *Lexer) stateFn {
 			break
 		} else if r == '}' {
 			l.backup()
-			l.emit(T_VARIABLE)
+			l.emit(ast.T_VARIABLE)
 			return lexStatement
 			break
 		} else if r == EOF || r == ' ' || r == ';' {
@@ -324,7 +309,7 @@ func lexVariableName(l *Lexer) stateFn {
 		r = l.next()
 	}
 	l.backup()
-	l.emit(T_VARIABLE)
+	l.emit(ast.T_VARIABLE)
 	return lexStatement
 }
 
@@ -337,7 +322,7 @@ func lexHexColor(l *Lexer) stateFn {
 		if (l.Offset-l.Start) != 4 && (l.Offset-l.Start) != 7 {
 			panic("Invalid hex color length")
 		}
-		l.emit(T_HEX_COLOR)
+		l.emit(ast.T_HEX_COLOR)
 		return lexPropertyValue
 	}
 	l.error("Expecting hex color, got '%s'", r)
@@ -346,17 +331,17 @@ func lexHexColor(l *Lexer) stateFn {
 
 func lexNumberUnit(l *Lexer) stateFn {
 	if l.match("px") {
-		l.emit(T_UNIT_PX)
+		l.emit(ast.T_UNIT_PX)
 	} else if l.match("pt") {
-		l.emit(T_UNIT_PT)
+		l.emit(ast.T_UNIT_PT)
 	} else if l.match("em") {
-		l.emit(T_UNIT_EM)
+		l.emit(ast.T_UNIT_EM)
 	} else if l.match("rem") {
-		l.emit(T_UNIT_REM)
+		l.emit(ast.T_UNIT_REM)
 	} else if l.match("deg") {
-		l.emit(T_UNIT_DEG)
+		l.emit(ast.T_UNIT_DEG)
 	} else if l.match("%") {
-		l.emit(T_UNIT_PERCENT)
+		l.emit(ast.T_UNIT_PERCENT)
 	} else if l.peek() == ';' {
 		return lexStatement
 	}
@@ -381,9 +366,9 @@ func lexNumber(l *Lexer) stateFn {
 	l.backup()
 
 	if floatPoint {
-		l.emit(T_FLOAT)
+		l.emit(ast.T_FLOAT)
 	} else {
-		l.emit(T_INTEGER)
+		l.emit(ast.T_INTEGER)
 	}
 	return lexNumberUnit
 }
@@ -402,7 +387,7 @@ func lexConstantString(l *Lexer) stateFn {
 		r = l.next()
 	}
 	l.backup()
-	l.emit(T_CONSTANT)
+	l.emit(ast.T_CONSTANT)
 	return lexPropertyValue
 }
 
@@ -420,19 +405,19 @@ func lexStatement(l *Lexer) stateFn {
 		return lexAtRule
 	} else if r == '(' {
 		l.next()
-		l.emit(T_PAREN_START)
+		l.emit(ast.T_PAREN_START)
 		return lexStart
 	} else if r == ')' {
 		l.next()
-		l.emit(T_PAREN_END)
+		l.emit(ast.T_PAREN_END)
 		return lexStart
 	} else if r == '{' {
 		l.next()
-		l.emit(T_BRACE_START)
+		l.emit(ast.T_BRACE_START)
 		return lexStatement
 	} else if r == '}' {
 		l.next()
-		l.emit(T_BRACE_END)
+		l.emit(ast.T_BRACE_END)
 		return lexStatement
 	} else if r == '/' && l.peekBy(2) == '/' {
 		l.next()
@@ -447,11 +432,11 @@ func lexStatement(l *Lexer) stateFn {
 		return lexSelectors
 	} else if r == ';' {
 		l.next()
-		l.emit(T_SEMICOLON)
+		l.emit(ast.T_SEMICOLON)
 		return lexStart
 	} else if r == ',' {
 		l.next()
-		l.emit(T_COMMA)
+		l.emit(ast.T_COMMA)
 		return lexStart
 	} else if r == '-' || unicode.IsLetter(r) { // it maybe -vendor- property or a property name
 

@@ -35,18 +35,18 @@ func getFileTypeByExtension(extension string) uint {
 }
 
 type Parser struct {
-	Input chan *Token
+	Input chan *ast.Token
 
 	// integer for counting token
 	Pos         int
 	RollbackPos int
-	Tokens      []*Token
+	Tokens      []*ast.Token
 }
 
 func NewParser() *Parser {
 	p := Parser{}
 	p.Pos = 0
-	p.Tokens = []*Token{}
+	p.Tokens = []*ast.Token{}
 	return &p
 }
 
@@ -75,7 +75,7 @@ func (self *Parser) rollback() {
 	self.Pos = self.RollbackPos
 }
 
-func (self *Parser) matchByTypes(types []TokenType) bool {
+func (self *Parser) matchByTypes(types []ast.TokenType) bool {
 	var p = self.Pos
 	var match = true
 	for _, tokType := range types {
@@ -92,7 +92,7 @@ func (self *Parser) matchByTypes(types []TokenType) bool {
 	return match
 }
 
-func (self *Parser) next() *Token {
+func (self *Parser) next() *ast.Token {
 	var p = self.Pos
 	self.Pos++
 	if p < len(self.Tokens) {
@@ -112,7 +112,7 @@ func (self *Parser) next() *Token {
 	return nil
 }
 
-func (self *Parser) peekBy(offset int) *Token {
+func (self *Parser) peekBy(offset int) *ast.Token {
 	if self.Pos+offset < len(self.Tokens) {
 		return self.Tokens[self.Pos+offset]
 	}
@@ -131,11 +131,11 @@ func (self *Parser) advance() {
 	self.Pos++
 }
 
-func (self *Parser) current() *Token {
+func (self *Parser) current() *ast.Token {
 	return self.Tokens[self.Pos]
 }
 
-func (self *Parser) peek() *Token {
+func (self *Parser) peek() *ast.Token {
 	if self.Pos < len(self.Tokens) {
 		return self.Tokens[self.Pos]
 	}
@@ -146,13 +146,13 @@ func (self *Parser) peek() *Token {
 
 func (self *Parser) isSelector() bool {
 	var tok = self.peek()
-	if tok.Type == T_ID_SELECTOR ||
-		tok.Type == T_TYPE_SELECTOR ||
-		tok.Type == T_CLASS_SELECTOR ||
-		tok.Type == T_PSEUDO_SELECTOR ||
-		tok.Type == T_PARENT_SELECTOR {
+	if tok.Type == ast.T_ID_SELECTOR ||
+		tok.Type == ast.T_TYPE_SELECTOR ||
+		tok.Type == ast.T_CLASS_SELECTOR ||
+		tok.Type == ast.T_PSEUDO_SELECTOR ||
+		tok.Type == ast.T_PARENT_SELECTOR {
 		return true
-	} else if tok.Type == T_BRACKET_LEFT {
+	} else if tok.Type == ast.T_BRACKET_LEFT {
 		return true
 	}
 	return false
@@ -217,7 +217,7 @@ Unit := T_UNIT_PX | T_UNIT_PT | T_UNIT_EM | T_UNIT_PERCENT | T_UNIT_DEG
 func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
 	var token = parser.peek()
 
-	if token.Type == T_IMPORT {
+	if token.Type == ast.T_IMPORT {
 		return parser.ParseImportStatement()
 	} else if token.IsSelector() {
 		return parser.ParseRuleSet(parentRuleSet)
@@ -232,32 +232,32 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 	for tok.IsSelector() {
 
 		switch tok.Type {
-		case T_TYPE_SELECTOR:
+		case ast.T_TYPE_SELECTOR:
 			sel := ast.TypeSelector{tok.Str}
 			ruleset.AppendSelector(sel)
-		case T_UNIVERSAL_SELECTOR:
+		case ast.T_UNIVERSAL_SELECTOR:
 			sel := ast.UniversalSelector{}
 			ruleset.AppendSelector(sel)
-		case T_ID_SELECTOR:
+		case ast.T_ID_SELECTOR:
 			sel := ast.IdSelector{tok.Str}
 			ruleset.AppendSelector(sel)
-		case T_CLASS_SELECTOR:
+		case ast.T_CLASS_SELECTOR:
 			sel := ast.ClassSelector{tok.Str}
 			ruleset.AppendSelector(sel)
-		case T_PARENT_SELECTOR:
+		case ast.T_PARENT_SELECTOR:
 			sel := ast.ParentSelector{parentRuleSet}
 			ruleset.AppendSelector(sel)
-		case T_PSEUDO_SELECTOR:
+		case ast.T_PSEUDO_SELECTOR:
 			sel := ast.PseudoSelector{tok.Str, ""}
-			if nextTok := parser.peek(); nextTok.Type == T_LANG_CODE {
+			if nextTok := parser.peek(); nextTok.Type == ast.T_LANG_CODE {
 				sel.C = nextTok.Str
 			}
 			ruleset.AppendSelector(sel)
-		case T_ADJACENT_SELECTOR:
+		case ast.T_ADJACENT_SELECTOR:
 			ruleset.AppendSelector(ast.AdjacentSelector{})
-		case T_CHILD_SELECTOR:
+		case ast.T_CHILD_SELECTOR:
 			ruleset.AppendSelector(ast.ChildSelector{})
-		case T_DESCENDANT_SELECTOR:
+		case ast.T_DESCENDANT_SELECTOR:
 			ruleset.AppendSelector(ast.DescendantSelector{})
 		default:
 			panic(fmt.Errorf("Unexpected selector token: %+v", tok))
@@ -273,12 +273,21 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 
 func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.DeclarationBlock {
 	var tok = parser.next() // should be '{'
-	if tok.Type != T_BRACE_START {
+	if tok.Type != ast.T_BRACE_START {
 		panic(ParserError{"(", tok.Str})
 	}
 
 	tok = parser.next()
-	for tok.Type != T_BRACE_END {
+	for tok.Type != ast.T_BRACE_END {
+
+		if tok.Type == ast.T_PROPERTY_NAME {
+			var name = ast.PropertyName{tok.Str, tok.ContainsInterpolation}
+			_ = name
+
+		} else if tok.IsSelector() {
+			// parse subrule
+		}
+
 		tok = parser.next()
 	}
 
@@ -286,7 +295,7 @@ func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.Dec
 }
 
 func (parser *Parser) ParseImportStatement() ast.Statement {
-	// skip the T_IMPORT token
+	// skip the ast.T_IMPORT token
 	var tok = parser.next()
 
 	// Create the import statement node
@@ -294,21 +303,21 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 
 	tok = parser.peek()
 	// expecting url(..)
-	if tok.Type == T_IDENT {
+	if tok.Type == ast.T_IDENT {
 		parser.advance()
 
 		if tok.Str != "url" {
 			panic("invalid function for @import rule.")
 		}
 
-		if tok = parser.next(); tok.Type != T_PAREN_START {
+		if tok = parser.next(); tok.Type != ast.T_PAREN_START {
 			panic("expecting parenthesis after url")
 		}
 
 		tok = parser.next()
 		rule.Url = ast.Url(tok.Str)
 
-		if tok = parser.next(); tok.Type != T_PAREN_END {
+		if tok = parser.next(); tok.Type != ast.T_PAREN_END {
 			panic("expecting parenthesis after url")
 		}
 
@@ -325,14 +334,14 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 		@import url("bluish.css") projection, tv;
 	*/
 	tok = parser.peek()
-	if tok.Type == T_MEDIA {
+	if tok.Type == ast.T_MEDIA {
 		parser.advance()
 		rule.MediaList = append(rule.MediaList, tok.Str)
 	}
 
-	// must be T_SEMICOLON
+	// must be ast.T_SEMICOLON
 	tok = parser.next()
-	if tok.Type != T_SEMICOLON {
+	if tok.Type != ast.T_SEMICOLON {
 		panic(ParserError{";", tok.Str})
 	}
 	return &rule

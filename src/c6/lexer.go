@@ -5,8 +5,9 @@ import "unicode/utf8"
 import "strings"
 import "fmt"
 import "unicode"
+import "c6/ast"
 
-type tokenChannel chan *Token
+type tokenChannel chan *ast.Token
 
 const TOKEN_CHANNEL_BUFFER = 1024
 
@@ -46,12 +47,12 @@ type Lexer struct {
 	Line int
 
 	// the token output channel
-	Output chan *Token
+	Output chan *ast.Token
 
-	Tokens []Token
+	Tokens []ast.Token
 }
 
-func (l *Lexer) lastToken() *Token {
+func (l *Lexer) lastToken() *ast.Token {
 	if len(l.Tokens) > 0 {
 		return &l.Tokens[len(l.Tokens)-1]
 	}
@@ -101,11 +102,11 @@ func NewLexerWithFile(file string) (*Lexer, error) {
 	}, nil
 }
 
-func (l *Lexer) getOutput() chan *Token {
+func (l *Lexer) getOutput() chan *ast.Token {
 	if l.Output != nil {
 		return l.Output
 	}
-	l.Output = make(chan *Token, TOKEN_CHANNEL_BUFFER)
+	l.Output = make(chan *ast.Token, TOKEN_CHANNEL_BUFFER)
 	return l.Output
 }
 
@@ -211,7 +212,7 @@ func (l *Lexer) take() string {
 	return l.Input[l.Start:l.Offset]
 }
 
-func (l *Lexer) emitToken(token *Token) {
+func (l *Lexer) emitToken(token *ast.Token) {
 	if DEBUG_EMIT {
 		fmt.Printf("emit: %+v\n", token)
 	}
@@ -221,8 +222,8 @@ func (l *Lexer) emitToken(token *Token) {
 	l.Start = l.Offset
 }
 
-func (l *Lexer) createTokenWith0Offset(tokenType TokenType) *Token {
-	var token = Token{
+func (l *Lexer) createTokenWith0Offset(tokenType ast.TokenType) *ast.Token {
+	var token = ast.Token{
 		Type: tokenType,
 		Str:  "",
 		Pos:  l.Start,
@@ -231,13 +232,13 @@ func (l *Lexer) createTokenWith0Offset(tokenType TokenType) *Token {
 	return &token
 }
 
-func (l *Lexer) createToken(tokenType TokenType) *Token {
+func (l *Lexer) createToken(tokenType ast.TokenType) *ast.Token {
 	/*
 		if l.Offset > len(l.Input) {
 			panic(fmt.Sprintf("out of range at '%s': start:%d, offset:%d, length: %d", l.Input[l.Start:], l.Start, l.Offset, len(l.Input)))
 		}
 	*/
-	var token = Token{
+	var token = ast.Token{
 		Type: tokenType,
 		Str:  l.Input[l.Start:l.Offset],
 		Pos:  l.Start,
@@ -247,7 +248,7 @@ func (l *Lexer) createToken(tokenType TokenType) *Token {
 }
 
 // emit a token to the channel
-func (l *Lexer) emit(tokenType TokenType) {
+func (l *Lexer) emit(tokenType ast.TokenType) {
 	token := l.createToken(tokenType)
 	l.emitToken(token)
 }

@@ -2,6 +2,7 @@ package c6
 
 import "unicode"
 import _ "fmt"
+import "c6/ast"
 
 func isInterpolationStartToken(r rune, r2 rune) bool {
 	return r == '#' && r2 == '{'
@@ -12,14 +13,14 @@ func isSelectorOperatorToken(r rune) bool {
 	return r == '>' || r == '+' || r == ','
 }
 
-func isSelector(t TokenType) bool {
-	return t == T_CLASS_SELECTOR ||
-		t == T_ID_SELECTOR ||
-		t == T_CLASS_SELECTOR ||
-		t == T_TYPE_SELECTOR ||
-		t == T_UNIVERSAL_SELECTOR ||
-		t == T_PARENT_SELECTOR || // SASS parent selector
-		t == T_PSEUDO_SELECTOR // :hover, :visited , ...
+func isSelector(t ast.TokenType) bool {
+	return t == ast.T_CLASS_SELECTOR ||
+		t == ast.T_ID_SELECTOR ||
+		t == ast.T_CLASS_SELECTOR ||
+		t == ast.T_TYPE_SELECTOR ||
+		t == ast.T_UNIVERSAL_SELECTOR ||
+		t == ast.T_PARENT_SELECTOR || // SASS parent selector
+		t == ast.T_PSEUDO_SELECTOR // :hover, :visited , ...
 }
 
 /**
@@ -45,7 +46,7 @@ func isDescendantSelectorSeparator(r rune) bool {
 func lexAttributeSelector(l *Lexer) stateFn {
 	var r = l.next()
 	if r == '[' {
-		l.emit(T_BRACKET_LEFT)
+		l.emit(ast.T_BRACKET_LEFT)
 
 		var foundInterpolation = false
 
@@ -65,7 +66,7 @@ func lexAttributeSelector(l *Lexer) stateFn {
 		}
 		l.backup()
 
-		token := l.createToken(T_ATTRIBUTE_NAME)
+		token := l.createToken(ast.T_ATTRIBUTE_NAME)
 		token.ContainsInterpolation = foundInterpolation
 		l.emitToken(token)
 
@@ -75,13 +76,13 @@ func lexAttributeSelector(l *Lexer) stateFn {
 
 		if r == '=' {
 			l.next()
-			l.emit(T_EQUAL)
+			l.emit(ast.T_EQUAL)
 			attrOp = true
 		} else if l.match("~=") {
-			l.emit(T_TILDE_EQUAL)
+			l.emit(ast.T_TILDE_EQUAL)
 			attrOp = true
 		} else if l.match("|=") {
-			l.emit(T_PIPE_EQUAL)
+			l.emit(ast.T_PIPE_EQUAL)
 			attrOp = true
 		}
 
@@ -97,7 +98,7 @@ func lexAttributeSelector(l *Lexer) stateFn {
 		r = l.peek()
 		if r == ']' {
 			l.next()
-			l.emit(T_BRACKET_RIGHT)
+			l.emit(ast.T_BRACKET_RIGHT)
 			return lexStatement
 		}
 
@@ -124,7 +125,7 @@ func lexClassSelector(l *Lexer) stateFn {
 		r = l.next()
 	}
 	l.backup()
-	l.emit(T_CLASS_SELECTOR)
+	l.emit(ast.T_CLASS_SELECTOR)
 	return lexSelectors
 }
 
@@ -133,7 +134,7 @@ func lexParentSelector(l *Lexer) stateFn {
 	if r != '&' {
 		l.error("Unexpected token '%s' for universal selector.", r)
 	}
-	l.emit(T_PARENT_SELECTOR)
+	l.emit(ast.T_PARENT_SELECTOR)
 	return lexSelectors
 }
 
@@ -142,7 +143,7 @@ func lexChildSelector(l *Lexer) stateFn {
 	if r != '>' {
 		l.error("Unexpected token '%s' for child selector.", r)
 	}
-	l.emit(T_GT)
+	l.emit(ast.T_GT)
 	return lexSelectors
 }
 
@@ -172,9 +173,9 @@ func lexPseudoSelector(l *Lexer) stateFn {
 	l.backup()
 
 	if foundInterpolation {
-		l.emit(T_INTERPOLATION_SELECTOR)
+		l.emit(ast.T_INTERPOLATION_SELECTOR)
 	} else {
-		l.emit(T_PSEUDO_SELECTOR)
+		l.emit(ast.T_PSEUDO_SELECTOR)
 	}
 
 	if r == '(' {
@@ -195,7 +196,7 @@ func lexUniversalSelector(l *Lexer) stateFn {
 	if r != '*' {
 		l.error("Unexpected token '%s' for universal selector.", r)
 	}
-	l.emit(T_UNIVERSAL_SELECTOR)
+	l.emit(ast.T_UNIVERSAL_SELECTOR)
 
 	r = l.peek()
 	if r == '.' {
@@ -213,7 +214,7 @@ func lexUniversalSelector(l *Lexer) stateFn {
 // Dispath selector lexing method
 func lexSelectors(l *Lexer) stateFn {
 	var r rune
-	// T_INTERPOLATION_SELECTOR
+	// ast.T_INTERPOLATION_SELECTOR
 
 	// space between selector means descendant selector
 	if tok := l.lastToken(); tok != nil && isSelector(tok.Type) {
@@ -228,7 +229,7 @@ func lexSelectors(l *Lexer) stateFn {
 			return nil
 		}
 		if foundSpace && r != ',' && r != '{' && !isSelectorOperatorToken(r) {
-			l.emit(T_DESCENDANT_SELECTOR)
+			l.emit(ast.T_DESCENDANT_SELECTOR)
 		} else {
 			l.ignore()
 		}
@@ -259,7 +260,7 @@ func lexSelectors(l *Lexer) stateFn {
 		//    '#{  }#myId {  }'
 		if isInterpolationStartToken(r, l.peekBy(2)) {
 			if tok := l.lastToken(); tok != nil && isSelector(tok.Type) {
-				l.emit(T_CONCAT)
+				l.emit(ast.T_CONCAT)
 			}
 
 			lexInterpolation(l, false)
@@ -279,7 +280,7 @@ func lexSelectors(l *Lexer) stateFn {
 			l.backup()
 
 			// the suffix of the selector.
-			var token = l.createToken(T_INTERPOLATION_SELECTOR)
+			var token = l.createToken(ast.T_INTERPOLATION_SELECTOR)
 			token.ContainsInterpolation = true
 			l.emitToken(token)
 			return lexSelectors
@@ -290,14 +291,14 @@ func lexSelectors(l *Lexer) stateFn {
 	} else if r == ',' {
 
 		l.next()
-		l.emit(T_COMMA)
+		l.emit(ast.T_COMMA)
 
 		// lex next selector
 		return lexSelectors
 
 	} else if r == '+' {
 		l.next()
-		l.emit(T_ADJACENT_SELECTOR)
+		l.emit(ast.T_ADJACENT_SELECTOR)
 		return lexSelectors
 	} else if r == ' ' {
 		for r == ' ' {
@@ -335,9 +336,9 @@ func lexTypeSelector(l *Lexer) stateFn {
 	l.backup()
 
 	if foundInterpolation {
-		l.emit(T_INTERPOLATION_SELECTOR)
+		l.emit(ast.T_INTERPOLATION_SELECTOR)
 	} else {
-		l.emit(T_TYPE_SELECTOR)
+		l.emit(ast.T_TYPE_SELECTOR)
 	}
 
 	r = l.peek()
@@ -391,7 +392,7 @@ func lexLang(l *Lexer) stateFn {
 			l.error("Unexpected language token. Got '%s'", r)
 		}
 	}
-	l.emit(T_LANG_CODE)
+	l.emit(ast.T_LANG_CODE)
 	return nil
 }
 
@@ -426,9 +427,9 @@ func lexIdSelector(l *Lexer) stateFn {
 	l.backup()
 
 	if foundInterpolation {
-		l.emit(T_INTERPOLATION_SELECTOR)
+		l.emit(ast.T_INTERPOLATION_SELECTOR)
 	} else {
-		l.emit(T_ID_SELECTOR)
+		l.emit(ast.T_ID_SELECTOR)
 	}
 	return lexSelectors
 }

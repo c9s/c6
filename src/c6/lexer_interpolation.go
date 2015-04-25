@@ -1,5 +1,7 @@
 package c6
 
+import "c6/ast"
+
 /*
 There are 3 scope that users may use interpolation syntax:
 
@@ -15,7 +17,7 @@ func lexInterpolation(l *Lexer, emit bool) stateFn {
 		r = l.next()
 		if r == '{' {
 			if emit {
-				l.emit(T_INTERPOLATION_START)
+				l.emit(ast.T_INTERPOLATION_START)
 			}
 
 			r = l.next()
@@ -31,12 +33,12 @@ func lexInterpolation(l *Lexer, emit bool) stateFn {
 			l.backup()
 
 			if emit {
-				l.emit(T_INTERPOLATION_INNER)
+				l.emit(ast.T_INTERPOLATION_INNER)
 			}
 
 			l.next() // for '}'
 			if emit {
-				l.emit(T_INTERPOLATION_END)
+				l.emit(ast.T_INTERPOLATION_END)
 			}
 			return nil
 		}

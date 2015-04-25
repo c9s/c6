@@ -1,6 +1,7 @@
 package c6
 
 import "unicode"
+import "c6/ast"
 
 func lexIdentifier(l *Lexer) stateFn {
 	var r = l.next()
@@ -20,7 +21,7 @@ func lexIdentifier(l *Lexer) stateFn {
 		r = l.next()
 	}
 	l.backup()
-	l.emit(T_IDENT)
+	l.emit(ast.T_IDENT)
 	return lexExpression
 }
 
@@ -45,43 +46,43 @@ func lexExpression(l *Lexer) stateFn {
 	} else if r == '-' {
 
 		l.next()
-		l.emit(T_MINUS)
+		l.emit(ast.T_MINUS)
 		return lexExpression
 
 	} else if r == '*' {
 
 		l.next()
-		l.emit(T_MUL)
+		l.emit(ast.T_MUL)
 		return lexExpression
 
 	} else if r == '+' {
 
 		l.next()
-		l.emit(T_PLUS)
+		l.emit(ast.T_PLUS)
 		return lexExpression
 
 	} else if r == '/' {
 
 		l.next()
-		l.emit(T_DIV)
+		l.emit(ast.T_DIV)
 		return lexExpression
 
 	} else if r == '(' {
 
 		l.next()
-		l.emit(T_PAREN_START)
+		l.emit(ast.T_PAREN_START)
 		return lexExpression
 
 	} else if r == ')' {
 
 		l.next()
-		l.emit(T_PAREN_END)
+		l.emit(ast.T_PAREN_END)
 		return lexExpression
 
 	} else if r == ',' {
 
 		l.next()
-		l.emit(T_COMMA)
+		l.emit(ast.T_COMMA)
 		return lexExpression
 
 	} else if r == '$' {

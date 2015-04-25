@@ -1,4 +1,4 @@
-package c6
+package ast
 
 //go:generate stringer -type=TokenType token.go
 type TokenType int
