@@ -271,6 +271,10 @@ func (l *Lexer) match(str string) bool {
 	return true
 }
 
+func (l *Lexer) precedeStartOffset() bool {
+	return l.Offset > l.Start
+}
+
 func (l *Lexer) ignoreSpaces() {
 	for {
 		var r rune = l.peek()

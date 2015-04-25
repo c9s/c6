@@ -106,6 +106,14 @@ func TestLexerAtRuleImportWithUrl(t *testing.T) {
 	l.close()
 }
 
+func TestLexerAtRuleImportWithUrlAndMediaList(t *testing.T) {
+	l := NewLexerWithString(`@import url("test.css") screen;`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []TokenType{T_IMPORT, T_URL, T_PAREN_START, T_QQ_STRING, T_PAREN_END, T_MEDIA, T_SEMICOLON})
+	l.close()
+}
+
 func TestLexerAtRuleImportWithUnquoteUrl(t *testing.T) {
 	l := NewLexerWithString(`@import url(http://foo.com/bar/test.css);`)
 	assert.NotNil(t, l)

@@ -22,6 +22,7 @@ const (
 	T_COMMA
 	T_IDENT
 	T_URL
+	T_MEDIA
 
 	// selector tokens
 	T_ID_SELECTOR

@@ -183,15 +183,22 @@ func lexAtRule(l *Lexer) stateFn {
 	if t == '@' {
 		l.next()
 		if l.match("import") {
-			fmt.Println("@import")
 			l.emit(T_IMPORT)
-			l.next()
-			l.ignore()
+			l.ignoreSpaces()
 			lexUrl(l)
-			return lexStart
-		} else if l.match("charset") {
+			l.ignoreSpaces()
+
+			// looks like a media list
+			for unicode.IsLetter(l.peek()) {
+				l.next()
+			}
+			if l.precedeStartOffset() {
+				l.emit(T_MEDIA)
+			}
+			return lexStatement
+		} else if l.match("charset ") {
 			l.emit(T_CHARSET)
-			return lexStart
+			return lexStatement
 		} else {
 			panic("unknown at-rule directive")
 		}

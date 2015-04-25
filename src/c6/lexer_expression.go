@@ -10,7 +10,6 @@ func lexIdentifier(l *Lexer) stateFn {
 	r = l.next()
 
 	for unicode.IsLetter(r) || unicode.IsDigit(r) || r == '-' {
-
 		if r == '-' {
 			if !unicode.IsLetter(l.peek()) {
 				l.backup()
