@@ -2,9 +2,9 @@ package ast
 
 type Op struct {
 	Op    string
-	Token Token
+	Token *Token
 }
 
-func NewOp(op string, token Token) *Op {
-	return &Op{op, token}
+func NewOp(token *Token) *Op {
+	return &Op{token.Str, token}
 }

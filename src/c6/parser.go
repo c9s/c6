@@ -351,7 +351,7 @@ func (parser *Parser) ReduceFactor() ast.Expression {
 	if tok.Type == ast.T_PAREN_START {
 		// skip the parent
 		parser.accept(ast.T_PAREN_START)
-		parser.ParseExpression()
+		parser.ReduceExpression()
 		parser.accept(ast.T_PAREN_END)
 		return nil
 		// _ = expr
@@ -370,19 +370,24 @@ func (parser *Parser) ReduceFactor() ast.Expression {
 			var ident = parser.ReduceIdent()
 			return ast.Expression(ident)
 		}
+	} else if tok.Type == ast.T_HEX_COLOR {
+		panic("hex color is not implemented yet")
 	}
 	return nil
-
 }
 
-func (parser *Parser) ReduceTerm() {
-	parser.ReduceFactor()
+func (parser *Parser) ReduceTerm() ast.Expression {
+	var expr1 = parser.ReduceFactor()
 
 	// see if the next token is '*' or '/'
 	var tok = parser.peek()
 	if tok.Type == ast.T_MUL || tok.Type == ast.T_DIV {
-		parser.next()
+		var opTok = parser.next()
+		var op = ast.NewOp(opTok)
+		var expr2 = parser.ReduceFactor()
+		return ast.NewBinaryExpression(op, expr1, expr2)
 	}
+	return expr1
 }
 
 /**
@@ -393,7 +398,7 @@ We here treat the property values as expressions:
 	margin: {expression};
 
 */
-func (parser *Parser) ParseExpression() ast.Expression {
+func (parser *Parser) ReduceExpression() ast.Expression {
 	// plus or minus. this creates an unary expression that holds the later term.
 	parser.acceptTypes([]ast.TokenType{ast.T_PLUS, ast.T_MINUS})
 
@@ -401,6 +406,8 @@ func (parser *Parser) ParseExpression() ast.Expression {
 	if parser.acceptTypes([]ast.TokenType{ast.T_PLUS, ast.T_MINUS}) {
 		// reduce another term
 		parser.ReduceTerm()
+	} else {
+
 	}
 	return nil
 }
@@ -411,7 +418,7 @@ The returned Expression is an interface
 func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *ast.Property) {
 	tok := parser.peek()
 	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
-		parser.ParseExpression()
+		parser.ReduceExpression()
 		tok = parser.peek()
 	}
 	parser.accept(ast.T_SEMICOLON)
@@ -438,7 +445,7 @@ func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.Dec
 			tok := parser.peek()
 
 			for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
-				parser.ParseExpression()
+				parser.ReduceExpression()
 				tok = parser.peek()
 			}
 			_ = property
