@@ -230,7 +230,6 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 	var tok = parser.next()
 
 	for tok.IsSelector() {
-		tok = parser.next()
 
 		switch tok.Type {
 		case T_TYPE_SELECTOR:
@@ -246,7 +245,6 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 			sel := ast.ClassSelector{tok.Str}
 			ruleset.AppendSelector(sel)
 		case T_PARENT_SELECTOR:
-			// XXX: pass parent ruleset here...
 			sel := ast.ParentSelector{parentRuleSet}
 			ruleset.AppendSelector(sel)
 		case T_PSEUDO_SELECTOR:
@@ -261,7 +259,10 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 			ruleset.AppendSelector(ast.ChildSelector{})
 		case T_DESCENDANT_SELECTOR:
 			ruleset.AppendSelector(ast.DescendantSelector{})
+		default:
+			panic(fmt.Errorf("Unexpected selector token: %+v", tok))
 		}
+		tok = parser.next()
 	}
 	parser.backup()
 
