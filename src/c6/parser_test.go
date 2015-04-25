@@ -46,8 +46,15 @@ func TestParserParseImportRuleWithMediaList(t *testing.T) {
 
 func TestParserParseTypeSelectorRule(t *testing.T) {
 	parser := NewParser()
-	block := parser.parseScss(`div { }`)
-	_ = block
+	block := parser.parseScss(`div { width: auto; }`)
+
+	ruleset, ok := block.Statements[0].(*ast.RuleSet)
+	assert.True(t, ok)
+
+	t.Logf("%+v\n", ruleset.Selectors)
+	t.Logf("%+v\n", ruleset.DeclarationBlock)
+
+	// _ = block
 }
 
 /*

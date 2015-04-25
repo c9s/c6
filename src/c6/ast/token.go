@@ -37,6 +37,15 @@ func (tok Token) IsSelector() bool {
 		tok.Type == T_PARENT_SELECTOR
 }
 
+func (tok Token) IsOneOfTypes(types []TokenType) bool {
+	for _, t := range types {
+		if tok.Type == t {
+			return true
+		}
+	}
+	return false
+}
+
 const (
 	T_SPACE TokenType = iota
 	T_COMMENT_LINE

@@ -3,6 +3,7 @@ package c6
 import "io/ioutil"
 import "path/filepath"
 import "c6/ast"
+import "strconv"
 
 // import "errors"
 import "fmt"
@@ -75,7 +76,16 @@ func (self *Parser) rollback() {
 	self.Pos = self.RollbackPos
 }
 
-func (self *Parser) matchByTypes(types []ast.TokenType) bool {
+func (self *Parser) accept(tokenType ast.TokenType) *ast.Token {
+	var tok = self.next()
+	if tok.Type == tokenType {
+		return tok
+	}
+	self.backup()
+	return nil
+}
+
+func (self *Parser) acceptTypes(types []ast.TokenType) bool {
 	var p = self.Pos
 	var match = true
 	for _, tokType := range types {
@@ -271,42 +281,182 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 	return &ruleset
 }
 
+func (parser *Parser) PushPropertyConstantStrings(property *ast.Property) {
+	rightTok := parser.next()
+	for rightTok.Type == ast.T_IDENT {
+		property.AppendValue(ast.ConstantString{rightTok.Str, *rightTok})
+		rightTok = parser.next()
+	}
+	parser.backup()
+}
+
+/**
+This method returns objects with ast.Number interface
+
+works for:
+
+	'10'
+	'10' 'px'
+	'10' 'em'
+	'0.2' 'em'
+*/
+func (parser *Parser) ReduceNumber() ast.Number {
+	// the value token
+	var value = parser.next()
+	var tok2 = parser.peek()
+	var number ast.Number
+	if value.Type == ast.T_INTEGER {
+		i, err := strconv.ParseInt(value.Str, 10, 64)
+		if err != nil {
+			panic(err)
+		}
+		number = ast.NewIntegerNumber(i)
+	} else {
+
+		f, err := strconv.ParseFloat(value.Str, 64)
+		if err != nil {
+			panic(err)
+		}
+		number = ast.NewFloatNumber(f)
+	}
+
+	if tok2.IsOneOfTypes([]ast.TokenType{ast.T_UNIT_PX, ast.T_UNIT_PT, ast.T_UNIT_CM, ast.T_UNIT_EM, ast.T_UNIT_MM, ast.T_UNIT_REM, ast.T_UNIT_DEG, ast.T_UNIT_PERCENT}) {
+		number.SetUnit(int(tok2.Type))
+	}
+	return number
+}
+
+func (parser *Parser) ReduceFactor() {
+	var tok = parser.peek()
+
+	if tok.Type == ast.T_PAREN_START {
+		// skip the parent
+		parser.accept(ast.T_PAREN_START)
+		parser.ParseExpression()
+		parser.accept(ast.T_PAREN_END)
+		// _ = expr
+	} else if tok.Type == ast.T_INTEGER || tok.Type == ast.T_FLOAT {
+		// reduce number
+
+	}
+
+}
+
+func (parser *Parser) ReduceTerm() {
+	parser.ReduceTerm()
+}
+
+/**
+
+We here treat the property values as expressions:
+
+	padding: {expression} {expression} {expression};
+	margin: {expression};
+
+*/
+func (parser *Parser) ParseExpression() {
+	parser.ReduceTerm()
+	parser.acceptTypes([]ast.TokenType{ast.T_PLUS, ast.T_MINUS})
+	parser.ReduceTerm()
+
+}
+
+/**
+The returned Expression is an interface
+*/
+func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *ast.Property) {
+	tok := parser.next()
+
+	// Check if the property value is an expression or
+	if tok.Type == ast.T_IDENT {
+		pos := parser.Pos
+
+		// if it's a constant list
+		rightTok := parser.next()
+		for rightTok.Type == ast.T_IDENT {
+			rightTok = parser.next()
+		}
+		// a constant list can be end with a semi colon or a end brace
+		if rightTok.Type == ast.T_SEMICOLON || rightTok.Type == ast.T_BRACE_END {
+			// OK, it's a constant list, restore to the original position (the position after the colon)
+			parser.Pos = pos
+
+			// push the values before semicolon into the property value list.
+			parser.PushPropertyConstantStrings(property)
+		} else {
+			parser.Pos = pos
+		}
+
+		_ = pos
+		_ = rightTok
+
+		/*
+			if right.Type == ast.T_SEMICOLON {
+				parser.advance()
+				// construct the normal property value since we meet semicolon
+				return &ast.UnaryExpression{tok.Str, *tok}
+			}
+		*/
+	} else {
+		panic("unimplemented property value parsing...")
+	}
+}
+
 func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.DeclarationBlock {
+	var declBlock = ast.DeclarationBlock{}
+
 	var tok = parser.next() // should be '{'
 	if tok.Type != ast.T_BRACE_START {
-		panic(ParserError{"(", tok.Str})
+		panic(ParserError{"{", tok.Str})
 	}
 
 	tok = parser.next()
 	for tok.Type != ast.T_BRACE_END {
 
+		fmt.Printf("%+v\n", tok)
+
 		if tok.Type == ast.T_PROPERTY_NAME {
+			// skip T_COLON
+			parser.next()
 
-			var name = ast.PropertyName{tok.Str, tok.ContainsInterpolation}
-			_ = name
+			var propertyName = ast.PropertyName{tok.Str, tok.ContainsInterpolation, *tok}
+			var property = ast.Property{propertyName, []ast.Expression{}}
 
-			nextTok := parser.next()
+			tok := parser.peek()
 
 			// Check if the property value is an expression or
-			if nextTok.Type == ast.T_PROPERTY_VALUE {
+			if tok.Type == ast.T_IDENT {
 
-			} else if nextTok.Type == ast.T_CONSTANT {
+				parser.ParsePropertyValue(parentRuleSet, &property)
+				property.AppendValue(ast.UnaryExpression{tok.Str, *tok})
+				declBlock.Append(property)
 
-			} else if nextTok.Type == ast.T_IDENT {
+				/*
+					tok2 := parser.peek()
+					if tok2.Type == ast.T_SEMICOLON {
+						parser.advance()
+						// construct the normal property value since we meet semicolon
+						property.AppendValue(ast.UnaryExpression{tok.Str, *tok})
+						declBlock.Append(property)
+
+					} else if tok2.Type == ast.T_PAREN_START { // looks like a function
+
+						panic("unimplemented function expression")
+					}
+				*/
 
 			}
 
-			property := ast.Property{name, []ast.PropertyValue{}}
-			_ = property
-
 		} else if tok.IsSelector() {
 			// parse subrule
+			panic("subselector unimplemented")
+		} else {
 		}
 
 		tok = parser.next()
 	}
 
-	return &ast.DeclarationBlock{}
+	return &declBlock
 }
 
 func (parser *Parser) ParseImportStatement() ast.Statement {

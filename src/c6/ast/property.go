@@ -7,7 +7,7 @@ type Property struct {
 
 		`padding: 3px 3px;`
 	*/
-	Values []PropertyValue
+	Values []Expression
 }
 
 /**
@@ -15,23 +15,39 @@ Property is one of the declaration
 */
 func (self Property) IsDeclaration() {}
 
-func (self Property) appendValue(value PropertyValue) {
+func (self Property) AppendValue(value Expression) {
 	self.Values = append(self.Values, value)
-}
-
-type PropertyValue interface {
-	CanBePropertyValue()
 }
 
 type PropertyName struct {
 	String string
 	// If there is an interpolation in the property name
 	Interpolation bool
+	Token         Token
 }
-type ConstantValue string
 
-func (self ConstantValue) CanBePropertyValue() {}
+type Expression interface {
+	CanBeExpression()
+}
 
-type Expression struct{}
+type UnaryExpression struct {
+	Value interface{}
+	Token Token
+}
 
-func (self Expression) CanBePropertyValue() {}
+func (self UnaryExpression) CanBeExpression() {}
+
+type BinaryExpression struct {
+	Left  Expression
+	Right Expression
+	Op    string
+}
+
+func (self BinaryExpression) CanBeExpression() {}
+
+type ConstantString struct {
+	Constant string
+	Token    Token
+}
+
+func (self ConstantString) CanBeExpression() {}
