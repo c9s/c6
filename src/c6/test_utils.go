@@ -4,14 +4,17 @@ import "github.com/stretchr/testify/assert"
 import "testing"
 import "fmt"
 
-func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []TokenType) {
+func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []TokenType) []Token {
 	fmt.Printf("Input: %s\n", l.Input)
 
+	var tokens = []Token{}
 	var failure = false
 	for _, expectingToken := range tokenList {
 
 		var token = <-l.Output
 		assert.NotNil(t, token)
+
+		tokens = append(tokens, *token)
 
 		if expectingToken == token.Type {
 			fmt.Printf("\033[32mok %s '%s'\033[0m\n", token.Type.String(), token.Str)
@@ -24,6 +27,8 @@ func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []TokenType) {
 	if failure {
 		t.FailNow()
 	}
+
+	return tokens
 }
 
 func AssertToken(t *testing.T, tokenType TokenType, token *Token) {

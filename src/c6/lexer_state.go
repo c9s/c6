@@ -146,7 +146,7 @@ func lexString(l *Lexer) stateFn {
 
 func lexUrl(l *Lexer) {
 	if l.match("url") {
-		l.emit(T_IDENT)
+		l.emit(T_URL)
 
 		l.match("(")
 		l.emit(T_PAREN_START)

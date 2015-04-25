@@ -21,6 +21,7 @@ const (
 	T_SEMICOLON
 	T_COMMA
 	T_IDENT
+	T_URL
 
 	// selector tokens
 	T_ID_SELECTOR
