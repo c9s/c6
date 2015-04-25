@@ -98,14 +98,17 @@ func lexString(l *Lexer) stateFn {
 	var r = l.next()
 	if r == '"' {
 		var containsInterpolation = false
-
+		l.ignore()
 		// string start
 		r = l.next()
 		for {
 			if r == '"' {
+				l.backup()
 				token := l.createToken(T_QQ_STRING)
 				token.ContainsInterpolation = containsInterpolation
 				l.emitToken(token)
+				l.next()
+				l.ignore()
 				return lexStart
 			} else if r == '\\' {
 				// skip the escape character
@@ -125,11 +128,14 @@ func lexString(l *Lexer) stateFn {
 	} else if r == '\'' {
 
 		l.next()
+		l.ignore()
 		for {
 			r = l.next()
 			if r == '\'' {
-				l.next()
+				l.backup()
 				l.emit(T_Q_STRING)
+				l.next()
+				l.ignore()
 				return lexStart
 			} else if r == '\\' {
 				// skip the escape character

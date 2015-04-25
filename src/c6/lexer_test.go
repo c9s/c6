@@ -99,7 +99,7 @@ func TestLexerAtRuleImportWithUrl(t *testing.T) {
 
 	for _, tok := range tokens {
 		if tok.Type == T_QQ_STRING {
-			assert.Equal(t, `"test.css"`, tok.Str)
+			assert.Equal(t, `test.css`, tok.Str)
 		}
 	}
 
