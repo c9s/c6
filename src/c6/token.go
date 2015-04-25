@@ -18,13 +18,23 @@ func (tok Token) IsString() bool {
 	return tok.Type == T_QQ_STRING || tok.Type == T_Q_STRING || tok.Type == T_UNQUOTE_STRING
 }
 
+func (tok Token) IsSelectorOp() bool {
+	return tok.Type == T_ADJACENT_SELECTOR ||
+		tok.Type == T_CHILD_SELECTOR ||
+		tok.Type == T_DESCENDANT_SELECTOR
+}
+
 func (tok Token) IsSelector() bool {
-	return tok.Type == T_TYPE_SELECTOR || tok.Type == T_UNIVERSAL_SELECTOR ||
-		tok.Type == T_ID_SELECTOR || tok.Type == T_CLASS_SELECTOR || tok.Type == T_PARENT_SELECTOR ||
+	return tok.Type == T_TYPE_SELECTOR ||
+		tok.Type == T_UNIVERSAL_SELECTOR ||
+		tok.Type == T_ID_SELECTOR ||
+		tok.Type == T_CLASS_SELECTOR ||
+		tok.Type == T_PARENT_SELECTOR ||
 		tok.Type == T_PSEUDO_SELECTOR ||
 		tok.Type == T_ADJACENT_SELECTOR ||
 		tok.Type == T_CHILD_SELECTOR ||
-		tok.Type == T_DESCENDANT_SELECTOR
+		tok.Type == T_DESCENDANT_SELECTOR ||
+		tok.Type == T_PARENT_SELECTOR
 }
 
 const (

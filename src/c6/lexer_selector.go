@@ -111,6 +111,7 @@ func lexClassSelector(l *Lexer) stateFn {
 	if r != '.' {
 		l.error("Unexpected token for class selector. got '%s'", r)
 	}
+	l.ignore()
 
 	r = l.next()
 	if !unicode.IsLetter(r) {
@@ -152,6 +153,7 @@ func lexPseudoSelector(l *Lexer) stateFn {
 	if r != ':' {
 		l.error("Unexpected token '%s' for pseudo selector.", r)
 	}
+	l.ignore()
 
 	r = l.next()
 	if !unicode.IsLetter(r) && !(r == '#' && l.peek() == '{') {
@@ -203,7 +205,7 @@ func lexUniversalSelector(l *Lexer) stateFn {
 	} else if r == ':' {
 		return lexPseudoSelector
 	} else if r == '#' {
-		return lexIdentifierSelector
+		return lexIdSelector
 	}
 	return lexSelectors
 }
@@ -282,7 +284,7 @@ func lexSelectors(l *Lexer) stateFn {
 			l.emitToken(token)
 			return lexSelectors
 		}
-		return lexIdentifierSelector
+		return lexIdSelector
 	} else if r == '>' {
 		return lexChildSelector
 	} else if r == ',' {
@@ -348,7 +350,7 @@ func lexTypeSelector(l *Lexer) stateFn {
 		return lexAttributeSelector
 	case '#':
 		if l.peekBy(2) != '{' {
-			return lexIdentifierSelector
+			return lexIdSelector
 		}
 	case '.':
 		return lexClassSelector
@@ -393,12 +395,14 @@ func lexLang(l *Lexer) stateFn {
 	return nil
 }
 
-func lexIdentifierSelector(l *Lexer) stateFn {
+func lexIdSelector(l *Lexer) stateFn {
 	var foundInterpolation = false
 	var r = l.next()
 	if r != '#' {
 		l.error("Expecting '#' for lexing identifier, Got '%s'", r)
 	}
+	l.ignore()
+
 	r = l.next()
 	if !unicode.IsLetter(r) && r != '#' && l.peek() != '{' {
 		l.error("An identifier should start with at least a letter, Got '%s'", r)

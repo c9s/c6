@@ -51,7 +51,7 @@ Selectors presents: E:pseudo
 */
 type PseudoSelector struct {
 	PseudoClass string
-	C           string
+	C           string // for dynamic language pseudo selector like :lang(C)
 }
 
 func (self PseudoSelector) IsSelector() {}
@@ -112,6 +112,20 @@ func (self AttributeSelector) String() (out string) {
 		return "[" + self.Name + self.Op + self.Pattern + "]"
 	}
 	return "[" + self.Name + "]"
+}
+
+/*
+This is a SCSS only selector
+*/
+type ParentSelector struct {
+	ParentRuleSet *RuleSet
+}
+
+func (self ParentSelector) IsSelector() {}
+func (self ParentSelector) String() string {
+	// TODO: get parent rule set and render the selector...
+	panic("unimplemented")
+	return ""
 }
 
 /**

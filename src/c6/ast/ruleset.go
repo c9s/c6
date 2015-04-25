@@ -1,7 +1,7 @@
 package ast
 
 type RuleSet struct {
-	Selectors CombinedSelector
+	Selectors []Selector
 	Block     DeclarationBlock
 }
 
@@ -10,7 +10,7 @@ func NewRuleSet() *RuleSet {
 }
 
 func (self *RuleSet) AppendSelector(sel Selector) {
-	// self.Selectors = append(self.Selectors, sel)
+	self.Selectors = append(self.Selectors, sel)
 }
 
 func (self *RuleSet) AppendDeclaration() {
