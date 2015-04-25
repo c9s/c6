@@ -5,7 +5,6 @@ import "path/filepath"
 import "c6/ast"
 import "strconv"
 
-// import "errors"
 import "fmt"
 
 var fileAstMap map[string]interface{} = map[string]interface{}{}
@@ -326,6 +325,22 @@ func (parser *Parser) ReduceNumber() ast.Number {
 	return number
 }
 
+func (parser *Parser) ReduceFunctionCall() {
+	var ident = parser.next()
+
+	if tok := parser.accept(ast.T_PAREN_START); tok == nil {
+		panic("Expecting parenthesis after ident")
+	}
+	var argTok = parser.peek()
+	for argTok.Type != ast.T_PAREN_END {
+		parser.ReduceFactor()
+		argTok = parser.peek()
+	}
+	_ = ident
+
+	// Construct a FunctionCall AST Node
+}
+
 func (parser *Parser) ReduceFactor() {
 	var tok = parser.peek()
 
@@ -337,13 +352,26 @@ func (parser *Parser) ReduceFactor() {
 		// _ = expr
 	} else if tok.Type == ast.T_INTEGER || tok.Type == ast.T_FLOAT {
 		// reduce number
-
+		parser.ReduceNumber()
+	} else if tok.Type == ast.T_IDENT {
+		if tok2 := parser.peekBy(2); tok2.Type == ast.T_PAREN_START {
+			parser.ReduceFunctionCall()
+		} else {
+			// take the ident as an factor (we should check the term expression)
+			parser.next()
+		}
 	}
 
 }
 
 func (parser *Parser) ReduceTerm() {
-	parser.ReduceTerm()
+	parser.ReduceFactor()
+
+	// see if the next token is '*' or '/'
+	var tok = parser.peek()
+	if tok.Type == ast.T_MUL || tok.Type == ast.T_DIV {
+		parser.next()
+	}
 }
 
 /**
@@ -355,51 +383,26 @@ We here treat the property values as expressions:
 
 */
 func (parser *Parser) ParseExpression() {
-	parser.ReduceTerm()
+	// plus or minus. this creates an unary expression that holds the later term.
 	parser.acceptTypes([]ast.TokenType{ast.T_PLUS, ast.T_MINUS})
-	parser.ReduceTerm()
 
+	parser.ReduceTerm()
+	if parser.acceptTypes([]ast.TokenType{ast.T_PLUS, ast.T_MINUS}) {
+		// reduce another term
+		parser.ReduceTerm()
+	}
 }
 
 /**
 The returned Expression is an interface
 */
 func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *ast.Property) {
-	tok := parser.next()
-
-	// Check if the property value is an expression or
-	if tok.Type == ast.T_IDENT {
-		pos := parser.Pos
-
-		// if it's a constant list
-		rightTok := parser.next()
-		for rightTok.Type == ast.T_IDENT {
-			rightTok = parser.next()
-		}
-		// a constant list can be end with a semi colon or a end brace
-		if rightTok.Type == ast.T_SEMICOLON || rightTok.Type == ast.T_BRACE_END {
-			// OK, it's a constant list, restore to the original position (the position after the colon)
-			parser.Pos = pos
-
-			// push the values before semicolon into the property value list.
-			parser.PushPropertyConstantStrings(property)
-		} else {
-			parser.Pos = pos
-		}
-
-		_ = pos
-		_ = rightTok
-
-		/*
-			if right.Type == ast.T_SEMICOLON {
-				parser.advance()
-				// construct the normal property value since we meet semicolon
-				return &ast.UnaryExpression{tok.Str, *tok}
-			}
-		*/
-	} else {
-		panic("unimplemented property value parsing...")
+	tok := parser.peek()
+	for tok.Type != ast.T_SEMICOLON {
+		parser.ParseExpression()
+		tok = parser.peek()
 	}
+	parser.accept(ast.T_SEMICOLON)
 }
 
 func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.DeclarationBlock {
@@ -412,8 +415,6 @@ func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.Dec
 
 	tok = parser.next()
 	for tok.Type != ast.T_BRACE_END {
-
-		fmt.Printf("%+v\n", tok)
 
 		if tok.Type == ast.T_PROPERTY_NAME {
 			// skip T_COLON
