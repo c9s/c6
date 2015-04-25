@@ -197,7 +197,7 @@ func (l *Lexer) advance(w int) {
 }
 
 // peek more characters
-func (l *Lexer) peekMore(p int) (r rune) {
+func (l *Lexer) peekBy(p int) (r rune) {
 	var w = 0
 	for i := p; i > 0; i-- {
 		r = l.next()

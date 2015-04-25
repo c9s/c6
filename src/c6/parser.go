@@ -2,6 +2,10 @@ package c6
 
 import "io/ioutil"
 import "path/filepath"
+import "c6/ast"
+
+// import "errors"
+import "fmt"
 
 var fileAstMap map[string]interface{} = map[string]interface{}{}
 
@@ -10,6 +14,15 @@ const (
 	ScssFileType
 	SassFileType
 )
+
+type ParserError struct {
+	ExpectingToken string
+	ActualToken    string
+}
+
+func (e ParserError) Error() string {
+	return fmt.Sprintf("Expecting '%s', but the actual token we got was '%s'.", e.ExpectingToken, e.ActualToken)
+}
 
 func getFileTypeByExtension(extension string) uint {
 	switch extension {
@@ -27,13 +40,13 @@ type Parser struct {
 	// integer for counting token
 	Pos         int
 	RollbackPos int
-	Tokens      []Token
+	Tokens      []*Token
 }
 
 func NewParser() *Parser {
 	p := Parser{}
 	p.Pos = 0
-	p.Tokens = []Token{}
+	p.Tokens = []*Token{}
 	return &p
 }
 
@@ -62,13 +75,38 @@ func (self *Parser) rollback() {
 	self.Pos = self.RollbackPos
 }
 
+func (self *Parser) matchByTypes(types []TokenType) bool {
+	var p = self.Pos
+	var match = true
+	for _, tokType := range types {
+		var tok = self.next()
+		if tok.Type != tokType {
+			match = false
+			break
+		}
+	}
+	// restore the position if it doesn't match
+	if !match {
+		self.Pos = p
+	}
+	return match
+}
+
 func (self *Parser) next() *Token {
 	var p = self.Pos
 	self.Pos++
 	if p < len(self.Tokens) {
-		return &self.Tokens[p]
-	} else if token := <-self.Input; token != nil {
-		self.Tokens = append(self.Tokens, *token)
+		return self.Tokens[p]
+	} else {
+		if len(self.Tokens) > 1 {
+			// get the last token
+			var tok = self.Tokens[len(self.Tokens)-1]
+			if tok == nil {
+				return nil
+			}
+		}
+		token := <-self.Input
+		self.Tokens = append(self.Tokens, token)
 		return token
 	}
 	return nil
@@ -76,29 +114,34 @@ func (self *Parser) next() *Token {
 
 func (self *Parser) peekBy(offset int) *Token {
 	if self.Pos+offset < len(self.Tokens) {
-		return &self.Tokens[self.Pos+offset]
+		return self.Tokens[self.Pos+offset]
 	}
 	token := <-self.Input
 	for token != nil {
-		self.Tokens = append(self.Tokens, *token)
+		self.Tokens = append(self.Tokens, token)
 		if self.Pos+offset < len(self.Tokens) {
-			return &self.Tokens[self.Pos+offset]
+			return self.Tokens[self.Pos+offset]
 		}
 		token = <-self.Input
 	}
 	return nil
 }
 
+func (self *Parser) advance() {
+	self.Pos++
+}
+
+func (self *Parser) current() *Token {
+	return self.Tokens[self.Pos]
+}
+
 func (self *Parser) peek() *Token {
 	if self.Pos < len(self.Tokens) {
-		return &self.Tokens[self.Pos]
+		return self.Tokens[self.Pos]
 	}
-
-	if token := <-self.Input; token != nil {
-		self.Tokens = append(self.Tokens, *token)
-		return token
-	}
-	return nil
+	token := <-self.Input
+	self.Tokens = append(self.Tokens, token)
+	return token
 }
 
 func (self *Parser) isSelector() bool {
@@ -115,16 +158,25 @@ func (self *Parser) isSelector() bool {
 	return false
 }
 
-func (self *Parser) parseScss(code string) {
+func (self *Parser) eof() bool {
+	var tok = self.next()
+	self.backup()
+	return tok == nil
+}
+
+func (parser *Parser) parseScss(code string) *ast.Block {
 	l := NewLexerWithString(code)
 	l.run()
-	self.Input = l.getOutput()
-	/*
-		if self.isSelector() {
-			rule := Rule{}
-			_ = rule
+	parser.Input = l.getOutput()
+
+	block := ast.Block{}
+	for !parser.eof() {
+		stm := parser.ParseStatement()
+		if stm != nil {
+			block.AppendStatement(stm)
 		}
-	*/
+	}
+	return &block
 }
 
 /*
@@ -163,14 +215,51 @@ Scalar := T_NUMBER | T_NUMBER Unit
 Unit := T_UNIT_PX | T_UNIT_PT | T_UNIT_EM | T_UNIT_PERCENT | T_UNIT_DEG
 */
 
-func (self *Parser) parseStatement() {
+func (parser *Parser) ParseStatement() ast.Statement {
+	var token = parser.peek()
 
-}
+	switch token.Type {
+	case T_IMPORT:
+		parser.advance()
 
-func (self *Parser) parseAtRule() {
+		var rule = ast.AtRuleImport{}
 
-}
+		var tok = parser.peek()
+		// expecting url(..)
+		if tok.Type == T_IDENT {
+			parser.advance()
 
-func (self *Parser) parseRule() {
+			if tok.Str != "url" {
+				panic("invalid function for @import rule.")
+			}
 
+			if tok = parser.next(); tok.Type != T_PAREN_START {
+				panic("expecting parenthesis after url")
+			}
+
+			tok = parser.next()
+			rule.Url = ast.Url(tok.Str)
+
+			if tok = parser.next(); tok.Type != T_PAREN_END {
+				panic("expecting parenthesis after url")
+			}
+
+		} else if tok.Type == T_QQ_STRING || tok.Type == T_UNQUOTE_STRING {
+			parser.advance()
+			rule.Url = ast.RelativeUrl(tok.Str)
+		}
+		tok = parser.peek()
+		if tok.Type == T_MEDIA {
+			parser.advance()
+			rule.MediaList = append(rule.MediaList, tok.Str)
+		}
+
+		// must be T_SEMICOLON
+		tok = parser.next()
+		if tok.Type != T_SEMICOLON {
+			panic(ParserError{";", tok.Str})
+		}
+		return &rule
+	}
+	return nil
 }

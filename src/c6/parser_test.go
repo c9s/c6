@@ -1,11 +1,42 @@
 package c6
 
 import "testing"
+import "c6/ast"
 import "github.com/stretchr/testify/assert"
 
+func TestParserParseoImportRuleWithUrl(t *testing.T) {
+	parser := NewParser()
+	block := parser.parseScss(`@import url("foo.css");`)
+
+	rule, ok := block.Statements[0].(*ast.AtRuleImport)
+	assert.True(t, ok)
+	assert.NotNil(t, rule)
+
+	// it's not a relative url
+	_, ok1 := rule.Url.(ast.RelativeUrl)
+	assert.False(t, ok1)
+
+	// it's a url
+	url, ok2 := rule.Url.(ast.Url)
+	assert.True(t, ok2)
+	assert.Equal(t, "foo.css", url)
+}
+
+func TestParserParseoImportRuleWithString(t *testing.T) {
+	parser := NewParser()
+	block := parser.parseScss(`@import "foo.css";`)
+	_ = block
+}
+
+func TestParserParseoImportRuleWithMediaList(t *testing.T) {
+	parser := NewParser()
+	block := parser.parseScss(`@import url("foo.css") screen;`)
+	_ = block
+}
+
+/*
 func TestParserParseEmptyRuleWithClassSelector(t *testing.T) {
 	parser := NewParser()
-	assert.NotNil(t, parser)
 	parser.parseScss(`.test {  }`)
 
 	var token *Token
@@ -67,3 +98,4 @@ func TestParseNestedRule(t *testing.T) {
 	assert.NotNil(t, p)
 	p.parseScss(code)
 }
+*/

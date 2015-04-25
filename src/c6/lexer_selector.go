@@ -255,7 +255,7 @@ func lexSelectors(l *Lexer) stateFn {
 		//    '#{  }.something {  }'
 		//    '#{  } .something {  }'
 		//    '#{  }#myId {  }'
-		if isInterpolationStartToken(r, l.peekMore(2)) {
+		if isInterpolationStartToken(r, l.peekBy(2)) {
 			if tok := l.lastToken(); tok != nil && isSelector(tok.Type) {
 				l.emit(T_CONCAT)
 			}
@@ -314,7 +314,7 @@ func lexSelectors(l *Lexer) stateFn {
 
 func lexTypeSelector(l *Lexer) stateFn {
 	var r = l.next()
-	if !unicode.IsLetter(r) && !isInterpolationStartToken(r, l.peekMore(2)) {
+	if !unicode.IsLetter(r) && !isInterpolationStartToken(r, l.peekBy(2)) {
 		l.error("Expecting letter token for tag name selector. got %s", r)
 	}
 
@@ -347,7 +347,7 @@ func lexTypeSelector(l *Lexer) stateFn {
 	case '[':
 		return lexAttributeSelector
 	case '#':
-		if l.peekMore(2) != '{' {
+		if l.peekBy(2) != '{' {
 			return lexIdentifierSelector
 		}
 	case '.':

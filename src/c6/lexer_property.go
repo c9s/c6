@@ -40,7 +40,7 @@ func lexPropertyValue(l *Lexer) stateFn {
 	var r rune = l.peek()
 
 	if r == '#' {
-		if l.peekMore(2) == '{' {
+		if l.peekBy(2) == '{' {
 			lexInterpolation(l, true)
 			return lexPropertyValue
 		}

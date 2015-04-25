@@ -434,7 +434,7 @@ func lexStatement(l *Lexer) stateFn {
 		l.next()
 		l.emit(T_BRACE_END)
 		return lexStatement
-	} else if r == '/' && l.peekMore(2) == '/' {
+	} else if r == '/' && l.peekBy(2) == '/' {
 		l.next()
 		r = l.next()
 		for r != '\r' && r != '\n' && r != EOF {
@@ -470,7 +470,7 @@ func lexStatement(l *Lexer) stateFn {
 			}
 
 			// ignore interpolation
-			if r == '#' && l.peekMore(2) == '{' {
+			if r == '#' && l.peekBy(2) == '{' {
 				r = l.next()
 				// find the matching brace
 				for r != '}' {
@@ -513,7 +513,7 @@ func lexStatement(l *Lexer) stateFn {
 			} else if r == EOF {
 				isSelector = false
 				goto end_guess
-			} else if r == '#' && l.peekMore(2) == '{' {
+			} else if r == '#' && l.peekBy(2) == '{' {
 				// skip expansion
 				r = l.next()
 				for r != '}' {
