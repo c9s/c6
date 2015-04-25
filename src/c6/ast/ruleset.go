@@ -1,25 +1,28 @@
 package ast
 
 type RuleSet struct {
-	Selectors *CombinedSelector
-	Block     *DeclarationBlock
+	Selectors CombinedSelector
+	Block     DeclarationBlock
 }
 
 func NewRuleSet() *RuleSet {
 	return &RuleSet{}
 }
 
-func (self *RuleSet) appendSelector(sel Selector) {
+func (self *RuleSet) AppendSelector(sel Selector) {
 	// self.Selectors = append(self.Selectors, sel)
 }
 
-func (self *RuleSet) appendDeclaration() {
+func (self *RuleSet) AppendDeclaration() {
 
 }
 
-func (self *RuleSet) appendSubRuleSet() {
+func (self *RuleSet) AppendSubRuleSet() {
 
 }
+
+// Complete the statement interface
+func (self *RuleSet) IsStatement() {}
 
 type PropertyName struct{}
 type PropertyValue struct{}

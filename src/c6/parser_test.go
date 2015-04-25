@@ -6,10 +6,10 @@ import "github.com/stretchr/testify/assert"
 
 func TestParserParseoImportRuleWithUrl(t *testing.T) {
 	parser := NewParser()
-	block := parser.parseScss(`@import url("foo.css");`)
+	block := parser.parseScss(`@import url("http://foo.com/bar.css");`)
 
-	rule, ok := block.Statements[0].(*ast.ImportStatement)
-	assert.True(t, ok)
+	rule, ok := block.Statement(0).(*ast.ImportStatement)
+	assert.True(t, ok, "Convert to ImportStatement OK")
 	assert.NotNil(t, rule)
 
 	// it's not a relative url
@@ -19,13 +19,23 @@ func TestParserParseoImportRuleWithUrl(t *testing.T) {
 	// it's a url
 	url, ok2 := rule.Url.(ast.Url)
 	assert.True(t, ok2)
-	assert.Equal(t, "foo.css", url)
+	assert.Equal(t, "http://foo.com/bar.css", url)
 }
 
 func TestParserParseoImportRuleWithString(t *testing.T) {
 	parser := NewParser()
 	block := parser.parseScss(`@import "foo.css";`)
-	_ = block
+
+	rule, ok := block.Statement(0).(*ast.ImportStatement)
+	assert.True(t, ok, "Convert to ImportStatement OK")
+	assert.NotNil(t, rule)
+
+	// it's not a relative url
+	url, ok := rule.Url.(ast.RelativeUrl)
+	assert.True(t, ok)
+
+	assert.True(t, ok)
+	assert.Equal(t, "foo.css", url)
 }
 
 func TestParserParseoImportRuleWithMediaList(t *testing.T) {

@@ -18,6 +18,12 @@ func (tok Token) IsString() bool {
 	return tok.Type == T_QQ_STRING || tok.Type == T_Q_STRING || tok.Type == T_UNQUOTE_STRING
 }
 
+func (tok Token) IsSelector() bool {
+	return tok.Type == T_TYPE_SELECTOR || tok.Type == T_UNIVERSAL_SELECTOR ||
+		tok.Type == T_ID_SELECTOR || tok.Type == T_CLASS_SELECTOR || tok.Type == T_PARENT_SELECTOR ||
+		tok.Type == T_PSEUDO_SELECTOR
+}
+
 const (
 	T_SPACE TokenType = iota
 	T_COMMENT_LINE
@@ -40,9 +46,12 @@ const (
 
 	// Selector relationship
 	T_AND_SELECTOR        // {parent-selector}{child-selector} { }
-	T_DESCENDANT_SELECTOR // 'E' 'F'
-	T_CHILD_SELECTOR
+	T_DESCENDANT_SELECTOR // E ' ' F
+	T_CHILD_SELECTOR      // E '>' F
+	T_ADJACENT_SELECTOR   // E '+' F
 
+	T_OR   // 'or' used in conditional query
+	T_AND  // 'and' used in conditional query
 	T_PLUS // E '+' F
 	T_GT   // E '>' F
 	T_BRACE_START

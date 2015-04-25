@@ -17,7 +17,6 @@ AdjacentSelector
 AttributeSelector
 
 */
-
 const ChildSelectorOp = " > "
 const DescendantSelectorOp = " "
 const AdjacentSelectorOp = " + "

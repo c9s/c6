@@ -295,7 +295,7 @@ func lexSelectors(l *Lexer) stateFn {
 
 	} else if r == '+' {
 		l.next()
-		l.emit(T_PLUS)
+		l.emit(T_ADJACENT_SELECTOR)
 		return lexSelectors
 	} else if r == ' ' {
 		for r == ' ' {

@@ -214,52 +214,80 @@ Scalar := T_NUMBER | T_NUMBER Unit
 
 Unit := T_UNIT_PX | T_UNIT_PT | T_UNIT_EM | T_UNIT_PERCENT | T_UNIT_DEG
 */
-
 func (parser *Parser) ParseStatement() ast.Statement {
 	var token = parser.peek()
 
-	switch token.Type {
-	case T_IMPORT:
-		parser.advance()
-
-		var rule = ast.ImportStatement{}
-
-		var tok = parser.peek()
-		// expecting url(..)
-		if tok.Type == T_IDENT {
-			parser.advance()
-
-			if tok.Str != "url" {
-				panic("invalid function for @import rule.")
-			}
-
-			if tok = parser.next(); tok.Type != T_PAREN_START {
-				panic("expecting parenthesis after url")
-			}
-
-			tok = parser.next()
-			rule.Url = ast.Url(tok.Str)
-
-			if tok = parser.next(); tok.Type != T_PAREN_END {
-				panic("expecting parenthesis after url")
-			}
-
-		} else if tok.IsString() {
-			parser.advance()
-			rule.Url = ast.RelativeUrl(tok.Str)
-		}
-		tok = parser.peek()
-		if tok.Type == T_MEDIA {
-			parser.advance()
-			rule.MediaList = append(rule.MediaList, tok.Str)
-		}
-
-		// must be T_SEMICOLON
-		tok = parser.next()
-		if tok.Type != T_SEMICOLON {
-			panic(ParserError{";", tok.Str})
-		}
-		return &rule
+	if token.Type == T_IMPORT {
+		return parser.ParseImportStatement()
+	} else if token.IsSelector() {
+		return parser.ParseRuleSet()
 	}
 	return nil
+}
+
+func (parser *Parser) ParseRuleSet() ast.Statement {
+	var ruleset = ast.RuleSet{}
+	var tok = parser.next()
+
+	_ = tok
+	/*
+		for tok.IsSelector() {
+			ruleset.AddSelector(tok.Str)
+		}
+	*/
+
+	return &ruleset
+}
+
+func (parser *Parser) ParseImportStatement() ast.Statement {
+	// skip the T_IMPORT token
+	var tok = parser.next()
+
+	// Create the import statement node
+	var rule = ast.ImportStatement{}
+
+	tok = parser.peek()
+	// expecting url(..)
+	if tok.Type == T_IDENT {
+		parser.advance()
+
+		if tok.Str != "url" {
+			panic("invalid function for @import rule.")
+		}
+
+		if tok = parser.next(); tok.Type != T_PAREN_START {
+			panic("expecting parenthesis after url")
+		}
+
+		tok = parser.next()
+		rule.Url = ast.Url(tok.Str)
+
+		if tok = parser.next(); tok.Type != T_PAREN_END {
+			panic("expecting parenthesis after url")
+		}
+
+	} else if tok.IsString() {
+		parser.advance()
+		rule.Url = ast.RelativeUrl(tok.Str)
+	}
+
+	/*
+		TODO: parse media query for something like:
+
+		@import url(color.css) screen and (color);
+		@import url('landscape.css') screen and (orientation:landscape);
+		@import url("bluish.css") projection, tv;
+	*/
+	tok = parser.peek()
+	if tok.Type == T_MEDIA {
+		parser.advance()
+		rule.MediaList = append(rule.MediaList, tok.Str)
+	}
+
+	// must be T_SEMICOLON
+	tok = parser.next()
+	if tok.Type != T_SEMICOLON {
+		panic(ParserError{";", tok.Str})
+	}
+	return &rule
 }
