@@ -213,6 +213,7 @@ func lexAtRule(l *Lexer) stateFn {
 		if l.match("import") {
 			l.emit(T_IMPORT)
 			l.ignoreSpaces()
+
 			lexUrl(l)
 			l.ignoreSpaces()
 
@@ -224,11 +225,12 @@ func lexAtRule(l *Lexer) stateFn {
 				l.emit(T_MEDIA)
 			}
 			return lexStatement
-		} else if l.match("charset ") {
+		} else if l.match("charset") {
 			l.emit(T_CHARSET)
+			l.ignoreSpaces()
 			return lexStatement
 		} else {
-			panic("unknown at-rule directive")
+			panic("Unknown at-rule directive")
 		}
 	}
 	return nil

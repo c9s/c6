@@ -4,6 +4,7 @@ import "io/ioutil"
 import "unicode/utf8"
 import "strings"
 import "fmt"
+import "unicode"
 
 type tokenChannel chan *Token
 
