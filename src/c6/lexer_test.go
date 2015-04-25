@@ -165,7 +165,7 @@ func TestLexerRuleWithPropertyValueComma(t *testing.T) {
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_CONSTANT, ast.T_COMMA, ast.T_CONSTANT,
+		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_IDENT, ast.T_COMMA, ast.T_IDENT,
 		ast.T_BRACE_END})
 	l.close()
 }
@@ -177,7 +177,7 @@ func TestLexerRuleWithVendorPrefixPropertyName(t *testing.T) {
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_CONSTANT, ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
 		ast.T_BRACE_END})
 	l.close()
 }
@@ -340,7 +340,7 @@ func TestLexerRuleWithSubRule(t *testing.T) {
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_CONSTANT, ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,

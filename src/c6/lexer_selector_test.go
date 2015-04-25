@@ -84,7 +84,7 @@ func TestLexerRuleSimpleSelectorGrouping(t *testing.T) {
 		ast.T_TYPE_SELECTOR, ast.T_COMMA, ast.T_TYPE_SELECTOR, ast.T_COMMA, ast.T_TYPE_SELECTOR, ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME,
 		ast.T_COLON,
-		ast.T_CONSTANT,
+		ast.T_IDENT,
 		ast.T_SEMICOLON,
 		ast.T_BRACE_END})
 	l.close()
@@ -116,7 +116,7 @@ func TestLexerRuleWithCombinedAttributeSelector(t *testing.T) {
 		ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME,
 		ast.T_COLON,
-		ast.T_CONSTANT,
+		ast.T_IDENT,
 		ast.T_SEMICOLON,
 		ast.T_BRACE_END})
 	l.close()
@@ -337,7 +337,7 @@ func TestLexerRuleWithSubRuleWithParentSelector(t *testing.T) {
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_CONSTANT, ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
 		ast.T_PARENT_SELECTOR,
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,

@@ -12,6 +12,20 @@ func TestLexerExpression(t *testing.T) {
 	l.close()
 }
 
+func TestLexerHexColor3Letter(t *testing.T) {
+	l := NewLexerWithString(`#fff`)
+	l.runFrom(lexExpression)
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_HEX_COLOR})
+	l.close()
+}
+
+func TestLexerHexColor6Letter(t *testing.T) {
+	l := NewLexerWithString(`#ffffff`)
+	l.runFrom(lexExpression)
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_HEX_COLOR})
+	l.close()
+}
+
 func TestLexerFunctionCall(t *testing.T) {
 	l := NewLexerWithString(`rgba(0,0,0,0)`)
 	l.runFrom(lexExpression)

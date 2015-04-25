@@ -27,6 +27,7 @@ func lexIdentifier(l *Lexer) stateFn {
 
 func lexExpression(l *Lexer) stateFn {
 
+	// ignore spaces
 	var r = l.next()
 	for r == ' ' {
 		r = l.next()

@@ -336,6 +336,10 @@ func lexNumberUnit(l *Lexer) stateFn {
 		l.emit(ast.T_UNIT_PT)
 	} else if l.match("em") {
 		l.emit(ast.T_UNIT_EM)
+	} else if l.match("cm") {
+		l.emit(ast.T_UNIT_CM)
+	} else if l.match("mm") {
+		l.emit(ast.T_UNIT_MM)
 	} else if l.match("rem") {
 		l.emit(ast.T_UNIT_REM)
 	} else if l.match("deg") {
@@ -371,24 +375,6 @@ func lexNumber(l *Lexer) stateFn {
 		l.emit(ast.T_INTEGER)
 	}
 	return lexNumberUnit
-}
-
-// lex for: `center`, `auto`, `top`, `none`
-func lexConstantString(l *Lexer) stateFn {
-	var r = l.next()
-
-	// first char should be letter
-	if !unicode.IsLetter(r) {
-		l.error("Unexpected token for constant string. Got '%s'", r)
-	}
-
-	r = l.next()
-	for unicode.IsLetter(r) || r == '-' {
-		r = l.next()
-	}
-	l.backup()
-	l.emit(ast.T_CONSTANT)
-	return lexPropertyValue
 }
 
 func lexStatement(l *Lexer) stateFn {
