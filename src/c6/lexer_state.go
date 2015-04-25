@@ -152,8 +152,7 @@ func lexString(l *Lexer) stateFn {
 
 func lexUrl(l *Lexer) {
 	if l.match("url") {
-		l.emit(T_URL)
-
+		l.emit(T_IDENT)
 		l.match("(")
 		l.emit(T_PAREN_START)
 
@@ -176,10 +175,39 @@ func lexUrl(l *Lexer) {
 	}
 }
 
+/*
+func lexMediaQuery(l *Lexer) stateFn {
+	if !unicode.IsLetter(l.peek()) {
+		return nil
+	}
+
+	var r = l.next()
+	for {
+		r = l.next()
+	}
+	l.backup()
+	for unicode.IsLetter(r) {
+		r = l.next()
+	}
+	l.backup()
+	l.ignoreSpaces()
+
+	if l.peek() == ',' {
+		l.next()
+		l.emit(T_COMMA)
+	}
+}
+*/
+
+/*
+
+Currently the @import rule only supports '@import url(...) media;
+
+@see https://developer.mozilla.org/en-US/docs/Web/CSS/@import for more @import syntax support
+*/
 func lexAtRule(l *Lexer) stateFn {
 	t := l.peek()
 
-	// fmt.Printf("%c", t)
 	if t == '@' {
 		l.next()
 		if l.match("import") {

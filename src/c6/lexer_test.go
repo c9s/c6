@@ -95,7 +95,7 @@ func TestLexerAtRuleImportWithUrl(t *testing.T) {
 	l := NewLexerWithString(`@import url("test.css");`)
 	assert.NotNil(t, l)
 	l.run()
-	tokens := AssertTokenSequence(t, l, []TokenType{T_IMPORT, T_URL, T_PAREN_START, T_QQ_STRING, T_PAREN_END, T_SEMICOLON})
+	tokens := AssertTokenSequence(t, l, []TokenType{T_IMPORT, T_IDENT, T_PAREN_START, T_QQ_STRING, T_PAREN_END, T_SEMICOLON})
 
 	for _, tok := range tokens {
 		if tok.Type == T_QQ_STRING {
@@ -110,7 +110,7 @@ func TestLexerAtRuleImportWithUrlAndMediaList(t *testing.T) {
 	l := NewLexerWithString(`@import url("test.css") screen;`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []TokenType{T_IMPORT, T_URL, T_PAREN_START, T_QQ_STRING, T_PAREN_END, T_MEDIA, T_SEMICOLON})
+	AssertTokenSequence(t, l, []TokenType{T_IMPORT, T_IDENT, T_PAREN_START, T_QQ_STRING, T_PAREN_END, T_MEDIA, T_SEMICOLON})
 	l.close()
 }
 
@@ -118,7 +118,7 @@ func TestLexerAtRuleImportWithUnquoteUrl(t *testing.T) {
 	l := NewLexerWithString(`@import url(http://foo.com/bar/test.css);`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []TokenType{T_IMPORT, T_URL, T_PAREN_START, T_UNQUOTE_STRING, T_PAREN_END, T_SEMICOLON})
+	AssertTokenSequence(t, l, []TokenType{T_IMPORT, T_IDENT, T_PAREN_START, T_UNQUOTE_STRING, T_PAREN_END, T_SEMICOLON})
 	l.close()
 }
 
