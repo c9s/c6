@@ -17,11 +17,12 @@ AdjacentSelector
 AttributeSelector
 
 */
-const ChildSelectorOp = " > "
-const DescendantSelectorOp = " "
-const AdjacentSelectorOp = " + "
 
 type Selector interface {
+	// type signature method
+	IsSelector()
+
+	// basic code gen
 	String() string
 }
 
@@ -29,21 +30,45 @@ type CodeGen interface{}
 
 type UniversalSelector struct{}
 
+func (self UniversalSelector) IsSelector() {}
+
 func (self UniversalSelector) String() string {
 	return "*"
 }
 
+type DescendantSelector struct{}
+
+func (self DescendantSelector) IsSelector()    {}
+func (self DescendantSelector) String() string { return " " }
+
+type ChildSelector struct{}
+
+func (self ChildSelector) IsSelector()    {}
+func (self ChildSelector) String() string { return " > " }
+
+/*
+Selectors presents: E:pseudo
+*/
 type PseudoSelector struct {
 	PseudoClass string
 	C           string
 }
 
+func (self PseudoSelector) IsSelector() {}
 func (self PseudoSelector) String() (out string) {
 	if self.C != "" {
 		return ":" + self.PseudoClass + "(" + self.C + ")"
 	}
 	return ":" + self.PseudoClass
 }
+
+/*
+Selectors present: E '+' F
+*/
+type AdjacentSelector struct{}
+
+func (self AdjacentSelector) IsSelector()    {}
+func (self AdjacentSelector) String() string { return " + " }
 
 /**
 TypeSelector
@@ -52,6 +77,7 @@ type TypeSelector struct {
 	Type string
 }
 
+func (self TypeSelector) IsSelector() {}
 func (self TypeSelector) String() string {
 	return self.Type
 }
@@ -60,6 +86,7 @@ type IdSelector struct {
 	Id string
 }
 
+func (self IdSelector) IsSelector() {}
 func (self IdSelector) String() string {
 	return "#" + self.Id
 }
@@ -68,6 +95,7 @@ type ClassSelector struct {
 	ClassName string
 }
 
+func (self ClassSelector) IsSelector() {}
 func (self ClassSelector) String() string {
 	return "." + self.ClassName
 }
@@ -78,6 +106,7 @@ type AttributeSelector struct {
 	Pattern string
 }
 
+func (self AttributeSelector) IsSelector() {}
 func (self AttributeSelector) String() (out string) {
 	if self.Op != "" && self.Pattern != "" {
 		return "[" + self.Name + self.Op + self.Pattern + "]"
@@ -85,6 +114,9 @@ func (self AttributeSelector) String() (out string) {
 	return "[" + self.Name + "]"
 }
 
+/**
+An ast node that could combine all selector with the same operator.
+*/
 type CombinedSelector struct {
 	Op        string
 	Selectors []Selector
