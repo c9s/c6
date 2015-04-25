@@ -267,11 +267,11 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 	parser.backup()
 
 	// parse declaration block
-	ruleset.DeclarationBlock = parser.ParseDeclarationBlock()
+	ruleset.DeclarationBlock = parser.ParseDeclarationBlock(&ruleset)
 	return &ruleset
 }
 
-func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
+func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.DeclarationBlock {
 	var tok = parser.next() // should be '{'
 	if tok.Type != T_BRACE_START {
 		panic(ParserError{"(", tok.Str})
