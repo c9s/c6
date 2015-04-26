@@ -75,13 +75,13 @@ func (self *Parser) rollback() {
 	self.Pos = self.RollbackPos
 }
 
-func (self *Parser) accept(tokenType ast.TokenType) *ast.Token {
+func (self *Parser) accept(tokenType ast.TokenType) bool {
 	var tok = self.next()
 	if tok.Type == tokenType {
-		return tok
+		return true
 	}
 	self.backup()
-	return nil
+	return false
 }
 
 func (self *Parser) expect(tokenType ast.TokenType) *ast.Token {
@@ -202,22 +202,37 @@ func (parser *Parser) parseScss(code string) *ast.Block {
 /*
 Statement := RuleSet | At-Rule | Mixin-Statement | FunctionStatement
 
-
 At-Rule := '@' T_IDENT ';'
 
 RuleSet := Rule | RuleSet
-
-Property := PropertyName ':' PropertyValue
-
-PropertyValue := Expr ';'
-		       | ConstantList ';'
-
 
 SelectorList := Selector | Selector ',' SelectorList
 
 Rule := SelectorList '{'
 			RuleSet
 		'}'
+
+Property := PropertyName ':' PropertyValue
+
+PropertyName :=  Raw Concat Raw
+			 |   Raw
+
+PropertyValue := Raw Concat Raw
+				   | Raw Raw
+				   | Raw
+
+Raw := Interpolation | Expression
+
+Interpolation := '#{' Expression '}'
+
+Expression := Term '+' Term
+	        | Term '-' Term
+			| Term
+
+Term := Factor '*' Factor
+		Factor '/' Factor
+
+Factor := Number | Variable
 
 Variable := T_VARIABLE
 
@@ -322,7 +337,7 @@ func (parser *Parser) ReduceFunctionCall() *ast.FunctionCall {
 	var ident = parser.next()
 	var fcall = ast.NewFunctionCall(ident.Str, *ident)
 
-	if tok := parser.accept(ast.T_PAREN_START); tok == nil {
+	if parser.accept(ast.T_PAREN_START) {
 		panic("Expecting parenthesis after ident")
 	}
 	var argTok = parser.peek()
@@ -337,8 +352,8 @@ func (parser *Parser) ReduceFunctionCall() *ast.FunctionCall {
 }
 
 func (parser *Parser) ReduceIdent() *ast.Ident {
-	var tok = parser.accept(ast.T_IDENT)
-	if tok == nil {
+	var tok = parser.next()
+	if tok.Type != ast.T_IDENT {
 		panic("Invalid token for ident.")
 	}
 	return ast.NewIdent(tok.Str, *tok)
@@ -417,8 +432,9 @@ func (parser *Parser) ReduceExpression() ast.Expression {
 	if parser.acceptTypes([]ast.TokenType{ast.T_PLUS, ast.T_MINUS}) {
 		// reduce another term
 		parser.ReduceTerm()
-	} else {
-
+	} else if parser.accept(ast.T_CONCAT) {
+		var concat = ast.NewConcat()
+		_ = concat
 	}
 	return nil
 }

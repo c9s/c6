@@ -2,6 +2,7 @@ package ast
 
 type Expression interface {
 	CanBeExpression()
+	// String() string
 }
 
 type UnaryExpression struct {
