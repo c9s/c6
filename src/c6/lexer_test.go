@@ -85,11 +85,7 @@ func TestLexerTil(t *testing.T) {
 }
 
 func TestLexerAtRuleImport(t *testing.T) {
-	l := NewLexerWithString(`@import "test.css";`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_IMPORT, ast.T_QQ_STRING, ast.T_SEMICOLON})
-	l.close()
+	AssertLexerTokenSequence(t, `@import "test.css";`, []ast.TokenType{ast.T_IMPORT, ast.T_QQ_STRING, ast.T_SEMICOLON})
 }
 
 func TestLexerAtRuleImportWithUrl(t *testing.T) {
@@ -108,19 +104,15 @@ func TestLexerAtRuleImportWithUrl(t *testing.T) {
 }
 
 func TestLexerAtRuleImportWithUrlAndMediaList(t *testing.T) {
-	l := NewLexerWithString(`@import url("test.css") screen;`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_START, ast.T_QQ_STRING, ast.T_PAREN_END, ast.T_MEDIA, ast.T_SEMICOLON})
-	l.close()
+	AssertLexerTokenSequence(t, `@import url("test.css") screen;`, []ast.TokenType{
+		ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_START, ast.T_QQ_STRING, ast.T_PAREN_END, ast.T_MEDIA, ast.T_SEMICOLON,
+	})
 }
 
 func TestLexerAtRuleImportWithUnquoteUrl(t *testing.T) {
-	l := NewLexerWithString(`@import url(http://foo.com/bar/test.css);`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_START, ast.T_UNQUOTE_STRING, ast.T_PAREN_END, ast.T_SEMICOLON})
-	l.close()
+	AssertLexerTokenSequence(t, `@import url(http://foo.com/bar/test.css);`, []ast.TokenType{
+		ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_START, ast.T_UNQUOTE_STRING, ast.T_PAREN_END, ast.T_SEMICOLON,
+	})
 }
 
 /*
@@ -134,132 +126,86 @@ func TestLexerAtRuleImportWithQuoteUrl(t *testing.T) {
 */
 
 func TestLexerRuleWithOneProperty(t *testing.T) {
-	l := NewLexerWithString(`.test { color: #fff; }`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{
+	AssertLexerTokenSequence(t, `.test { color: #fff; }`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
 		ast.T_BRACE_END})
-	l.close()
 }
 
 func TestLexerRuleWithTwoProperty(t *testing.T) {
-	l := NewLexerWithString(`.test { color: #fff; background: #fff; }`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{
+	AssertLexerTokenSequence(t, `.test { color: #fff; background: #fff; }`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
 		ast.T_BRACE_END})
-	l.close()
 }
 
 func TestLexerRuleWithPropertyValueComma(t *testing.T) {
-	l := NewLexerWithString(`.test { font-family: Arial, sans-serif }`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{
+	AssertLexerTokenSequence(t, `.test { font-family: Arial, sans-serif }`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_IDENT, ast.T_COMMA, ast.T_IDENT,
-		ast.T_BRACE_END})
-	l.close()
+		ast.T_BRACE_END,
+	})
 }
 
 func TestLexerRuleWithVendorPrefixPropertyName(t *testing.T) {
-	l := NewLexerWithString(`.test { -webkit-transition: none; }`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{
+	AssertLexerTokenSequence(t, `.test { -webkit-transition: none; }`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
 		ast.T_BRACE_END})
-	l.close()
 }
 
 func TestLexerRuleWithVariableAsPropertyValue(t *testing.T) {
-	l := NewLexerWithString(`.test { color: $favorite; }`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{
+	AssertLexerTokenSequence(t, `.test { color: $favorite; }`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_VARIABLE, ast.T_SEMICOLON,
 		ast.T_BRACE_END})
-	l.close()
 }
 
 func TestLexerVariableAssignment(t *testing.T) {
-	l := NewLexerWithString(`$favorite: #fff;`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON})
-	l.close()
+	AssertLexerTokenSequence(t, `$favorite: #fff;`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON})
 }
 
 func TestLexerVariableWithPtValue(t *testing.T) {
-	l := NewLexerWithString(`$foo: 10pt;`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{
+	AssertLexerTokenSequence(t, `$foo: 10pt;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PT, ast.T_SEMICOLON,
 	})
-	l.close()
 }
 
 func TestLexerVariableWithPxValue(t *testing.T) {
-	l := NewLexerWithString(`$foo: 10px;`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{
+	AssertLexerTokenSequence(t, `$foo: 10px;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON,
 	})
-	l.close()
 }
 
 func TestLexerVariableWithEmValue(t *testing.T) {
-	l := NewLexerWithString(`$foo: 0.3em;`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{
+	AssertLexerTokenSequence(t, `$foo: 0.3em;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_EM, ast.T_SEMICOLON,
 	})
-	l.close()
 }
 
 func TestLexerVariableWithPercent(t *testing.T) {
-	l := NewLexerWithString(`width: 20%;`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{
+	AssertLexerTokenSequence(t, `width: 20%;`, []ast.TokenType{
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PERCENT, ast.T_SEMICOLON,
 	})
-	l.close()
 }
 
 func TestLexerMultipleVariableAssignment(t *testing.T) {
-	l := NewLexerWithString(`$favorite: #fff; $foo: 10em;`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{
+	AssertLexerTokenSequence(t, `$favorite: #fff; $foo: 10em;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
 		ast.T_VARIABLE, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_EM, ast.T_SEMICOLON,
 	})
-	l.close()
 }
 
 func TestLexerInterpolationPropertyValue(t *testing.T) {
-	l := NewLexerWithString(`.test {
+	AssertLexerTokenSequence(t, `.test {
 		-webkit-transition: #{ 1 + 2 }px
-	}`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{
+	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
@@ -271,16 +217,12 @@ func TestLexerInterpolationPropertyValue(t *testing.T) {
 		ast.T_CONCAT,
 		ast.T_IDENT,
 		ast.T_BRACE_END})
-	l.close()
 }
 
 func TestLexerInterpolationPropertyValueList(t *testing.T) {
-	l := NewLexerWithString(`.test {
+	AssertLexerTokenSequence(t, `.test {
 		padding: #{ 1 + 2 }px 10px;
-	}`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{
+	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
@@ -295,7 +237,6 @@ func TestLexerInterpolationPropertyValueList(t *testing.T) {
 		ast.T_UNIT_PX,
 		ast.T_SEMICOLON,
 		ast.T_BRACE_END})
-	l.close()
 }
 
 func TestLexerInterpolationLeadingInterpolation(t *testing.T) {
