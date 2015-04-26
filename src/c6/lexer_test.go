@@ -314,6 +314,27 @@ func TestLexerInterpolationPropertyValueListWithoutSemiColon(t *testing.T) {
 	})
 }
 
+func TestLexerGradientFunction(t *testing.T) {
+	AssertLexerTokenSequence(t, `.test {
+		background-image: -moz-linear-gradient(top, #81a8cb, #4477a1);
+	}`, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+		ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_COLON,
+		ast.T_IDENT,
+		ast.T_PAREN_START,
+		ast.T_IDENT,
+		ast.T_COMMA,
+		ast.T_HEX_COLOR,
+		ast.T_COMMA,
+		ast.T_HEX_COLOR,
+		ast.T_PAREN_END,
+		ast.T_SEMICOLON,
+		ast.T_BRACE_END,
+	})
+}
+
 func TestLexerInterpolationPropertyName(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test {
 		#{ "foo" }: #{ 1 + 2 }px;

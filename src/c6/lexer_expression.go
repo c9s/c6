@@ -5,7 +5,7 @@ import "c6/ast"
 
 func lexIdentifier(l *Lexer) stateFn {
 	var r = l.next()
-	if !unicode.IsLetter(r) {
+	if !unicode.IsLetter(r) && r != '-' {
 		panic("An identifier needs to start with a letter")
 	}
 	r = l.next()
@@ -51,8 +51,12 @@ func lexExpression(l *Lexer) stateFn {
 
 	} else if r == '-' {
 
-		l.next()
-		l.emit(ast.T_MINUS)
+		if unicode.IsLetter(l.peekBy(2)) {
+			lexIdentifier(l)
+		} else {
+			l.next()
+			l.emit(ast.T_MINUS)
+		}
 
 	} else if r == '*' {
 
