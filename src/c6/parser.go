@@ -208,13 +208,23 @@ Rule := SelectorList '{'
 			RuleSet
 		'}'
 
-Expr := Expr '+' Expr
-      | Expr '-' Expr
-      | Expr '*' Expr
-      | Expr '/' Expr
-	  | '(' Expr ')'
-	  | Scalar
-	  | Variable
+	(3px + 4px) 10px#{ 10px + 20px }px;
+
+
+	(T_RAW T_INTERPOLATION_START ... T_INTERPOLATION_END T_RAW)
+	(T_INTERPOLATION_START ... T_INTERPOLATION_END)
+	(T_RAW T_INTERPOLATION_START ... T_INTERPOLATION_END)
+
+	when the last token is not space, and the next token is a interpolation, we send out a concat token,
+	and the previous can be an expression (ident, number or anything)
+
+
+	{expression}	{concat}
+						|
+				  {interpolation}
+						|
+				   {expression}
+
 
 Variable := T_VARIABLE
 

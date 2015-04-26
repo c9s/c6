@@ -266,7 +266,18 @@ func lexSemiColon(l *Lexer) stateFn {
 func lexVariableAssignment(l *Lexer) stateFn {
 	lexVariableName(l)
 	lexColon(l)
-	return lexExpression(l)
+	var r = l.peek()
+	for r != ';' && r != '}' {
+		lexExpression(l)
+		r = l.peek()
+	}
+	r = l.next()
+	if r == ';' {
+		l.emit(ast.T_SEMICOLON)
+	} else if r == '}' {
+		l.emit(ast.T_BRACE_END)
+	}
+	return lexStatement
 }
 
 // $var-rgba(255,255,0)
@@ -501,7 +512,7 @@ func lexStatement(l *Lexer) stateFn {
 		if isSelector {
 			return lexSelectors
 		} else {
-			return lexPropertyName
+			return lexProperty
 		}
 	} else if r == '"' || r == '\'' {
 		return lexString

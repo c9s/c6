@@ -354,3 +354,83 @@ func TestLexerRuleWithSubRuleWithParentSelector(t *testing.T) {
 		ast.T_BRACE_END})
 	l.close()
 }
+
+func TestLexerSelectorInterpolationSuffix(t *testing.T) {
+	l := NewLexerWithString(`#myPost#{ abc } {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_INTERPOLATION_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	l.close()
+}
+
+func TestLexerSelectorInterpolationPrefix(t *testing.T) {
+	l := NewLexerWithString(`#{ abc }#myPost {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_INTERPOLATION_SELECTOR, ast.T_ID_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	l.close()
+}
+
+func TestLexerSelectorInterpolationWithPseudoSelector(t *testing.T) {
+	l := NewLexerWithString(`#{ abc }:hover {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_INTERPOLATION_SELECTOR, ast.T_PSEUDO_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	l.close()
+}
+
+func TestLexerSelectorInterpolationWithPseudoSuffix(t *testing.T) {
+	l := NewLexerWithString(`#{ abc }:hover {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_INTERPOLATION_SELECTOR, ast.T_PSEUDO_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	l.close()
+}
+
+func TestLexerSelectorInterpolationInTheMiddleOfTypeSelector(t *testing.T) {
+	l := NewLexerWithString(`foo#{ abc }bar {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_INTERPOLATION_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	l.close()
+}
+
+func TestLexerSelectorInterpolationInTheMiddleOfClassSelector(t *testing.T) {
+	l := NewLexerWithString(`.foo#{ abc }bar {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_CLASS_SELECTOR, ast.T_CONCAT, ast.T_INTERPOLATION_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	l.close()
+}
+
+func TestLexerSelectorInterpolationWithSuffix(t *testing.T) {
+	l := NewLexerWithString(`#{ abc }foo#{ bar } {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_INTERPOLATION_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	l.close()
+}
+
+func TestLexerSelectorInterpolationInTheMiddleOfIdSelector(t *testing.T) {
+	l := NewLexerWithString(`#foo#{ abc }bar {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_INTERPOLATION_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	l.close()
+}
+
+func TestLexerSelectorInterpolationInTheMiddleOfPseudoSelector(t *testing.T) {
+	l := NewLexerWithString(`:#{ abc }bar {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_INTERPOLATION_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	l.close()
+}
+
+func TestLexerSelectorInterpolationInTheMiddleOfPseudoSelector2(t *testing.T) {
+	l := NewLexerWithString(`:hover#{ abc }bar {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_INTERPOLATION_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	l.close()
+}

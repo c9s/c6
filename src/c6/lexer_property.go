@@ -13,7 +13,7 @@ Possible property value syntax:
    width: auto;    // string constant
 
 */
-func lexPropertyName(l *Lexer) stateFn {
+func lexProperty(l *Lexer) stateFn {
 	var r rune = l.next()
 	for r == '-' || unicode.IsLetter(r) {
 		r = l.next()
@@ -21,7 +21,19 @@ func lexPropertyName(l *Lexer) stateFn {
 	l.backup()
 	l.emit(ast.T_PROPERTY_NAME)
 	lexColon(l)
-	return lexExpression
+
+	r = l.peek()
+	for r != ';' && r != '}' {
+		lexExpression(l)
+		r = l.peek()
+	}
+	r = l.next()
+	if r == ';' {
+		l.emit(ast.T_SEMICOLON)
+	} else if r == '}' {
+		l.emit(ast.T_BRACE_END)
+	}
+	return lexStatement
 }
 
 func lexColon(l *Lexer) stateFn {

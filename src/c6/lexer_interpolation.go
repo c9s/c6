@@ -1,6 +1,7 @@
 package c6
 
 import "c6/ast"
+import "unicode"
 
 /*
 There are 3 scope that users may use interpolation syntax:
@@ -44,5 +45,37 @@ func lexInterpolation(l *Lexer, emit bool) stateFn {
 		}
 	}
 	l.rollback()
+	return nil
+}
+
+// Lex the expression inside interpolation
+func lexInterpolation2(l *Lexer) stateFn {
+	var r rune = l.next()
+	if r != '#' {
+		l.error("Expecting interpolation token '#', Got %s", r)
+	}
+	r = l.next()
+	if r != '{' {
+		l.error("Expecting interpolation token '{', Got %s", r)
+	}
+	l.emit(ast.T_INTERPOLATION_START)
+
+	// skip the space after #{
+	l.ignoreSpaces()
+
+	r = l.peek()
+	for r != '}' {
+		lexExpression(l)
+
+		// ignore space
+		l.ignoreSpaces()
+		r = l.peek()
+	}
+	l.emit(ast.T_INTERPOLATION_END)
+
+	r = l.peek()
+	if !unicode.IsSpace(r) {
+		l.emit(ast.T_CONCAT)
+	}
 	return nil
 }

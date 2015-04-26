@@ -26,10 +26,11 @@ func lexIdentifier(l *Lexer) stateFn {
 }
 
 func lexExpression(l *Lexer) stateFn {
-
 	// ignore spaces
 	var r = l.next()
+	var leadingSpace = false
 	for r == ' ' {
+		leadingSpace = true
 		r = l.next()
 	}
 	l.backup()
@@ -93,9 +94,11 @@ func lexExpression(l *Lexer) stateFn {
 		return lexExpression
 
 	} else if r == '#' {
-
 		if l.peekBy(2) == '{' {
-			lexInterpolation(l, true)
+			if leadingSpace {
+				l.emit(ast.T_CONCAT)
+			}
+			lexInterpolation2(l)
 			return lexExpression
 		}
 
@@ -111,18 +114,6 @@ func lexExpression(l *Lexer) stateFn {
 
 		lexIdentifier(l)
 		return lexExpression
-
-	} else if r == ';' {
-
-		l.next()
-		l.emit(ast.T_SEMICOLON)
-		return lexStatement
-
-	} else if r == '}' {
-
-		l.next()
-		l.emit(ast.T_BRACE_END)
-		return lexStatement
 
 	} else if r == EOF {
 		// panic("Unexpected end of file")
