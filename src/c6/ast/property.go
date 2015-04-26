@@ -1,5 +1,8 @@
 package ast
 
+/**
+An property may contains interpolation
+*/
 type Property struct {
 	Name PropertyName
 	/**
@@ -13,7 +16,7 @@ type Property struct {
 /**
 Property is one of the declaration
 */
-func (self Property) IsDeclaration() {}
+func (self Property) CanBeDeclaration() {}
 
 func (self Property) AppendValue(value Expression) {
 	self.Values = append(self.Values, value)
@@ -23,5 +26,9 @@ type PropertyName struct {
 	String string
 	// If there is an interpolation in the property name
 	Interpolation bool
-	Token         Token
+	Token         *Token
+}
+
+func NewPropertyName(tok *Token) *PropertyName {
+	return &PropertyName{tok.Str, tok.ContainsInterpolation, tok}
 }

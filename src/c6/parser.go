@@ -371,6 +371,7 @@ func (parser *Parser) ReduceFactor() ast.Expression {
 		return ast.Expression(number)
 
 	} else if tok.Type == ast.T_IDENT {
+
 		// check if it's a function call
 		if parenTok := parser.peekBy(2); parenTok.Type == ast.T_PAREN_START {
 			var fcall = parser.ReduceFunctionCall()
@@ -379,6 +380,7 @@ func (parser *Parser) ReduceFactor() ast.Expression {
 			var ident = parser.ReduceIdent()
 			return ast.Expression(ident)
 		}
+
 	} else if tok.Type == ast.T_HEX_COLOR {
 		panic("hex color is not implemented yet")
 	}
@@ -448,8 +450,8 @@ func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.Dec
 			// skip T_COLON
 			parser.next()
 
-			var propertyName = ast.PropertyName{tok.Str, tok.ContainsInterpolation, *tok}
-			var property = ast.Property{propertyName, []ast.Expression{}}
+			var propertyName = ast.NewPropertyName(tok)
+			var property = ast.Property{*propertyName, []ast.Expression{}}
 
 			tok := parser.peek()
 

@@ -11,5 +11,5 @@ type VariableAssignment struct {
 /*
 Property is one of the declaration
 */
-func (self VariableAssignment) IsDeclaration() {}
+func (self VariableAssignment) CanBeDeclaration() {}
 func (self VariableAssignment) CanBeStatement()   {}
