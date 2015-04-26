@@ -26,18 +26,9 @@ func lexIdentifier(l *Lexer) stateFn {
 }
 
 func lexExpression(l *Lexer) stateFn {
+	l.ignoreSpaces()
 
-	// ignore spaces
-	var r = l.next()
-	var leadingSpace = false
-	for r == ' ' || r == '\r' || r == '\n' || r == '\t' {
-		leadingSpace = true
-		r = l.next()
-	}
-	l.backup()
-	l.ignore()
-
-	r = l.peek()
+	var r = l.peek()
 
 	if r == 't' && l.match("true") {
 
@@ -112,9 +103,6 @@ func lexExpression(l *Lexer) stateFn {
 	} else if r == '#' {
 
 		if l.peekBy(2) == '{' {
-			if !leadingSpace {
-				l.emit(ast.T_CONCAT)
-			}
 			lexInterpolation2(l)
 			return lexExpression
 		}

@@ -29,10 +29,12 @@ PropertyValue	:= Expression Concat Expression
 
 Url := T_URL '(' T_QQ_STRING ')'
 
-Expression := '#{' Expression '}'
+Expression := Interpolation
 			| Term '+' Term
 	        | Term '-' Term
 			| Term
+
+Interpolation := "#{" Expression "}"
 
 Term := Factor '*' Factor
 		Factor '/' Factor

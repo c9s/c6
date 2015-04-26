@@ -61,6 +61,7 @@ func TestParserMassiveRules(t *testing.T) {
 		`div { color: rgb(255,255,255); }`,
 		`div { color: rgba(255,255,255,0); }`,
 		`div { background-image: url("../images/foo.png"); }`,
+		// `div { color: #ccddee; }`,
 	}
 	for _, buffer := range buffers {
 		t.Logf("Input %s", buffer)

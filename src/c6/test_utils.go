@@ -5,6 +5,14 @@ import "testing"
 import "fmt"
 import "c6/ast"
 
+func AssertLexerTokenSequence(t *testing.T, scss string, tokenList []ast.TokenType) {
+	var lexer = NewLexerWithString(scss)
+	assert.NotNil(t, lexer)
+	lexer.run()
+	AssertTokenSequence(t, lexer, tokenList)
+	lexer.close()
+}
+
 func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []ast.TokenType) []ast.Token {
 	fmt.Printf("Input: %s\n", l.Input)
 

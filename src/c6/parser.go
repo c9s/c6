@@ -29,7 +29,7 @@ const debugParser = true
 
 func debug(format string, args ...interface{}) {
 	if debugParser {
-		fmt.Printf(format, args...)
+		fmt.Printf(format+"\n", args...)
 	}
 }
 
@@ -286,19 +286,22 @@ works for:
 	'0.2' 'em'
 */
 func (parser *Parser) ReduceNumber() ast.Number {
-	// the value token
-	var value = parser.next()
+	// the number token
+	var tok = parser.next()
+
+	debug("ReduceNumber => next: %s", tok)
+
 	var tok2 = parser.peek()
 	var number ast.Number
-	if value.Type == ast.T_INTEGER {
-		i, err := strconv.ParseInt(value.Str, 10, 64)
+	if tok.Type == ast.T_INTEGER {
+		i, err := strconv.ParseInt(tok.Str, 10, 64)
 		if err != nil {
 			panic(err)
 		}
 		number = ast.NewIntegerNumber(i)
 	} else {
 
-		f, err := strconv.ParseFloat(value.Str, 64)
+		f, err := strconv.ParseFloat(tok.Str, 64)
 		if err != nil {
 			panic(err)
 		}
@@ -316,7 +319,7 @@ func (parser *Parser) ReduceNumber() ast.Number {
 func (parser *Parser) ReduceFunctionCall() *ast.FunctionCall {
 	var identTok = parser.next()
 
-	debug("ReduceFunctionCall => next: %s\n", identTok)
+	debug("ReduceFunctionCall => next: %s", identTok)
 
 	var fcall = ast.NewFunctionCall(identTok)
 
@@ -326,7 +329,7 @@ func (parser *Parser) ReduceFunctionCall() *ast.FunctionCall {
 	for argTok.Type != ast.T_PAREN_END {
 		var arg = parser.ReduceFactor()
 		fcall.AppendArgument(arg)
-		debug("ReduceFunctionCall => arg: %+v\n", arg)
+		debug("ReduceFunctionCall => arg: %+v", arg)
 
 		argTok = parser.peek()
 		if argTok.Type == ast.T_COMMA {
@@ -342,7 +345,7 @@ func (parser *Parser) ReduceFunctionCall() *ast.FunctionCall {
 
 func (parser *Parser) ReduceIdent() *ast.Ident {
 	var tok = parser.next()
-	debug("ReduceIndent => next: %s\n", tok)
+	debug("ReduceIndent => next: %s", tok)
 
 	if tok.Type != ast.T_IDENT {
 		panic("Invalid token for ident.")
@@ -355,7 +358,7 @@ The ReduceFactor must return an Expression interface compatible object
 */
 func (parser *Parser) ReduceFactor() ast.Expression {
 	var tok = parser.peek()
-	debug("ReduceFactor => peek: %s\n", tok)
+	debug("ReduceFactor => peek: %s", tok)
 
 	if tok.Type == ast.T_PAREN_START {
 
@@ -406,7 +409,7 @@ func (parser *Parser) ReduceFactor() ast.Expression {
 }
 
 func (parser *Parser) ReduceTerm() ast.Expression {
-	fmt.Println("ReduceTerm")
+	debug("ReduceTerm")
 
 	var expr1 = parser.ReduceFactor()
 
@@ -436,10 +439,16 @@ Expression := "#{" Expression "}"
 			| Term
 */
 func (parser *Parser) ReduceExpression() ast.Expression {
-	fmt.Println("ReduceExpression")
+	debug("ReduceExpression")
+
 	if parser.accept(ast.T_INTERPOLATION_START) {
+		debug("ReduceExpression => accept: T_INTERPOLATION_START")
+
+		debug("ReduceExpression => ReduceExpression")
 		var expr = parser.ReduceExpression()
+
 		parser.expect(ast.T_INTERPOLATION_END)
+		debug("ReduceExpression => expect: T_INTERPOLATION_START")
 		return expr
 	}
 
