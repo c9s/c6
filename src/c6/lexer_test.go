@@ -239,13 +239,16 @@ func TestLexerInterpolationPropertyValueList(t *testing.T) {
 		ast.T_BRACE_END})
 }
 
-func TestLexerInterpolationLeadingInterpolation(t *testing.T) {
+func TestLexerInterpolationLeadingAndTrailing(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test {
-		padding: #{ 1 + 2 }#{ 3 + 4 }px;
+		padding: 10#{ 1 + 1 }#{ 2 + 2 }px;
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
+
+		ast.T_INTEGER,
+		ast.T_CONCAT,
 
 		ast.T_INTERPOLATION_START,
 		ast.T_INTEGER, ast.T_PLUS, ast.T_INTEGER,

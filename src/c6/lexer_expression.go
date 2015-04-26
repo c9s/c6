@@ -33,7 +33,6 @@ func lexExpression(l *Lexer) stateFn {
 	if r == 't' && l.match("true") {
 
 		l.emit(ast.T_TRUE)
-		return lexExpression
 
 	} else if r == 'f' && l.match("false") {
 
@@ -43,90 +42,91 @@ func lexExpression(l *Lexer) stateFn {
 	} else if r == 'n' && l.match("null") {
 
 		l.emit(ast.T_NULL)
-		return lexExpression
 
 	} else if unicode.IsDigit(r) {
 
 		if fn := lexNumber(l); fn != nil {
 			fn(l)
 		}
-		return lexExpression
 
 	} else if r == '-' {
 
 		l.next()
 		l.emit(ast.T_MINUS)
-		return lexExpression
 
 	} else if r == '*' {
 
 		l.next()
 		l.emit(ast.T_MUL)
-		return lexExpression
 
 	} else if r == '+' {
 
 		l.next()
 		l.emit(ast.T_PLUS)
-		return lexExpression
 
 	} else if r == '/' {
 
 		l.next()
 		l.emit(ast.T_DIV)
-		return lexExpression
 
 	} else if r == '(' {
 
 		l.next()
 		l.emit(ast.T_PAREN_START)
-		return lexExpression
 
 	} else if r == ')' {
 
 		l.next()
 		l.emit(ast.T_PAREN_END)
-		return lexExpression
 
 	} else if r == ' ' {
 
 		l.next()
 		l.ignore()
-		return lexExpression
 
 	} else if r == ',' {
 
 		l.next()
 		l.emit(ast.T_COMMA)
-		return lexExpression
 
 	} else if r == '#' {
 
 		if l.peekBy(2) == '{' {
+			// It handles the concat after interpolation
 			lexInterpolation2(l)
 			return lexExpression
-		}
 
-		lexHexColor(l)
-		return lexExpression
+		} else {
+			lexHexColor(l)
+		}
 
 	} else if r == '"' || r == '\'' {
 
 		lexString(l)
-		return lexExpression
 
 	} else if r == '$' {
 
 		lexVariableName(l)
-		return lexExpression
 
 	} else if unicode.IsLetter(r) {
 
 		lexIdentifier(l)
-		return lexExpression
 
 	} else if r == EOF {
+
 		return nil
+
+	} else {
+
+		return nil
+
 	}
-	return nil
+
+	if l.peek() == '#' && l.peekBy(2) == '{' {
+		// inject a ast.T_CONCAT since we have an interpolation following the expression
+		l.emit(ast.T_CONCAT)
+	}
+
+	// the default return stats
+	return lexExpression
 }
