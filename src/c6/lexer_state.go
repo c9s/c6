@@ -448,17 +448,25 @@ func lexStatement(l *Lexer) stateFn {
 		return lexStatement
 
 	} else if r == '$' { // it's a variable assignment statement
+
 		return lexVariableAssignment
+
 	} else if r == '[' || r == '*' || r == '>' || r == '&' || r == '#' || r == '.' || r == '+' || r == ':' {
+
 		return lexSelectors
+
 	} else if r == ';' {
+
 		l.next()
 		l.emit(ast.T_SEMICOLON)
 		return lexStart
+
 	} else if r == ',' {
+
 		l.next()
 		l.emit(ast.T_COMMA)
 		return lexStart
+
 	} else if r == '-' {
 
 		// lex the slash prefix property name
@@ -474,7 +482,7 @@ func lexStatement(l *Lexer) stateFn {
 		r = l.next()
 		for {
 			// ignore interpolation
-			if r == '#' && l.peekBy(2) == '{' {
+			if r == '#' && l.peek() == '{' {
 				// find the matching brace
 				r = l.next()
 				for r != '}' {
@@ -512,6 +520,15 @@ func lexStatement(l *Lexer) stateFn {
 	}
 	return nil
 }
+
+/*
+func lexKeywords(l *Lexer) stateFn {
+	// "!global"
+	// "!important"
+	// "!optional"
+	// !default
+}
+*/
 
 func lexStart(l *Lexer) stateFn {
 	return lexStatement

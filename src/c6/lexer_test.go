@@ -254,7 +254,9 @@ func TestLexerMultipleVariableAssignment(t *testing.T) {
 }
 
 func TestLexerInterpolationPropertyValue(t *testing.T) {
-	l := NewLexerWithString(`.test { -webkit-transition: #{ 1 + 2 }px }`)
+	l := NewLexerWithString(`.test {
+		-webkit-transition: #{ 1 + 2 }px
+	}`)
 	assert.NotNil(t, l)
 	l.run()
 	AssertTokenSequence(t, l, []ast.TokenType{
@@ -272,7 +274,70 @@ func TestLexerInterpolationPropertyValue(t *testing.T) {
 	l.close()
 }
 
+func TestLexerInterpolationPropertyValueList(t *testing.T) {
+	l := NewLexerWithString(`.test {
+		padding: #{ 1 + 2 }px 10px;
+	}`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+		ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME, ast.T_COLON,
+		ast.T_INTERPOLATION_START,
+		ast.T_INTEGER,
+		ast.T_PLUS,
+		ast.T_INTEGER,
+		ast.T_INTERPOLATION_END,
+		ast.T_CONCAT,
+		ast.T_IDENT,
+		ast.T_INTEGER,
+		ast.T_UNIT_PX,
+		ast.T_SEMICOLON,
+		ast.T_BRACE_END})
+	l.close()
+}
+
+func TestLexerInterpolationPropertyValueListWithoutSemiColon(t *testing.T) {
+	l := NewLexerWithString(`.test {
+		padding: #{ 1 + 2 }px 10px
+	}`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+		ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME, ast.T_COLON,
+		ast.T_INTERPOLATION_START,
+		ast.T_INTEGER,
+		ast.T_PLUS,
+		ast.T_INTEGER,
+		ast.T_INTERPOLATION_END,
+		ast.T_CONCAT,
+		ast.T_IDENT,
+		ast.T_INTEGER,
+		ast.T_UNIT_PX,
+		ast.T_BRACE_END})
+	l.close()
+}
+
 func TestLexerInterpolationPropertyName(t *testing.T) {
+	l := NewLexerWithString(`.test { -webkit-transition: #{ 1 + 2 }px }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+		ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME, ast.T_COLON,
+		ast.T_INTERPOLATION_START,
+		ast.T_INTEGER,
+		ast.T_PLUS,
+		ast.T_INTEGER,
+		ast.T_INTERPOLATION_END,
+		ast.T_CONCAT,
+		ast.T_IDENT,
+		ast.T_BRACE_END})
+	l.close()
 
 }
 

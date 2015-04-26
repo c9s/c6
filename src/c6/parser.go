@@ -15,6 +15,11 @@ const (
 	SassFileType
 )
 
+type ParserContext struct {
+	ParentRuleSet  *ast.RuleSet
+	CurrentRuleSet *ast.RuleSet
+}
+
 type ParserError struct {
 	ExpectingToken string
 	ActualToken    string
@@ -407,11 +412,20 @@ func (parser *Parser) ReduceExpression() ast.Expression {
 /**
 The returned Expression is an interface
 */
-func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *ast.Property) {
+func (parser *Parser) ParsePropertyListValue(parentRuleSet *ast.RuleSet, property *ast.Property) {
 	tok := parser.peek()
+
+	// a list can end with ';' or '}'
 	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
-		parser.ReduceExpression()
+		expr := parser.ReduceExpression()
 		tok = parser.peek()
+
+		// see if the next is a comma
+		if tok.Type == ast.T_COMMA {
+			parser.next()
+			tok = parser.peek()
+		}
+		_ = expr
 	}
 	parser.accept(ast.T_SEMICOLON)
 }
@@ -432,11 +446,15 @@ func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.Dec
 			parser.next()
 
 			var property = ast.NewProperty(tok)
-			tok := parser.peek()
-			for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
-				parser.ReduceExpression()
-				tok = parser.peek()
-			}
+			parser.ParsePropertyListValue(parentRuleSet, property)
+
+			/*
+				tok := parser.peek()
+				for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
+					parser.ReduceExpression()
+					tok = parser.peek()
+				}
+			*/
 			_ = property
 
 		} else if tok.IsSelector() {

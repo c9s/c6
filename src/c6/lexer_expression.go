@@ -26,10 +26,11 @@ func lexIdentifier(l *Lexer) stateFn {
 }
 
 func lexExpression(l *Lexer) stateFn {
+
 	// ignore spaces
 	var r = l.next()
 	var leadingSpace = false
-	for r == ' ' {
+	for r == ' ' || r == '\r' || r == '\n' || r == '\t' {
 		leadingSpace = true
 		r = l.next()
 	}
@@ -46,6 +47,11 @@ func lexExpression(l *Lexer) stateFn {
 	} else if r == 'f' && l.match("false") {
 
 		l.emit(ast.T_FALSE)
+		return lexExpression
+
+	} else if r == 'n' && l.match("null") {
+
+		l.emit(ast.T_NULL)
 		return lexExpression
 
 	} else if unicode.IsDigit(r) {
@@ -127,7 +133,6 @@ func lexExpression(l *Lexer) stateFn {
 		return lexExpression
 
 	} else if r == EOF {
-		// panic("Unexpected end of file")
 		return nil
 	}
 	return nil

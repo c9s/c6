@@ -20,7 +20,7 @@ type Token struct {
 Implement the stringer interface
 */
 func (tok Token) String() string {
-	return fmt.Sprintf("'%s' (%s) at line %d, %d", tok.Str, tok.Type.String(), tok.Line, tok.Pos)
+	return fmt.Sprintf("'%s' (%s) at line %d, %d", tok.Str, tok.Type, tok.Line, tok.Pos)
 }
 
 func (tok Token) IsString() bool {
@@ -67,6 +67,7 @@ const (
 
 	T_TRUE
 	T_FALSE
+	T_NULL
 
 	// selector tokens
 	T_ID_SELECTOR

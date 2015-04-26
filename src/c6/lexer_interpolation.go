@@ -2,6 +2,7 @@ package c6
 
 import "c6/ast"
 import "unicode"
+import _ "fmt"
 
 /*
 There are 3 scope that users may use interpolation syntax:
@@ -70,6 +71,7 @@ func lexInterpolation2(l *Lexer) stateFn {
 		// ignore space
 		l.ignoreSpaces()
 		r = l.peek()
+
 	}
 	l.next() // consume '}'
 	l.emit(ast.T_INTERPOLATION_END)
