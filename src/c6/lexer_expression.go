@@ -122,6 +122,11 @@ func lexExpression(l *Lexer) stateFn {
 		lexHexColor(l)
 		return lexExpression
 
+	} else if r == '"' || r == '\'' {
+
+		lexString(l)
+		return lexExpression
+
 	} else if r == '$' {
 
 		lexVariableName(l)

@@ -451,10 +451,6 @@ func lexStatement(l *Lexer) stateFn {
 
 		return lexVariableAssignment
 
-	} else if r == '[' || r == '*' || r == '>' || r == '&' || r == '#' || r == '.' || r == '+' || r == ':' {
-
-		return lexSelectors
-
 	} else if r == ';' {
 
 		l.next()
@@ -472,7 +468,7 @@ func lexStatement(l *Lexer) stateFn {
 		// lex the slash prefix property name
 		return lexProperty
 
-	} else if unicode.IsLetter(r) { // it might be -vendor- property or a property name or a selector
+	} else if r == '#' || unicode.IsLetter(r) { // it might be -vendor- property or a property name or a selector
 
 		// detect selector syntax
 		l.remember()
@@ -511,6 +507,11 @@ func lexStatement(l *Lexer) stateFn {
 		} else {
 			return lexProperty
 		}
+
+	} else if r == '[' || r == '*' || r == '>' || r == '&' || r == '#' || r == '.' || r == '+' || r == ':' {
+
+		return lexSelectors
+
 	} else if r == '"' || r == '\'' {
 		return lexString
 	} else if r == EOF {

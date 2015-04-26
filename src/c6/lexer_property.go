@@ -14,23 +14,27 @@ Possible property value syntax:
 
 */
 func lexProperty(l *Lexer) stateFn {
-	var r rune = l.next()
 
 	// accept all leading slash
 	for l.accept("-") {
 	}
 
-	// a property must start with letters
-	if !l.acceptLetters() {
-		l.error("A property must starts with [a-zA-Z-]. Got %s", l.peek())
-	}
-
-	r = l.next()
-	for unicode.IsLetter(r) || unicode.IsDigit(r) || r == '-' {
+	var r = l.next()
+	for {
+		if r == '#' && l.peek() == '{' {
+			l.backup() // back to the position before '#'
+			lexInterpolation2(l)
+		} else if !unicode.IsLetter(r) && !unicode.IsDigit(r) && r != '-' {
+			break
+		}
 		r = l.next()
 	}
 	l.backup()
-	l.emit(ast.T_PROPERTY_NAME)
+
+	if l.precedeStartOffset() {
+		l.emit(ast.T_PROPERTY_NAME)
+	}
+
 	lexColon(l)
 
 	r = l.peek()
@@ -50,10 +54,9 @@ func lexProperty(l *Lexer) stateFn {
 func lexColon(l *Lexer) stateFn {
 	l.ignoreSpaces()
 	var r = l.next()
-	if r == ':' {
-		l.emit(ast.T_COLON)
-	} else {
+	if r != ':' {
 		l.error("Expecting ':' token, Got '%s'", r)
 	}
+	l.emit(ast.T_COLON)
 	return nil
 }
