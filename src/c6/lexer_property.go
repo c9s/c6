@@ -15,7 +15,18 @@ Possible property value syntax:
 */
 func lexProperty(l *Lexer) stateFn {
 	var r rune = l.next()
-	for r == '-' || unicode.IsLetter(r) {
+
+	// accept all leading slash
+	for l.accept("-") {
+	}
+
+	// a property must start with letters
+	if !l.acceptLetters() {
+		l.error("A property must starts with [a-zA-Z-]. Got %s", l.peek())
+	}
+
+	r = l.next()
+	for unicode.IsLetter(r) || unicode.IsDigit(r) || r == '-' {
 		r = l.next()
 	}
 	l.backup()

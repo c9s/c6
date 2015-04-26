@@ -1,5 +1,7 @@
 package ast
 
+import "fmt"
+
 //go:generate stringer -type=TokenType token.go
 type TokenType int
 
@@ -12,6 +14,13 @@ type Token struct {
 	Pos                   int
 	Line                  int
 	ContainsInterpolation bool
+}
+
+/**
+Implement the stringer interface
+*/
+func (tok Token) String() string {
+	return fmt.Sprintf("'%s' (%s) at line %d, %d", tok.Str, tok.Type.String(), tok.Line, tok.Pos)
 }
 
 func (tok Token) IsString() bool {

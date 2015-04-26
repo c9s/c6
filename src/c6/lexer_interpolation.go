@@ -71,10 +71,11 @@ func lexInterpolation2(l *Lexer) stateFn {
 		l.ignoreSpaces()
 		r = l.peek()
 	}
+	l.next() // consume '}'
 	l.emit(ast.T_INTERPOLATION_END)
 
 	r = l.peek()
-	if !unicode.IsSpace(r) {
+	if !unicode.IsSpace(r) && r != '}' && r != ';' {
 		l.emit(ast.T_CONCAT)
 	}
 	return nil

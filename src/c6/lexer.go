@@ -13,7 +13,7 @@ const TOKEN_CHANNEL_BUFFER = 1024
 
 const EOF = -1
 
-const DEBUG_EMIT = false
+const DEBUG_EMIT = true
 
 type Lexer struct {
 	// lex input
@@ -157,6 +157,19 @@ func (l *Lexer) acceptLettersAndDigits() bool {
 	}
 	l.backup()
 	return l.Offset > l.Start
+}
+
+// Return the current token string but not consume it
+func (l *Lexer) current() string {
+	if l.Offset >= len(l.Input) {
+		return ""
+	}
+	return l.Input[l.Start:l.Offset]
+}
+
+// Return the length of the current token
+func (l *Lexer) length() int {
+	return l.Offset - l.Start
 }
 
 // next returns the next rune in the input.
@@ -304,7 +317,10 @@ func (l *Lexer) precedeStartOffset() bool {
 func (l *Lexer) ignoreSpaces() {
 	for {
 		var r rune = l.peek()
-		if r == ' ' || r == '\t' || r == '\n' || r == '\r' {
+		if r == '\n' {
+			l.Line++
+			l.next()
+		} else if r == ' ' || r == '\t' || r == '\r' {
 			l.next()
 		} else {
 			break

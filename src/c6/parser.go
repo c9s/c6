@@ -84,6 +84,17 @@ func (self *Parser) accept(tokenType ast.TokenType) *ast.Token {
 	return nil
 }
 
+func (self *Parser) expect(tokenType ast.TokenType) *ast.Token {
+	var tok = self.next()
+	if tok.Type != tokenType {
+		self.backup()
+		panic(fmt.Errorf("Expecting %s, Got %s", tokenType, tok))
+	}
+	return tok
+	return nil
+
+}
+
 func (self *Parser) acceptTypes(types []ast.TokenType) bool {
 	var p = self.Pos
 	var match = true
@@ -207,24 +218,6 @@ SelectorList := Selector | Selector ',' SelectorList
 Rule := SelectorList '{'
 			RuleSet
 		'}'
-
-	(3px + 4px) 10px#{ 10px + 20px }px;
-
-
-	(T_RAW T_INTERPOLATION_START ... T_INTERPOLATION_END T_RAW)
-	(T_INTERPOLATION_START ... T_INTERPOLATION_END)
-	(T_RAW T_INTERPOLATION_START ... T_INTERPOLATION_END)
-
-	when the last token is not space, and the next token is a interpolation, we send out a concat token,
-	and the previous can be an expression (ident, number or anything)
-
-
-	{expression}	{concat}
-						|
-				  {interpolation}
-						|
-				   {expression}
-
 
 Variable := T_VARIABLE
 
@@ -359,11 +352,18 @@ func (parser *Parser) ReduceFactor() ast.Expression {
 
 	if tok.Type == ast.T_PAREN_START {
 		// skip the parent
-		parser.accept(ast.T_PAREN_START)
+		parser.expect(ast.T_PAREN_START)
 		parser.ReduceExpression()
-		parser.accept(ast.T_PAREN_END)
+		parser.expect(ast.T_PAREN_END)
+
 		return nil
 		// _ = expr
+	} else if tok.Type == ast.T_INTERPOLATION_START {
+
+		parser.expect(ast.T_INTERPOLATION_START)
+		parser.ReduceExpression()
+		parser.expect(ast.T_INTERPOLATION_END)
+
 	} else if tok.Type == ast.T_INTEGER || tok.Type == ast.T_FLOAT {
 
 		// reduce number

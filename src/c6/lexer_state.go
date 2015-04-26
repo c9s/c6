@@ -327,16 +327,22 @@ func lexVariableName(l *Lexer) stateFn {
 func lexHexColor(l *Lexer) stateFn {
 	l.ignoreSpaces()
 	var r rune = l.next()
-	if r == '#' {
-		for l.accept("0123456789abcdefABCDEF") {
-		}
-		if (l.Offset-l.Start) != 4 && (l.Offset-l.Start) != 7 {
-			panic("Invalid hex color length")
-		}
-		l.emit(ast.T_HEX_COLOR)
-		return lexExpression
+	if r != '#' {
+		l.error("Expecting hex color, got '%s'", r)
 	}
-	l.error("Expecting hex color, got '%s'", r)
+
+	r = l.next()
+	for unicode.IsLetter(r) || unicode.IsDigit(r) {
+		r = l.next()
+	}
+	l.backup()
+
+	var length = l.length() - 1
+	if length != 3 && length != 6 {
+		panic(fmt.Errorf("Invalid hex color length, expecting 3 or 6, got %d - %s", length, l.current()))
+	}
+	l.emit(ast.T_HEX_COLOR)
+	return lexExpression
 	return nil
 }
 
@@ -435,7 +441,12 @@ func lexStatement(l *Lexer) stateFn {
 		l.next()
 		l.emit(ast.T_COMMA)
 		return lexStart
-	} else if r == '-' || unicode.IsLetter(r) { // it maybe -vendor- property or a property name
+	} else if r == '-' {
+
+		// lex the slash prefix property name
+		return lexProperty
+
+	} else if unicode.IsLetter(r) { // it might be -vendor- property or a property name or a selector
 
 		// detect selector syntax
 		l.remember()
@@ -453,8 +464,8 @@ func lexStatement(l *Lexer) stateFn {
 
 			// ignore interpolation
 			if r == '#' && l.peekBy(2) == '{' {
-				r = l.next()
 				// find the matching brace
+				r = l.next()
 				for r != '}' {
 					r = l.next()
 				}

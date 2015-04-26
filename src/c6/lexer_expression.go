@@ -95,7 +95,7 @@ func lexExpression(l *Lexer) stateFn {
 
 	} else if r == '#' {
 		if l.peekBy(2) == '{' {
-			if leadingSpace {
+			if !leadingSpace {
 				l.emit(ast.T_CONCAT)
 			}
 			lexInterpolation2(l)
