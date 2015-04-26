@@ -419,7 +419,10 @@ func TestLexerInterpolationPropertyName2(t *testing.T) {
 }
 
 func TestLexerRuleWithSubRule(t *testing.T) {
-	AssertLexerTokenSequence(t, `.test { -webkit-transition: none;   .foo { color: #fff; } }`, []ast.TokenType{
+	AssertLexerTokenSequence(t, `.test {
+		-webkit-transition: none;
+		.foo { color: #fff; }
+	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
