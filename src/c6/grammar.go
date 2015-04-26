@@ -15,22 +15,17 @@ Rule := SelectorList '{'
 
 Property := PropertyName ':' PropertyValue
 
-PropertyName :=  PropertyNameToken Concat PropertyNameToken
-			 |   PropertyNameToken
+PropertyName :=  Expression Concat Expression
+			 |   Expression
 
 PropertyNameToken := Ident | Interpolation
 
-PropertyValue	:= PropertyValueToken Concat PropertyValueToken
-				| PropertyValueToken PropertyValueToken
-				| PropertyValueToken
+PropertyValue	:= Expression Concat Expression
+				| Expression Expression
+				| Expression
 
-PropertyValueToken := Expression | Interpolation
-
-Raw := Interpolation | Expression
-
-Interpolation := '#{' Expression '}'
-
-Expression := Term '+' Term
+Expression := '#{' Expression '}'
+			| Term '+' Term
 	        | Term '-' Term
 			| Term
 

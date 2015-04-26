@@ -6,13 +6,12 @@ type Expression interface {
 }
 
 type UnaryExpression struct {
-	Op    *Op
-	Expr  Expression
-	Token Token
+	Op   *Op
+	Expr Expression
 }
 
-func NewUnaryExpression(op *Op, expr Expression, token Token) *UnaryExpression {
-	return &UnaryExpression{op, expr, token}
+func NewUnaryExpression(op *Op, expr Expression) *UnaryExpression {
+	return &UnaryExpression{op, expr}
 }
 
 func (self UnaryExpression) CanBeExpression() {}

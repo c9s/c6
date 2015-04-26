@@ -393,18 +393,43 @@ We here treat the property values as expressions:
 	padding: {expression} {expression} {expression};
 	margin: {expression};
 
+Expression := "#{" Expression "}"
+			| '+' Expression
+			| '-' Expression
+			| Term '+' Term
+			| Term '-' Term
+			| Term
 */
 func (parser *Parser) ReduceExpression() ast.Expression {
-	// plus or minus. this creates an unary expression that holds the later term.
-	parser.acceptTypes([]ast.TokenType{ast.T_PLUS, ast.T_MINUS})
+	if parser.accept(ast.T_INTERPOLATION_START) {
+		var expr = parser.ReduceExpression()
+		parser.expect(ast.T_INTERPOLATION_END)
+		return expr
+	}
 
-	parser.ReduceTerm()
-	if parser.acceptTypes([]ast.TokenType{ast.T_PLUS, ast.T_MINUS}) {
-		// reduce another term
-		parser.ReduceTerm()
-	} else if parser.accept(ast.T_CONCAT) {
-		var concat = ast.NewConcat()
-		_ = concat
+	// plus or minus. this creates an unary expression that holds the later term.
+	var tok = parser.peek()
+	if tok.Type == ast.T_PLUS || tok.Type == ast.T_MINUS {
+		parser.next()
+		var op = ast.NewOp(tok)
+		var expr = parser.ReduceExpression()
+		return ast.NewUnaryExpression(op, expr)
+	}
+
+	var leftTerm = parser.ReduceTerm()
+	var rightTok = parser.peek()
+	if rightTok.Type == ast.T_PLUS {
+		parser.next()
+		var op = ast.NewOp(rightTok)
+		var rightTerm = parser.ReduceTerm()
+		return ast.NewBinaryExpression(op, leftTerm, rightTerm)
+	} else if rightTok.Type == ast.T_MINUS {
+		parser.next()
+		var op = ast.NewOp(rightTok)
+		var rightTerm = parser.ReduceTerm()
+		return ast.NewBinaryExpression(op, leftTerm, rightTerm)
+	} else {
+		return ast.NewUnaryExpression(nil, leftTerm)
 	}
 	return nil
 }
@@ -412,12 +437,14 @@ func (parser *Parser) ReduceExpression() ast.Expression {
 /**
 The returned Expression is an interface
 */
-func (parser *Parser) ParsePropertyListValue(parentRuleSet *ast.RuleSet, property *ast.Property) {
+func (parser *Parser) ParsePropertyListValue(parentRuleSet *ast.RuleSet, property *ast.Property) []ast.Expression {
 	tok := parser.peek()
+
+	var valueList []ast.Expression = []ast.Expression{}
 
 	// a list can end with ';' or '}'
 	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
-		expr := parser.ReduceExpression()
+		var expr = parser.ReduceExpression()
 		tok = parser.peek()
 
 		// see if the next is a comma
@@ -425,9 +452,12 @@ func (parser *Parser) ParsePropertyListValue(parentRuleSet *ast.RuleSet, propert
 			parser.next()
 			tok = parser.peek()
 		}
-		_ = expr
+		if expr != nil {
+			valueList = append(valueList, expr)
+		}
 	}
 	parser.accept(ast.T_SEMICOLON)
+	return valueList
 }
 
 func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.DeclarationBlock {
@@ -446,15 +476,9 @@ func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.Dec
 			parser.next()
 
 			var property = ast.NewProperty(tok)
-			parser.ParsePropertyListValue(parentRuleSet, property)
-
-			/*
-				tok := parser.peek()
-				for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
-					parser.ReduceExpression()
-					tok = parser.peek()
-				}
-			*/
+			var valueList = parser.ParsePropertyListValue(parentRuleSet, property)
+			property.Values = valueList
+			declBlock.Append(property)
 			_ = property
 
 		} else if tok.IsSelector() {
