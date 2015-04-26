@@ -199,47 +199,6 @@ func (parser *Parser) parseScss(code string) *ast.Block {
 	return &block
 }
 
-/*
-Statement := RuleSet | At-Rule | Mixin-Statement | FunctionStatement
-
-At-Rule := '@' T_IDENT ';'
-
-RuleSet := Rule | RuleSet
-
-SelectorList := Selector | Selector ',' SelectorList
-
-Rule := SelectorList '{'
-			RuleSet
-		'}'
-
-Property := PropertyName ':' PropertyValue
-
-PropertyName :=  Raw Concat Raw
-			 |   Raw
-
-PropertyValue := Raw Concat Raw
-				   | Raw Raw
-				   | Raw
-
-Raw := Interpolation | Expression
-
-Interpolation := '#{' Expression '}'
-
-Expression := Term '+' Term
-	        | Term '-' Term
-			| Term
-
-Term := Factor '*' Factor
-		Factor '/' Factor
-
-Factor := Number | Variable
-
-Variable := T_VARIABLE
-
-Scalar := T_NUMBER | T_NUMBER Unit
-
-Unit := T_UNIT_PX | T_UNIT_PT | T_UNIT_EM | T_UNIT_PERCENT | T_UNIT_DEG
-*/
 func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
 	var token = parser.peek()
 
