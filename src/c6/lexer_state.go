@@ -343,7 +343,6 @@ func lexHexColor(l *Lexer) stateFn {
 	}
 	l.emit(ast.T_HEX_COLOR)
 	return lexExpression
-	return nil
 }
 
 func lexNumberUnit(l *Lexer) stateFn {
@@ -455,13 +454,6 @@ func lexStatement(l *Lexer) stateFn {
 
 		r = l.next()
 		for {
-			if r == EOF {
-				break
-			}
-			if !unicode.IsLetter(r) && r != '-' {
-				break
-			}
-
 			// ignore interpolation
 			if r == '#' && l.peekBy(2) == '{' {
 				// find the matching brace
@@ -469,54 +461,21 @@ func lexStatement(l *Lexer) stateFn {
 				for r != '}' {
 					r = l.next()
 				}
-			}
-
-			// for unicode.IsLetter(r) || r == '-' || r == ' ' {
-			r = l.next()
-		}
-
-		for r == ' ' {
-			r = l.next()
-		}
-		if r == '{' {
-			isSelector = true
-			goto end_guess
-		}
-
-		if r != ':' {
-			isSelector = true
-			goto end_guess
-		}
-
-		r = l.next()
-		// ignore space
-		for r == ' ' {
-			r = l.next()
-		}
-		for {
-			if r == '{' {
+			} else if r == '{' {
 				isSelector = true
-				goto end_guess
-			} else if r == '}' { // end of property
-				isSelector = false
-				goto end_guess
+				break
 			} else if r == ';' {
 				isSelector = false
-				goto end_guess
-			} else if r == EOF {
+				break
+			} else if r == '}' {
 				isSelector = false
-				goto end_guess
-			} else if r == '#' && l.peekBy(2) == '{' {
-				// skip expansion
-				r = l.next()
-				for r != '}' {
-					r = l.next()
-				}
-				l.backup()
+				break
+			} else if r == EOF {
+				panic("unexpected EOF")
+				break
 			}
 			r = l.next()
 		}
-	end_guess:
 
 		// it's a selector, so we end with a brace '{'
 		l.rollback()

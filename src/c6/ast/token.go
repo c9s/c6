@@ -65,6 +65,9 @@ const (
 	T_URL
 	T_MEDIA
 
+	T_TRUE
+	T_FALSE
+
 	// selector tokens
 	T_ID_SELECTOR
 	T_CLASS_SELECTOR

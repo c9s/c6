@@ -38,7 +38,17 @@ func lexExpression(l *Lexer) stateFn {
 
 	r = l.peek()
 
-	if unicode.IsDigit(r) {
+	if r == 't' && l.match("true") {
+
+		l.emit(ast.T_TRUE)
+		return lexExpression
+
+	} else if r == 'f' && l.match("false") {
+
+		l.emit(ast.T_FALSE)
+		return lexExpression
+
+	} else if unicode.IsDigit(r) {
 
 		if fn := lexNumber(l); fn != nil {
 			fn(l)
@@ -94,6 +104,7 @@ func lexExpression(l *Lexer) stateFn {
 		return lexExpression
 
 	} else if r == '#' {
+
 		if l.peekBy(2) == '{' {
 			if !leadingSpace {
 				l.emit(ast.T_CONCAT)
