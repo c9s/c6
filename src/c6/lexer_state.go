@@ -51,29 +51,44 @@ func (l *Lexer) emitIfKeywordMatches() bool {
 func lexComment(l *Lexer) stateFn {
 	var r = l.next()
 
-	if r == '/' {
-		r = l.next()
-		if r == '/' {
-			for {
-				r = l.next()
-				if r == '\n' || r == '\r' {
-					l.emit(ast.T_COMMENT_LINE)
-					return lexStart
-				}
-			}
-		} else if r == '*' {
+	if r != '/' {
+		l.error("Expecting '/' for comment. Got %s", r)
+	}
 
-			for {
-				r = l.next()
-				if r == '*' && l.peek() == '/' {
-					l.next()
-					l.emit(ast.T_COMMENT_BLOCK)
-					return lexStart
-				}
-			}
-		} else {
-			l.backup()
+	r = l.next()
+	if r == '/' {
+
+		l.next() // skip the second '/'
+		l.ignore()
+
+		r = l.next()
+		for r != '\n' && r != EOF {
+			l.next()
 		}
+		l.backup()
+		l.emit(ast.T_COMMENT_LINE)
+		return lexStatement
+
+	} else if r == '*' {
+		l.next()   // skip '*'
+		l.ignore() // ignore the start mark
+
+		r = l.next()
+		for r != EOF {
+			if r == '*' && l.peek() == '/' {
+				l.backup()
+				l.emit(ast.T_COMMENT_BLOCK)
+				l.next()
+				l.next()
+				l.ignore()
+				return lexStatement
+			}
+			r = l.next()
+		}
+		l.error("Expecting comment end mark '*/'.", r)
+
+	} else {
+		l.error("Unexpected token %s for comment", r)
 	}
 	l.backup()
 	return nil
@@ -410,23 +425,27 @@ func lexStatement(l *Lexer) stateFn {
 		l.emit(ast.T_PAREN_START)
 		return lexStart
 	} else if r == ')' {
+
 		l.next()
 		l.emit(ast.T_PAREN_END)
 		return lexStart
+
 	} else if r == '{' {
+
 		l.next()
 		l.emit(ast.T_BRACE_START)
 		return lexStatement
+
 	} else if r == '}' {
+
 		l.next()
 		l.emit(ast.T_BRACE_END)
 		return lexStatement
-	} else if r == '/' && l.peekBy(2) == '/' {
-		l.next()
-		r = l.next()
-		for r != '\r' && r != '\n' && r != EOF {
-			l.next()
-		}
+
+	} else if r == '/' && (l.peek() == '*' || l.peek() == '/') {
+
+		lexComment(l)
+		return lexStatement
 
 	} else if r == '$' { // it's a variable assignment statement
 		return lexVariableAssignment
