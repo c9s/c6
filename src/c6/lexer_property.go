@@ -23,6 +23,10 @@ func lexProperty(l *Lexer) stateFn {
 	for {
 		if r == '#' && l.peek() == '{' {
 			l.backup() // back to the position before '#'
+			if l.precedeStartOffset() {
+				l.emit(ast.T_PROPERTY_NAME_TOKEN)
+				l.emit(ast.T_CONCAT)
+			}
 			lexInterpolation2(l)
 		} else if !unicode.IsLetter(r) && !unicode.IsDigit(r) && r != '-' {
 			break
@@ -32,7 +36,7 @@ func lexProperty(l *Lexer) stateFn {
 	l.backup()
 
 	if l.precedeStartOffset() {
-		l.emit(ast.T_PROPERTY_NAME)
+		l.emit(ast.T_PROPERTY_NAME_TOKEN)
 	}
 
 	lexColon(l)

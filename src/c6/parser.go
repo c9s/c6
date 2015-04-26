@@ -441,7 +441,7 @@ func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.Dec
 	tok = parser.next()
 	for tok.Type != ast.T_BRACE_END {
 
-		if tok.Type == ast.T_PROPERTY_NAME {
+		if tok.Type == ast.T_PROPERTY_NAME_TOKEN {
 			// skip T_COLON
 			parser.next()
 

@@ -24,7 +24,7 @@ func TestLexerRuleWithTagNameSelectorWithProperty(t *testing.T) {
 	l := NewLexerWithString(`div { width: 200px; }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_BRACE_START, ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON, ast.T_BRACE_END})
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_BRACE_START, ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON, ast.T_BRACE_END})
 	l.close()
 }
 
@@ -90,7 +90,7 @@ func TestLexerRuleSimpleSelectorGrouping(t *testing.T) {
 	l.run()
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_TYPE_SELECTOR, ast.T_COMMA, ast.T_TYPE_SELECTOR, ast.T_COMMA, ast.T_TYPE_SELECTOR, ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME,
+		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
@@ -122,7 +122,7 @@ func TestLexerRuleWithCombinedAttributeSelector(t *testing.T) {
 		ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_EQUAL, ast.T_QQ_STRING, ast.T_BRACKET_RIGHT,
 		ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_EQUAL, ast.T_QQ_STRING, ast.T_BRACKET_RIGHT,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME,
+		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
@@ -315,7 +315,7 @@ func TestLexerPropertyEmValueMul(t *testing.T) {
 	assert.NotNil(t, l)
 	l.run()
 	AssertTokenSequence(t, l, []ast.TokenType{ast.T_CLASS_SELECTOR, ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_EM, ast.T_MUL, ast.T_FLOAT, ast.T_UNIT_EM,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_EM, ast.T_MUL, ast.T_FLOAT, ast.T_UNIT_EM,
 		ast.T_BRACE_END})
 	l.close()
 }
@@ -325,7 +325,7 @@ func TestLexerPropertyPxValueMul(t *testing.T) {
 	assert.NotNil(t, l)
 	l.run()
 	AssertTokenSequence(t, l, []ast.TokenType{ast.T_CLASS_SELECTOR, ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_MUL, ast.T_INTEGER, ast.T_UNIT_PX,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_MUL, ast.T_INTEGER, ast.T_UNIT_PX,
 		ast.T_BRACE_END})
 	l.close()
 }
@@ -345,11 +345,11 @@ func TestLexerRuleWithSubRuleWithParentSelector(t *testing.T) {
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
 		ast.T_PARENT_SELECTOR,
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
 		ast.T_BRACE_END,
 		ast.T_BRACE_END})
 	l.close()

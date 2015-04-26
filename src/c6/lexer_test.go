@@ -140,7 +140,7 @@ func TestLexerRuleWithOneProperty(t *testing.T) {
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
 		ast.T_BRACE_END})
 	l.close()
 }
@@ -152,8 +152,8 @@ func TestLexerRuleWithTwoProperty(t *testing.T) {
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
 		ast.T_BRACE_END})
 	l.close()
 }
@@ -165,7 +165,7 @@ func TestLexerRuleWithPropertyValueComma(t *testing.T) {
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_IDENT, ast.T_COMMA, ast.T_IDENT,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_IDENT, ast.T_COMMA, ast.T_IDENT,
 		ast.T_BRACE_END})
 	l.close()
 }
@@ -177,7 +177,7 @@ func TestLexerRuleWithVendorPrefixPropertyName(t *testing.T) {
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
 		ast.T_BRACE_END})
 	l.close()
 }
@@ -189,7 +189,7 @@ func TestLexerRuleWithVariableAsPropertyValue(t *testing.T) {
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_VARIABLE, ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_VARIABLE, ast.T_SEMICOLON,
 		ast.T_BRACE_END})
 	l.close()
 }
@@ -237,7 +237,7 @@ func TestLexerVariableWithPercent(t *testing.T) {
 	assert.NotNil(t, l)
 	l.run()
 	AssertTokenSequence(t, l, []ast.TokenType{
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PERCENT, ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PERCENT, ast.T_SEMICOLON,
 	})
 	l.close()
 }
@@ -262,7 +262,7 @@ func TestLexerInterpolationPropertyValue(t *testing.T) {
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
 		ast.T_INTERPOLATION_START,
 		ast.T_INTEGER,
 		ast.T_PLUS,
@@ -283,7 +283,7 @@ func TestLexerInterpolationPropertyValueList(t *testing.T) {
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
 		ast.T_INTERPOLATION_START,
 		ast.T_INTEGER,
 		ast.T_PLUS,
@@ -307,7 +307,7 @@ func TestLexerInterpolationPropertyValueListWithoutSemiColon(t *testing.T) {
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
 		ast.T_INTERPOLATION_START,
 		ast.T_INTEGER,
 		ast.T_PLUS,
@@ -344,7 +344,35 @@ func TestLexerInterpolationPropertyName(t *testing.T) {
 		ast.T_SEMICOLON,
 		ast.T_BRACE_END})
 	l.close()
+}
 
+func TestLexerInterpolationPropertyName2(t *testing.T) {
+	l := NewLexerWithString(`.test {
+		-#{ "moz" }-border-radius: #{ 1 + 2 }px;
+	}`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+		ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_CONCAT,
+		ast.T_INTERPOLATION_START,
+		ast.T_QQ_STRING,
+		ast.T_INTERPOLATION_END,
+		ast.T_CONCAT,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_COLON,
+		ast.T_INTERPOLATION_START,
+		ast.T_INTEGER,
+		ast.T_PLUS,
+		ast.T_INTEGER,
+		ast.T_INTERPOLATION_END,
+		ast.T_CONCAT,
+		ast.T_IDENT,
+		ast.T_SEMICOLON,
+		ast.T_BRACE_END})
+	l.close()
 }
 
 func TestLexerRuleWithSubRule(t *testing.T) {
@@ -354,10 +382,10 @@ func TestLexerRuleWithSubRule(t *testing.T) {
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
 		ast.T_BRACE_END,
 		ast.T_BRACE_END})
 	l.close()
