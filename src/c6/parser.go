@@ -25,6 +25,14 @@ type ParserError struct {
 	ActualToken    string
 }
 
+const debugParser = true
+
+func debug(format string, args ...interface{}) {
+	if debugParser {
+		fmt.Printf(format, args...)
+	}
+}
+
 func (e ParserError) Error() string {
 	return fmt.Sprintf("Expecting '%s', but the actual token we got was '%s'.", e.ExpectingToken, e.ActualToken)
 }
@@ -298,31 +306,44 @@ func (parser *Parser) ReduceNumber() ast.Number {
 	}
 
 	if tok2.IsOneOfTypes([]ast.TokenType{ast.T_UNIT_PX, ast.T_UNIT_PT, ast.T_UNIT_CM, ast.T_UNIT_EM, ast.T_UNIT_MM, ast.T_UNIT_REM, ast.T_UNIT_DEG, ast.T_UNIT_PERCENT}) {
+		// consume the unit token
+		parser.next()
 		number.SetUnit(int(tok2.Type))
 	}
 	return number
 }
 
 func (parser *Parser) ReduceFunctionCall() *ast.FunctionCall {
-	var ident = parser.next()
-	var fcall = ast.NewFunctionCall(ident.Str, *ident)
+	var identTok = parser.next()
 
-	if parser.accept(ast.T_PAREN_START) {
-		panic("Expecting parenthesis after ident")
-	}
+	debug("ReduceFunctionCall => next: %s\n", identTok)
+
+	var fcall = ast.NewFunctionCall(identTok)
+
+	parser.expect(ast.T_PAREN_START)
+
 	var argTok = parser.peek()
 	for argTok.Type != ast.T_PAREN_END {
 		var arg = parser.ReduceFactor()
 		fcall.AppendArgument(arg)
+		debug("ReduceFunctionCall => arg: %+v\n", arg)
+
 		argTok = parser.peek()
+		if argTok.Type == ast.T_COMMA {
+			parser.next() // skip comma
+			argTok = parser.peek()
+		} else if argTok.Type == ast.T_PAREN_END {
+			parser.next() // consume ')'
+			break
+		}
 	}
-	_ = fcall
-	_ = ident
 	return fcall
 }
 
 func (parser *Parser) ReduceIdent() *ast.Ident {
 	var tok = parser.next()
+	debug("ReduceIndent => next: %s\n", tok)
+
 	if tok.Type != ast.T_IDENT {
 		panic("Invalid token for ident.")
 	}
@@ -334,20 +355,27 @@ The ReduceFactor must return an Expression interface compatible object
 */
 func (parser *Parser) ReduceFactor() ast.Expression {
 	var tok = parser.peek()
+	debug("ReduceFactor => peek: %s\n", tok)
 
 	if tok.Type == ast.T_PAREN_START {
-		// skip the parent
-		parser.expect(ast.T_PAREN_START)
-		parser.ReduceExpression()
-		parser.expect(ast.T_PAREN_END)
 
-		return nil
-		// _ = expr
+		parser.expect(ast.T_PAREN_START)
+		var expr = parser.ReduceExpression()
+		parser.expect(ast.T_PAREN_END)
+		return expr
+
 	} else if tok.Type == ast.T_INTERPOLATION_START {
 
 		parser.expect(ast.T_INTERPOLATION_START)
 		parser.ReduceExpression()
 		parser.expect(ast.T_INTERPOLATION_END)
+		// TODO:
+
+	} else if tok.Type == ast.T_QQ_STRING || tok.Type == ast.T_Q_STRING {
+
+		tok = parser.next()
+		var str = ast.NewString(tok)
+		return ast.Expression(str)
 
 	} else if tok.Type == ast.T_INTEGER || tok.Type == ast.T_FLOAT {
 
@@ -357,8 +385,11 @@ func (parser *Parser) ReduceFactor() ast.Expression {
 
 	} else if tok.Type == ast.T_IDENT {
 
+		var tok2 = parser.peekBy(1)
+		fmt.Printf("ReduceFactor => peekBy(1): %s\n", tok2)
+
 		// check if it's a function call
-		if parenTok := parser.peekBy(2); parenTok.Type == ast.T_PAREN_START {
+		if tok2.Type == ast.T_PAREN_START {
 			var fcall = parser.ReduceFunctionCall()
 			return ast.Expression(*fcall)
 		} else {
@@ -368,11 +399,15 @@ func (parser *Parser) ReduceFactor() ast.Expression {
 
 	} else if tok.Type == ast.T_HEX_COLOR {
 		panic("hex color is not implemented yet")
+	} else {
+		panic(fmt.Errorf("Unknown Token: %s", tok))
 	}
 	return nil
 }
 
 func (parser *Parser) ReduceTerm() ast.Expression {
+	fmt.Println("ReduceTerm")
+
 	var expr1 = parser.ReduceFactor()
 
 	// see if the next token is '*' or '/'
@@ -401,6 +436,7 @@ Expression := "#{" Expression "}"
 			| Term
 */
 func (parser *Parser) ReduceExpression() ast.Expression {
+	fmt.Println("ReduceExpression")
 	if parser.accept(ast.T_INTERPOLATION_START) {
 		var expr = parser.ReduceExpression()
 		parser.expect(ast.T_INTERPOLATION_END)
@@ -438,8 +474,7 @@ func (parser *Parser) ReduceExpression() ast.Expression {
 The returned Expression is an interface
 */
 func (parser *Parser) ParsePropertyListValue(parentRuleSet *ast.RuleSet, property *ast.Property) []ast.Expression {
-	tok := parser.peek()
-
+	var tok = parser.peek()
 	var valueList []ast.Expression = []ast.Expression{}
 
 	// a list can end with ';' or '}'
@@ -469,11 +504,10 @@ func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.Dec
 	}
 
 	tok = parser.next()
-	for tok.Type != ast.T_BRACE_END {
+	for tok != nil && tok.Type != ast.T_BRACE_END {
 
 		if tok.Type == ast.T_PROPERTY_NAME_TOKEN {
-			// skip T_COLON
-			parser.next()
+			parser.expect(ast.T_COLON)
 
 			var property = ast.NewProperty(tok)
 			var valueList = parser.ParsePropertyListValue(parentRuleSet, property)
@@ -485,6 +519,7 @@ func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.Dec
 			// parse subrule
 			panic("subselector unimplemented")
 		} else {
+			panic("unexpected token")
 		}
 
 		tok = parser.next()

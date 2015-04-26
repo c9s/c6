@@ -22,7 +22,12 @@ PropertyNameToken := Ident | Interpolation
 
 PropertyValue	:= Expression Concat Expression
 				| Expression Expression
+				| Expression ',' Expression
 				| Expression
+				| Keyword
+				| Url
+
+Url := T_URL '(' T_QQ_STRING ')'
 
 Expression := '#{' Expression '}'
 			| Term '+' Term

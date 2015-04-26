@@ -4,6 +4,8 @@ import "testing"
 import "c6/ast"
 import "github.com/stretchr/testify/assert"
 
+import "fmt"
+
 func TestParserParseImportRuleWithUrl(t *testing.T) {
 	parser := NewParser()
 	block := parser.parseScss(`@import url("http://foo.com/bar.css");`)
@@ -45,19 +47,27 @@ func TestParserParseImportRuleWithMediaList(t *testing.T) {
 }
 
 func TestParserMassiveRules(t *testing.T) {
-	parser := NewParser()
-	parser.parseScss(`div { width: auto; }`)
-	parser.parseScss(`div { width: 100px }`)
-	parser.parseScss(`div { width: 100pt }`)
-	parser.parseScss(`div { width: 100em }`)
-	parser.parseScss(`div { width: 100rem }`)
-	parser.parseScss(`div { padding: 10px 10px; }`)
-	parser.parseScss(`div { padding: 10px 10px 20px 30px; }`)
-	parser.parseScss(`div { padding: 10px + 10px; }`)
-	parser.parseScss(`div { padding: 10px + 10px * 3; }`)
-	parser.parseScss(`div { color: red; }`)
-	parser.parseScss(`div { color: rgb(255,255,255); }`)
-	parser.parseScss(`div { color: rgba(255,255,255,0); }`)
+	var buffers []string = []string{
+		`div { width: auto; }`,
+		`div { width: 100px }`,
+		`div { width: 100pt }`,
+		`div { width: 100em }`,
+		`div { width: 100rem }`,
+		`div { padding: 10px 10px; }`,
+		`div { padding: 10px 10px 20px 30px; }`,
+		`div { padding: 10px + 10px; }`,
+		`div { padding: 10px + 10px * 3; }`,
+		`div { color: red; }`,
+		`div { color: rgb(255,255,255); }`,
+		`div { color: rgba(255,255,255,0); }`,
+		`div { background-image: url("../images/foo.png"); }`,
+	}
+	for _, buffer := range buffers {
+		t.Logf("Input %s", buffer)
+		var parser = NewParser()
+		var block = parser.parseScss(buffer)
+		fmt.Printf("%+v\n", block)
+	}
 }
 
 func TestParserParseTypeSelectorRule(t *testing.T) {

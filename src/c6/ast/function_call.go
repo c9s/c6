@@ -2,12 +2,12 @@ package ast
 
 type FunctionCall struct {
 	Function  string
-	Token     Token
 	Arguments []Expression
+	Token     *Token
 }
 
-func NewFunctionCall(name string, token Token) *FunctionCall {
-	return &FunctionCall{name, token, []Expression{}}
+func NewFunctionCall(token *Token) *FunctionCall {
+	return &FunctionCall{token.Str, []Expression{}, token}
 }
 func (self FunctionCall) CanBeExpression() {}
 
