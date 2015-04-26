@@ -4,7 +4,7 @@ package ast
 An property may contains interpolation
 */
 type Property struct {
-	Name PropertyName
+	Name *PropertyName
 	/**
 	property value can be something like:
 
@@ -31,4 +31,8 @@ type PropertyName struct {
 
 func NewPropertyName(tok *Token) *PropertyName {
 	return &PropertyName{tok.Str, tok.ContainsInterpolation, tok}
+}
+
+func NewProperty(nameTok *Token) *Property {
+	return &Property{NewPropertyName(nameTok), []Expression{}}
 }

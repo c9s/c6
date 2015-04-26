@@ -450,17 +450,13 @@ func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.Dec
 			// skip T_COLON
 			parser.next()
 
-			var propertyName = ast.NewPropertyName(tok)
-			var property = ast.Property{*propertyName, []ast.Expression{}}
-
+			var property = ast.NewProperty(tok)
 			tok := parser.peek()
-
 			for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
 				parser.ReduceExpression()
 				tok = parser.peek()
 			}
 			_ = property
-			_ = propertyName
 
 		} else if tok.IsSelector() {
 			// parse subrule
