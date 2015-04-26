@@ -1,7 +1,7 @@
 package ast
 
 type Statement interface {
-	IsStatement()
+	CanBeStatement()
 }
 
 /*
@@ -9,4 +9,4 @@ The nested statement allows declaration block and statements
 */
 type NestedStatement struct{}
 
-func (stm NestedStatement) IsStatement() {}
+func (stm NestedStatement) CanBeStatement() {}

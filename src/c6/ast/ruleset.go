@@ -21,4 +21,4 @@ func (self *RuleSet) AppendSubRuleSet() {
 }
 
 // Complete the statement interface
-func (self *RuleSet) IsStatement() {}
+func (self *RuleSet) CanBeStatement() {}

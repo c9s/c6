@@ -5,7 +5,7 @@ type ImportStatement struct {
 	MediaList []string
 }
 
-func (self ImportStatement) IsStatement() {}
+func (self ImportStatement) CanBeStatement() {}
 
 // for Url()
 type Url string

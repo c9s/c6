@@ -5,7 +5,7 @@ type CharsetStatement struct {
 	Token   *Token
 }
 
-func (self CharsetStatement) IsStatement() {}
+func (self CharsetStatement) CanBeStatement() {}
 
 func NewCharsetStatement(token *Token) *CharsetStatement {
 	return &CharsetStatement{token.Str, token}
