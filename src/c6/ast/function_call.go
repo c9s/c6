@@ -6,10 +6,12 @@ type FunctionCall struct {
 	Token     *Token
 }
 
+func (self FunctionCall) CanBeExpression() {}
+func (self FunctionCall) CanBeNode()       {}
+
 func NewFunctionCall(token *Token) *FunctionCall {
 	return &FunctionCall{token.Str, []Expression{}, token}
 }
-func (self FunctionCall) CanBeExpression() {}
 
 func (self FunctionCall) AppendArgument(arg Expression) {
 	self.Arguments = append(self.Arguments, arg)
