@@ -20,7 +20,9 @@ func lexFunctionParams(l *Lexer) stateFn {
 			l.emit(ast.T_PAREN_END)
 			break
 		}
-		lexExpression(l)
+		if lexExpression(l) == nil {
+			break
+		}
 
 		l.ignoreSpaces()
 		r = l.peek()
