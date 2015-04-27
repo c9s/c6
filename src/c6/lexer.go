@@ -123,6 +123,20 @@ func (l *Lexer) rollback() {
 	l.Offset = l.RollbackOffset
 }
 
+func (l *Lexer) acceptAndEmit(valid string, tokenType ast.TokenType) bool {
+	if l.accept(valid) {
+		l.emit(tokenType)
+		return true
+	}
+	return false
+}
+
+func (l *Lexer) expect(valid string) {
+	if !l.accept(valid) {
+		panic(fmt.Errorf("Expecting %s at %d", valid, l.Offset))
+	}
+}
+
 // test the next character, if it's not matched, go back to the original
 // offset.
 // Note, this method only match the first character
@@ -309,6 +323,7 @@ func (l *Lexer) match(str string) bool {
 		r = l.next()
 		width += l.Width
 		if sc != r {
+			// rollback
 			l.Offset -= width
 			return false
 		}

@@ -21,7 +21,12 @@ func lexIdentifier(l *Lexer) stateFn {
 		r = l.next()
 	}
 	l.backup()
-	l.emit(ast.T_IDENT)
+
+	if l.peek() == '(' {
+		l.emit(ast.T_FUNCTION_NAME)
+	} else {
+		l.emit(ast.T_IDENT)
+	}
 	return lexExpression
 }
 
@@ -83,13 +88,9 @@ func lexExpression(l *Lexer) stateFn {
 		l.next()
 		l.emit(ast.T_PAREN_END)
 
-	} else if r == ' ' {
-
-		l.next()
-		l.ignore()
-
 	} else if r == ',' {
 
+		// TODO: move this out?
 		l.next()
 		l.emit(ast.T_COMMA)
 

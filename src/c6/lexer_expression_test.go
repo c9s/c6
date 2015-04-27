@@ -29,7 +29,7 @@ func TestLexerHexColor6Letter(t *testing.T) {
 func TestLexerFunctionCall(t *testing.T) {
 	l := NewLexerWithString(`rgba(0,0,0,0)`)
 	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_IDENT, ast.T_PAREN_START,
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_FUNCTION_NAME, ast.T_PAREN_START,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_COMMA,
@@ -42,13 +42,13 @@ func TestLexerExpressionFunction(t *testing.T) {
 	l := NewLexerWithString(`rgba(0,0,0,0) - rgba(255,255,255,0)`)
 	l.runFrom(lexExpression)
 	AssertTokenSequence(t, l, []ast.TokenType{
-		ast.T_IDENT, ast.T_PAREN_START,
+		ast.T_FUNCTION_NAME, ast.T_PAREN_START,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_PAREN_END,
 		ast.T_MINUS,
-		ast.T_IDENT, ast.T_PAREN_START,
+		ast.T_FUNCTION_NAME, ast.T_PAREN_START,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_COMMA,

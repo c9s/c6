@@ -69,6 +69,9 @@ const (
 	T_FALSE
 	T_NULL
 
+	T_PARAM_NAME
+	T_FUNCTION_NAME
+
 	// selector tokens
 	T_ID_SELECTOR
 	T_CLASS_SELECTOR
@@ -78,6 +81,9 @@ const (
 	T_PSEUDO_SELECTOR        // :hover, :visited , ...
 	T_INTERPOLATION_SELECTOR // selector with interpolation: '#{ ... }'
 	T_CONCAT                 // used to concat selectors and interpolation
+
+	// for Microsoft 'progid:' token
+	T_MS_PROGID
 
 	// Selector relationship
 	T_AND_SELECTOR        // {parent-selector}{child-selector} { }

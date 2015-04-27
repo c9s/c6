@@ -349,7 +349,7 @@ func TestLexerGradientFunction(t *testing.T) {
 		ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
-		ast.T_IDENT,
+		ast.T_FUNCTION_NAME,
 		ast.T_PAREN_START,
 		ast.T_IDENT,
 		ast.T_COMMA,

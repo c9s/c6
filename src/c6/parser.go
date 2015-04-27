@@ -386,19 +386,15 @@ func (parser *Parser) ReduceFactor() ast.Expression {
 		var number = parser.ReduceNumber()
 		return ast.Expression(number)
 
+	} else if tok.Type == ast.T_FUNCTION_NAME {
+
+		var fcall = parser.ReduceFunctionCall()
+		return ast.Expression(*fcall)
+
 	} else if tok.Type == ast.T_IDENT {
 
-		var tok2 = parser.peekBy(1)
-		fmt.Printf("ReduceFactor => peekBy(1): %s\n", tok2)
-
-		// check if it's a function call
-		if tok2.Type == ast.T_PAREN_START {
-			var fcall = parser.ReduceFunctionCall()
-			return ast.Expression(*fcall)
-		} else {
-			var ident = parser.ReduceIdent()
-			return ast.Expression(ident)
-		}
+		var ident = parser.ReduceIdent()
+		return ast.Expression(ident)
 
 	} else if tok.Type == ast.T_HEX_COLOR {
 		panic("hex color is not implemented yet")
