@@ -5,6 +5,10 @@ import "testing"
 import "fmt"
 import "c6/ast"
 
+func AssertToken(t *testing.T, gotToken *ast.Token, tokenType ast.TokenType, tokenString string) {
+
+}
+
 func AssertLexerTokenSequence(t *testing.T, scss string, tokenList []ast.TokenType) {
 	fmt.Printf("Testing SCSS: %s\n", scss)
 
@@ -60,12 +64,12 @@ func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []ast.TokenType) []as
 	return tokens
 }
 
-func AssertToken(t *testing.T, tokenType ast.TokenType, token *ast.Token) {
+func AssertTokenType(t *testing.T, tokenType ast.TokenType, token *ast.Token) {
 	assert.NotNil(t, token)
 	if tokenType != token.Type {
-		fmt.Printf("\033[31mnot ok - expecting %s. Got %s '%s'\033[0m\n", tokenType.String(), token.Type.String(), token.Str)
+		OutputRed("not ok - expecting %s. Got %s '%s'", tokenType.String(), token.Type.String(), token.Str)
 	} else {
-		fmt.Printf("\033[32mok - expecting %s. Got %s '%s'\033[0m\n", tokenType.String(), token.Type.String(), token.Str)
+		OutputGreen("ok - expecting %s. Got %s '%s'", tokenType.String(), token.Type.String(), token.Str)
 	}
 	assert.Equal(t, tokenType, token.Type)
 }
