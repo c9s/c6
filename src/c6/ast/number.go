@@ -1,26 +1,50 @@
 package ast
 
-type Number interface {
-	SetUnit(unit UnitType)
-	GetUnit() UnitType
-	CanBeNumber()
-	CanBeExpression()
+import "strconv"
+
+type Number struct {
+	Value float64
+	Unit  UnitType
+	Token *Token
 }
 
-func NewNumber(val interface{}) Number {
-	floatval, ok := val.(float64)
-	if ok {
-		return NewFloatNumber(floatval)
+func (num *Number) AddFloat(a float64) {
+	num.Value += a
+}
+
+func (num *Number) AddInt(a int) {
+	num.Value += float64(a)
+}
+
+func (num *Number) GetUnit() UnitType {
+	return num.Unit
+}
+
+func NewNumberInt64(num int64, token *Token) *Number {
+	return &Number{float64(num), UNIT_NONE, token}
+}
+
+func NewNumber(num float64, token *Token) *Number {
+	return &Number{num, UNIT_NONE, token}
+}
+
+func (num Number) CanBeNode()       {}
+func (num Number) CanBeExpression() {}
+
+func (num *Number) SetUnit(unit UnitType) {
+	num.Unit = unit
+}
+
+func (num Number) String() (out string) {
+	out += strconv.FormatFloat(num.Value, 'G', -1, 64)
+	if num.Unit != UNIT_NONE {
+		out += num.Unit.UnitString()
 	}
-	intval, ok := val.(int64)
-	if ok {
-		return NewIntegerNumber(intval)
-	}
-	panic("Unknown number type")
+	return out
 }
 
 // Pass numbers as pointer
-func AddNumber(a Number, b Number) Number {
+func AddNumber(a *Number, b *Number) *Number {
 	var unitA = a.GetUnit()
 	var unitB = b.GetUnit()
 	if unitA != UNIT_NONE && unitB != UNIT_NONE && a.GetUnit() != b.GetUnit() {
@@ -34,38 +58,8 @@ func AddNumber(a Number, b Number) Number {
 		unitC = unitB
 	}
 
-	switch a.(type) {
-	case *FloatNumber:
-		var result float64 = a.(*FloatNumber).Float
-		switch b.(type) {
-		case *IntegerNumber:
-			result += float64(b.(*IntegerNumber).Int)
-		case *FloatNumber:
-			result += float64(b.(*FloatNumber).Float)
-		default:
-			panic("Unknown type for calculation")
-		}
-		num := NewNumber(result)
-		num.SetUnit(unitC)
-		return num
-	case *IntegerNumber:
-		switch b.(type) {
-		case *IntegerNumber:
-			var result int64 = a.(*IntegerNumber).Int
-			result += int64(b.(*IntegerNumber).Int)
-			var num = NewNumber(result)
-			num.SetUnit(unitC)
-			return num
-		case *FloatNumber:
-			var result float64 = float64(a.(*IntegerNumber).Int)
-			result += float64(b.(*FloatNumber).Float)
-			var num = NewNumber(result)
-			num.SetUnit(unitC)
-			return num
-		default:
-			panic("Unknown type for calculation")
-		}
-	}
-	panic("Unknown type for calculation")
-	return nil
+	var result = a.Value + b.Value
+	var num = NewNumber(result, nil)
+	num.SetUnit(unitC)
+	return num
 }

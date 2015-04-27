@@ -297,14 +297,14 @@ func (parser *Parser) ReduceNumber() ast.Number {
 		if err != nil {
 			panic(err)
 		}
-		number = ast.NewIntegerNumber(i)
+		number = ast.NewNumberInt64(i)
 	} else {
 
 		f, err := strconv.ParseFloat(tok.Str, 64)
 		if err != nil {
 			panic(err)
 		}
-		number = ast.NewFloatNumber(f)
+		number = ast.NewNumber(f)
 	}
 
 	if tok2.IsOneOfTypes([]ast.TokenType{ast.T_UNIT_PX, ast.T_UNIT_PT, ast.T_UNIT_CM, ast.T_UNIT_EM, ast.T_UNIT_MM, ast.T_UNIT_REM, ast.T_UNIT_DEG, ast.T_UNIT_PERCENT}) {
