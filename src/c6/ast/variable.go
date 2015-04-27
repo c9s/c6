@@ -2,18 +2,22 @@ package ast
 
 type Variable struct {
 	Name      string
-	Value     interface{}
+	Value     Expression
 	ScopeRule *RuleSet
+	Token     *Token
 }
 
-func NewVariable(name string) *Variable {
-	return &Variable{name, nil, nil}
-}
+func (self Variable) CanBeExpression() {}
+func (self Variable) CanBeNode()       {}
 
 func (self *Variable) SetScopeRule(scope *RuleSet) {
 	self.ScopeRule = scope
 }
 
-func (self *Variable) SetValue(val interface{}) {
+func (self *Variable) SetValue(val Expression) {
 	self.Value = val
+}
+
+func NewVariable(token *Token) *Variable {
+	return &Variable{token.Str, nil, nil, token}
 }
