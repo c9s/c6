@@ -310,7 +310,7 @@ func (parser *Parser) ReduceNumber() ast.Number {
 	if tok2.IsOneOfTypes([]ast.TokenType{ast.T_UNIT_PX, ast.T_UNIT_PT, ast.T_UNIT_CM, ast.T_UNIT_EM, ast.T_UNIT_MM, ast.T_UNIT_REM, ast.T_UNIT_DEG, ast.T_UNIT_PERCENT}) {
 		// consume the unit token
 		parser.next()
-		number.SetUnit(int(tok2.Type))
+		number.SetUnit(ast.ConvertTokenTypeToUnitType(tok2.Type))
 	}
 	return number
 }

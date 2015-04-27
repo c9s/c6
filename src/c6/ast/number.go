@@ -34,20 +34,8 @@ func (num FloatNumber) SetUnit(unit UnitType) {
 
 func (num FloatNumber) String() (out string) {
 	out += fmt.Sprintf("%.2f", num.Float)
-
 	if num.Unit > 0 {
-		switch num.Unit {
-		case UNIT_PX:
-			out += "px"
-		case UNIT_PT:
-			out += "pt"
-		case UNIT_EM:
-			out += "em"
-		case UNIT_REM:
-			out += "rem"
-		default:
-			panic("unimplemented type")
-		}
+		out += num.Unit.String()
 	}
 	return out
 }
@@ -78,5 +66,8 @@ func (num IntegerNumber) SetUnit(unit UnitType) {
 
 func (num IntegerNumber) String() (out string) {
 	out += fmt.Sprintf("%d", num.Int)
-
+	if num.Unit > 0 {
+		out += num.Unit.String()
+	}
+	return out
 }
