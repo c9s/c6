@@ -1,6 +1,7 @@
 package ast
 
 import "fmt"
+import "strconv"
 
 type Number interface {
 	SetUnit(unit UnitType)
@@ -40,7 +41,8 @@ func (num *FloatNumber) SetUnit(unit UnitType) {
 }
 
 func (num FloatNumber) String() (out string) {
-	out += fmt.Sprintf("%.2f", num.Float)
+	// out += fmt.Sprintf("%.2f", num.Float)
+	out += strconv.FormatFloat(num.Float, 'G', -1, 64)
 	if num.Unit != UNIT_NONE {
 		out += num.Unit.UnitString()
 	}

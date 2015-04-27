@@ -70,3 +70,17 @@ func TestNumberAddFloatInt(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, 13.3, num.Float)
 }
+
+func TestNumberAddFloatPxFloatPx(t *testing.T) {
+	var a = NewFloatNumber(10.3)
+	a.SetUnit(UNIT_PX)
+	var b = NewIntegerNumber(3)
+	a.SetUnit(UNIT_PX)
+
+	var c = AddNumber(a, b)
+	assert.NotNil(t, c)
+	num, ok := c.(*FloatNumber)
+	assert.True(t, ok)
+	assert.Equal(t, 13.3, num.Float)
+	assert.Equal(t, "13.3px", num.String())
+}
