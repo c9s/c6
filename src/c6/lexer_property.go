@@ -47,6 +47,9 @@ func lexMicrosoftProgIdFunction(l *Lexer) stateFn {
 
 	l.ignoreSpaces()
 
+	// here comes the sProperty
+	//     progid:DXImageTransform.Microsoft.filtername(sProperties)
+	// @see https://msdn.microsoft.com/en-us/library/ms532847(v=vs.85).aspx
 	for r != ')' {
 		// lex function parameter name
 		r = l.next()

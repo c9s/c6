@@ -317,7 +317,7 @@ func TestLexerInterpolationPropertyValueListWithoutSemiColon(t *testing.T) {
 /*
 This is for microsoft filter functions
 */
-func TestLexerMSFilter(t *testing.T) {
+func TestLexerMSFilterGradient(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test {
 		filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#81a8cb', endColorstr='#4477a1');
 	}`, []ast.TokenType{
@@ -332,6 +332,26 @@ func TestLexerMSFilter(t *testing.T) {
 		ast.T_MS_PARAM_NAME, ast.T_EQUAL, ast.T_INTEGER, ast.T_COMMA,
 		ast.T_MS_PARAM_NAME, ast.T_EQUAL, ast.T_Q_STRING, ast.T_COMMA,
 		ast.T_MS_PARAM_NAME, ast.T_EQUAL, ast.T_Q_STRING,
+		ast.T_PAREN_END,
+		ast.T_SEMICOLON,
+		ast.T_BRACE_END,
+	})
+}
+
+func TestLexerMSFilterBasicImage(t *testing.T) {
+	AssertLexerTokenSequence(t, `.test {
+		filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1);
+	}`, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+		ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_COLON,
+
+		ast.T_MS_PROGID,
+		ast.T_FUNCTION_NAME,
+		ast.T_PAREN_START,
+		ast.T_MS_PARAM_NAME, ast.T_EQUAL, ast.T_INTEGER, ast.T_COMMA,
+		ast.T_MS_PARAM_NAME, ast.T_EQUAL, ast.T_INTEGER,
 		ast.T_PAREN_END,
 		ast.T_SEMICOLON,
 		ast.T_BRACE_END,
