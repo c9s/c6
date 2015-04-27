@@ -8,6 +8,20 @@ type TokenType int
 const LF = '\r'
 const CR = '\n'
 
+//go:generate stringer -type=UnitType token.go
+type UnitType int
+
+const (
+	UNIT_PX UnitType = iota
+	UNIT_PT
+	UNIT_EM
+	UNIT_CM
+	UNIT_MM
+	UNIT_REM
+	UNIT_DEG
+	UNIT_PERCENT
+)
+
 type Token struct {
 	Type                  TokenType
 	Str                   string

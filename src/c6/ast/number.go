@@ -3,14 +3,14 @@ package ast
 import "fmt"
 
 type Number interface {
-	SetUnit(unit int)
+	SetUnit(unit UnitType)
 	IsNumber()
 	CanBeExpression()
 }
 
 type FloatNumber struct {
 	Float float64
-	Unit  int
+	Unit  UnitType
 }
 
 func (num FloatNumber) AddFloat(a float64) {
@@ -54,7 +54,7 @@ func (num FloatNumber) String() (out string) {
 
 type IntegerNumber struct {
 	Int  int64
-	Unit int
+	Unit UnitType
 }
 
 func NewIntegerNumber(num int64) *IntegerNumber {
@@ -72,6 +72,11 @@ func (num IntegerNumber) AddInt(a int64) {
 	num.Int += a
 }
 
-func (num IntegerNumber) SetUnit(unit int) {
+func (num IntegerNumber) SetUnit(unit UnitType) {
 	num.Unit = unit
+}
+
+func (num IntegerNumber) String() (out string) {
+	out += fmt.Sprintf("%d", num.Int)
+
 }
