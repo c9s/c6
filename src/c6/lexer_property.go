@@ -43,6 +43,8 @@ func lexMicrosoftProgIdFunction(l *Lexer) stateFn {
 
 		l.ignoreSpaces()
 		r = l.next()
+		if r == ',' {
+		}
 	}
 	l.emit(ast.T_PAREN_END)
 	return nil
@@ -107,6 +109,12 @@ func lexProperty(l *Lexer) stateFn {
 				l.emit(ast.T_CONCAT)
 			}
 		}
+
+		l.ignoreSpaces()
+		if l.accept(",") {
+			l.emit(ast.T_COMMA)
+		}
+
 		r = l.peek()
 	}
 

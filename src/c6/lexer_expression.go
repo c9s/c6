@@ -3,6 +3,35 @@ package c6
 import "unicode"
 import "c6/ast"
 
+func lexFunctionParams(l *Lexer) stateFn {
+	var r = l.next()
+	if r != '(' {
+		l.error("Expecting '('. Got '%s'.", r)
+	}
+	l.emit(ast.T_PAREN_START)
+	l.ignoreSpaces()
+
+	r = l.peek()
+	for r != EOF {
+		l.ignoreSpaces()
+		r = l.peek()
+		if r == ')' {
+			l.next()
+			l.emit(ast.T_PAREN_END)
+			break
+		}
+		lexExpression(l)
+
+		l.ignoreSpaces()
+		r = l.peek()
+		if r == ',' {
+			l.next()
+			l.emit(ast.T_COMMA)
+		}
+	}
+	return nil
+}
+
 func lexIdentifier(l *Lexer) stateFn {
 	var r = l.next()
 	if !unicode.IsLetter(r) && r != '-' {
@@ -24,6 +53,7 @@ func lexIdentifier(l *Lexer) stateFn {
 
 	if l.peek() == '(' {
 		l.emit(ast.T_FUNCTION_NAME)
+		lexFunctionParams(l)
 	} else {
 		l.emit(ast.T_IDENT)
 	}
@@ -87,12 +117,6 @@ func lexExpression(l *Lexer) stateFn {
 
 		l.next()
 		l.emit(ast.T_PAREN_END)
-
-	} else if r == ',' {
-
-		// TODO: move this out?
-		l.next()
-		l.emit(ast.T_COMMA)
 
 	} else if r == '=' {
 
