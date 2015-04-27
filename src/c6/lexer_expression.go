@@ -95,14 +95,12 @@ func lexExpression(l *Lexer) stateFn {
 
 	} else if r == '#' {
 
+		// ignore interpolation
 		if l.peekBy(2) == '{' {
-			// It handles the concat after interpolation
-			lexInterpolation2(l)
-			return lexExpression
-
-		} else {
-			lexHexColor(l)
+			return nil
 		}
+
+		lexHexColor(l)
 
 	} else if r == '"' || r == '\'' {
 
@@ -122,13 +120,9 @@ func lexExpression(l *Lexer) stateFn {
 
 	} else {
 
+		// for ';' and '}'
 		return nil
 
-	}
-
-	if l.peek() == '#' && l.peekBy(2) == '{' {
-		// inject a ast.T_CONCAT since we have an interpolation following the expression
-		l.emit(ast.T_CONCAT)
 	}
 
 	// the default return stats

@@ -1,7 +1,8 @@
 package c6
 
 import "c6/ast"
-import "unicode"
+
+// import "unicode"
 import _ "fmt"
 
 /*
@@ -75,10 +76,5 @@ func lexInterpolation2(l *Lexer) stateFn {
 	}
 	l.next() // consume '}'
 	l.emit(ast.T_INTERPOLATION_END)
-
-	r = l.peek()
-	if !unicode.IsSpace(r) && r != '}' && r != ';' && r != ':' {
-		l.emit(ast.T_CONCAT)
-	}
 	return nil
 }

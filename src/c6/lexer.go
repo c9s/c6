@@ -172,6 +172,11 @@ func (l *Lexer) length() int {
 	return l.Offset - l.Start
 }
 
+// If there are remaining tokens
+func (l *Lexer) remaining() bool {
+	return l.Offset+1 < len(l.Input)
+}
+
 // next returns the next rune in the input.
 func (l *Lexer) next() (r rune) {
 	if l.Offset >= len(l.Input) {
