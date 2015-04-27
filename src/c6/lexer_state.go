@@ -126,9 +126,8 @@ func lexString(l *Lexer) stateFn {
 		return lexStart
 
 	} else if r == '\'' {
-
-		l.next()
 		l.ignore()
+		l.next()
 		for {
 			r = l.next()
 			if r == '\'' {

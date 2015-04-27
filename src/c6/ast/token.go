@@ -69,7 +69,7 @@ const (
 	T_FALSE
 	T_NULL
 
-	T_PARAM_NAME
+	T_MS_PARAM_NAME
 	T_FUNCTION_NAME
 
 	// selector tokens

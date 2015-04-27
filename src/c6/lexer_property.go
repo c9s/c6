@@ -16,12 +16,27 @@ func lexPropertyNameToken(l *Lexer) stateFn {
 	return nil
 }
 
+func lexPropertyEnd(l *Lexer) stateFn {
+	// try ';' or '}'
+	var r = l.next()
+	if r == ';' {
+		l.emit(ast.T_SEMICOLON)
+	} else if r == '}' {
+		// emit another semicolon here for parser simplicity?
+		l.emit(ast.T_BRACE_END)
+	} else {
+		l.backup()
+	}
+	return nil
+}
+
 func lexMicrosoftProgIdFunction(l *Lexer) stateFn {
 	var r = l.next()
 	for unicode.IsLetter(r) || unicode.IsDigit(r) || r == '.' || r == '_' {
 		r = l.next()
 	}
 	l.backup()
+	l.emit(ast.T_FUNCTION_NAME)
 
 	// here starts the sproperty
 	r = l.next()
@@ -31,22 +46,32 @@ func lexMicrosoftProgIdFunction(l *Lexer) stateFn {
 	l.emit(ast.T_PAREN_START)
 
 	l.ignoreSpaces()
-	r = l.next()
+
 	for r != ')' {
 		// lex function parameter name
-		for unicode.IsLetter(r) || unicode.IsDigit(r) {
+		r = l.next()
+		for unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' {
 			r = l.next()
 		}
-		l.emit(ast.T_PARAM_NAME)
+		l.backup()
+		l.emit(ast.T_MS_PARAM_NAME)
 		l.accept("=")
 		l.emit(ast.T_EQUAL)
 
+		lexExpression(l)
+
 		l.ignoreSpaces()
-		r = l.next()
+		r = l.peek()
 		if r == ',' {
+			l.next()
+			l.emit(ast.T_COMMA)
+			l.ignoreSpaces()
+		} else if r == ')' {
+			l.next()
+			l.emit(ast.T_PAREN_END)
+			break
 		}
 	}
-	l.emit(ast.T_PAREN_END)
 	return nil
 }
 
@@ -117,17 +142,7 @@ func lexProperty(l *Lexer) stateFn {
 
 		r = l.peek()
 	}
-
-	// try ';' or '}'
-	r = l.next()
-	if r == ';' {
-		l.emit(ast.T_SEMICOLON)
-	} else if r == '}' {
-		// emit another semicolon here for parser simplicity?
-		l.emit(ast.T_BRACE_END)
-	} else {
-		l.backup()
-	}
+	lexPropertyEnd(l)
 	return lexStatement
 }
 

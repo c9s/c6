@@ -315,10 +315,9 @@ func TestLexerInterpolationPropertyValueListWithoutSemiColon(t *testing.T) {
 }
 
 /*
-This is for IE6 and IE7
+This is for microsoft filter functions
 */
-/*
-func TestLexerIEFilter(t *testing.T) {
+func TestLexerMSFilter(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test {
 		filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#81a8cb', endColorstr='#4477a1');
 	}`, []ast.TokenType{
@@ -327,19 +326,17 @@ func TestLexerIEFilter(t *testing.T) {
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
 
-		ast.T_IDENT,
+		ast.T_MS_PROGID,
+		ast.T_FUNCTION_NAME,
 		ast.T_PAREN_START,
-		ast.T_IDENT,
-		ast.T_COMMA,
-		ast.T_HEX_COLOR,
-		ast.T_COMMA,
-		ast.T_HEX_COLOR,
+		ast.T_MS_PARAM_NAME, ast.T_EQUAL, ast.T_INTEGER, ast.T_COMMA,
+		ast.T_MS_PARAM_NAME, ast.T_EQUAL, ast.T_Q_STRING, ast.T_COMMA,
+		ast.T_MS_PARAM_NAME, ast.T_EQUAL, ast.T_Q_STRING,
 		ast.T_PAREN_END,
 		ast.T_SEMICOLON,
 		ast.T_BRACE_END,
 	})
 }
-*/
 
 func TestLexerGradientFunction(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test {
