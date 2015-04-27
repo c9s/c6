@@ -88,13 +88,13 @@ func (self *Parser) rollback() {
 	self.Pos = self.RollbackPos
 }
 
-func (self *Parser) accept(tokenType ast.TokenType) bool {
+func (self *Parser) accept(tokenType ast.TokenType) *ast.Token {
 	var tok = self.next()
 	if tok.Type == tokenType {
-		return true
+		return tok
 	}
 	self.backup()
-	return false
+	return nil
 }
 
 func (self *Parser) expect(tokenType ast.TokenType) *ast.Token {
@@ -104,7 +104,6 @@ func (self *Parser) expect(tokenType ast.TokenType) *ast.Token {
 		panic(fmt.Errorf("Expecting %s, Got %s", tokenType, tok))
 	}
 	return tok
-	return nil
 
 }
 
@@ -437,15 +436,17 @@ Expression := "#{" Expression "}"
 func (parser *Parser) ReduceExpression() ast.Expression {
 	debug("ReduceExpression")
 
-	if parser.accept(ast.T_INTERPOLATION_START) {
+	if tok := parser.accept(ast.T_INTERPOLATION_START); tok != nil {
 		debug("ReduceExpression => accept: T_INTERPOLATION_START")
 
 		debug("ReduceExpression => ReduceExpression")
 		var expr = parser.ReduceExpression()
 
-		parser.expect(ast.T_INTERPOLATION_END)
+		endToken := parser.expect(ast.T_INTERPOLATION_END)
 		debug("ReduceExpression => expect: T_INTERPOLATION_START")
-		return expr
+
+		var interp = ast.NewInterpolation(expr, tok, endToken)
+		return interp
 	}
 
 	// plus or minus. this creates an unary expression that holds the later term.
