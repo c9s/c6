@@ -96,7 +96,7 @@ func lexProperty(l *Lexer) stateFn {
 
 			r = l.peek()
 			if !unicode.IsSpace(r) && r != ':' {
-				l.emit(ast.T_CONCAT)
+				l.emit(ast.T_LITERAL_CONCAT)
 			}
 		}
 
@@ -104,7 +104,7 @@ func lexProperty(l *Lexer) stateFn {
 		if lexPropertyNameToken(l) != nil {
 			r = l.peek()
 			if !unicode.IsSpace(r) && r != ':' {
-				l.emit(ast.T_CONCAT)
+				l.emit(ast.T_LITERAL_CONCAT)
 			}
 		}
 		r = l.peek()
@@ -128,13 +128,13 @@ func lexProperty(l *Lexer) stateFn {
 			// See if it's the end of property
 			r = l.peek()
 			if !unicode.IsSpace(r) && r != '}' && r != ';' && r != ':' {
-				l.emit(ast.T_CONCAT)
+				l.emit(ast.T_LITERAL_CONCAT)
 			}
 		}
 
 		if lexExpression(l) != nil {
 			if l.peek() == '#' && l.peekBy(2) == '{' {
-				l.emit(ast.T_CONCAT)
+				l.emit(ast.T_LITERAL_CONCAT)
 			}
 		}
 

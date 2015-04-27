@@ -214,7 +214,7 @@ func TestLexerInterpolationPropertyValue(t *testing.T) {
 		ast.T_PLUS,
 		ast.T_INTEGER,
 		ast.T_INTERPOLATION_END,
-		ast.T_CONCAT,
+		ast.T_LITERAL_CONCAT,
 		ast.T_IDENT,
 		ast.T_BRACE_END})
 }
@@ -231,7 +231,7 @@ func TestLexerInterpolationPropertyValueList(t *testing.T) {
 		ast.T_PLUS,
 		ast.T_INTEGER,
 		ast.T_INTERPOLATION_END,
-		ast.T_CONCAT,
+		ast.T_LITERAL_CONCAT,
 		ast.T_IDENT,
 		ast.T_INTEGER,
 		ast.T_UNIT_PX,
@@ -248,19 +248,19 @@ func TestLexerInterpolationLeadingAndTrailing(t *testing.T) {
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
 
 		ast.T_INTEGER,
-		ast.T_CONCAT,
+		ast.T_LITERAL_CONCAT,
 
 		ast.T_INTERPOLATION_START,
 		ast.T_INTEGER, ast.T_PLUS, ast.T_INTEGER,
 		ast.T_INTERPOLATION_END,
 
-		ast.T_CONCAT,
+		ast.T_LITERAL_CONCAT,
 
 		ast.T_INTERPOLATION_START,
 		ast.T_INTEGER, ast.T_PLUS, ast.T_INTEGER,
 		ast.T_INTERPOLATION_END,
 
-		ast.T_CONCAT,
+		ast.T_LITERAL_CONCAT,
 
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
@@ -280,13 +280,13 @@ func TestLexerInterpolationConcatInterpolation(t *testing.T) {
 		ast.T_INTEGER, ast.T_PLUS, ast.T_INTEGER,
 		ast.T_INTERPOLATION_END,
 
-		ast.T_CONCAT,
+		ast.T_LITERAL_CONCAT,
 
 		ast.T_INTERPOLATION_START,
 		ast.T_INTEGER, ast.T_PLUS, ast.T_INTEGER,
 		ast.T_INTERPOLATION_END,
 
-		ast.T_CONCAT,
+		ast.T_LITERAL_CONCAT,
 
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
@@ -306,7 +306,7 @@ func TestLexerInterpolationPropertyValueListWithoutSemiColon(t *testing.T) {
 		ast.T_PLUS,
 		ast.T_INTEGER,
 		ast.T_INTERPOLATION_END,
-		ast.T_CONCAT,
+		ast.T_LITERAL_CONCAT,
 		ast.T_IDENT,
 		ast.T_INTEGER,
 		ast.T_UNIT_PX,
@@ -394,7 +394,7 @@ func TestLexerInterpolationPropertyName(t *testing.T) {
 		ast.T_PLUS,
 		ast.T_INTEGER,
 		ast.T_INTERPOLATION_END,
-		ast.T_CONCAT,
+		ast.T_LITERAL_CONCAT,
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
 		ast.T_BRACE_END,
@@ -408,11 +408,11 @@ func TestLexerInterpolationPropertyName2(t *testing.T) {
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME_TOKEN,
-		ast.T_CONCAT,
+		ast.T_LITERAL_CONCAT,
 		ast.T_INTERPOLATION_START,
 		ast.T_QQ_STRING,
 		ast.T_INTERPOLATION_END,
-		ast.T_CONCAT,
+		ast.T_LITERAL_CONCAT,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
 		ast.T_INTERPOLATION_START,
@@ -420,7 +420,7 @@ func TestLexerInterpolationPropertyName2(t *testing.T) {
 		ast.T_PLUS,
 		ast.T_INTEGER,
 		ast.T_INTERPOLATION_END,
-		ast.T_CONCAT,
+		ast.T_LITERAL_CONCAT,
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
 		ast.T_BRACE_END,

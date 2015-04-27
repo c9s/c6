@@ -5,15 +5,15 @@ A struct that contains many concatable strings
 
 	{any} {expression} {any}
 */
-type Concat struct {
+type LiteralConcat struct {
 	Expressions []Expression
 }
 
-func NewConcat() *Concat {
-	return &Concat{[]Expression{}}
+func NewLiteralConcat() *LiteralConcat {
+	return &LiteralConcat{[]Expression{}}
 }
 
-func (self Concat) AppendExpression(expr Expression) {
+func (self *LiteralConcat) AppendExpression(expr Expression) {
 	self.Expressions = append(self.Expressions, expr)
 }
 

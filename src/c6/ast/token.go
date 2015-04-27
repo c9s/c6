@@ -80,7 +80,7 @@ const (
 	T_PARENT_SELECTOR        // SASS parent selector
 	T_PSEUDO_SELECTOR        // :hover, :visited , ...
 	T_INTERPOLATION_SELECTOR // selector with interpolation: '#{ ... }'
-	T_CONCAT                 // used to concat selectors and interpolation
+	T_LITERAL_CONCAT                 // used to concat selectors and interpolation
 
 	// for Microsoft 'progid:' token
 	T_MS_PROGID

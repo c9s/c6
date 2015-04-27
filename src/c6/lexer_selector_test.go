@@ -399,7 +399,7 @@ func TestLexerSelectorInterpolationInTheMiddleOfClassSelector(t *testing.T) {
 	l := NewLexerWithString(`.foo#{ abc }bar {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_CLASS_SELECTOR, ast.T_CONCAT, ast.T_INTERPOLATION_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_CLASS_SELECTOR, ast.T_LITERAL_CONCAT, ast.T_INTERPOLATION_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
 	l.close()
 }
 

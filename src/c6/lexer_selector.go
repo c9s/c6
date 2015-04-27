@@ -260,7 +260,7 @@ func lexSelectors(l *Lexer) stateFn {
 		//    '#{  }#myId {  }'
 		if isInterpolationStartToken(r, l.peekBy(2)) {
 			if tok := l.lastToken(); tok != nil && isSelector(tok.Type) {
-				l.emit(ast.T_CONCAT)
+				l.emit(ast.T_LITERAL_CONCAT)
 			}
 
 			lexInterpolation(l, false)
