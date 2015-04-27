@@ -10,4 +10,5 @@ func TestNumber(t *testing.T) {
 	t.Logf("%s", num.String())
 
 	assert.Equal(t, 200, num.Int)
+	assert.Equal(t, "200px", num.String())
 }

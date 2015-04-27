@@ -4,7 +4,7 @@ import "fmt"
 
 type Number interface {
 	SetUnit(unit UnitType)
-	IsNumber()
+	CanBeNumber()
 	CanBeExpression()
 }
 
@@ -26,17 +26,18 @@ func NewFloatNumber(num float64) *FloatNumber {
 	return &FloatNumber{num, UNIT_NONE, nil}
 }
 
-func (num FloatNumber) IsNumber()        {}
+func (num FloatNumber) CanBeNumber()     {}
+func (num FloatNumber) CanBeNode()       {}
 func (num FloatNumber) CanBeExpression() {}
 
-func (num FloatNumber) SetUnit(unit UnitType) {
+func (num *FloatNumber) SetUnit(unit UnitType) {
 	num.Unit = unit
 }
 
 func (num FloatNumber) String() (out string) {
 	out += fmt.Sprintf("%.2f", num.Float)
 	if num.Unit != UNIT_NONE {
-		out += num.Unit.String()
+		out += num.Unit.UnitString()
 	}
 	return out
 }
@@ -51,7 +52,8 @@ func NewIntegerNumber(num int64) *IntegerNumber {
 	return &IntegerNumber{num, UNIT_NONE, nil}
 }
 
-func (num IntegerNumber) IsNumber()        {}
+func (num IntegerNumber) CanBeNumber()     {}
+func (num IntegerNumber) CanBeNode()       {}
 func (num IntegerNumber) CanBeExpression() {}
 
 func (num *IntegerNumber) AddFloat(a float64) {
@@ -62,14 +64,18 @@ func (num *IntegerNumber) AddInt(a int64) {
 	num.Int += a
 }
 
-func (num IntegerNumber) SetUnit(unit UnitType) {
+func (num *IntegerNumber) SetUnit(unit UnitType) {
 	num.Unit = unit
 }
 
 func (num IntegerNumber) String() (out string) {
 	out += fmt.Sprintf("%d", num.Int)
 	if num.Unit > 0 {
-		out += num.Unit.String()
+		out += num.Unit.UnitString()
 	}
 	return out
+}
+
+func AddNumber(a Number, b Number) {
+
 }
