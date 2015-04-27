@@ -93,6 +93,11 @@ func lexExpression(l *Lexer) stateFn {
 		l.next()
 		l.emit(ast.T_COMMA)
 
+	} else if r == '=' {
+
+		l.next()
+		l.emit(ast.T_EQUAL)
+
 	} else if r == '#' {
 
 		// ignore interpolation

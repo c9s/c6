@@ -320,7 +320,7 @@ This is for IE6 and IE7
 /*
 func TestLexerIEFilter(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test {
-		filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#81a8cb', endColorstr='#4477a1');
+		filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#81a8cb', endColorstr='#4477a1');
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
