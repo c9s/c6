@@ -11,6 +11,7 @@ type Number interface {
 type FloatNumber struct {
 	Float float64
 	Unit  UnitType
+	Token *Token
 }
 
 func (num FloatNumber) AddFloat(a float64) {
@@ -22,7 +23,7 @@ func (num FloatNumber) AddInt(a int) {
 }
 
 func NewFloatNumber(num float64) *FloatNumber {
-	return &FloatNumber{num, 0}
+	return &FloatNumber{num, 0, nil}
 }
 
 func (num FloatNumber) IsNumber()        {}
@@ -41,12 +42,13 @@ func (num FloatNumber) String() (out string) {
 }
 
 type IntegerNumber struct {
-	Int  int64
-	Unit UnitType
+	Int   int64
+	Unit  UnitType
+	Token *Token
 }
 
 func NewIntegerNumber(num int64) *IntegerNumber {
-	return &IntegerNumber{num, 0}
+	return &IntegerNumber{num, 0, nil}
 }
 
 func (num IntegerNumber) IsNumber()        {}

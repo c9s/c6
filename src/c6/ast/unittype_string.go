@@ -4,9 +4,9 @@ package ast
 
 import "fmt"
 
-const _UnitType_name = "UNIT_PXUNIT_PTUNIT_EMUNIT_CMUNIT_MMUNIT_REMUNIT_DEGUNIT_PERCENT"
+const _UnitType_name = "UNIT_NONEUNIT_PXUNIT_PTUNIT_EMUNIT_CMUNIT_MMUNIT_REMUNIT_DEGUNIT_PERCENT"
 
-var _UnitType_index = [...]uint8{0, 7, 14, 21, 28, 35, 43, 51, 63}
+var _UnitType_index = [...]uint8{0, 9, 16, 23, 30, 37, 44, 52, 60, 72}
 
 func (i UnitType) String() string {
 	if i < 0 || i+1 >= UnitType(len(_UnitType_index)) {

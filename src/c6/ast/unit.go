@@ -6,7 +6,8 @@ import "fmt"
 type UnitType int
 
 const (
-	UNIT_PX UnitType = iota
+	UNIT_NONE UnitType = iota
+	UNIT_PX
 	UNIT_PT
 	UNIT_EM
 	UNIT_CM
@@ -34,6 +35,8 @@ func (unit UnitType) UnitString() string {
 		return "deg"
 	case UNIT_PERCENT:
 		return "%"
+	case UNIT_NONE:
+		return ""
 	default:
 		panic(fmt.Errorf("Unsupported unit type: %s", unit))
 	}
