@@ -28,7 +28,7 @@ func NewFloatNumber(num float64) *FloatNumber {
 func (num FloatNumber) IsNumber()        {}
 func (num FloatNumber) CanBeExpression() {}
 
-func (num FloatNumber) SetUnit(unit int) {
+func (num FloatNumber) SetUnit(unit UnitType) {
 	num.Unit = unit
 }
 
@@ -36,14 +36,14 @@ func (num FloatNumber) String() (out string) {
 	out += fmt.Sprintf("%.2f", num.Float)
 
 	if num.Unit > 0 {
-		switch TokenType(num.Unit) {
-		case T_UNIT_PX:
+		switch num.Unit {
+		case UNIT_PX:
 			out += "px"
-		case T_UNIT_PT:
+		case UNIT_PT:
 			out += "pt"
-		case T_UNIT_EM:
+		case UNIT_EM:
 			out += "em"
-		case T_UNIT_REM:
+		case UNIT_REM:
 			out += "rem"
 		default:
 			panic("unimplemented type")
