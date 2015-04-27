@@ -14,16 +14,16 @@ type FloatNumber struct {
 	Token *Token
 }
 
-func (num FloatNumber) AddFloat(a float64) {
+func (num *FloatNumber) AddFloat(a float64) {
 	num.Float += a
 }
 
-func (num FloatNumber) AddInt(a int) {
+func (num *FloatNumber) AddInt(a int) {
 	num.Float += float64(a)
 }
 
 func NewFloatNumber(num float64) *FloatNumber {
-	return &FloatNumber{num, 0, nil}
+	return &FloatNumber{num, UNIT_NONE, nil}
 }
 
 func (num FloatNumber) IsNumber()        {}
@@ -35,7 +35,7 @@ func (num FloatNumber) SetUnit(unit UnitType) {
 
 func (num FloatNumber) String() (out string) {
 	out += fmt.Sprintf("%.2f", num.Float)
-	if num.Unit > 0 {
+	if num.Unit != UNIT_NONE {
 		out += num.Unit.String()
 	}
 	return out
@@ -48,17 +48,17 @@ type IntegerNumber struct {
 }
 
 func NewIntegerNumber(num int64) *IntegerNumber {
-	return &IntegerNumber{num, 0, nil}
+	return &IntegerNumber{num, UNIT_NONE, nil}
 }
 
 func (num IntegerNumber) IsNumber()        {}
 func (num IntegerNumber) CanBeExpression() {}
 
-func (num IntegerNumber) AddFloat(a float64) {
+func (num *IntegerNumber) AddFloat(a float64) {
 	num.Int += int64(a)
 }
 
-func (num IntegerNumber) AddInt(a int64) {
+func (num *IntegerNumber) AddInt(a int64) {
 	num.Int += a
 }
 
