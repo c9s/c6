@@ -284,27 +284,27 @@ works for:
 	'10' 'em'
 	'0.2' 'em'
 */
-func (parser *Parser) ReduceNumber() ast.Number {
+func (parser *Parser) ReduceNumber() *ast.Number {
 	// the number token
 	var tok = parser.next()
 
 	debug("ReduceNumber => next: %s", tok)
 
 	var tok2 = parser.peek()
-	var number ast.Number
+	var number *ast.Number
 	if tok.Type == ast.T_INTEGER {
 		i, err := strconv.ParseInt(tok.Str, 10, 64)
 		if err != nil {
 			panic(err)
 		}
-		number = ast.NewNumberInt64(i)
+		number = ast.NewNumberInt64(i, tok)
 	} else {
 
 		f, err := strconv.ParseFloat(tok.Str, 64)
 		if err != nil {
 			panic(err)
 		}
-		number = ast.NewNumber(f)
+		number = ast.NewNumber(f, tok)
 	}
 
 	if tok2.IsOneOfTypes([]ast.TokenType{ast.T_UNIT_PX, ast.T_UNIT_PT, ast.T_UNIT_CM, ast.T_UNIT_EM, ast.T_UNIT_MM, ast.T_UNIT_REM, ast.T_UNIT_DEG, ast.T_UNIT_PERCENT}) {
