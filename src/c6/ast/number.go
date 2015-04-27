@@ -28,6 +28,7 @@ func NewNumber(num float64, token *Token) *Number {
 	return &Number{num, UNIT_NONE, token}
 }
 
+func (num Number) CanBeValue()      {}
 func (num Number) CanBeNode()       {}
 func (num Number) CanBeExpression() {}
 

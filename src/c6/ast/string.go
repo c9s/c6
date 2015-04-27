@@ -5,6 +5,8 @@ type String struct {
 	Token *Token
 }
 
+func (self String) CanBeValue() {}
+
 func (self String) CanBeExpression() {}
 
 func NewString(token *Token) *String {

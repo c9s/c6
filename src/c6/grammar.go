@@ -15,14 +15,14 @@ Rule := SelectorList '{'
 
 Property := PropertyName ':' PropertyValue
 
-PropertyName :=  Expression Concat Expression
-			 |   Expression
+PropertyName :=  PropertyNameToken LiteralConcat PropertyNameToken
+			 |   PropertyNameToken
 
 PropertyNameToken := Ident | Interpolation
 
-PropertyValue	:= Expression Concat Expression
+PropertyValue	:= Expression LiteralConcat Expression
 				| Expression Expression
-				| Expression ',' Expression
+				| Expression LiteralConcat(',') Expression
 				| Expression
 				| Keyword
 				| Url

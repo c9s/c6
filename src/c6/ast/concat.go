@@ -3,7 +3,7 @@ package ast
 /**
 A struct that contains many concatable strings
 
-	{any} {expression} {any}
+	{any}{expression}{any}
 */
 type LiteralConcat struct {
 	Expressions []Expression
@@ -12,6 +12,8 @@ type LiteralConcat struct {
 func NewLiteralConcat() *LiteralConcat {
 	return &LiteralConcat{[]Expression{}}
 }
+
+func (self LiteralConcat) CanBeExpression() {}
 
 func (self *LiteralConcat) AppendExpression(expr Expression) {
 	self.Expressions = append(self.Expressions, expr)

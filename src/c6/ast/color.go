@@ -12,6 +12,7 @@ type HexColor struct {
 func (self HexColor) CanBeExpression() {}
 func (self HexColor) CanBeNode()       {}
 func (self HexColor) CanBeColor()      {}
+func (self HexColor) CanBeValue()      {}
 
 // Factor functions
 func NewHexColor(hex string, token *Token) *HexColor {
@@ -29,6 +30,7 @@ type RGBAColor struct {
 func (self RGBAColor) CanBeExpression() {}
 func (self RGBAColor) CanBeNode()       {}
 func (self RGBAColor) CanBeColor()      {}
+func (self RGBAColor) CanBeValue()      {}
 
 func NewRGBAColor(r, g, b, a float64, token *Token) *RGBAColor {
 	return &RGBAColor{r, g, b, a, token}
@@ -44,6 +46,7 @@ type RGBColor struct {
 func (self RGBColor) CanBeExpression() {}
 func (self RGBColor) CanBeNode()       {}
 func (self RGBColor) CanBeColor()      {}
+func (self RGBColor) CanBeValue()      {}
 
 func NewRGBColor(r, g, b float64, token *Token) *RGBColor {
 	return &RGBColor{r, g, b, token}
