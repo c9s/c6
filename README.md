@@ -3,7 +3,7 @@ C6
 
 A SASS implementation in Go.
 
-
+This is not just to implement SASS, but also to improve the language for a better consistency.
 
 
 ## Working in progress
