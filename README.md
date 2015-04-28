@@ -30,6 +30,8 @@ This is not just to implement SASS, but also to improve the language for better 
   - [x] functions
   - [x] vendor prefix properties
   - [x] MS filter.  `progid:DXImageTransform.Microsoft....`
+  - [x] variable names
+  - [x] variable assignment
 - [ ] Syntax
   - [x] `@import`
   - [ ] `@if`
