@@ -4,21 +4,6 @@ import "fmt"
 import "strconv"
 import "c6/ast"
 
-func (parser *Parser) parseScss(code string) *ast.Block {
-	l := NewLexerWithString(code)
-	l.run()
-	parser.Input = l.getOutput()
-
-	block := ast.Block{}
-	for !parser.eof() {
-		stm := parser.ParseStatement(nil)
-		if stm != nil {
-			block.AppendStatement(stm)
-		}
-	}
-	return &block
-}
-
 func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
 	var token = parser.peek()
 
@@ -92,11 +77,11 @@ works for:
 	'10' 'em'
 	'0.2' 'em'
 */
-func (parser *Parser) ReduceNumber() *ast.Number {
+func (parser *Parser) ParseNumber() *ast.Number {
 	// the number token
 	var tok = parser.next()
 
-	debug("ReduceNumber => next: %s", tok)
+	debug("ParseNumber => next: %s", tok)
 
 	var tok2 = parser.peek()
 	var number *ast.Number
@@ -151,7 +136,7 @@ func (parser *Parser) ParseFunctionCall() *ast.FunctionCall {
 	return fcall
 }
 
-func (parser *Parser) ReduceIdent() *ast.Ident {
+func (parser *Parser) ParseIdent() *ast.Ident {
 	var tok = parser.next()
 	debug("ReduceIndent => next: %s", tok)
 	if tok.Type != ast.T_IDENT {
@@ -190,7 +175,7 @@ func (parser *Parser) ParseFactor() ast.Expression {
 	} else if tok.Type == ast.T_INTEGER || tok.Type == ast.T_FLOAT {
 
 		// reduce number
-		var number = parser.ReduceNumber()
+		var number = parser.ParseNumber()
 		return ast.Expression(number)
 
 	} else if tok.Type == ast.T_FUNCTION_NAME {
@@ -200,7 +185,7 @@ func (parser *Parser) ParseFactor() ast.Expression {
 
 	} else if tok.Type == ast.T_IDENT {
 
-		var ident = parser.ReduceIdent()
+		var ident = parser.ParseIdent()
 		return ast.Expression(ident)
 
 	} else if tok.Type == ast.T_HEX_COLOR {
@@ -258,6 +243,7 @@ func (parser *Parser) ParseExpression() ast.Expression {
 	}
 
 	// plus or minus. this creates an unary expression that holds the later term.
+	// this is for:  +3 or -4
 	var tok = parser.peek()
 	if tok.Type == ast.T_PLUS || tok.Type == ast.T_MINUS {
 		parser.next()
@@ -266,6 +252,8 @@ func (parser *Parser) ParseExpression() ast.Expression {
 		return ast.NewUnaryExpression(op, expr)
 	}
 
+	// there is a operator
+	//    return expression object that presents something like 3 + 4
 	var leftTerm = parser.ParseTerm()
 	var rightTok = parser.peek()
 	if rightTok.Type == ast.T_PLUS {
@@ -284,37 +272,140 @@ func (parser *Parser) ParseExpression() ast.Expression {
 	return nil
 }
 
+func (parser *Parser) ParseList() *ast.List {
+	var list = ast.NewList()
+	var tok = parser.peek()
+	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
+		if sublist := parser.ParseCommaSepList(); sublist != nil {
+			list.Append(sublist)
+		}
+
+		tok = parser.peek()
+		if tok.Type == ast.T_COMMA {
+			parser.next()
+		}
+		tok = parser.peek()
+	}
+	fmt.Printf("ParseList <= %s\n", list.String())
+	return list
+}
+
+func (parser *Parser) ParseCommaSepList() *ast.List {
+	var list = ast.NewList()
+	list.Separator = ","
+
+	var tok = parser.peek()
+
+	tok = parser.peek()
+	for tok.Type != ast.T_COMMA && tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
+
+		if tok.Type == ast.T_PAREN_START {
+			parser.next()
+			var sublist = parser.ParseCommaSepList()
+			parser.expect(ast.T_PAREN_END)
+			if sublist != nil {
+				list.Append(sublist)
+			}
+		} else {
+			var sublist = parser.ParseSpaceSepList()
+			if sublist != nil {
+				list.Append(sublist)
+			}
+		}
+
+		tok = parser.peek()
+		if tok.Type == ast.T_COMMA {
+			parser.next()
+			tok = parser.peek()
+		}
+	}
+	fmt.Printf("Comma-separated list: %s\n", list)
+	return list
+}
+
+func (parser *Parser) ParseSpaceSepList() *ast.List {
+	var list = ast.NewList()
+	list.Separator = " "
+
+	var tok = parser.peek()
+
+	if tok.Type == ast.T_PAREN_START {
+		parser.next()
+		var sublist = parser.ParseCommaSepList()
+		parser.expect(ast.T_PAREN_END)
+
+		list.Append(sublist)
+	}
+
+	tok = parser.peek()
+	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
+		var expr = parser.ParseExpression()
+		if expr != nil {
+			list.Append(expr)
+		}
+		tok = parser.peek()
+		if tok.Type == ast.T_COMMA {
+			break
+		}
+	}
+	return list
+}
+
+/*
+func (parser *Parser) ReduceCommaSepList() *ast.List {
+	var tok = parser.peek()
+
+	// the start of the list token
+	if tok.Type == ast.T_PAREN_START {
+		parser.next()
+		// reduce the space separated list inside
+		var grouplist = parser.ReduceList()
+		_ = grouplist
+	} else {
+		var list = ast.NewList()
+		var expr = parser.ParseExpression()
+		var tok = parser.peek()
+		if tok.Type == ast.T_COMMA {
+			list.Separator = ","
+		} else if tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
+			list.Separator = " "
+		}
+
+		// try to parse the second expression
+		var expr2 = parser.ParseExpression()
+		for expr2 != nil {
+			var tok = parser.peek()
+
+			// the processed token is comma, but what we've got is not a comma
+			// this is for "," then " " case
+			if list.Separator == "," && tok.Type != ast.T_COMMA {
+
+			} else if list.Separator == " " && tok.Type == ast.T_COMMA {
+
+			}
+
+			expr2 = parser.ParseExpression()
+		}
+	}
+	return nil
+}
+*/
+
 /**
 We treat the property value section as a list value, which is separated by ',' or ' '
 */
-func (parser *Parser) ParsePropertyListValue(parentRuleSet *ast.RuleSet, property *ast.Property) *ast.List {
+func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *ast.Property) *ast.List {
+	// var tok = parser.peek()
+	var list = parser.ParseList()
+
 	var tok = parser.peek()
 
-	var propertyValueList = ast.NewList()
-	var valueList = ast.NewList()
-	valueList.Separator = " "
-
-	// a list can end with ';' or '}'
-	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
-		var expr = parser.ParseExpression()
-
-		tok = parser.peek()
-
-		// see if the next is a comma
-		if tok.Type == ast.T_COMMA {
-			// consume the comma token
-			parser.next()
-
-		} else if tok.Type == ast.T_LITERAL_CONCAT {
-			// it means there is a literal concat for something like:
-			//   #{ ... }px or 10#{ 10 }px
-		}
-		if expr != nil {
-			valueList.Append(expr)
-		}
+	if tok.Type == ast.T_SEMICOLON || tok.Type == ast.T_BRACE_END {
+		parser.next()
+	} else {
+		panic(fmt.Errorf("Unexpected end of property value. Got %s", tok))
 	}
-	parser.accept(ast.T_SEMICOLON)
-	return propertyValueList
+	return list
 }
 
 func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.DeclarationBlock {
@@ -332,7 +423,7 @@ func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.Dec
 			parser.expect(ast.T_COLON)
 
 			var property = ast.NewProperty(tok)
-			var valueList = parser.ParsePropertyListValue(parentRuleSet, property)
+			var valueList = parser.ParsePropertyValue(parentRuleSet, property)
 			_ = valueList
 			// property.Values = valueList
 			declBlock.Append(property)

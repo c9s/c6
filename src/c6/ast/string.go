@@ -8,6 +8,9 @@ type String struct {
 func (self String) CanBeValue() {}
 
 func (self String) CanBeExpression() {}
+func (self String) String() string {
+	return self.Value
+}
 
 func NewString(token *Token) *String {
 	return &String{token.Str, token}

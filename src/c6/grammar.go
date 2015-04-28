@@ -20,9 +20,15 @@ PropertyName :=  PropertyNameToken LiteralConcat PropertyNameToken
 
 PropertyNameToken := Ident | Interpolation
 
-PropertyValue	:= Expression LiteralConcat Expression
-				| Expression Expression
-				| Expression LiteralConcat(',') Expression
+PropertyValue: List
+
+List := CommaSeparatoredList
+	  | SpaceSeparatoredList
+
+CommaSeparatoredList := Value T_COMMA CommaSeparatoredList
+SpaceSeparatoredList := Value SpaceSeparatoredList
+
+Value		   := Expression LiteralConcat Expression
 				| Expression
 				| Keyword
 				| Url

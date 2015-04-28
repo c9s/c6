@@ -190,3 +190,18 @@ func (self *Parser) eof() bool {
 	self.backup()
 	return tok == nil
 }
+
+func (parser *Parser) parseScss(code string) *ast.Block {
+	l := NewLexerWithString(code)
+	l.run()
+	parser.Input = l.getOutput()
+
+	block := ast.Block{}
+	for !parser.eof() {
+		stm := parser.ParseStatement(nil)
+		if stm != nil {
+			block.AppendStatement(stm)
+		}
+	}
+	return &block
+}

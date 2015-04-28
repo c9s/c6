@@ -8,6 +8,10 @@ type FunctionCall struct {
 
 func (self FunctionCall) CanBeExpression() {}
 func (self FunctionCall) CanBeNode()       {}
+func (self FunctionCall) String() string {
+	// XXX:
+	return self.Function
+}
 
 func NewFunctionCall(token *Token) *FunctionCall {
 	return &FunctionCall{token.Str, []Expression{}, token}

@@ -46,6 +46,23 @@ func TestParserParseImportRuleWithMediaList(t *testing.T) {
 	_ = block
 }
 
+func TestParserPropertyListExpression(t *testing.T) {
+	var buffers []string = []string{
+		`div { width: 1px; }`,
+		`div { width: 2px 3px; }`,
+		`div { width: 4px, 5px, 6px, 7px; }`,
+		`div { width: 4px, 5px 6px, 7px; }`,
+		`div { width: 10px 3px + 7px 20px; }`,
+		// `div { width: 10px, 3px + 7px, 20px; }`,
+	}
+	for _, buffer := range buffers {
+		t.Logf("Input %s", buffer)
+		var parser = NewParser()
+		var block = parser.parseScss(buffer)
+		fmt.Printf("%+v\n", block)
+	}
+}
+
 func TestParserMassiveRules(t *testing.T) {
 	var buffers []string = []string{
 		`div { width: auto; }`,
