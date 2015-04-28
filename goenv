@@ -72,3 +72,6 @@ function git_install() {
 }
 
 get golang.org/x/tools/cmd/stringer
+get golang.org/x/text/encoding
+get golang.org/x/text/transform
+get github.com/stretchr/testify/assert
