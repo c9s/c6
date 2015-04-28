@@ -48,6 +48,33 @@ func (l *Lexer) emitIfKeywordMatches() bool {
 	return false
 }
 
+func lexCommentBlock(l *Lexer, returnState stateFn) stateFn {
+	var r = l.next()
+	if r != '/' {
+		l.error("Unexpected token of comment block. Got '%s'", r)
+	}
+	r = l.next()
+	if r != '*' {
+		l.error("Unexpected token of comment block. Got '%s'", r)
+	}
+	l.ignore()
+
+	r = l.next()
+	for r != EOF {
+		if r == '*' && l.peek() == '/' {
+			l.backup()
+			l.emit(ast.T_COMMENT_BLOCK)
+			l.next()
+			l.next()
+			l.ignore()
+			return returnState
+		}
+		r = l.next()
+	}
+	l.error("Expecting comment end mark '*/'.", r)
+	return returnState
+}
+
 func lexComment(l *Lexer) stateFn {
 	var r = l.next()
 
