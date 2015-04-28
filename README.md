@@ -9,6 +9,27 @@ This is not just to implement SASS, but also to improve the language for better 
 ## Working in progress
 
 
+- [ ] Lexing
+  - [x] `@import`
+  - [x] simple selector.
+    - [x] type selector.
+    - [x] child selector.
+    - [x] attribute selector.
+    - [x] adjacent selector.
+    - [x] descendant selector.
+    - [x] class selector.
+    - [x] ID selector.
+  - [x] ruleset
+  - [x] sub-ruleset
+  - [x] interpolation
+  - [x] property name
+  - [x] property value list
+  - [x] comma-separated list
+  - [x] space-separated list
+  - [x] hex color
+  - [x] functions
+  - [x] vendor prefix properties
+  - [x] MS filter.  `progid:DXImageTransform.Microsoft....`
 - [ ] Syntax
   - [x] `@import`
   - [ ] `@if`
