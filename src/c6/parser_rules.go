@@ -124,10 +124,10 @@ func (parser *Parser) ReduceNumber() *ast.Number {
 	return number
 }
 
-func (parser *Parser) ReduceFunctionCall() *ast.FunctionCall {
+func (parser *Parser) ParseFunctionCall() *ast.FunctionCall {
 	var identTok = parser.next()
 
-	debug("ReduceFunctionCall => next: %s", identTok)
+	debug("ParseFunctionCall => next: %s", identTok)
 
 	var fcall = ast.NewFunctionCall(identTok)
 
@@ -135,9 +135,9 @@ func (parser *Parser) ReduceFunctionCall() *ast.FunctionCall {
 
 	var argTok = parser.peek()
 	for argTok.Type != ast.T_PAREN_END {
-		var arg = parser.ReduceFactor()
+		var arg = parser.ParseFactor()
 		fcall.AppendArgument(arg)
-		debug("ReduceFunctionCall => arg: %+v", arg)
+		debug("ParseFunctionCall => arg: %+v", arg)
 
 		argTok = parser.peek()
 		if argTok.Type == ast.T_COMMA {
@@ -161,23 +161,23 @@ func (parser *Parser) ReduceIdent() *ast.Ident {
 }
 
 /**
-The ReduceFactor must return an Expression interface compatible object
+The ParseFactor must return an Expression interface compatible object
 */
-func (parser *Parser) ReduceFactor() ast.Expression {
+func (parser *Parser) ParseFactor() ast.Expression {
 	var tok = parser.peek()
-	debug("ReduceFactor => peek: %s", tok)
+	debug("ParseFactor => peek: %s", tok)
 
 	if tok.Type == ast.T_PAREN_START {
 
 		parser.expect(ast.T_PAREN_START)
-		var expr = parser.ReduceExpression()
+		var expr = parser.ParseExpression()
 		parser.expect(ast.T_PAREN_END)
 		return expr
 
 	} else if tok.Type == ast.T_INTERPOLATION_START {
 
 		parser.expect(ast.T_INTERPOLATION_START)
-		parser.ReduceExpression()
+		parser.ParseExpression()
 		parser.expect(ast.T_INTERPOLATION_END)
 		// TODO:
 
@@ -195,7 +195,7 @@ func (parser *Parser) ReduceFactor() ast.Expression {
 
 	} else if tok.Type == ast.T_FUNCTION_NAME {
 
-		var fcall = parser.ReduceFunctionCall()
+		var fcall = parser.ParseFunctionCall()
 		return ast.Expression(*fcall)
 
 	} else if tok.Type == ast.T_IDENT {
@@ -211,17 +211,17 @@ func (parser *Parser) ReduceFactor() ast.Expression {
 	return nil
 }
 
-func (parser *Parser) ReduceTerm() ast.Expression {
-	debug("ReduceTerm")
+func (parser *Parser) ParseTerm() ast.Expression {
+	debug("ParseTerm")
 
-	var expr1 = parser.ReduceFactor()
+	var expr1 = parser.ParseFactor()
 
 	// see if the next token is '*' or '/'
 	var tok = parser.peek()
 	if tok.Type == ast.T_MUL || tok.Type == ast.T_DIV {
 		var opTok = parser.next()
 		var op = ast.NewOp(opTok)
-		var expr2 = parser.ReduceFactor()
+		var expr2 = parser.ParseFactor()
 		return ast.NewBinaryExpression(op, expr1, expr2)
 	}
 	return expr1
@@ -241,17 +241,17 @@ Expression := "#{" Expression "}"
 			| Term '-' Term
 			| Term
 */
-func (parser *Parser) ReduceExpression() ast.Expression {
-	debug("ReduceExpression")
+func (parser *Parser) ParseExpression() ast.Expression {
+	debug("ParseExpression")
 
 	if tok := parser.accept(ast.T_INTERPOLATION_START); tok != nil {
-		debug("ReduceExpression => accept: T_INTERPOLATION_START")
+		debug("ParseExpression => accept: T_INTERPOLATION_START")
 
-		debug("ReduceExpression => ReduceExpression")
-		var expr = parser.ReduceExpression()
+		debug("ParseExpression => ParseExpression")
+		var expr = parser.ParseExpression()
 
 		endToken := parser.expect(ast.T_INTERPOLATION_END)
-		debug("ReduceExpression => expect: T_INTERPOLATION_START")
+		debug("ParseExpression => expect: T_INTERPOLATION_START")
 
 		var interp = ast.NewInterpolation(expr, tok, endToken)
 		return interp
@@ -262,21 +262,21 @@ func (parser *Parser) ReduceExpression() ast.Expression {
 	if tok.Type == ast.T_PLUS || tok.Type == ast.T_MINUS {
 		parser.next()
 		var op = ast.NewOp(tok)
-		var expr = parser.ReduceExpression()
+		var expr = parser.ParseExpression()
 		return ast.NewUnaryExpression(op, expr)
 	}
 
-	var leftTerm = parser.ReduceTerm()
+	var leftTerm = parser.ParseTerm()
 	var rightTok = parser.peek()
 	if rightTok.Type == ast.T_PLUS {
 		parser.next()
 		var op = ast.NewOp(rightTok)
-		var rightTerm = parser.ReduceTerm()
+		var rightTerm = parser.ParseTerm()
 		return ast.NewBinaryExpression(op, leftTerm, rightTerm)
 	} else if rightTok.Type == ast.T_MINUS {
 		parser.next()
 		var op = ast.NewOp(rightTok)
-		var rightTerm = parser.ReduceTerm()
+		var rightTerm = parser.ParseTerm()
 		return ast.NewBinaryExpression(op, leftTerm, rightTerm)
 	} else {
 		return ast.NewUnaryExpression(nil, leftTerm)
@@ -296,7 +296,7 @@ func (parser *Parser) ParsePropertyListValue(parentRuleSet *ast.RuleSet, propert
 
 	// a list can end with ';' or '}'
 	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
-		var expr = parser.ReduceExpression()
+		var expr = parser.ParseExpression()
 
 		tok = parser.peek()
 
