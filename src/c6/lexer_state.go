@@ -352,8 +352,8 @@ func lexHexColor(l *Lexer) stateFn {
 	l.backup()
 
 	var length = l.length() - 1
-	if length != 3 && length != 6 {
-		panic(fmt.Errorf("Invalid hex color length, expecting 3 or 6, got %d - %s", length, l.current()))
+	if length != 3 && length != 6 && length != 8 {
+		panic(fmt.Errorf("Invalid hex color, expecting 3, 6 or 8 hex characters, got %d - %s", length, l.current()))
 	}
 	l.emit(ast.T_HEX_COLOR)
 	return lexExpression

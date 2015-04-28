@@ -13,6 +13,9 @@ func (self HexColor) CanBeExpression() {}
 func (self HexColor) CanBeNode()       {}
 func (self HexColor) CanBeColor()      {}
 func (self HexColor) CanBeValue()      {}
+func (self HexColor) String() string {
+	return "#" + self.Hex
+}
 
 // Factor functions
 func NewHexColor(hex string, token *Token) *HexColor {

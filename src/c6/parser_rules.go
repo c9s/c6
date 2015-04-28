@@ -292,7 +292,7 @@ func (parser *Parser) ParseList() *ast.List {
 
 func (parser *Parser) ParseCommaSepList() *ast.List {
 	var list = ast.NewList()
-	list.Separator = ","
+	list.Separator = ", "
 
 	var tok = parser.peek()
 
@@ -319,7 +319,10 @@ func (parser *Parser) ParseCommaSepList() *ast.List {
 			tok = parser.peek()
 		}
 	}
-	fmt.Printf("Comma-separated list: %s\n", list)
+	debug("Comma-separated list: %s\n", list)
+
+	// XXX: if there is only one item in the list, we can reduce it to element.
+
 	return list
 }
 
