@@ -3,8 +3,9 @@ C6
 
 A SASS implementation in Go.
 
-This is not just to implement SASS, but also to improve the language for better consistency, syntax and performance.
-
+This is not just to implement SASS, but also to improve the language for better
+consistency, syntax and performance. And yes, this means we're free to accept any new
+language feature requests.
 
 ## Working in progress
 
@@ -39,6 +40,9 @@ This is not just to implement SASS, but also to improve the language for better 
   - [ ] `@include`
   - [ ] `@function`
   - [ ] `@media`
+  - [ ] built-in `@import-once`
+- [ ] Built-in Functions
+  - .... to be listed
 - [ ] Building AST
   - [x] RuleSet
   - [x] DeclarationBlock
