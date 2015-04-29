@@ -1,6 +1,8 @@
 C6
 ===========================
 
+[![Build Status](https://travis-ci.org/c9s/c6.svg)](https://travis-ci.org/c9s/c6)
+
 C6 is a SASS implementation in Go.
 
 This is not just to implement SASS, but also to improve the language for better
