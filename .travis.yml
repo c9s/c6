@@ -1,9 +1,8 @@
 language: go
 
 before_install:
-  - source ./goenv
-  - go get -u golang.org/x/tools/cmd/stringer
-  - go get github.com/stretchr/testify
+  - source goenv
+  - source goinstall
   - export PATH="$PATH:$TRAVIS_BUILD_DIR/vendor/bin"
 
 install:
