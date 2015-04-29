@@ -54,3 +54,5 @@ language feature requests.
   - [ ] Variable statements
 - [ ] NestedStyleCompiler
 
+
+A feature check list from libsass: https://github.com/sass/libsass/releases/tag/3.2.0
