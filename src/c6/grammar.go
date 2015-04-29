@@ -22,10 +22,10 @@ PropertyNameToken := Ident | Interpolation
 
 PropertyValue: List
 
-List := CommaSeparatoredList
-	  | SpaceSeparatoredList
+List := CommaSeparatoredList | '(' CommaSeparatoredList ')'
 
-CommaSeparatoredList := Value T_COMMA CommaSeparatoredList
+CommaSeparatoredList := Value T_COMMA CommaSeparatoredList | SpaceSeparatoredList
+
 SpaceSeparatoredList := Value SpaceSeparatoredList
 
 Value		   := Expression LiteralConcat Expression

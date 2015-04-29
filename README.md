@@ -10,9 +10,13 @@ language feature requests.
 
 ## Setup
 
-Setup GOPATH and dependencies:
+Setup GOPATH:
 
     source goenv
+
+Setup dependencies:
+
+    source goinstall
 
 Run tests:
 

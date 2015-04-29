@@ -295,8 +295,6 @@ func (parser *Parser) ParseCommaSepList() *ast.List {
 	list.Separator = ", "
 
 	var tok = parser.peek()
-
-	tok = parser.peek()
 	for tok.Type != ast.T_COMMA && tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
 
 		if tok.Type == ast.T_PAREN_START {
