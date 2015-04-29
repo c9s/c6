@@ -1,14 +1,30 @@
 C6
 ===========================
 
-A SASS implementation in Go.
+C6 is a SASS implementation in Go.
 
 This is not just to implement SASS, but also to improve the language for better
 consistency, syntax and performance. And yes, this means we're free to accept any new
 language feature requests.
 
-## Working in progress
 
+## Setup
+
+Setup GOPATH and dependencies:
+
+    source goenv
+
+Run tests:
+
+    go test c6
+    go test -v c6
+    go test -v c6/ast
+
+To run specific test
+
+    go test -run TestParser -x -v c6
+
+## Working in progress
 
 - [ ] Lexing
   - [x] `@import`
@@ -55,4 +71,20 @@ language feature requests.
 - [ ] NestedStyleCompiler
 
 
-A feature check list from libsass: https://github.com/sass/libsass/releases/tag/3.2.0
+## Features
+
+- [ ] import directory: https://github.com/sass/sass/issues/690
+- [ ] import css as sass: https://github.com/sass/sass/issues/556
+- [ ] import once: https://github.com/sass/sass/issues/139
+- [ ] namespace and alias: https://github.com/sass/sass/issues/353
+- [ ] `@use` directive: https://github.com/nex3/sass/issues/353#issuecomment-5146513 
+- [ ] conditional import: https://github.com/sass/sass/issues/451
+
+
+
+## Reference
+
+A feature check list from libsass:
+
+- https://github.com/sass/libsass/releases/tag/3.2.0
+- https://github.com/sass/sass/issues/1094
