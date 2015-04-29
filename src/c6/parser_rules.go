@@ -326,6 +326,26 @@ func (parser *Parser) ParseCommaSepList() *ast.List {
 	return list
 }
 
+func (parser *Parser) ParseVariable() *ast.Variable {
+	var tok = parser.next()
+	if tok.Type != ast.T_VARIABLE {
+		panic("Expecting variable name")
+	}
+	return ast.NewVariable(tok)
+}
+
+func (parser *Parser) ParseVariableAssignment() ast.Statement {
+	var variable = parser.ParseVariable()
+
+	// skip ":", T_COLON token
+	parser.expect(ast.T_COLON)
+
+	var expr = parser.ParseExpression()
+
+	// Reduce list or map here
+	return ast.NewVariableAssignment(variable, expr)
+}
+
 func (parser *Parser) ParseSpaceSepList() *ast.List {
 	var list = ast.NewList()
 	list.Separator = " "
