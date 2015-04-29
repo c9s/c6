@@ -92,3 +92,8 @@ A feature check list from libsass:
 
 - https://github.com/sass/libsass/releases/tag/3.2.0
 - https://github.com/sass/sass/issues/1094
+
+
+## License
+
+MPL License <https://www.mozilla.org/MPL/2.0/>
