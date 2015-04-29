@@ -1,7 +1,9 @@
 package c6
 
 /*
-Statement := RuleSet | At-Rule | Mixin-Statement | FunctionStatement
+Statement := RuleSet | At-Rule | Mixin-Statement | FunctionStatement | VariableAssignment
+
+VariableAssignment := Variable ':' Value
 
 At-Rule := '@' T_IDENT ';'
 
@@ -32,6 +34,7 @@ Value		   := Expression LiteralConcat Expression
 				| Expression
 				| Keyword
 				| Url
+				| List
 
 Url := T_URL '(' T_QQ_STRING ')'
 
