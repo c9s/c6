@@ -21,7 +21,7 @@ func TestParserParseImportRuleWithUrl(t *testing.T) {
 	// it's a url
 	url, ok2 := rule.Url.(ast.Url)
 	assert.True(t, ok2)
-	assert.Equal(t, "http://foo.com/bar.css", url)
+	assert.Equal(t, "http://foo.com/bar.css", string(url))
 }
 
 func TestParserParseImportRuleWithString(t *testing.T) {
@@ -37,7 +37,7 @@ func TestParserParseImportRuleWithString(t *testing.T) {
 	assert.True(t, ok)
 
 	assert.True(t, ok)
-	assert.Equal(t, "foo.css", url)
+	assert.Equal(t, "foo.css", string(url))
 }
 
 func TestParserParseImportRuleWithMediaList(t *testing.T) {
