@@ -63,6 +63,12 @@ func TestParserPropertyListExpression(t *testing.T) {
 	}
 }
 
+func TestParserVariableAssignment(t *testing.T) {
+	var parser = NewParser()
+	var block = parser.parseScss(`$foo: 10px;`)
+	fmt.Printf("%+v\n", block)
+}
+
 func TestParserMassiveRules(t *testing.T) {
 	var buffers []string = []string{
 		`div { width: auto; }`,

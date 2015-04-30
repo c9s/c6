@@ -13,6 +13,8 @@ func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
 
 	if token.Type == ast.T_IMPORT {
 		return parser.ParseImportStatement()
+	} else if token.Type == ast.T_VARIABLE {
+		return parser.ParseVariableAssignment()
 	} else if token.IsSelector() {
 		return parser.ParseRuleSet(parentRuleSet)
 	}
@@ -303,23 +305,51 @@ func (parser *Parser) ParseMap() *ast.Map {
 */
 
 func (parser *Parser) ParseMap() ast.Node {
-	var tok = parser.peek()
+	var pos = parser.Pos
+	var tok = parser.next()
+	// since it's not started with '(', it's not map
 	if tok.Type != ast.T_PAREN_START {
+		parser.restore(pos)
 		return nil
 	}
-	parser.expect(ast.T_PAREN_START)
 
 	tok = parser.peek()
-
 	for tok.Type != ast.T_PAREN_END {
-		// var keyExpr = parser.ParseExpression()
+		var keyExpr = parser.ParseExpression()
+		if keyExpr == nil {
+			parser.restore(pos)
+			return nil
+		}
+
+		if parser.expect(ast.T_COLON) == nil {
+			parser.restore(pos)
+			return nil
+		}
+
+		var valueExpr = parser.ParseExpression()
+		if valueExpr == nil {
+			parser.restore(pos)
+			return nil
+		}
+
+		tok = parser.peek()
+		if tok.Type == ast.T_COMMA {
+			parser.next()
+			tok = parser.peek()
+		}
 	}
 	return nil
 }
 
-func (parser *Parser) ParseValue() {
+func (parser *Parser) ParseValue() ast.Node {
+	debug("ParseValue")
 	var pos = parser.Pos
-	_ = pos
+
+	if mapValue := parser.ParseMap(); mapValue != nil {
+		return mapValue
+	}
+
+	parser.restore(pos)
 
 	var tok = parser.peek()
 
@@ -340,6 +370,7 @@ func (parser *Parser) ParseValue() {
 	} else {
 		parser.ParseList()
 	}
+	return nil
 }
 
 func (parser *Parser) ParseList() *ast.List {
@@ -399,20 +430,37 @@ func (parser *Parser) ParseCommaSepList() *ast.List {
 }
 
 func (parser *Parser) ParseVariable() *ast.Variable {
+	var pos = parser.Pos
 	var tok = parser.next()
 	if tok.Type != ast.T_VARIABLE {
-		panic("Expecting variable name")
+		parser.restore(pos)
+		return nil
 	}
 	return ast.NewVariable(tok)
 }
 
 func (parser *Parser) ParseVariableAssignment() ast.Statement {
+	var pos = parser.Pos
+
 	var variable = parser.ParseVariable()
+	if variable == nil {
+		parser.restore(pos)
+		return nil
+	}
 
 	// skip ":", T_COLON token
-	parser.expect(ast.T_COLON)
+	if parser.accept(ast.T_COLON) == nil {
+		parser.restore(pos)
+		return nil
+	}
 
 	var expr = parser.ParseExpression()
+	if expr == nil {
+		parser.restore(pos)
+		return nil
+	}
+
+	parser.expect(ast.T_SEMICOLON)
 
 	// Reduce list or map here
 	return ast.NewVariableAssignment(variable, expr)
