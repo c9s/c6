@@ -484,3 +484,22 @@ func TestLexerRuleWithSubRule(t *testing.T) {
 		ast.T_BRACE_END,
 	})
 }
+
+func TestLexerMapValue(t *testing.T) {
+	AssertLexerTokenSequence(t, `$foo: (foo: 1, bar: 2);`, []ast.TokenType{
+		ast.T_VARIABLE,
+		ast.T_COLON,
+		ast.T_PAREN_START,
+		ast.T_IDENT,
+		ast.T_COLON,
+		ast.T_INTEGER,
+		ast.T_COMMA,
+
+		ast.T_IDENT,
+		ast.T_COLON,
+		ast.T_INTEGER,
+		ast.T_PAREN_END,
+
+		ast.T_SEMICOLON,
+	})
+}

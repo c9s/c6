@@ -110,6 +110,16 @@ func lexExpression(l *Lexer) stateFn {
 		l.next()
 		l.emit(ast.T_DIV)
 
+	} else if r == ':' { // a port of map
+
+		l.next()
+		l.emit(ast.T_COLON)
+
+	} else if r == ',' { // a part of map or list
+
+		l.next()
+		l.emit(ast.T_COMMA)
+
 	} else if r == '(' {
 
 		l.next()
