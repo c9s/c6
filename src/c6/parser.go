@@ -9,8 +9,6 @@ import "c6/ast"
 import "path/filepath"
 import "io/ioutil"
 
-var fileAstMap map[string]interface{} = map[string]interface{}{}
-
 const (
 	UnknownFileType = iota
 	ScssFileType
@@ -80,6 +78,10 @@ func (parser *Parser) parseFile(path string) error {
 
 func (self *Parser) backup() {
 	self.Pos--
+}
+
+func (self *Parser) restore(pos int) {
+	self.Pos = pos
 }
 
 func (self *Parser) remember() {

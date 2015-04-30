@@ -53,6 +53,7 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 				sel.C = nextTok.Str
 			}
 			ruleset.AppendSelector(sel)
+
 		case ast.T_ADJACENT_SELECTOR:
 			ruleset.AppendSelector(ast.AdjacentSelector{})
 		case ast.T_CHILD_SELECTOR:
@@ -276,6 +277,48 @@ func (parser *Parser) ParseExpression() ast.Expression {
 	return nil
 }
 
+/*
+func (parser *Parser) ParseMap() *ast.Map {
+	var tok = parser.next()
+	if tok.Type != ast.T_PAREN_START {
+		panic("Map Syntax error: expecting '('")
+	}
+
+	tok = parser.next()
+	if tok.Type != ast.T_IDENT {
+		panic("Map Syntax error: expecting ident or expression after '('")
+	}
+	return nil
+}
+*/
+
+func (parser *Parser) ParseMapOrListInsideParenthesis() {
+
+}
+
+func (parser *Parser) ParseValue() {
+	var pos = parser.Pos
+	var tok = parser.peek()
+
+	// list or map start with '('
+	if tok.Type == ast.T_PAREN_START {
+		var expr = parser.ParseExpression()
+		_ = expr
+	}
+
+	tok = parser.peek()
+	if tok.Type == ast.T_COLON {
+		// it's a map
+	}
+
+	var tok = parser.peek()
+	if tok.Type == ast.T_PAREN_START {
+		// parser.ParseMapOrList()
+	} else {
+		parser.ParseList()
+	}
+}
+
 func (parser *Parser) ParseList() *ast.List {
 	var list = ast.NewList()
 	var tok = parser.peek()
@@ -301,10 +344,14 @@ func (parser *Parser) ParseCommaSepList() *ast.List {
 	var tok = parser.peek()
 	for tok.Type != ast.T_COMMA && tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
 
+		// when the syntax start with a '(', it could be a list or map.
 		if tok.Type == ast.T_PAREN_START {
-			parser.next()
+			parser.expect(ast.T_PAREN_START)
+
 			var sublist = parser.ParseCommaSepList()
+
 			parser.expect(ast.T_PAREN_END)
+
 			if sublist != nil {
 				list.Append(sublist)
 			}

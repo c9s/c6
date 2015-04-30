@@ -48,11 +48,45 @@ Interpolation := "#{" Expression "}"
 Term := Factor '*' Factor
 		Factor '/' Factor
 
-Factor := Number | Variable
+Factor := Number
+       | Variable
+	   | '(' Expression ')'
 
 Variable := T_VARIABLE
 
 Scalar := T_NUMBER | T_NUMBER Unit
 
 Unit := T_UNIT_PX | T_UNIT_PT | T_UNIT_EM | T_UNIT_PERCENT | T_UNIT_DEG
+
+Color := T_HEX_COLOR
+
+Value := Color
+       | '(' List ')'
+	   | Map
+
+Value := Map
+       | List
+	   | Expression
+
+List := '(' CommaSep List ')'
+      | CommaSep List
+
+CommaSepList := SpaceSepList ',' CommaSepList
+			  | SpaceSepList
+
+SpaceSepList := Value SpaceSepList
+              | Value
+
+Map := '(' MapPair ')'
+
+MapPairList := MapPair ',' MapPairList
+             | MapPair
+
+MapPair := Expression ':' Value
+
+
+
+
+
+
 */

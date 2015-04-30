@@ -99,3 +99,6 @@ A feature check list from libsass:
 ## License
 
 MPL License <https://www.mozilla.org/MPL/2.0/>
+
+(MPL is like LGPL but with static/dynamic linking exception, which allows you
+to either dynamic/static link this library without permissions)
