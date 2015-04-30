@@ -450,7 +450,9 @@ func lexStatement(l *Lexer) stateFn {
 		return lexStatement
 
 	} else if r == '/' && (l.peek() == '*' || l.peek() == '/') {
+
 		lexComment(l, true)
+
 		return lexStatement
 
 	} else if r == '$' { // it's a variable assignment statement
