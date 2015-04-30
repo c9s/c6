@@ -314,10 +314,19 @@ func TestLexerInterpolationPropertyValueListWithoutSemiColon(t *testing.T) {
 	})
 }
 
+func TestLexerCommentBlockBetweenSelectors(t *testing.T) {
+	AssertLexerTokenSequence(t, `.test /* comment between selector and block */ .foo { }`, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+		ast.T_DESCENDANT_SELECTOR,
+		ast.T_CLASS_SELECTOR,
+		ast.T_BRACE_START,
+		ast.T_BRACE_END,
+	})
+}
+
 func TestLexerCommentBlockBetweenSelectorAndBlock(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test /* comment between selector and block */ { }`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_COMMENT_BLOCK,
 		ast.T_BRACE_START,
 		ast.T_BRACE_END,
 	})

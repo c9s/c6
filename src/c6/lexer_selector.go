@@ -215,7 +215,7 @@ func lexUniversalSelector(l *Lexer) stateFn {
 func lexSelectors(l *Lexer) stateFn {
 	var r rune
 
-	lexComment(l)
+	lexComment(l, false)
 
 	// space between selector means descendant selector
 	if tok := l.lastToken(); tok != nil && isSelector(tok.Type) {
@@ -225,7 +225,7 @@ func lexSelectors(l *Lexer) stateFn {
 			if r == ' ' {
 				foundSpace = true
 			}
-			lexComment(l)
+			lexComment(l, false)
 			r = l.next()
 		}
 		l.backup()
@@ -239,7 +239,7 @@ func lexSelectors(l *Lexer) stateFn {
 		}
 	}
 
-	lexComment(l)
+	lexComment(l, false)
 
 	// re-peek again
 	r = l.peek()

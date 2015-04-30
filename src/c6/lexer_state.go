@@ -48,7 +48,7 @@ func (l *Lexer) emitIfKeywordMatches() bool {
 	return false
 }
 
-func lexCommentLine(l *Lexer) stateFn {
+func lexCommentLine(l *Lexer, emit bool) stateFn {
 	if !l.match("//") {
 		return nil
 	}
@@ -59,11 +59,15 @@ func lexCommentLine(l *Lexer) stateFn {
 		l.next()
 	}
 	l.backup()
-	l.emit(ast.T_COMMENT_LINE)
+	if emit {
+		l.emit(ast.T_COMMENT_LINE)
+	} else {
+		l.ignore()
+	}
 	return nil
 }
 
-func lexCommentBlock(l *Lexer) stateFn {
+func lexCommentBlock(l *Lexer, emit bool) stateFn {
 	if !l.match("/*") {
 		return nil
 	}
@@ -72,7 +76,11 @@ func lexCommentBlock(l *Lexer) stateFn {
 	for r != EOF {
 		if r == '*' && l.peek() == '/' {
 			l.backup()
-			l.emit(ast.T_COMMENT_BLOCK)
+			if emit {
+				l.emit(ast.T_COMMENT_BLOCK)
+			} else {
+				l.ignore()
+			}
 			l.match("*/")
 			l.ignore()
 			return nil
@@ -83,13 +91,13 @@ func lexCommentBlock(l *Lexer) stateFn {
 	return nil
 }
 
-func lexComment(l *Lexer) stateFn {
+func lexComment(l *Lexer, emit bool) stateFn {
 	var r = l.peek()
 	var r2 = l.peekBy(2)
 	if r == '/' && r2 == '*' {
-		lexCommentBlock(l)
+		lexCommentBlock(l, emit)
 	} else if r == '/' && r2 == '/' {
-		lexCommentLine(l)
+		lexCommentLine(l, emit)
 	}
 	return nil
 }
@@ -442,8 +450,7 @@ func lexStatement(l *Lexer) stateFn {
 		return lexStatement
 
 	} else if r == '/' && (l.peek() == '*' || l.peek() == '/') {
-
-		lexComment(l)
+		lexComment(l, true)
 		return lexStatement
 
 	} else if r == '$' { // it's a variable assignment statement
