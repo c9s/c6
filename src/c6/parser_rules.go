@@ -311,7 +311,7 @@ func (parser *Parser) ParseValue() {
 		// it's a map
 	}
 
-	var tok = parser.peek()
+	tok = parser.peek()
 	if tok.Type == ast.T_PAREN_START {
 		// parser.ParseMapOrList()
 	} else {
