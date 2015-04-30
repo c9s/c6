@@ -63,7 +63,19 @@ func TestParserPropertyListExpression(t *testing.T) {
 	}
 }
 
-func TestParserVariableAssignment(t *testing.T) {
+func TestParserVariableAssignmentWithMorePlus(t *testing.T) {
+	var parser = NewParser()
+	var block = parser.parseScss(`$foo: 12px + 20px + 20px;`)
+	fmt.Printf("%+v\n", block)
+}
+
+func TestParserVariableAssignmentWithSimpleExpresion(t *testing.T) {
+	var parser = NewParser()
+	var block = parser.parseScss(`$foo: 10px + 20px;`)
+	fmt.Printf("%+v\n", block)
+}
+
+func TestParserVariableAssignmentWithPxValue(t *testing.T) {
 	var parser = NewParser()
 	var block = parser.parseScss(`$foo: 10px;`)
 	fmt.Printf("%+v\n", block)

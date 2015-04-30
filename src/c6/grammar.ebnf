@@ -1,6 +1,4 @@
-package c6
 
-/*
 Statement := RuleSet | At-Rule | Mixin-Statement | FunctionStatement | VariableAssignment
 
 VariableAssignment := Variable ':' Value ';'
@@ -12,48 +10,46 @@ RuleSet := Rule | RuleSet
 SelectorList := Selector | Selector ',' SelectorList
 
 Rule := SelectorList '{'
-			RuleSet
-		'}'
+            RuleSet
+        '}'
 
 Property := PropertyName ':' PropertyValue
 
 PropertyName :=  PropertyNameToken LiteralConcat PropertyNameToken
-			 |   PropertyNameToken
+             |   PropertyNameToken
 
 PropertyNameToken := Ident | Interpolation
 
 PropertyValue: List
 
-
 Url := T_URL '(' T_QQ_STRING ')'
 
 Expression := Interpolation
-			| Term '+' Term
-	        | Term '-' Term
-			| Term
+            | <Term> {'+' <Term>}
+            | <Term> {'-' <Term>}
 
 Interpolation := "#{" Expression "}"
 
-Term := Factor '*' Factor
-		Factor '/' Factor
+Term := <Factor> '*' <Factor>
+        <Factor> '/' <Factor>
 
 Factor := Number
        | Variable
-	   | '(' Expression ')'
+       | '(' Expression ')'
 
 Value := Map
        | List
-	   | Expression
-	   | Expression LiteralConcat Expression
-	   | Keyword
-	   | Url
-	   | Color
+       | Expression
+       | Expression LiteralConcat Expression
+       | Keyword
+       | Url
+       | Color
 
 List := '(' CommaSep List ')'
       | CommaSep List
 
 CommaSepList := SpaceSepList ',' CommaSepList
-			  | SpaceSepList
+              | SpaceSepList
 
 SpaceSepList := Value SpaceSepList
               | Value
@@ -76,4 +72,3 @@ Color := T_HEX_COLOR
 Variable := T_VARIABLE
 
 Scalar := T_NUMBER | T_NUMBER Unit
-*/

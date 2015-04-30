@@ -209,26 +209,24 @@ func (parser *Parser) ParseFactor() ast.Expression {
 }
 
 func (parser *Parser) ParseTerm() ast.Expression {
-	var expr1 = parser.ParseFactor()
-	if expr1 == nil {
+	var factor = parser.ParseFactor()
+	if factor == nil {
 		return nil
 	}
 
 	// see if the next token is '*' or '/'
 	var tok = parser.peek()
 	if tok.Type == ast.T_MUL || tok.Type == ast.T_DIV {
-		var opTok = parser.next()
-		var op = ast.NewOp(opTok)
-		var expr2 = parser.ParseFactor()
+		parser.next()
+		var term = parser.ParseTerm()
 
-		if expr2 == nil {
-			// TODO: panic here ?
-			return nil
+		if tok.Type == ast.T_MUL {
+			return ast.NewBinaryExpression(ast.OpMul, factor, term)
+		} else if tok.Type == ast.T_DIV {
+			return ast.NewBinaryExpression(ast.OpDiv, factor, term)
 		}
-
-		return ast.NewBinaryExpression(op, expr1, expr2)
 	}
-	return expr1
+	return factor
 }
 
 /**
@@ -238,12 +236,6 @@ We here treat the property values as expressions:
 	padding: {expression} {expression} {expression};
 	margin: {expression};
 
-Expression := "#{" Expression "}"
-			| '+' Expression
-			| '-' Expression
-			| Term '+' Term
-			| Term '-' Term
-			| Term
 */
 func (parser *Parser) ParseExpression() ast.Expression {
 	if tok := parser.accept(ast.T_INTERPOLATION_START); tok != nil {
@@ -262,31 +254,23 @@ func (parser *Parser) ParseExpression() ast.Expression {
 	// plus or minus. this creates an unary expression that holds the later term.
 	// this is for:  +3 or -4
 	var tok = parser.peek()
+	var expr ast.Expression
 	if tok.Type == ast.T_PLUS || tok.Type == ast.T_MINUS {
 		parser.next()
-		var op = ast.NewOp(tok)
-		var expr = parser.ParseExpression()
-		return ast.NewUnaryExpression(op, expr)
+		var term = parser.ParseTerm()
+		expr = ast.NewUnaryExpression(ast.ConvertTokenTypeToOpType(tok.Type), term)
+	} else {
+		expr = parser.ParseTerm()
 	}
 
-	// there is a operator
-	//    return expression object that presents something like 3 + 4
-	var leftTerm = parser.ParseTerm()
 	var rightTok = parser.peek()
-	if rightTok.Type == ast.T_PLUS {
+	for rightTok.Type == ast.T_PLUS || rightTok.Type == ast.T_MINUS {
 		parser.next()
-		var op = ast.NewOp(rightTok)
 		var rightTerm = parser.ParseTerm()
-		return ast.NewBinaryExpression(op, leftTerm, rightTerm)
-	} else if rightTok.Type == ast.T_MINUS {
-		parser.next()
-		var op = ast.NewOp(rightTok)
-		var rightTerm = parser.ParseTerm()
-		return ast.NewBinaryExpression(op, leftTerm, rightTerm)
-	} else {
-		return ast.NewUnaryExpression(nil, leftTerm)
+		expr = ast.NewBinaryExpression(ast.ConvertTokenTypeToOpType(rightTok.Type), expr, rightTerm)
+		rightTok = parser.peek()
 	}
-	return nil
+	return expr
 }
 
 /*

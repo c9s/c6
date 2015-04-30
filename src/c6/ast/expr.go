@@ -6,24 +6,21 @@ type Expression interface {
 }
 
 type UnaryExpression struct {
-	Op   *Op
+	Op   OpType
 	Expr Expression
 }
 
-func NewUnaryExpression(op *Op, expr Expression) *UnaryExpression {
+func NewUnaryExpression(op OpType, expr Expression) *UnaryExpression {
 	return &UnaryExpression{op, expr}
 }
 
 func (self UnaryExpression) CanBeExpression() {}
 func (self UnaryExpression) String() string {
-	if self.Op != nil {
-		return self.Op.String() + self.Expr.String()
-	}
-	return self.Expr.String()
+	return "(" + self.Op.String() + " " + self.Expr.String() + ")"
 }
 
 type BinaryExpression struct {
-	Op    *Op
+	Op    OpType
 	Left  Expression
 	Right Expression
 }
@@ -31,9 +28,9 @@ type BinaryExpression struct {
 func (self BinaryExpression) CanBeExpression() {}
 
 func (self BinaryExpression) String() string {
-	return self.Left.String() + self.Op.String() + self.Right.String()
+	return "(" + self.Left.String() + " " + self.Op.String() + " " + self.Right.String() + ")"
 }
 
-func NewBinaryExpression(op *Op, left Expression, right Expression) *BinaryExpression {
+func NewBinaryExpression(op OpType, left Expression, right Expression) *BinaryExpression {
 	return &BinaryExpression{op, left, right}
 }
