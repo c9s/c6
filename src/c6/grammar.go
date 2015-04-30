@@ -3,7 +3,7 @@ package c6
 /*
 Statement := RuleSet | At-Rule | Mixin-Statement | FunctionStatement | VariableAssignment
 
-VariableAssignment := Variable ':' Value
+VariableAssignment := Variable ':' Value ';'
 
 At-Rule := '@' T_IDENT ';'
 
@@ -24,17 +24,6 @@ PropertyNameToken := Ident | Interpolation
 
 PropertyValue: List
 
-List := CommaSeparatoredList | '(' CommaSeparatoredList ')'
-
-CommaSeparatoredList := Value T_COMMA CommaSeparatoredList | SpaceSeparatoredList
-
-SpaceSeparatoredList := Value SpaceSeparatoredList
-
-Value		   := Expression LiteralConcat Expression
-				| Expression
-				| Keyword
-				| Url
-				| List
 
 Url := T_URL '(' T_QQ_STRING ')'
 
@@ -52,21 +41,13 @@ Factor := Number
        | Variable
 	   | '(' Expression ')'
 
-Variable := T_VARIABLE
-
-Scalar := T_NUMBER | T_NUMBER Unit
-
-Unit := T_UNIT_PX | T_UNIT_PT | T_UNIT_EM | T_UNIT_PERCENT | T_UNIT_DEG
-
-Color := T_HEX_COLOR
-
-Value := Color
-       | '(' List ')'
-	   | Map
-
 Value := Map
        | List
 	   | Expression
+	   | Expression LiteralConcat Expression
+	   | Keyword
+	   | Url
+	   | Color
 
 List := '(' CommaSep List ')'
       | CommaSep List
@@ -85,8 +66,14 @@ MapPairList := MapPair ',' MapPairList
 MapPair := Expression ':' Value
 
 
+Terminals
+----------------
 
+Unit := T_UNIT_PX | T_UNIT_PT | T_UNIT_EM | T_UNIT_PERCENT | T_UNIT_DEG
 
+Color := T_HEX_COLOR
 
+Variable := T_VARIABLE
 
+Scalar := T_NUMBER | T_NUMBER Unit
 */
