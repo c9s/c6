@@ -1,5 +1,3 @@
 package ast
 
-type Node interface {
-	CanBeNode()
-}
+type Node interface{}

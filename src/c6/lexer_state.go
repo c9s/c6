@@ -48,76 +48,49 @@ func (l *Lexer) emitIfKeywordMatches() bool {
 	return false
 }
 
-func lexCommentBlock(l *Lexer, returnState stateFn) stateFn {
-	var r = l.next()
-	if r != '/' {
-		l.error("Unexpected token of comment block. Got '%s'", r)
-	}
-	r = l.next()
-	if r != '*' {
-		l.error("Unexpected token of comment block. Got '%s'", r)
+func lexCommentLine(l *Lexer) stateFn {
+	if !l.match("//") {
+		return nil
 	}
 	l.ignore()
 
-	r = l.next()
+	var r = l.next()
+	for r != '\n' && r != EOF {
+		l.next()
+	}
+	l.backup()
+	l.emit(ast.T_COMMENT_LINE)
+	return nil
+}
+
+func lexCommentBlock(l *Lexer) stateFn {
+	if !l.match("/*") {
+		return nil
+	}
+	l.ignore()
+	var r = l.next()
 	for r != EOF {
 		if r == '*' && l.peek() == '/' {
 			l.backup()
 			l.emit(ast.T_COMMENT_BLOCK)
-			l.next()
-			l.next()
+			l.match("*/")
 			l.ignore()
-			return returnState
+			return nil
 		}
 		r = l.next()
 	}
 	l.error("Expecting comment end mark '*/'.", r)
-	return returnState
+	return nil
 }
 
 func lexComment(l *Lexer) stateFn {
-	var r = l.next()
-
-	if r != '/' {
-		l.error("Expecting '/' for comment. Got %s", r)
+	var r = l.peek()
+	var r2 = l.peekBy(2)
+	if r == '/' && r2 == '*' {
+		lexCommentBlock(l)
+	} else if r == '/' && r2 == '/' {
+		lexCommentLine(l)
 	}
-
-	r = l.next()
-	if r == '/' {
-
-		l.next() // skip the second '/'
-		l.ignore()
-
-		r = l.next()
-		for r != '\n' && r != EOF {
-			l.next()
-		}
-		l.backup()
-		l.emit(ast.T_COMMENT_LINE)
-		return lexStatement
-
-	} else if r == '*' {
-		l.next()   // skip '*'
-		l.ignore() // ignore the start mark
-
-		r = l.next()
-		for r != EOF {
-			if r == '*' && l.peek() == '/' {
-				l.backup()
-				l.emit(ast.T_COMMENT_BLOCK)
-				l.next()
-				l.next()
-				l.ignore()
-				return lexStatement
-			}
-			r = l.next()
-		}
-		l.error("Expecting comment end mark '*/'.", r)
-
-	} else {
-		l.error("Unexpected token %s for comment", r)
-	}
-	l.backup()
 	return nil
 }
 

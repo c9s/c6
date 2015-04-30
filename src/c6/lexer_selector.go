@@ -214,15 +214,19 @@ func lexUniversalSelector(l *Lexer) stateFn {
 // Dispath selector lexing method
 func lexSelectors(l *Lexer) stateFn {
 	var r rune
-	// ast.T_INTERPOLATION_SELECTOR
+
+	lexComment(l)
 
 	// space between selector means descendant selector
 	if tok := l.lastToken(); tok != nil && isSelector(tok.Type) {
 		var foundSpace = false
-		r = l.next()
-		for r == ' ' {
+		var r = l.next()
+		for r == ' ' || r == '/' {
+			if r == ' ' {
+				foundSpace = true
+			}
+			lexComment(l)
 			r = l.next()
-			foundSpace = true
 		}
 		l.backup()
 		if r == EOF {
@@ -234,6 +238,8 @@ func lexSelectors(l *Lexer) stateFn {
 			l.ignore()
 		}
 	}
+
+	lexComment(l)
 
 	// re-peek again
 	r = l.peek()

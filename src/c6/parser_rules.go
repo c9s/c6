@@ -194,17 +194,23 @@ func (parser *Parser) ParseFactor() ast.Expression {
 		return ast.Expression(ident)
 
 	} else if tok.Type == ast.T_HEX_COLOR {
+
 		panic("hex color is not implemented yet")
+
+		// TODO: Add more incorrect cases here
+
 	} else {
-		panic(fmt.Errorf("Unknown Token: %s", tok))
+
+		return nil
 	}
 	return nil
 }
 
 func (parser *Parser) ParseTerm() ast.Expression {
-	debug("ParseTerm")
-
 	var expr1 = parser.ParseFactor()
+	if expr1 == nil {
+		return nil
+	}
 
 	// see if the next token is '*' or '/'
 	var tok = parser.peek()
@@ -212,6 +218,12 @@ func (parser *Parser) ParseTerm() ast.Expression {
 		var opTok = parser.next()
 		var op = ast.NewOp(opTok)
 		var expr2 = parser.ParseFactor()
+
+		if expr2 == nil {
+			// TODO: panic here ?
+			return nil
+		}
+
 		return ast.NewBinaryExpression(op, expr1, expr2)
 	}
 	return expr1
@@ -232,8 +244,6 @@ Expression := "#{" Expression "}"
 			| Term
 */
 func (parser *Parser) ParseExpression() ast.Expression {
-	debug("ParseExpression")
-
 	if tok := parser.accept(ast.T_INTERPOLATION_START); tok != nil {
 		debug("ParseExpression => accept: T_INTERPOLATION_START")
 
@@ -292,15 +302,28 @@ func (parser *Parser) ParseMap() *ast.Map {
 }
 */
 
-func (parser *Parser) ParseMapOrListInsideParenthesis() {
+func (parser *Parser) ParseMap() ast.Node {
+	var tok = parser.peek()
+	if tok.Type != ast.T_PAREN_START {
+		return nil
+	}
+	parser.expect(ast.T_PAREN_START)
 
+	tok = parser.peek()
+
+	for tok.Type != ast.T_PAREN_END {
+		// var keyExpr = parser.ParseExpression()
+	}
+	return nil
 }
 
 func (parser *Parser) ParseValue() {
 	var pos = parser.Pos
+	_ = pos
+
 	var tok = parser.peek()
 
-	// list or map start with '('
+	// list or map starts with '('
 	if tok.Type == ast.T_PAREN_START {
 		var expr = parser.ParseExpression()
 		_ = expr

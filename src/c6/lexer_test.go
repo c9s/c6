@@ -314,6 +314,26 @@ func TestLexerInterpolationPropertyValueListWithoutSemiColon(t *testing.T) {
 	})
 }
 
+func TestLexerCommentBlockBetweenSelectorAndBlock(t *testing.T) {
+	AssertLexerTokenSequence(t, `.test /* comment between selector and block */ { }`, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+		ast.T_COMMENT_BLOCK,
+		ast.T_BRACE_START,
+		ast.T_BRACE_END,
+	})
+}
+
+func TestLexerCommentBlock(t *testing.T) {
+	AssertLexerTokenSequence(t, `.test {
+		/* comment here */
+	}`, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+		ast.T_BRACE_START,
+		ast.T_COMMENT_BLOCK,
+		ast.T_BRACE_END,
+	})
+}
+
 /*
 This is for microsoft filter functions
 */
