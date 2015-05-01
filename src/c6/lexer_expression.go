@@ -87,8 +87,9 @@ func lexExpression(l *Lexer) stateFn {
 		}
 
 	} else if r == '-' {
+		var r2 = l.peekBy(2)
 
-		if unicode.IsLetter(l.peekBy(2)) {
+		if unicode.IsLetter(r2) {
 			lexIdentifier(l)
 		} else {
 			l.next()

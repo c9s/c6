@@ -78,6 +78,20 @@ func TestLexerExpressionMinus3(t *testing.T) {
 	l.close()
 }
 
+func TestLexerExpressionMinus43(t *testing.T) {
+	l := NewLexerWithString(`$foo-4-3`)
+	l.runFrom(lexExpression)
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_VARIABLE, ast.T_MINUS, ast.T_INTEGER, ast.T_MINUS, ast.T_INTEGER})
+	l.close()
+}
+
+func TestLexerExpressionMinus4neg3(t *testing.T) {
+	l := NewLexerWithString(`$foo-4--3`)
+	l.runFrom(lexExpression)
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_VARIABLE, ast.T_MINUS, ast.T_INTEGER, ast.T_MINUS, ast.T_MINUS, ast.T_INTEGER})
+	l.close()
+}
+
 func TestLexerExpressionMinus3WithoutSpace(t *testing.T) {
 	l := NewLexerWithString(`$foo-3`)
 	l.runFrom(lexExpression)
