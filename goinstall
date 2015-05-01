@@ -1,4 +1,5 @@
 source goenv
+get github.com/mattn/goveralls
 get golang.org/x/tools/cmd/stringer
 get golang.org/x/text/encoding
 get golang.org/x/text/transform
