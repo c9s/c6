@@ -1,12 +1,15 @@
 C6
 ===========================
-
-[![Build Status](https://travis-ci.org/c9s/c6.svg)](https://travis-ci.org/c9s/c6)
+Hate to wait for SASS/Compass compilation over 10 seconds?
+C6 helps you write style sheets with efficiency.
 
 C6 is a SASS implementation written in Go. But wait! this is not just to
 implement SASS, but also to improve the language for better consistency, syntax
 and performance. And yes, this means we're free to accept any new language
 feature requests.
+
+
+[![Build Status](https://travis-ci.org/c9s/c6.svg)](https://travis-ci.org/c9s/c6)
 
 
 ## Setup
@@ -41,19 +44,20 @@ To run specific test
     - [x] descendant selector.
     - [x] class selector.
     - [x] ID selector.
-  - [x] ruleset
-  - [x] sub-ruleset
-  - [x] interpolation
-  - [x] property name
-  - [x] property value list
-  - [x] comma-separated list
-  - [x] space-separated list
-  - [x] hex color
-  - [x] functions
-  - [x] vendor prefix properties
+  - [x] Ruleset
+  - [x] Sub-ruleset
+  - [x] Interpolation
+  - [x] Property name
+  - [x] Property value list
+  - [x] Comma-separated list
+  - [x] Space-separated list
+  - [x] Hex color
+  - [x] Functions
+  - [x] Vendor prefix properties
   - [x] MS filter.  `progid:DXImageTransform.Microsoft....`
-  - [x] variable names
-  - [x] variable assignment
+  - [x] Variable names
+  - [x] Variable assignment
+  - [ ] Media Query
 - [ ] Syntax
   - [x] `@import`
   - [ ] `@if`
@@ -72,7 +76,10 @@ To run specific test
   - [x] Comma-Separated List
   - [x] Space-Separated List
   - [x] Basic Expressions
+  - [x] FunctionCall
   - [ ] Variable statements
+  - [ ] Expression with interpolation
+  - [ ] Expression evaluator
 - [ ] NestedStyleCompiler
 
 
