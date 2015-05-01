@@ -18,6 +18,10 @@ func (self *Variable) SetValue(val Expression) {
 	self.Value = val
 }
 
+func (self Variable) String() string {
+	return self.Name
+}
+
 func NewVariable(token *Token) *Variable {
 	return &Variable{token.Str, nil, nil, token}
 }
