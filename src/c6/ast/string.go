@@ -1,6 +1,8 @@
 package ast
 
 type String struct {
+	// Can be `"`, `'` or ``
+	Quote byte
 	Value string
 	Token *Token
 }
@@ -13,5 +15,5 @@ func (self String) String() string {
 }
 
 func NewString(token *Token) *String {
-	return &String{token.Str, token}
+	return &String{0, token.Str, token}
 }
