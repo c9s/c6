@@ -3,11 +3,10 @@ C6
 
 [![Build Status](https://travis-ci.org/c9s/c6.svg)](https://travis-ci.org/c9s/c6)
 
-C6 is a SASS implementation in Go.
-
-This is not just to implement SASS, but also to improve the language for better
-consistency, syntax and performance. And yes, this means we're free to accept any new
-language feature requests.
+C6 is a SASS implementation written in Go. But wait! this is not just to
+implement SASS, but also to improve the language for better consistency, syntax
+and performance. And yes, this means we're free to accept any new language
+feature requests.
 
 
 ## Setup
