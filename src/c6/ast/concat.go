@@ -13,6 +13,14 @@ func NewLiteralConcat() *LiteralConcat {
 	return &LiteralConcat{[]Expression{}}
 }
 
+func (self LiteralConcat) String() (out string) {
+	out = ""
+	for _, expr := range self.Expressions {
+		out += expr.String()
+	}
+	return out
+}
+
 func (self LiteralConcat) CanBeExpression() {}
 
 func (self *LiteralConcat) AppendExpression(expr Expression) {

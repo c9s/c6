@@ -23,12 +23,9 @@ func lexInterpolation(l *Lexer, emit bool) stateFn {
 				l.emit(ast.T_INTERPOLATION_START)
 			}
 
-			r = l.next()
-			for r == ' ' {
-				r = l.next()
-			}
-			l.backup()
+			l.ignoreSpaces()
 
+			// find the end of interpolation end brace
 			r = l.next()
 			for r != '}' {
 				r = l.next()

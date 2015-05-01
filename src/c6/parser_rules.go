@@ -86,6 +86,7 @@ works for:
 */
 func (parser *Parser) ParseNumber() *ast.Number {
 	var pos = parser.Pos
+	debug("ParseNumber at %d", parser.Pos)
 
 	// the number token
 	var tok = parser.next()
@@ -181,6 +182,7 @@ func (parser *Parser) ParseIdent() *ast.Ident {
 The ParseFactor must return an Expression interface compatible object
 */
 func (parser *Parser) ParseFactor() ast.Expression {
+	debug("ParseFactor at %d", parser.Pos)
 	var tok = parser.peek()
 	debug("ParseFactor => peek: %s", tok)
 
@@ -193,10 +195,7 @@ func (parser *Parser) ParseFactor() ast.Expression {
 
 	} else if tok.Type == ast.T_INTERPOLATION_START {
 
-		parser.expect(ast.T_INTERPOLATION_START)
-		parser.ParseExpression()
-		parser.expect(ast.T_INTERPOLATION_END)
-		// TODO:
+		return parser.ParseInterp()
 
 	} else if tok.Type == ast.T_QQ_STRING {
 
@@ -214,10 +213,6 @@ func (parser *Parser) ParseFactor() ast.Expression {
 
 		tok = parser.next()
 		return ast.Expression(ast.NewString(tok))
-
-	} else if tok.Type == ast.T_INTERPOLATION_START {
-
-		return parser.ParseInterp()
 
 	} else if tok.Type == ast.T_INTEGER || tok.Type == ast.T_FLOAT {
 
@@ -244,8 +239,11 @@ func (parser *Parser) ParseFactor() ast.Expression {
 }
 
 func (parser *Parser) ParseTerm() ast.Expression {
+	debug("ParseTerm at %d", parser.Pos)
+	var pos = parser.Pos
 	var factor = parser.ParseFactor()
 	if factor == nil {
+		parser.restore(pos)
 		return nil
 	}
 
@@ -253,12 +251,14 @@ func (parser *Parser) ParseTerm() ast.Expression {
 	var tok = parser.peek()
 	if tok.Type == ast.T_MUL || tok.Type == ast.T_DIV {
 		parser.next()
-		var term = parser.ParseTerm()
-
-		if tok.Type == ast.T_MUL {
-			return ast.NewBinaryExpression(ast.OpMul, factor, term)
-		} else if tok.Type == ast.T_DIV {
-			return ast.NewBinaryExpression(ast.OpDiv, factor, term)
+		if term := parser.ParseTerm(); term != nil {
+			if tok.Type == ast.T_MUL {
+				return ast.NewBinaryExpression(ast.OpMul, factor, term)
+			} else if tok.Type == ast.T_DIV {
+				return ast.NewBinaryExpression(ast.OpDiv, factor, term)
+			}
+		} else {
+			panic("Unexpected token after * and /")
 		}
 	}
 	return factor
@@ -273,20 +273,9 @@ We here treat the property values as expressions:
 
 */
 func (parser *Parser) ParseExpression() ast.Expression {
-	/*
-		if tok := parser.accept(ast.T_INTERPOLATION_START); tok != nil {
-			debug("ParseExpression => accept: T_INTERPOLATION_START")
+	var pos = parser.Pos
 
-			debug("ParseExpression => ParseExpression")
-			var expr = parser.ParseExpression()
-
-			endToken := parser.expect(ast.T_INTERPOLATION_END)
-			debug("ParseExpression => expect: T_INTERPOLATION_START")
-
-			var interp = ast.NewInterpolation(expr, tok, endToken)
-			return interp
-		}
-	*/
+	debug("ParseExpression")
 
 	// plus or minus. this creates an unary expression that holds the later term.
 	// this is for:  +3 or -4
@@ -294,10 +283,20 @@ func (parser *Parser) ParseExpression() ast.Expression {
 	var expr ast.Expression
 	if tok.Type == ast.T_PLUS || tok.Type == ast.T_MINUS {
 		parser.next()
-		var term = parser.ParseTerm()
-		expr = ast.NewUnaryExpression(ast.ConvertTokenTypeToOpType(tok.Type), term)
+		if term := parser.ParseTerm(); term != nil {
+			expr = ast.NewUnaryExpression(ast.ConvertTokenTypeToOpType(tok.Type), term)
+		} else {
+			parser.restore(pos)
+			return nil
+		}
 	} else {
 		expr = parser.ParseTerm()
+	}
+
+	if expr == nil {
+		debug("ParseExpression failed, got %+v, restoring to %d", expr, pos)
+		parser.restore(pos)
+		return nil
 	}
 
 	var rightTok = parser.peek()
@@ -396,11 +395,13 @@ func (parser *Parser) ParseString() ast.Expression {
 }
 
 func (parser *Parser) ParseInterp() ast.Expression {
+	debug("ParseInterp at %d", parser.Pos)
 	var startTok = parser.peek()
 
 	if startTok.Type != ast.T_INTERPOLATION_START {
 		return nil
 	}
+
 	parser.accept(ast.T_INTERPOLATION_START)
 	var innerExpr = parser.ParseExpression()
 	var endTok = parser.expect(ast.T_INTERPOLATION_END)
@@ -413,32 +414,36 @@ func (parser *Parser) ParseValue() ast.Expression {
 	var pos = parser.Pos
 
 	// try parse map
+	debug("Trying ParseMap")
 	if mapValue := parser.ParseMap(); mapValue != nil {
+		debug("OK ParseMap")
 		return mapValue
 	}
 	parser.restore(pos)
 
+	debug("ParseList trying")
 	if listValue := parser.ParseList(); listValue != nil {
+		debug("ParseList OK: %+v", listValue)
 		return listValue
 	}
 
+	debug("ParseList failed, restoring to %d", pos)
 	parser.restore(pos)
-	if stringTerm := parser.ParseInterp(); stringTerm != nil {
-		var tok = parser.peek()
-		for tok.Type == ast.T_LITERAL_CONCAT {
-			var rightExpr = parser.ParseExpression()
-			stringTerm = ast.NewBinaryExpression(ast.OpConcat, stringTerm, rightExpr)
-			tok = parser.peek()
+	/*
+		if stringTerm := parser.ParseInterp(); stringTerm != nil {
+			var tok = parser.peek()
+			for tok.Type == ast.T_LITERAL_CONCAT {
+				var rightExpr = parser.ParseExpression()
+				stringTerm = ast.NewBinaryExpression(ast.OpConcat, stringTerm, rightExpr)
+				tok = parser.peek()
+			}
+			return stringTerm
+		} else {
+			// for other possible string concat expression
 		}
-		return stringTerm
-	} else {
-		// for other possible string concat expression
-	}
-
-	var tok = parser.peek()
-	_ = tok
-	var expr = parser.ParseExpression()
-	return expr
+	*/
+	debug("ParseExpression trying", pos)
+	return parser.ParseExpression()
 	/*
 		var tok = parser.peek()
 
@@ -465,24 +470,19 @@ func (parser *Parser) ParseValue() ast.Expression {
 }
 
 func (parser *Parser) ParseList() *ast.List {
-	var list = ast.NewList()
-	var tok = parser.peek()
-	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
-		if sublist := parser.ParseCommaSepList(); sublist != nil {
-			list.Append(sublist)
-		}
-
-		tok = parser.peek()
-		if tok.Type == ast.T_COMMA {
-			parser.next()
-		}
-		tok = parser.peek()
+	debug("ParseList at %d", parser.Pos)
+	var pos = parser.Pos
+	var list = parser.ParseCommaSepList()
+	if list == nil {
+		debug("ParseList failed")
+		parser.restore(pos)
+		return nil
 	}
-	fmt.Printf("ParseList <= %s\n", list.String())
 	return list
 }
 
 func (parser *Parser) ParseCommaSepList() *ast.List {
+	debug("ParseCommaSepList at %d", parser.Pos)
 	var list = ast.NewList()
 	list.Separator = ", "
 
@@ -491,32 +491,27 @@ func (parser *Parser) ParseCommaSepList() *ast.List {
 
 		// when the syntax start with a '(', it could be a list or map.
 		if tok.Type == ast.T_PAREN_START {
-			parser.expect(ast.T_PAREN_START)
-
-			var sublist = parser.ParseCommaSepList()
-
-			parser.expect(ast.T_PAREN_END)
-
-			if sublist != nil {
+			parser.next()
+			if sublist := parser.ParseCommaSepList(); sublist != nil {
 				list.Append(sublist)
 			}
+			parser.expect(ast.T_PAREN_END)
+
 		} else {
 			var sublist = parser.ParseSpaceSepList()
 			if sublist != nil {
 				list.Append(sublist)
+			} else {
+				if list.Len() == 0 {
+					return nil
+				}
+				return list
 			}
 		}
-
 		tok = parser.peek()
-		if tok.Type == ast.T_COMMA {
-			parser.next()
-			tok = parser.peek()
-		}
 	}
 	debug("Comma-separated list: %s\n", list)
-
 	// XXX: if there is only one item in the list, we can reduce it to element.
-
 	return list
 }
 
@@ -541,14 +536,12 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 
 	// skip ":", T_COLON token
 	if parser.accept(ast.T_COLON) == nil {
-		parser.restore(pos)
-		return nil
+		panic("Expecting colon after variable name")
 	}
 
 	var expr = parser.ParseValue()
 	if expr == nil {
-		parser.restore(pos)
-		return nil
+		panic("Expecting value after variable assignment.")
 	}
 
 	parser.expect(ast.T_SEMICOLON)
@@ -558,6 +551,8 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 }
 
 func (parser *Parser) ParseSpaceSepList() *ast.List {
+	debug("ParseSpaceSepList at %d", parser.Pos)
+
 	var list = ast.NewList()
 	list.Separator = " "
 
@@ -565,23 +560,30 @@ func (parser *Parser) ParseSpaceSepList() *ast.List {
 
 	if tok.Type == ast.T_PAREN_START {
 		parser.next()
-		var sublist = parser.ParseCommaSepList()
+		if sublist := parser.ParseCommaSepList(); sublist != nil {
+			list.Append(sublist)
+		}
 		parser.expect(ast.T_PAREN_END)
-
-		list.Append(sublist)
 	}
 
 	tok = parser.peek()
 	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
-		var expr = parser.ParseExpression()
-		if expr != nil {
-			list.Append(expr)
+		var subexpr = parser.ParseExpression()
+		if subexpr != nil {
+			debug("Parsed Expression: %+v", subexpr)
+			list.Append(subexpr)
+		} else {
+			if list.Len() > 0 {
+				return list
+			}
+			return nil
 		}
 		tok = parser.peek()
 		if tok.Type == ast.T_COMMA {
-			break
+			return list
 		}
 	}
+	debug("Return space-sep list: %+v", list)
 	return list
 }
 

@@ -27,8 +27,13 @@ type BinaryExpression struct {
 
 func (self BinaryExpression) CanBeExpression() {}
 
-func (self BinaryExpression) String() string {
-	return "(" + self.Left.String() + " " + self.Op.String() + " " + self.Right.String() + ")"
+func (self BinaryExpression) String() (out string) {
+	out += "("
+	out += self.Left.String()
+	out += " " + self.Op.String() + " "
+	out += self.Right.String()
+	out += ")"
+	return out
 }
 
 func NewBinaryExpression(op OpType, left Expression, right Expression) *BinaryExpression {

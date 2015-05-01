@@ -1,6 +1,7 @@
 package ast
 
 import "strings"
+import "fmt"
 
 type List struct {
 	Separator   string
@@ -21,8 +22,9 @@ func (list *List) Len() int {
 	return len(list.Expressions)
 }
 
-func (list *List) Append(expr Expression) {
+func (list List) Append(expr Expression) {
 	list.Expressions = append(list.Expressions, expr)
+	fmt.Printf("Append: %+v => %+v\n", expr, list.Expressions)
 }
 
 // By the default, the separator is space

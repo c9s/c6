@@ -20,7 +20,7 @@ type ParserError struct {
 	ActualToken    string
 }
 
-const debugParser = false
+const debugParser = true
 
 func debug(format string, args ...interface{}) {
 	if debugParser {

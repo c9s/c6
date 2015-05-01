@@ -120,7 +120,7 @@ func lexProperty(l *Lexer) stateFn {
 	}
 
 	r = l.peek()
-	for r != ';' && r != '}' {
+	for r != ';' && r != '}' && r != EOF {
 
 		if l.peek() == '#' && l.peekBy(2) == '{' {
 			lexInterpolation2(l)

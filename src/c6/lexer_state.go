@@ -288,15 +288,42 @@ func lexSemiColon(l *Lexer) stateFn {
 func lexVariableAssignment(l *Lexer) stateFn {
 	lexVariableName(l)
 	lexColon(l)
+	l.ignoreSpaces()
+
 	var r = l.peek()
-	for r != ';' && r != '}' {
-		lexExpression(l)
+	for r != ';' && r != '}' && r != EOF {
+		if l.peek() == '#' && l.peekBy(2) == '{' {
+			lexInterpolation2(l)
+
+			// See if it's the end of property
+			r = l.peek()
+			if !unicode.IsSpace(r) && r != '}' && r != ';' && r != ':' {
+				l.emit(ast.T_LITERAL_CONCAT)
+			}
+		}
+
+		if lexExpression(l) != nil {
+			if l.peek() == '#' && l.peekBy(2) == '{' {
+				l.emit(ast.T_LITERAL_CONCAT)
+			}
+		}
+
+		l.ignoreSpaces()
+		if l.accept(",") {
+			l.emit(ast.T_COMMA)
+		}
+
 		r = l.peek()
 	}
-	r = l.next()
-	if r == ';' {
+	// l.backup()
+
+	l.ignoreSpaces()
+	lexComment(l, false)
+	l.ignoreSpaces()
+
+	if l.accept(";") {
 		l.emit(ast.T_SEMICOLON)
-	} else if r == '}' {
+	} else if l.accept("}") {
 		l.emit(ast.T_BRACE_END)
 	}
 	return lexStatement
