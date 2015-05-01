@@ -9,6 +9,7 @@ and performance. And yes, this means we're free to accept any new language
 feature requests.
 
 [![Build Status](https://travis-ci.org/c9s/c6.svg)](https://travis-ci.org/c9s/c6)
+[![Coverage Status](https://coveralls.io/repos/c9s/c6/badge.svg)](https://coveralls.io/r/c9s/c6)
 
 
 ## Setup
