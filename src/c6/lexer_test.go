@@ -227,16 +227,63 @@ func TestLexerInterpolationPropertyValueList(t *testing.T) {
 		ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
 		ast.T_INTERPOLATION_START,
-		ast.T_INTEGER,
+		ast.T_INTEGER, // 1
 		ast.T_PLUS,
-		ast.T_INTEGER,
+		ast.T_INTEGER, // 2
 		ast.T_INTERPOLATION_END,
-		ast.T_LITERAL_CONCAT,
+		ast.T_LITERAL_CONCAT, // px
 		ast.T_IDENT,
 		ast.T_INTEGER,
 		ast.T_UNIT_PX,
 		ast.T_SEMICOLON,
 		ast.T_BRACE_END})
+}
+
+func TestLexerInterpolationComplex1(t *testing.T) {
+	AssertLexerTokenSequence(t, `.test {
+		padding: (10+10)#{ 2 * 2 }px;
+	}`, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+		ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
+		ast.T_PAREN_START,
+		ast.T_INTEGER,
+		ast.T_PLUS,
+		ast.T_INTEGER,
+		ast.T_PAREN_END,
+		ast.T_LITERAL_CONCAT,
+		ast.T_INTERPOLATION_START,
+		ast.T_INTEGER,
+		ast.T_MUL,
+		ast.T_INTEGER,
+		ast.T_INTERPOLATION_END,
+		ast.T_LITERAL_CONCAT,
+		ast.T_IDENT,
+	})
+}
+
+func TestLexerInterpolationComplex2(t *testing.T) {
+	AssertLexerTokenSequence(t, `.test {
+		padding: (10+10) #{ 2 * 2 } 10px;
+	}`, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+		ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
+		ast.T_PAREN_START,
+		ast.T_INTEGER,
+		ast.T_PLUS,
+		ast.T_INTEGER,
+		ast.T_PAREN_END,
+
+		ast.T_INTERPOLATION_START,
+		ast.T_INTEGER,
+		ast.T_MUL,
+		ast.T_INTEGER,
+		ast.T_INTERPOLATION_END,
+
+		ast.T_INTEGER,
+		ast.T_UNIT_PX,
+	})
 }
 
 func TestLexerInterpolationLeadingAndTrailing(t *testing.T) {

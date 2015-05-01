@@ -269,18 +269,20 @@ We here treat the property values as expressions:
 
 */
 func (parser *Parser) ParseExpression() ast.Expression {
-	if tok := parser.accept(ast.T_INTERPOLATION_START); tok != nil {
-		debug("ParseExpression => accept: T_INTERPOLATION_START")
+	/*
+		if tok := parser.accept(ast.T_INTERPOLATION_START); tok != nil {
+			debug("ParseExpression => accept: T_INTERPOLATION_START")
 
-		debug("ParseExpression => ParseExpression")
-		var expr = parser.ParseExpression()
+			debug("ParseExpression => ParseExpression")
+			var expr = parser.ParseExpression()
 
-		endToken := parser.expect(ast.T_INTERPOLATION_END)
-		debug("ParseExpression => expect: T_INTERPOLATION_START")
+			endToken := parser.expect(ast.T_INTERPOLATION_END)
+			debug("ParseExpression => expect: T_INTERPOLATION_START")
 
-		var interp = ast.NewInterpolation(expr, tok, endToken)
-		return interp
-	}
+			var interp = ast.NewInterpolation(expr, tok, endToken)
+			return interp
+		}
+	*/
 
 	// plus or minus. this creates an unary expression that holds the later term.
 	// this is for:  +3 or -4
@@ -296,6 +298,7 @@ func (parser *Parser) ParseExpression() ast.Expression {
 
 	var rightTok = parser.peek()
 	for rightTok.Type == ast.T_PLUS || rightTok.Type == ast.T_MINUS {
+		// accept plus or minus
 		parser.next()
 		if rightTerm := parser.ParseTerm(); rightTerm != nil {
 			expr = ast.NewBinaryExpression(ast.ConvertTokenTypeToOpType(rightTok.Type), expr, rightTerm)
@@ -322,7 +325,7 @@ func (parser *Parser) ParseMap() *ast.Map {
 }
 */
 
-func (parser *Parser) ParseMap() ast.Node {
+func (parser *Parser) ParseMap() ast.Expression {
 	var pos = parser.Pos
 	var tok = parser.next()
 	// since it's not started with '(', it's not map
@@ -359,36 +362,45 @@ func (parser *Parser) ParseMap() ast.Node {
 	return nil
 }
 
-func (parser *Parser) ParseValue() ast.Node {
+func (parser *Parser) ParseValue() ast.Expression {
 	debug("ParseValue")
 	var pos = parser.Pos
 
+	// try parse map
 	if mapValue := parser.ParseMap(); mapValue != nil {
 		return mapValue
 	}
-
 	parser.restore(pos)
 
-	var tok = parser.peek()
-
-	// list or map starts with '('
-	if tok.Type == ast.T_PAREN_START {
-		var expr = parser.ParseExpression()
-		_ = expr
+	if listValue := parser.ParseList(); listValue != nil {
+		return listValue
 	}
 
-	tok = parser.peek()
-	if tok.Type == ast.T_COLON {
-		// it's a map
-	}
+	return parser.ParseExpression()
 
-	tok = parser.peek()
-	if tok.Type == ast.T_PAREN_START {
-		// parser.ParseMapOrList()
-	} else {
-		parser.ParseList()
-	}
-	return nil
+	/*
+		var tok = parser.peek()
+
+		// list or map starts with '('
+		if tok.Type == ast.T_PAREN_START {
+			if expr := parser.ParseExpression(); expr != nil {
+				return expr
+			}
+		}
+
+		tok = parser.peek()
+		if tok.Type == ast.T_COLON {
+			// it's a map
+		}
+
+		tok = parser.peek()
+		if tok.Type == ast.T_PAREN_START {
+			// parser.ParseMapOrList()
+		} else {
+			parser.ParseList()
+		}
+		return nil
+	*/
 }
 
 func (parser *Parser) ParseList() *ast.List {
@@ -472,7 +484,7 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 		return nil
 	}
 
-	var expr = parser.ParseExpression()
+	var expr = parser.ParseValue()
 	if expr == nil {
 		parser.restore(pos)
 		return nil
@@ -558,9 +570,7 @@ We treat the property value section as a list value, which is separated by ',' o
 func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *ast.Property) *ast.List {
 	// var tok = parser.peek()
 	var list = parser.ParseList()
-
 	var tok = parser.peek()
-
 	if tok.Type == ast.T_SEMICOLON || tok.Type == ast.T_BRACE_END {
 		parser.next()
 	} else {

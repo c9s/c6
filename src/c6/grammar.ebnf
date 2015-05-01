@@ -24,14 +24,13 @@ PropertyValue: List
 
 Url := T_URL '(' T_QQ_STRING ')'
 
-String Concat := Expression Expression
+StringExpression := <String> T_CONCAT <String>
+                  | <String> {['+'] <String>}
 
 Expression := <Term> {'+' <Term>}
             | <Term> {'-' <Term>}
 
 String := "#{" <Expression> "}"
-        | <String> {'+' <String>}
-        | Expression
         | T_IDENT
         | T_QUOTE_STRING
         | T_DOUBLE_QUOTE_STRING
