@@ -1,6 +1,4 @@
 package ast
 
 // type Value struct { }
-type Value interface {
-	CanBeValue()
-}
+type Value interface{}

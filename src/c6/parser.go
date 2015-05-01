@@ -15,11 +15,6 @@ const (
 	SassFileType
 )
 
-type ParserContext struct {
-	ParentRuleSet  *ast.RuleSet
-	CurrentRuleSet *ast.RuleSet
-}
-
 type ParserError struct {
 	ExpectingToken string
 	ActualToken    string
