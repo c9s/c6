@@ -198,11 +198,22 @@ func (parser *Parser) ParseFactor() ast.Expression {
 		parser.expect(ast.T_INTERPOLATION_END)
 		// TODO:
 
-	} else if tok.Type == ast.T_QQ_STRING || tok.Type == ast.T_Q_STRING {
+	} else if tok.Type == ast.T_QQ_STRING {
 
 		tok = parser.next()
-		var str = ast.NewString(tok)
+		var str = ast.NewStringWithQuote('"', tok)
 		return ast.Expression(str)
+
+	} else if tok.Type == ast.T_Q_STRING {
+
+		tok = parser.next()
+		var str = ast.NewStringWithQuote('\'', tok)
+		return ast.Expression(str)
+
+	} else if tok.Type == ast.T_IDENT {
+
+		tok = parser.next()
+		return ast.Expression(ast.NewString(tok))
 
 	} else if tok.Type == ast.T_INTEGER || tok.Type == ast.T_FLOAT {
 
@@ -214,11 +225,6 @@ func (parser *Parser) ParseFactor() ast.Expression {
 
 		var fcall = parser.ParseFunctionCall()
 		return ast.Expression(*fcall)
-
-	} else if tok.Type == ast.T_IDENT {
-
-		var ident = parser.ParseIdent()
-		return ast.Expression(ident)
 
 	} else if tok.Type == ast.T_HEX_COLOR {
 
@@ -291,8 +297,11 @@ func (parser *Parser) ParseExpression() ast.Expression {
 	var rightTok = parser.peek()
 	for rightTok.Type == ast.T_PLUS || rightTok.Type == ast.T_MINUS {
 		parser.next()
-		var rightTerm = parser.ParseTerm()
-		expr = ast.NewBinaryExpression(ast.ConvertTokenTypeToOpType(rightTok.Type), expr, rightTerm)
+		if rightTerm := parser.ParseTerm(); rightTerm != nil {
+			expr = ast.NewBinaryExpression(ast.ConvertTokenTypeToOpType(rightTok.Type), expr, rightTerm)
+		} else {
+			panic("right term is not parseable.")
+		}
 		rightTok = parser.peek()
 	}
 	return expr

@@ -24,12 +24,18 @@ PropertyValue: List
 
 Url := T_URL '(' T_QQ_STRING ')'
 
-Expression := Interpolation
-            | <Term> {'+' <Term>}
+String Concat := Expression Expression
+
+Expression := <Term> {'+' <Term>}
             | <Term> {'-' <Term>}
 
-Interpolation := "#{" Expression "}"
-
+String := "#{" <Expression> "}"
+        | <String> {'+' <String>}
+        | Expression
+        | T_IDENT
+        | T_QUOTE_STRING
+        | T_DOUBLE_QUOTE_STRING
+               
 Term := <Factor> '*' <Factor>
         <Factor> '/' <Factor>
 
@@ -39,8 +45,8 @@ Factor := Number
 
 Value := Map
        | List
+       | String
        | Expression
-       | Expression LiteralConcat Expression
        | Keyword
        | Url
        | Color
@@ -60,6 +66,7 @@ MapPairList := MapPair ',' MapPairList
              | MapPair
 
 MapPair := Expression ':' Value
+
 
 
 Terminals
