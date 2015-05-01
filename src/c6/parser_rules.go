@@ -215,6 +215,10 @@ func (parser *Parser) ParseFactor() ast.Expression {
 		tok = parser.next()
 		return ast.Expression(ast.NewString(tok))
 
+	} else if tok.Type == ast.T_INTERPOLATION_START {
+
+		return parser.ParseInterp()
+
 	} else if tok.Type == ast.T_INTEGER || tok.Type == ast.T_FLOAT {
 
 		// reduce number
@@ -297,9 +301,10 @@ func (parser *Parser) ParseExpression() ast.Expression {
 	}
 
 	var rightTok = parser.peek()
-	for rightTok.Type == ast.T_PLUS || rightTok.Type == ast.T_MINUS {
+	for rightTok.Type == ast.T_PLUS || rightTok.Type == ast.T_MINUS || rightTok.Type == ast.T_LITERAL_CONCAT {
 		// accept plus or minus
 		parser.next()
+
 		if rightTerm := parser.ParseTerm(); rightTerm != nil {
 			expr = ast.NewBinaryExpression(ast.ConvertTokenTypeToOpType(rightTok.Type), expr, rightTerm)
 		} else {
@@ -362,6 +367,34 @@ func (parser *Parser) ParseMap() ast.Expression {
 	return nil
 }
 
+func (parser *Parser) ParseString() ast.Expression {
+	var tok = parser.peek()
+
+	if tok.Type == ast.T_QQ_STRING {
+
+		tok = parser.next()
+		var str = ast.NewStringWithQuote('"', tok)
+		return ast.Expression(str)
+
+	} else if tok.Type == ast.T_Q_STRING {
+
+		tok = parser.next()
+		var str = ast.NewStringWithQuote('\'', tok)
+		return ast.Expression(str)
+
+	} else if tok.Type == ast.T_IDENT {
+
+		tok = parser.next()
+		return ast.Expression(ast.NewString(tok))
+
+	} else if tok.Type == ast.T_INTERPOLATION_START {
+
+		return parser.ParseInterp()
+
+	}
+	return nil
+}
+
 func (parser *Parser) ParseInterp() ast.Expression {
 	var startTok = parser.peek()
 
@@ -389,15 +422,17 @@ func (parser *Parser) ParseValue() ast.Expression {
 		return listValue
 	}
 
-	if expr := parser.ParseInterp(); expr != nil {
+	parser.restore(pos)
+	if stringTerm := parser.ParseInterp(); stringTerm != nil {
 		var tok = parser.peek()
 		for tok.Type == ast.T_LITERAL_CONCAT {
 			var rightExpr = parser.ParseExpression()
-			expr = ast.NewBinaryExpression(ast.OpConcat, expr, rightExpr)
+			stringTerm = ast.NewBinaryExpression(ast.OpConcat, stringTerm, rightExpr)
 			tok = parser.peek()
 		}
-		return expr
-		// See if there is a T_LITERAL_CONCAT operator then
+		return stringTerm
+	} else {
+		// for other possible string concat expression
 	}
 
 	var tok = parser.peek()
@@ -549,46 +584,6 @@ func (parser *Parser) ParseSpaceSepList() *ast.List {
 	}
 	return list
 }
-
-/*
-func (parser *Parser) ReduceCommaSepList() *ast.List {
-	var tok = parser.peek()
-
-	// the start of the list token
-	if tok.Type == ast.T_PAREN_START {
-		parser.next()
-		// reduce the space separated list inside
-		var grouplist = parser.ReduceList()
-		_ = grouplist
-	} else {
-		var list = ast.NewList()
-		var expr = parser.ParseExpression()
-		var tok = parser.peek()
-		if tok.Type == ast.T_COMMA {
-			list.Separator = ","
-		} else if tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
-			list.Separator = " "
-		}
-
-		// try to parse the second expression
-		var expr2 = parser.ParseExpression()
-		for expr2 != nil {
-			var tok = parser.peek()
-
-			// the processed token is comma, but what we've got is not a comma
-			// this is for "," then " " case
-			if list.Separator == "," && tok.Type != ast.T_COMMA {
-
-			} else if list.Separator == " " && tok.Type == ast.T_COMMA {
-
-			}
-
-			expr2 = parser.ParseExpression()
-		}
-	}
-	return nil
-}
-*/
 
 /**
 We treat the property value section as a list value, which is separated by ',' or ' '

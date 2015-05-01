@@ -75,6 +75,14 @@ func TestParserVariableAssignmentWithComplexExpression(t *testing.T) {
 	fmt.Printf("%+v\n", block.Statements[0])
 }
 
+/*
+func TestParserVariableAssignmentWithComplexExpression(t *testing.T) {
+	var parser = NewParser()
+	var block = parser.parseScss(`$foo: 12px * (20px + 20px) + 4px / 2px;`)
+	fmt.Printf("%+v\n", block.Statements[0])
+}
+*/
+
 func TestParserVariableAssignmentWithSimpleExpresion(t *testing.T) {
 	var parser = NewParser()
 	var block = parser.parseScss(`$foo: 10px + 20px;`)

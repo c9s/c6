@@ -4,9 +4,9 @@ package ast
 
 import "fmt"
 
-const _OpType_name = "OpNoneOpAddOpSubOpDivOpMulOpPow"
+const _OpType_name = "OpNoneOpAddOpSubOpDivOpMulOpPowOpConcat"
 
-var _OpType_index = [...]uint8{0, 6, 11, 16, 21, 26, 31}
+var _OpType_index = [...]uint8{0, 6, 11, 16, 21, 26, 31, 39}
 
 func (i OpType) String() string {
 	if i < 0 || i+1 >= OpType(len(_OpType_index)) {

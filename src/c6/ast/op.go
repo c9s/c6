@@ -23,6 +23,8 @@ func ConvertTokenTypeToOpType(tokenType TokenType) OpType {
 		return OpMul
 	case T_DIV:
 		return OpDiv
+	case T_LITERAL_CONCAT:
+		return OpConcat
 	}
 	panic("unknown token type")
 	return OpNone
