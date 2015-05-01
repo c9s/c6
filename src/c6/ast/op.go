@@ -10,6 +10,7 @@ const (
 	OpDiv
 	OpMul
 	OpPow
+	OpConcat
 )
 
 func ConvertTokenTypeToOpType(tokenType TokenType) OpType {

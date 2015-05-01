@@ -362,6 +362,19 @@ func (parser *Parser) ParseMap() ast.Expression {
 	return nil
 }
 
+func (parser *Parser) ParseInterp() ast.Expression {
+	var startTok = parser.peek()
+
+	if startTok.Type != ast.T_INTERPOLATION_START {
+		return nil
+	}
+	parser.accept(ast.T_INTERPOLATION_START)
+	var innerExpr = parser.ParseExpression()
+	var endTok = parser.expect(ast.T_INTERPOLATION_END)
+	var interp = ast.NewInterpolation(innerExpr, startTok, endTok)
+	return interp
+}
+
 func (parser *Parser) ParseValue() ast.Expression {
 	debug("ParseValue")
 	var pos = parser.Pos
@@ -376,8 +389,21 @@ func (parser *Parser) ParseValue() ast.Expression {
 		return listValue
 	}
 
-	return parser.ParseExpression()
+	if expr := parser.ParseInterp(); expr != nil {
+		var tok = parser.peek()
+		for tok.Type == ast.T_LITERAL_CONCAT {
+			var rightExpr = parser.ParseExpression()
+			expr = ast.NewBinaryExpression(ast.OpConcat, expr, rightExpr)
+			tok = parser.peek()
+		}
+		return expr
+		// See if there is a T_LITERAL_CONCAT operator then
+	}
 
+	var tok = parser.peek()
+	_ = tok
+	var expr = parser.ParseExpression()
+	return expr
 	/*
 		var tok = parser.peek()
 
