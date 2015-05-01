@@ -3,7 +3,7 @@ C6
 Hate waiting for SASS compiling your stylesheets with Compass over 10 seconds
 everytime?  C6 helps you write style sheets with efficiency.
 
-C6 is a SASS implementation written in Go. But, wait! this is not only to
+C6 is a SASS implementation written in Go. But wait! this is not only to
 implement SASS, but also to improve the language for better consistency, syntax
 and performance. And yes, this means we're free to accept new language
 feature requests.
