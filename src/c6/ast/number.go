@@ -44,13 +44,22 @@ func (num Number) String() (out string) {
 	return out
 }
 
-// Pass numbers as pointer
-func AddNumber(a *Number, b *Number) *Number {
+// Check the unit of the number operands to see if they're computable.
+func NumberComputable(a *Number, b *Number) bool {
 	var unitA = a.GetUnit()
 	var unitB = b.GetUnit()
-	if unitA != UNIT_NONE && unitB != UNIT_NONE && a.GetUnit() != b.GetUnit() {
-		panic("Incompatible number type")
+	// If any of them is without unit
+	return unitA == UNIT_NONE || unitB == UNIT_NONE || unitA == unitB
+}
+
+// Pass numbers as pointer
+func NumberAdd(a *Number, b *Number) *Number {
+	if !NumberComputable(a, b) {
+		panic("Can't compute number: incompatible number unit.")
 	}
+
+	var unitA = a.GetUnit()
+	var unitB = b.GetUnit()
 
 	var unitC UnitType = UNIT_NONE
 	if unitA != UNIT_NONE {
