@@ -10,7 +10,7 @@ feature requests.
 
 [![Build Status](https://travis-ci.org/c9s/c6.svg)](https://travis-ci.org/c9s/c6)
 [![Coverage Status](https://coveralls.io/repos/c9s/c6/badge.svg)](https://coveralls.io/r/c9s/c6)
-
+[![GoDoc](https://godoc.org/github.com/c9s/c6/src/c6?status.svg)](https://godoc.org/github.com/c9s/c6/src/c6)
 
 ## Setup
 
