@@ -3,12 +3,17 @@ package ast
 import "strconv"
 import "fmt"
 
+type Hex string
+
 type Color interface {
 	CanBeColor()
 }
 
 type HexColor struct {
-	Hex   string
+	Hex   Hex
+	R     uint8
+	G     uint8
+	B     uint8
 	Token *Token
 }
 
@@ -17,11 +22,12 @@ func (self HexColor) CanBeNode()       {}
 func (self HexColor) CanBeColor()      {}
 func (self HexColor) CanBeValue()      {}
 func (self HexColor) String() string {
-	return "#" + self.Hex
+	return "#" + string(self.Hex)
 }
 
 func NewHexColor(hex string, token *Token) *HexColor {
-	return &HexColor{hex, token}
+	var r, g, b, _ = HexToRGBA(hex)
+	return &HexColor{Hex(hex), r, g, b, token}
 }
 
 // HexToRGB converts an Hex string to a RGB triple.
@@ -47,9 +53,15 @@ func HexToRGBA(h string) (uint8, uint8, uint8, float32) {
 	return 0, 0, 0, 0
 }
 
+func NewRGBColorWithHexCode(hex string, token *Token) *RGBColor {
+	var r, g, b, _ = HexToRGBA(hex)
+	return &RGBColor{r, g, b, token}
+}
+
 // Factor functions
 func NewRGBAColorWithHexCode(hex string, token *Token) *RGBAColor {
-	return &RGBAColor{}
+	var r, g, b, a = HexToRGBA(hex)
+	return &RGBAColor{r, g, b, a, token}
 }
 
 type RGBAColor struct {
@@ -65,6 +77,11 @@ func (self RGBAColor) CanBeNode()       {}
 func (self RGBAColor) CanBeColor()      {}
 func (self RGBAColor) CanBeValue()      {}
 
+// NOTE: 8 char hex color is only supported by IE.
+func (self RGBAColor) ToHexColor() Hex {
+	return Hex(fmt.Sprintf("#%02X%02X%02X", self.R, self.G, self.B))
+}
+
 func NewRGBAColor(r, g, b uint8, a float32, token *Token) *RGBAColor {
 	return &RGBAColor{r, g, b, a, token}
 }
@@ -79,7 +96,12 @@ type RGBColor struct {
 func (self RGBColor) CanBeExpression() {}
 func (self RGBColor) CanBeNode()       {}
 func (self RGBColor) CanBeColor()      {}
-func (self RGBColor) CanBeValue()      {}
+
+func (self RGBColor) CanBeValue() {}
+
+func (self RGBColor) ToHexColor() Hex {
+	return Hex(fmt.Sprintf("#%02X%02X%02X", self.R, self.G, self.B))
+}
 
 func NewRGBColor(r, g, b uint8, token *Token) *RGBColor {
 	return &RGBColor{r, g, b, token}
