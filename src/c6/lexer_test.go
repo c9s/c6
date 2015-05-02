@@ -262,6 +262,33 @@ func TestLexerInterpolationComplex1(t *testing.T) {
 	})
 }
 
+func TestLexerMap(t *testing.T) {
+	AssertLexerTokenSequence(t, `$var: (foo: 1, bar: 2);`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON,
+		ast.T_PAREN_START,
+		ast.T_IDENT, ast.T_COLON, ast.T_INTEGER, ast.T_COMMA,
+		ast.T_IDENT, ast.T_COLON, ast.T_INTEGER,
+		ast.T_PAREN_END,
+	})
+}
+
+func TestLexerMapWithExtraComma(t *testing.T) {
+	AssertLexerTokenSequence(t, `$var: (foo: 1, bar: 2, );`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON,
+		ast.T_PAREN_START,
+		ast.T_IDENT, ast.T_COLON, ast.T_INTEGER, ast.T_COMMA,
+		ast.T_IDENT, ast.T_COLON, ast.T_INTEGER, ast.T_COMMA,
+		ast.T_PAREN_END,
+	})
+}
+
+func TestLexerMapWithExpression(t *testing.T) {
+	AssertLexerTokenSequence(t, `$var: (foo: 2px + 3px, bar: $var2);`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON,
+		ast.T_PAREN_START,
+		ast.T_IDENT, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_PLUS, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_COMMA,
+		ast.T_IDENT, ast.T_COLON, ast.T_VARIABLE,
+		ast.T_PAREN_END,
+	})
+}
+
 func TestLexerInterpolationComplex2(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test {
 		padding: (10+10) #{ 2 * 2 } 10px;
