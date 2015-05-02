@@ -1,5 +1,9 @@
 package ast
 
+/*
+http://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion
+*/
+
 import "fmt"
 import "math"
 

@@ -36,9 +36,16 @@ func TestHex6CharToRGBA(t *testing.T) {
 	assert.Equal(t, float32(0.0), a)
 }
 
-func TestHSLColor(t *testing.T) {
+func TestHSLColorRedToRGB(t *testing.T) {
 	// hsl(0,  100%,50%) = red
 	var c = NewHSLColor(0, 1, 0.5, nil)
+	assert.NotNil(t, c)
+	assert.Equal(t, "rgb(255, 0, 0)", c.RGBColor().String())
+}
+
+func TestHSLColorGreenToRGB(t *testing.T) {
+	// hsl(120,100%,50%) = green
+	var c = NewHSLColor(120/360, 1, 0.5, nil)
 	assert.NotNil(t, c)
 	assert.Equal(t, "rgb(255, 0, 0)", c.RGBColor().String())
 }
