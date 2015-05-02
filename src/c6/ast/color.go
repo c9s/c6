@@ -127,6 +127,9 @@ type HSVColor struct {
 	Token *Token
 }
 
+func (self HSVColor) CanBeColor() {}
+func (self HSVColor) CanBeNode()  {}
+
 func NewHSVColor(h, s, v float64, token *Token) *HSVColor {
 	return &HSVColor{h, s, v, token}
 }
