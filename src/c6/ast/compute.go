@@ -14,7 +14,12 @@ const (
 	RGBColorValue            = 4
 )
 
-var computableValueMatrix1 [5][5]bool = [5][5]bool{
+/*
+Value
+*/
+type ComputeFunction func(a Value, b Value) Value
+
+var computableMatrix [5][5]bool = [5][5]bool{
 	/* NumberValue */
 	[5]bool{false, false, false, false},
 
@@ -28,29 +33,16 @@ var computableValueMatrix1 [5][5]bool = [5][5]bool{
 	[5]bool{false, false, false, false},
 }
 
-var computableValueMatrix map[ValueType]map[ValueType]bool = map[ValueType]map[ValueType]bool{
-	NumberValue: map[ValueType]bool{
-		NumberValue:    true,
-		HexColorValue:  true,
-		RGBAColorValue: true,
-		RGBColorValue:  true,
-	},
-	HexColorValue: map[ValueType]bool{
-		NumberValue:    true,
-		HexColorValue:  true,
-		RGBAColorValue: false,
-		RGBColorValue:  false,
-	},
-	RGBAColorValue: map[ValueType]bool{
-		NumberValue:    true,
-		HexColorValue:  false,
-		RGBAColorValue: true,
-		RGBColorValue:  false,
-	},
-	RGBColorValue: map[ValueType]bool{
-		NumberValue:    true,
-		HexColorValue:  false,
-		RGBAColorValue: false,
-		RGBColorValue:  true,
-	},
+var computeFunctionMatrix [5][5]ComputeFunction = [5][5]ComputeFunction{
+	/* NumberValue */
+	[5]ComputeFunction{nil, nil, nil, nil, nil},
+
+	/* HexColorValue */
+	[5]ComputeFunction{nil, nil, nil, nil, nil},
+
+	/* RGBAColorValue */
+	[5]ComputeFunction{nil, nil, nil, nil, nil},
+
+	/* RGBColorValue */
+	[5]ComputeFunction{nil, nil, nil, nil, nil},
 }
