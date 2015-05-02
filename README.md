@@ -59,15 +59,33 @@ To run specific test
   - [x] Variable assignment
   - [ ] Media Query
 - [ ] Syntax
-  - [x] `@import`
-  - [ ] `@if`
-  - [ ] `@mixin`
-  - [ ] `@include`
-  - [ ] `@function`
-  - [ ] `@media`
   - [ ] built-in `@import-once`
 - [ ] Built-in Functions
   - .... to be listed
+- [ ] Parser
+  - [x] Parse `@import`
+  - [x] Parse Expression
+  - [x] Parse Space-Sep List
+  - [x] Parse Comma-Sep List
+  - [-] Parse Map (tests required)
+  - [ ] Parse Condition
+  - [x] Parse Selector
+  - [ ] Parse Selector with interpolation
+  - [x] Parse RuleSet
+  - [x] Parse DeclarationBlock
+  - [x] Parse Variable Assignment Statement
+  - [x] Parse PropertyName
+  - [ ] Parse PropertyName with interpolation
+  - [-] Parse PropertyValue
+  - [-] Parse PropertyValue with interpolation
+  - [ ] Parse Nested RuleSet
+  - [ ] Parse options: `!default`, `!global`, `!optional`
+  - [ ] Parse CSS Hack for different browser (support more syntax sugar for this)
+  - [ ] Parse `@if`
+  - [ ] Parse `@mixin`
+  - [ ] Parse `@include`
+  - [ ] Parse `@function`
+  - [ ] Parse `@media`
 - [ ] Building AST
   - [x] RuleSet
   - [x] DeclarationBlock
@@ -77,11 +95,20 @@ To run specific test
   - [x] Space-Separated List
   - [x] Basic Expressions
   - [x] FunctionCall
-  - [ ] Variable statements
-  - [ ] Expression with interpolation
-  - [ ] Expression evaluator
-- [ ] NestedStyleCompiler
-
+  - [x] Expression with interpolation
+  - [x] Variable statements
+  - [ ] If Condition
+  - [ ] If Else If, Else Condition
+  - [ ] Built-in color keyword table
+  - [ ] Hex Color computation
+  - [ ] HSL Color computation
+  - [ ] Number operation: add, sub, mul, div
+  - [ ] Length operation: number operation for px, pt, em, rem, cm ...etc
+  - [ ] Expression evaluation
+  - [ ] Media Query conditions
+- [ ] CodeGen
+  - [ ] NestedStyleCompiler
+    - [ ] .... list ast nodes here ....
 
 ## Features
 
@@ -91,6 +118,7 @@ To run specific test
 - [ ] namespace and alias: https://github.com/sass/sass/issues/353
 - [ ] `@use` directive: https://github.com/nex3/sass/issues/353#issuecomment-5146513 
 - [ ] conditional import: https://github.com/sass/sass/issues/451
+- [ ] `@sprite` syntax sugar
 
 
 
