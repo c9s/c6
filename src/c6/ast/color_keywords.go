@@ -1,5 +1,8 @@
 package ast
 
+// Color Value
+// @see https://developer.mozilla.org/en-US/docs/Web/CSS/color_value#rgba()
+
 // quote word with '"'
 //
 //  :%s/\<#\@<!\(\w\+\)\>/"\1":/g
