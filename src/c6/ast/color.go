@@ -82,6 +82,10 @@ func (self RGBAColor) ToHexColor() Hex {
 	return Hex(fmt.Sprintf("#%02X%02X%02X", self.R, self.G, self.B))
 }
 
+func (self RGBAColor) String() string {
+	return fmt.Sprintf("rgba(%d, %d, %d, %.2f)", self.R, self.G, self.B, self.A)
+}
+
 func NewRGBAColor(r, g, b uint8, a float32, token *Token) *RGBAColor {
 	return &RGBAColor{r, g, b, a, token}
 }
@@ -101,6 +105,10 @@ func (self RGBColor) CanBeValue() {}
 
 func (self RGBColor) ToHexColor() Hex {
 	return Hex(fmt.Sprintf("#%02X%02X%02X", self.R, self.G, self.B))
+}
+
+func (self RGBColor) String() string {
+	return fmt.Sprintf("rgb(%d, %d, %d)", self.R, self.G, self.B)
 }
 
 func NewRGBColor(r, g, b uint8, token *Token) *RGBColor {
