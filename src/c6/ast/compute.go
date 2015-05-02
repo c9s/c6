@@ -23,6 +23,9 @@ var computableMatrix [5][5]bool = [5][5]bool{
 	/* NumberValue */
 	[5]bool{false, false, false, false},
 
+	/* LengthValue */
+	[5]bool{false, false, false, false},
+
 	/* HexColorValue */
 	[5]bool{false, false, false, false},
 
@@ -33,8 +36,15 @@ var computableMatrix [5][5]bool = [5][5]bool{
 	[5]bool{false, false, false, false},
 }
 
+/**
+Each row: [5]ComputeFunction{ NumberValue, LengthValue, HexColorValue, RGBAColorValue, RGBColorValue }
+*/
 var computeFunctionMatrix [5][5]ComputeFunction = [5][5]ComputeFunction{
+
 	/* NumberValue */
+	[5]ComputeFunction{nil, nil, nil, nil, nil},
+
+	/* LengthValue */
 	[5]ComputeFunction{nil, nil, nil, nil, nil},
 
 	/* HexColorValue */
