@@ -120,6 +120,45 @@ func NewRGBColor(r, g, b uint8, token *Token) *RGBColor {
 	return &RGBColor{r, g, b, token}
 }
 
+type HSLColor struct {
+	H     float64
+	S     float64
+	L     float64
+	Token *Token
+}
+
+func (self HSLColor) CanBeColor() {}
+func (self HSLColor) CanBeNode()  {}
+func (self HSLColor) HSLAColor() *HSLAColor {
+	return NewHSLAColor(self.H, self.S, self.L, 0, nil)
+}
+
+func (self HSLColor) String() string {
+	return fmt.Sprintf("hsl(%G, %G, %G)", self.H, self.S, self.L)
+}
+
+func NewHSLColor(h, s, v float64, token *Token) *HSLColor {
+	return &HSLColor{h, s, v, token}
+}
+
+type HSLAColor struct {
+	H     float64
+	S     float64
+	L     float64
+	A     float64
+	Token *Token
+}
+
+func (self HSLAColor) CanBeColor() {}
+func (self HSLAColor) CanBeNode()  {}
+func (self HSLAColor) String() string {
+	return fmt.Sprintf("hsl(%G, %G, %G, %G)", self.H, self.S, self.L, self.A)
+}
+
+func NewHSLAColor(h, s, v, a float64, token *Token) *HSLAColor {
+	return &HSLAColor{h, s, v, a, token}
+}
+
 type HSVColor struct {
 	H     float64
 	S     float64
@@ -129,6 +168,11 @@ type HSVColor struct {
 
 func (self HSVColor) CanBeColor() {}
 func (self HSVColor) CanBeNode()  {}
+
+// hsv() is not supported in CSS3, we need to convert it to hex color
+func (self HSVColor) String() string {
+	return fmt.Sprintf("hsv(%G, %G, %G)", self.H, self.S, self.V)
+}
 
 func NewHSVColor(h, s, v float64, token *Token) *HSVColor {
 	return &HSVColor{h, s, v, token}
