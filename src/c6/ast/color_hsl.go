@@ -55,7 +55,15 @@ func NewHSLAColor(h, s, v, a float64, token *Token) *HSLAColor {
 	return &HSLAColor{h, s, v, a, token}
 }
 
+/*
+h = 0~360
+s = 0~1
+l = 0~1
+*/
 func HSLToRGB(h, s, l float64) (r, g, b uint32) {
+	if h > 0 {
+		h = h / 360
+	}
 	var fR, fG, fB float64
 	if s == 0 {
 		fR, fG, fB = l, l, l

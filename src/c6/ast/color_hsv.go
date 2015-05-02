@@ -33,15 +33,13 @@ func NewHSVColor(h, s, v float64, token *Token) *HSVColor {
 }
 
 func RGBToHSV(ir, ig, ib uint32) (h, s, v float64) {
-	// cast to float64 for math.* API
-	var r = float64(ir)
-	var g = float64(ig)
-	var b = float64(ib)
+	r := float64(ir) / 255
+	g := float64(ig) / 255
+	b := float64(ib) / 255
 
-	var min = math.Min(math.Min(r, g), b)
-
+	min := math.Min(math.Min(r, g), b)
 	v = math.Max(math.Max(r, g), b)
-	var C = v - min
+	C := v - min
 
 	s = 0.0
 	if v != 0.0 {
@@ -93,3 +91,45 @@ func HSVToRGB(h, s, v float64) (r, g, b uint32) {
 	b = uint32((fB * 255) + 0.5)
 	return
 }
+
+/*
+func HSVToRGB(h, s, v float64) (uint32, uint32, uint32) {
+	var r, g, b = 0.0, 0.0, 0.0
+
+	h /= 60
+	i := math.Floor(h)
+	f := h - i
+	p := v * (1 - s)
+	q := v * (1 - s*f)
+	t := v * (1 - s*(1-f))
+
+	switch i {
+	case 0:
+		r = v
+		g = t
+		b = p
+	case 1:
+		r = q
+		g = v
+		b = p
+	case 2:
+		r = p
+		g = v
+		b = t
+	case 3:
+		r = p
+		g = q
+		b = v
+	case 4:
+		r = t
+		g = p
+		b = v
+	default:
+		r = v
+		g = p
+		b = q
+	}
+
+	return uint32(r) * 255, uint32(g) * 255, uint32(b) * 255
+}
+*/

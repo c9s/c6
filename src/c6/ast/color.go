@@ -51,7 +51,7 @@ func HexToRGBA(h string) (uint32, uint32, uint32, float32) {
 	}
 	if len(h) == 8 {
 		if rgba, err := strconv.ParseUint(string(h), 16, 32); err == nil {
-			return uint32(rgba >> 24), uint32(rgba >> 16), uint32((rgba >> 8) & 0xFF), float32(rgba&0xFF) / 255
+			return uint32(rgba >> 24), uint32(rgba >> 16 & 0xFF), uint32((rgba >> 8) & 0xFF), float32(rgba&0xFF) / 255
 		}
 	}
 	return 0, 0, 0, 0

@@ -45,9 +45,24 @@ func TestHSLColorRedToRGB(t *testing.T) {
 
 func TestHSLColorGreenToRGB(t *testing.T) {
 	// hsl(120,100%,50%) = green
-	var c = NewHSLColor(120/360, 1, 0.5, nil)
+	var c = NewHSLColor(120, 1, 0.5, nil)
 	assert.NotNil(t, c)
+	assert.Equal(t, "rgb(0, 255, 0)", c.RGBColor().String())
+}
+
+func TestHSVColorRedToRGB(t *testing.T) {
+	var c = NewHSVColor(0, 1, 1, nil)
 	assert.Equal(t, "rgb(255, 0, 0)", c.RGBColor().String())
+}
+
+func TestHSVColorGreenToRGB(t *testing.T) {
+	var c = NewHSVColor(120, 0.5, 1, nil)
+	assert.Equal(t, "rgb(255, 128, 128)", c.RGBColor().String())
+
+	var h, s, v = RGBToHSV(0, 255, 0)
+	assert.Equal(t, 120.0, h)
+	assert.Equal(t, 1.0, s)
+	assert.Equal(t, 1.0, v)
 }
 
 func TestHex8CharToRGBA(t *testing.T) {
