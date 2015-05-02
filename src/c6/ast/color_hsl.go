@@ -1,6 +1,7 @@
 package ast
 
 import "fmt"
+import "math"
 
 type HSLColor struct {
 	H     float64
@@ -13,6 +14,15 @@ func (self HSLColor) CanBeColor() {}
 func (self HSLColor) CanBeNode()  {}
 func (self HSLColor) HSLAColor() *HSLAColor {
 	return NewHSLAColor(self.H, self.S, self.L, 0, nil)
+
+}
+func (c HSLColor) RGBAColor() *RGBAColor {
+	r, g, b := HSLToRGB(c.H, c.S, c.L)
+	return NewRGBAColor(uint32(r)*0x101, uint32(g)*0x101, uint32(b)*0x101, 0xffff, nil)
+}
+func (c HSLColor) RGBColor() *RGBColor {
+	r, g, b := HSLToRGB(c.H, c.S, c.L)
+	return NewRGBColor(uint32(r)*0x101, uint32(g)*0x101, uint32(b)*0x101, nil)
 }
 
 func (self HSLColor) String() string {
@@ -80,4 +90,38 @@ func HUEToRGB(p, q, t float64) float64 {
 		return p + (q-p)*(2.0/3-t)*6
 	}
 	return p
+}
+
+func RGBToHSL(r, g, b uint8) (h, s, l float64) {
+	fR := float64(r) / 255
+	fG := float64(g) / 255
+	fB := float64(b) / 255
+	max := math.Max(math.Max(fR, fG), fB)
+	min := math.Min(math.Min(fR, fG), fB)
+	l = (max + min) / 2
+	if max == min {
+		// Achromatic.
+		h, s = 0, 0
+	} else {
+		// Chromatic.
+		d := max - min
+		if l > 0.5 {
+			s = d / (2.0 - max - min)
+		} else {
+			s = d / (max + min)
+		}
+		switch max {
+		case fR:
+			h = (fG - fB) / d
+			if fG < fB {
+				h += 6
+			}
+		case fG:
+			h = (fB-fR)/d + 2
+		case fB:
+			h = (fR-fG)/d + 4
+		}
+		h /= 6
+	}
+	return
 }

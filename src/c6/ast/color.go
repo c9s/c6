@@ -15,9 +15,9 @@ type Color interface {
 
 type HexColor struct {
 	Hex   Hex
-	R     uint8
-	G     uint8
-	B     uint8
+	R     uint32
+	G     uint32
+	B     uint32
 	Token *Token
 }
 
@@ -35,7 +35,7 @@ func NewHexColor(hex string, token *Token) *HexColor {
 }
 
 // HexToRGB converts an Hex string to a RGB triple.
-func HexToRGBA(h string) (uint8, uint8, uint8, float32) {
+func HexToRGBA(h string) (uint32, uint32, uint32, float32) {
 	if len(h) > 0 && h[0] == '#' {
 		h = h[1:]
 	}
@@ -46,12 +46,12 @@ func HexToRGBA(h string) (uint8, uint8, uint8, float32) {
 	if len(h) == 6 {
 		if rgb, err := strconv.ParseUint(string(h), 16, 32); err == nil {
 			fmt.Printf("%+v", rgb)
-			return uint8(rgb >> 16), uint8((rgb >> 8) & 0xFF), uint8(rgb & 0xFF), 0
+			return uint32(rgb >> 16), uint32((rgb >> 8) & 0xFF), uint32(rgb & 0xFF), 0
 		}
 	}
 	if len(h) == 8 {
 		if rgba, err := strconv.ParseUint(string(h), 16, 32); err == nil {
-			return uint8(rgba >> 24), uint8(rgba >> 16), uint8((rgba >> 8) & 0xFF), float32(rgba&0xFF) / 255
+			return uint32(rgba >> 24), uint32(rgba >> 16), uint32((rgba >> 8) & 0xFF), float32(rgba&0xFF) / 255
 		}
 	}
 	return 0, 0, 0, 0
@@ -69,9 +69,9 @@ func NewRGBAColorWithHexCode(hex string, token *Token) *RGBAColor {
 }
 
 type RGBAColor struct {
-	R     uint8
-	G     uint8
-	B     uint8
+	R     uint32
+	G     uint32
+	B     uint32
 	A     float32
 	Token *Token
 }
@@ -90,14 +90,14 @@ func (self RGBAColor) String() string {
 	return fmt.Sprintf("rgba(%d, %d, %d, %g)", self.R, self.G, self.B, self.A)
 }
 
-func NewRGBAColor(r, g, b uint8, a float32, token *Token) *RGBAColor {
+func NewRGBAColor(r, g, b uint32, a float32, token *Token) *RGBAColor {
 	return &RGBAColor{r, g, b, a, token}
 }
 
 type RGBColor struct {
-	R     uint8
-	G     uint8
-	B     uint8
+	R     uint32
+	G     uint32
+	B     uint32
 	Token *Token
 }
 
@@ -115,6 +115,6 @@ func (self RGBColor) String() string {
 	return fmt.Sprintf("rgb(%d, %d, %d)", self.R, self.G, self.B)
 }
 
-func NewRGBColor(r, g, b uint8, token *Token) *RGBColor {
+func NewRGBColor(r, g, b uint32, token *Token) *RGBColor {
 	return &RGBColor{r, g, b, token}
 }

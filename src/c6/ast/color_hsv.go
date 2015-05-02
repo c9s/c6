@@ -13,6 +13,16 @@ type HSVColor struct {
 func (self HSVColor) CanBeColor() {}
 func (self HSVColor) CanBeNode()  {}
 
+func (c HSVColor) RGBAColor() *RGBAColor {
+	r, g, b := HSVToRGB(c.H, c.S, c.V)
+	return NewRGBAColor(uint32(r)*0x101, uint32(g)*0x101, uint32(b)*0x101, 0xffff, nil)
+}
+
+func (c HSVColor) RGBColor() *RGBColor {
+	r, g, b := HSVToRGB(c.H, c.S, c.V)
+	return NewRGBColor(uint32(r)*0x101, uint32(g)*0x101, uint32(b)*0x101, nil)
+}
+
 // hsv() is not supported in CSS3, we need to convert it to hex color
 func (self HSVColor) String() string {
 	return fmt.Sprintf("hsv(%G, %G, %G)", self.H, self.S, self.V)
@@ -22,7 +32,7 @@ func NewHSVColor(h, s, v float64, token *Token) *HSVColor {
 	return &HSVColor{h, s, v, token}
 }
 
-func RGBToHSV(ir, ig, ib uint) (h, s, v float64) {
+func RGBToHSV(ir, ig, ib uint32) (h, s, v float64) {
 	// cast to float64 for math.* API
 	var r = float64(ir)
 	var g = float64(ig)
@@ -54,5 +64,32 @@ func RGBToHSV(ir, ig, ib uint) (h, s, v float64) {
 			h += 360.0
 		}
 	}
+	return
+}
+
+func HSVToRGB(h, s, v float64) (r, g, b uint32) {
+	var fR, fG, fB float64
+	i := math.Floor(h * 6)
+	f := h*6 - i
+	p := v * (1.0 - s)
+	q := v * (1.0 - f*s)
+	t := v * (1.0 - (1.0-f)*s)
+	switch int(i) % 6 {
+	case 0:
+		fR, fG, fB = v, t, p
+	case 1:
+		fR, fG, fB = q, v, p
+	case 2:
+		fR, fG, fB = p, v, t
+	case 3:
+		fR, fG, fB = p, q, v
+	case 4:
+		fR, fG, fB = t, p, v
+	case 5:
+		fR, fG, fB = v, p, q
+	}
+	r = uint32((fR * 255) + 0.5)
+	g = uint32((fG * 255) + 0.5)
+	b = uint32((fB * 255) + 0.5)
 	return
 }
