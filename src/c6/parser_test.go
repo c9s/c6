@@ -6,6 +6,12 @@ import "github.com/stretchr/testify/assert"
 
 import "fmt"
 
+func RunParserTest(code string) *ast.Block {
+	fmt.Printf("Test parsing: %s\n", code)
+	var parser = NewParser()
+	return parser.parseScss(code)
+}
+
 func TestParserParseImportRuleWithUrl(t *testing.T) {
 	parser := NewParser()
 	block := parser.parseScss(`@import url("http://foo.com/bar.css");`)
@@ -41,8 +47,7 @@ func TestParserParseImportRuleWithString(t *testing.T) {
 }
 
 func TestParserParseImportRuleWithMediaList(t *testing.T) {
-	parser := NewParser()
-	block := parser.parseScss(`@import url("foo.css") screen;`)
+	var block = RunParserTest(`@import url("foo.css") screen;`)
 	_ = block
 }
 
@@ -56,40 +61,33 @@ func TestParserPropertyListExpression(t *testing.T) {
 		// `div { width: 10px, 3px + 7px, 20px; }`,
 	}
 	for _, buffer := range buffers {
-		t.Logf("Input %s", buffer)
-		var parser = NewParser()
-		var block = parser.parseScss(buffer)
+		var block = RunParserTest(buffer)
 		fmt.Printf("%+v\n", block)
 	}
 }
 
 func TestParserVariableAssignmentWithMorePlus(t *testing.T) {
-	var parser = NewParser()
-	var block = parser.parseScss(`$foo: 12px + 20px + 20px;`)
+	var block = RunParserTest(`$foo: 12px + 20px + 20px;`)
 	fmt.Printf("%+v\n", block)
 }
 
 func TestParserVariableAssignmentWithComplexExpression(t *testing.T) {
-	var parser = NewParser()
-	var block = parser.parseScss(`$foo: 12px * (20px + 20px) + 4px / 2px;`)
+	var block = RunParserTest(`$foo: 12px * (20px + 20px) + 4px / 2px;`)
 	fmt.Printf("%+v\n", block.Statements[0])
 }
 
 func TestParserVariableAssignmentWithInterpolation(t *testing.T) {
-	var parser = NewParser()
-	var block = parser.parseScss(`$foo: #{ 10 + 20 }px;`)
+	var block = RunParserTest(`$foo: #{ 10 + 20 }px;`)
 	fmt.Printf("%+v\n", block.Statements[0])
 }
 
 func TestParserVariableAssignmentWithSimpleExpresion(t *testing.T) {
-	var parser = NewParser()
-	var block = parser.parseScss(`$foo: 10px + 20px;`)
+	var block = RunParserTest(`$foo: 10px + 20px;`)
 	fmt.Printf("%+v\n", block)
 }
 
 func TestParserVariableAssignmentWithPxValue(t *testing.T) {
-	var parser = NewParser()
-	var block = parser.parseScss(`$foo: 10px;`)
+	var block = RunParserTest(`$foo: 10px;`)
 	fmt.Printf("%+v\n", block)
 }
 
@@ -111,7 +109,7 @@ func TestParserMassiveRules(t *testing.T) {
 		// `div { color: #ccddee; }`,
 	}
 	for _, buffer := range buffers {
-		t.Logf("Input %s", buffer)
+		fmt.Printf("Input %s\n", buffer)
 		var parser = NewParser()
 		var block = parser.parseScss(buffer)
 		fmt.Printf("%+v\n", block)

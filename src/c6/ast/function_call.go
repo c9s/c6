@@ -8,17 +8,25 @@ type FunctionCall struct {
 
 func (self FunctionCall) CanBeExpression() {}
 func (self FunctionCall) CanBeNode()       {}
-func (self FunctionCall) String() string {
-	// XXX:
-	return self.Function
+func (self FunctionCall) String() (out string) {
+	out = self.Function + "("
+	for _, arg := range self.Arguments {
+		out += arg.String() + ", "
+	}
+	if len(self.Arguments) > 0 {
+		out = out[:len(out)-2]
+	}
+	out += ")"
+	return out
 }
 
 func NewFunctionCall(token *Token) *FunctionCall {
 	return &FunctionCall{token.Str, []Expression{}, token}
 }
 
-func (self FunctionCall) AppendArgument(arg Expression) {
-	self.Arguments = append(self.Arguments, arg)
+func (self *FunctionCall) AppendArgument(arg Expression) {
+	var args = append(self.Arguments, arg)
+	self.Arguments = args
 }
 
 /*

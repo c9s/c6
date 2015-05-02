@@ -5,10 +5,6 @@ import "testing"
 import "fmt"
 import "c6/ast"
 
-func AssertToken(t *testing.T, gotToken *ast.Token, tokenType ast.TokenType, tokenString string) {
-
-}
-
 func AssertLexerTokenSequence(t *testing.T, scss string, tokenList []ast.TokenType) {
 	fmt.Printf("Testing SCSS: %s\n", scss)
 

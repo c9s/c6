@@ -491,26 +491,35 @@ func (parser *Parser) ParseCommaSepList() *ast.List {
 
 		// when the syntax start with a '(', it could be a list or map.
 		if tok.Type == ast.T_PAREN_START {
+
 			parser.next()
 			if sublist := parser.ParseCommaSepList(); sublist != nil {
+				debug("Appending sublist %+v", list)
 				list.Append(sublist)
 			}
+			// allow empty list here
 			parser.expect(ast.T_PAREN_END)
 
 		} else {
 			var sublist = parser.ParseSpaceSepList()
 			if sublist != nil {
+				debug("Appending sublist %+v", list)
 				list.Append(sublist)
 			} else {
-				if list.Len() == 0 {
-					return nil
+				if list.Len() > 0 {
+					return list
 				}
-				return list
+				return nil
 			}
+		}
+
+		if parser.accept(ast.T_COMMA) == nil {
+			debug("Returning comma-separated list: %+v\n", list)
+			return list
 		}
 		tok = parser.peek()
 	}
-	debug("Comma-separated list: %s\n", list)
+	debug("Returning comma-separated list: %+v\n", list)
 	// XXX: if there is only one item in the list, we can reduce it to element.
 	return list
 }
@@ -573,27 +582,41 @@ func (parser *Parser) ParseSpaceSepList() *ast.List {
 			debug("Parsed Expression: %+v", subexpr)
 			list.Append(subexpr)
 		} else {
-			if list.Len() > 0 {
-				return list
-			}
-			return nil
+			break
 		}
 		tok = parser.peek()
 		if tok.Type == ast.T_COMMA {
-			return list
+			break
 		}
 	}
-	debug("Return space-sep list: %+v", list)
-	return list
+	debug("Returning space-sep list: %+v", list)
+	if list.Len() > 0 {
+		return list
+	}
+	return nil
 }
 
 /**
 We treat the property value section as a list value, which is separated by ',' or ' '
 */
 func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *ast.Property) *ast.List {
+	debug("ParsePropertyValue")
 	// var tok = parser.peek()
-	var list = parser.ParseList()
+	var list = ast.NewList()
+
 	var tok = parser.peek()
+	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
+		var sublist = parser.ParseList()
+		if sublist != nil {
+			list.Append(sublist)
+			debug("ParsePropertyValue list: %+v", list)
+		} else {
+			break
+		}
+		tok = parser.peek()
+	}
+
+	tok = parser.peek()
 	if tok.Type == ast.T_SEMICOLON || tok.Type == ast.T_BRACE_END {
 		parser.next()
 	} else {
