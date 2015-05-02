@@ -2,6 +2,42 @@ package ast
 
 import "strconv"
 
+type ValueType uint16
+
+const (
+	NumberValue ValueType = iota
+	HexColorValue
+	RGBAColorValue
+	RGBColorValue
+)
+
+var computableValueMatrix map[ValueType]map[ValueType]bool = map[ValueType]map[ValueType]bool{
+	NumberValue: map[ValueType]bool{
+		NumberValue:    true,
+		HexColorValue:  true,
+		RGBAColorValue: true,
+		RGBColorValue:  true,
+	},
+	HexColorValue: map[ValueType]bool{
+		NumberValue:    true,
+		HexColorValue:  true,
+		RGBAColorValue: false,
+		RGBColorValue:  false,
+	},
+	RGBAColorValue: map[ValueType]bool{
+		NumberValue:    true,
+		HexColorValue:  false,
+		RGBAColorValue: true,
+		RGBColorValue:  false,
+	},
+	RGBColorValue: map[ValueType]bool{
+		NumberValue:    true,
+		HexColorValue:  false,
+		RGBAColorValue: false,
+		RGBColorValue:  true,
+	},
+}
+
 type Number struct {
 	Value float64
 	Unit  UnitType
