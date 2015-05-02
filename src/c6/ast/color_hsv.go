@@ -67,8 +67,8 @@ func RGBToHSV(ir, ig, ib uint32) (h, s, v float64) {
 
 func HSVToRGB(h, s, v float64) (r, g, b uint32) {
 	var fR, fG, fB float64
-	i := math.Floor(h * 6)
-	f := h*6 - i
+	i := math.Floor(h / 60)
+	f := h/60 - i
 	p := v * (1.0 - s)
 	q := v * (1.0 - f*s)
 	t := v * (1.0 - (1.0-f)*s)
@@ -86,50 +86,9 @@ func HSVToRGB(h, s, v float64) (r, g, b uint32) {
 	case 5:
 		fR, fG, fB = v, p, q
 	}
+	fmt.Printf("%G %G %G\n", fR, fG, fB)
 	r = uint32((fR * 255) + 0.5)
 	g = uint32((fG * 255) + 0.5)
 	b = uint32((fB * 255) + 0.5)
 	return
 }
-
-/*
-func HSVToRGB(h, s, v float64) (uint32, uint32, uint32) {
-	var r, g, b = 0.0, 0.0, 0.0
-
-	h /= 60
-	i := math.Floor(h)
-	f := h - i
-	p := v * (1 - s)
-	q := v * (1 - s*f)
-	t := v * (1 - s*(1-f))
-
-	switch i {
-	case 0:
-		r = v
-		g = t
-		b = p
-	case 1:
-		r = q
-		g = v
-		b = p
-	case 2:
-		r = p
-		g = v
-		b = t
-	case 3:
-		r = p
-		g = q
-		b = v
-	case 4:
-		r = t
-		g = p
-		b = v
-	default:
-		r = v
-		g = p
-		b = q
-	}
-
-	return uint32(r) * 255, uint32(g) * 255, uint32(b) * 255
-}
-*/
