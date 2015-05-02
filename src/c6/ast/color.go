@@ -5,6 +5,10 @@ import "fmt"
 
 type Hex string
 
+func (hex Hex) String() string {
+	return string(hex)
+}
+
 type Color interface {
 	CanBeColor()
 }
