@@ -1,7 +1,8 @@
 package ast
 
 import "testing"
-import "github.com/stretchr/testify/assert"
+
+// import "github.com/stretchr/testify/assert"
 
 func TestBinaryExprString(t *testing.T) {
 	var num1 = NewNumber(2, nil)

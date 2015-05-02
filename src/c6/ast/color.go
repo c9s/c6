@@ -1,5 +1,8 @@
 package ast
 
+import "strconv"
+import "fmt"
+
 type Color interface {
 	CanBeColor()
 }
@@ -17,16 +20,43 @@ func (self HexColor) String() string {
 	return "#" + self.Hex
 }
 
-// Factor functions
 func NewHexColor(hex string, token *Token) *HexColor {
 	return &HexColor{hex, token}
 }
 
+// HexToRGB converts an Hex string to a RGB triple.
+func HexToRGBA(h string) (uint8, uint8, uint8, float32) {
+	if len(h) > 0 && h[0] == '#' {
+		h = h[1:]
+	}
+	if len(h) == 3 {
+		// rebuild hex string
+		h = h[:1] + h[:1] + h[1:2] + h[1:2] + h[2:] + h[2:]
+	}
+	if len(h) == 6 {
+		if rgb, err := strconv.ParseUint(string(h), 16, 32); err == nil {
+			fmt.Printf("%+v", rgb)
+			return uint8(rgb >> 16), uint8((rgb >> 8) & 0xFF), uint8(rgb & 0xFF), 0
+		}
+	}
+	if len(h) == 8 {
+		if rgba, err := strconv.ParseUint(string(h), 16, 32); err == nil {
+			return uint8(rgba >> 24), uint8(rgba >> 16), uint8((rgba >> 8) & 0xFF), float32(rgba&0xFF) / 255
+		}
+	}
+	return 0, 0, 0, 0
+}
+
+// Factor functions
+func NewRGBAColorWithHexCode(hex string, token *Token) *RGBAColor {
+	return &RGBAColor{}
+}
+
 type RGBAColor struct {
-	R     float64
-	G     float64
-	B     float64
-	A     float64
+	R     uint8
+	G     uint8
+	B     uint8
+	A     float32
 	Token *Token
 }
 
@@ -35,14 +65,14 @@ func (self RGBAColor) CanBeNode()       {}
 func (self RGBAColor) CanBeColor()      {}
 func (self RGBAColor) CanBeValue()      {}
 
-func NewRGBAColor(r, g, b, a float64, token *Token) *RGBAColor {
+func NewRGBAColor(r, g, b uint8, a float32, token *Token) *RGBAColor {
 	return &RGBAColor{r, g, b, a, token}
 }
 
 type RGBColor struct {
-	R     float64
-	G     float64
-	B     float64
+	R     uint8
+	G     uint8
+	B     uint8
 	Token *Token
 }
 
@@ -51,6 +81,6 @@ func (self RGBColor) CanBeNode()       {}
 func (self RGBColor) CanBeColor()      {}
 func (self RGBColor) CanBeValue()      {}
 
-func NewRGBColor(r, g, b float64, token *Token) *RGBColor {
+func NewRGBColor(r, g, b uint8, token *Token) *RGBColor {
 	return &RGBColor{r, g, b, token}
 }
