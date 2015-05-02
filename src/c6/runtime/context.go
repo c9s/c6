@@ -4,18 +4,24 @@ import "c6/ast"
 
 type Context struct {
 	RuleSetStack   []*ast.RuleSet
+	SymTableStack  []*SymTable
 	GlobalSymTable SymTable
 }
 
 func (context *Context) GetVariable(name string) *ast.Variable {
-	var idx = len(context.RuleSetStack) - 1
+	var idx = len(context.SymTableStack) - 1
 	for ; idx > 0; idx-- {
-		// context.RuleSetStack
+		stack := context.SymTableStack[idx]
+		if variable := stack.FindVariable(name); variable != nil {
+			return variable
+		}
 	}
-
 	return nil
 }
 
-func (context *Context) TopRule() *ast.RuleSet {
-	return context.RuleSetStack[len(context.RuleSetStack)-1]
+func (context *Context) TopRuleSet() *ast.RuleSet {
+	if len(context.RuleSetStack) > 0 {
+		return context.RuleSetStack[len(context.RuleSetStack)-1]
+	}
+	return nil
 }
