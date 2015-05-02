@@ -120,6 +120,17 @@ func NewRGBColor(r, g, b uint8, token *Token) *RGBColor {
 	return &RGBColor{r, g, b, token}
 }
 
+type HSVColor struct {
+	H     float64
+	S     float64
+	V     float64
+	Token *Token
+}
+
+func NewHSVColor(h, s, v float64, token *Token) *HSVColor {
+	return &HSVColor{h, s, v, token}
+}
+
 func RGBToHSV(ir, ig, ib uint) (h, s, v float64) {
 	// cast to float64 for math.* API
 	var r = float64(ir)
