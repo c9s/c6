@@ -78,12 +78,12 @@ func (self RGBAColor) CanBeColor()      {}
 func (self RGBAColor) CanBeValue()      {}
 
 // NOTE: 8 char hex color is only supported by IE.
-func (self RGBAColor) ToHexColor() Hex {
+func (self RGBAColor) Hex() Hex {
 	return Hex(fmt.Sprintf("#%02X%02X%02X", self.R, self.G, self.B))
 }
 
 func (self RGBAColor) String() string {
-	return fmt.Sprintf("rgba(%d, %d, %d, %.2f)", self.R, self.G, self.B, self.A)
+	return fmt.Sprintf("rgba(%d, %d, %d, %g)", self.R, self.G, self.B, self.A)
 }
 
 func NewRGBAColor(r, g, b uint8, a float32, token *Token) *RGBAColor {
@@ -103,7 +103,7 @@ func (self RGBColor) CanBeColor()      {}
 
 func (self RGBColor) CanBeValue() {}
 
-func (self RGBColor) ToHexColor() Hex {
+func (self RGBColor) Hex() Hex {
 	return Hex(fmt.Sprintf("#%02X%02X%02X", self.R, self.G, self.B))
 }
 

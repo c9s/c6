@@ -3,9 +3,25 @@ package ast
 import "testing"
 import "github.com/stretchr/testify/assert"
 
+func TestNewRGBAColor(t *testing.T) {
+	var c = NewRGBAColor(10, 20, 30, 0.5, nil)
+	assert.Equal(t, "rgba(10, 20, 30, 0.5)", c.String())
+}
+
+func TestNewRGBAColor2(t *testing.T) {
+	var c = NewRGBAColor(10, 20, 30, 0.22, nil)
+	assert.Equal(t, "rgba(10, 20, 30, 0.22)", c.String())
+	assert.Equal(t, Hex("#0A141E"), c.Hex())
+}
+
+func TestNewRGBColor(t *testing.T) {
+	var c = NewRGBColor(10, 20, 30, nil)
+	assert.Equal(t, "rgb(10, 20, 30)", c.String())
+	assert.Equal(t, Hex("#0A141E"), c.Hex())
+}
+
 func TestNewHexColor(t *testing.T) {
 	var c = NewHexColor("#ffffff", nil)
-
 	assert.Equal(t, uint8(255), c.R)
 	assert.Equal(t, uint8(255), c.G)
 	assert.Equal(t, uint8(255), c.B)
