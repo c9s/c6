@@ -89,26 +89,35 @@ func NumberSub(a *Number, b *Number) *Number {
 	return num
 }
 
+/*
+10px / 3, 10 / 3, 10px / 10px is allowed here
+*/
 func NumberDiv(a *Number, b *Number) *Number {
 	var unitA = a.GetUnit()
 	var unitB = b.GetUnit()
-	if !(unitA == UNIT_NONE || unitB == UNIT_NONE || unitA == unitB) {
-		panic("Invalid number multiply expression")
-	}
-	var unitC UnitType = UNIT_NONE
-	if unitA != UNIT_NONE {
-		unitC = unitA
-	} else if unitB != UNIT_NONE {
-		unitC = unitB
+
+	// 10 / 3px is invalid
+	if unitA == UNIT_NONE && unitB != UNIT_NONE {
+		panic("Invalid number divisor")
 	}
 
-	var result = a.Value * b.Value
+	var unitC UnitType = unitA
+
+	// 10px / 10px = 1
+	if unitA == unitB {
+		unitC = UNIT_NONE
+	}
+
+	var result = a.Value / b.Value
 	var num = NewNumber(result, nil)
 	num.SetUnit(unitC)
 	return num
 	return nil
 }
 
+/*
+3 * 10px, 10px * 3, 10px * 10px is allowed here
+*/
 func NumberMul(a *Number, b *Number) *Number {
 	var unitA = a.GetUnit()
 	var unitB = b.GetUnit()
