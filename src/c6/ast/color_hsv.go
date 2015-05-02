@@ -15,12 +15,12 @@ func (self HSVColor) CanBeNode()  {}
 
 func (c HSVColor) RGBAColor() *RGBAColor {
 	r, g, b := HSVToRGB(c.H, c.S, c.V)
-	return NewRGBAColor(uint32(r)*0x101, uint32(g)*0x101, uint32(b)*0x101, 0xffff, nil)
+	return NewRGBAColor(uint32(r), uint32(g), uint32(b), 1, nil)
 }
 
 func (c HSVColor) RGBColor() *RGBColor {
 	r, g, b := HSVToRGB(c.H, c.S, c.V)
-	return NewRGBColor(uint32(r)*0x101, uint32(g)*0x101, uint32(b)*0x101, nil)
+	return NewRGBColor(uint32(r), uint32(g), uint32(b), nil)
 }
 
 // hsv() is not supported in CSS3, we need to convert it to hex color

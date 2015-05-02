@@ -17,12 +17,12 @@ func (self HSLColor) HSLAColor() *HSLAColor {
 
 }
 func (c HSLColor) RGBAColor() *RGBAColor {
-	r, g, b := HSLToRGB(c.H, c.S, c.L)
-	return NewRGBAColor(uint32(r)*0x101, uint32(g)*0x101, uint32(b)*0x101, 0xffff, nil)
+	var r, g, b = HSLToRGB(c.H, c.S, c.L)
+	return NewRGBAColor(uint32(r), uint32(g), uint32(b), 1, nil)
 }
 func (c HSLColor) RGBColor() *RGBColor {
-	r, g, b := HSLToRGB(c.H, c.S, c.L)
-	return NewRGBColor(uint32(r)*0x101, uint32(g)*0x101, uint32(b)*0x101, nil)
+	var r, g, b = HSLToRGB(c.H, c.S, c.L)
+	return NewRGBColor(uint32(r), uint32(g), uint32(b), nil)
 }
 
 func (self HSLColor) String() string {
@@ -51,7 +51,7 @@ func NewHSLAColor(h, s, v, a float64, token *Token) *HSLAColor {
 	return &HSLAColor{h, s, v, a, token}
 }
 
-func HSLToRGB(h, s, l float64) (r, g, b uint8) {
+func HSLToRGB(h, s, l float64) (r, g, b uint32) {
 	var fR, fG, fB float64
 	if s == 0 {
 		fR, fG, fB = l, l, l
@@ -63,17 +63,17 @@ func HSLToRGB(h, s, l float64) (r, g, b uint8) {
 			q = l + s - s*l
 		}
 		p := 2*l - q
-		fR = HUEToRGB(p, q, h+1.0/3)
-		fG = HUEToRGB(p, q, h)
-		fB = HUEToRGB(p, q, h-1.0/3)
+		fR = ConvertHUE(p, q, h+1.0/3)
+		fG = ConvertHUE(p, q, h)
+		fB = ConvertHUE(p, q, h-1.0/3)
 	}
-	r = uint8((fR * 255) + 0.5)
-	g = uint8((fG * 255) + 0.5)
-	b = uint8((fB * 255) + 0.5)
+	r = uint32((fR * 255) + 0.5)
+	g = uint32((fG * 255) + 0.5)
+	b = uint32((fB * 255) + 0.5)
 	return
 }
 
-func HUEToRGB(p, q, t float64) float64 {
+func ConvertHUE(p, q, t float64) float64 {
 	if t < 0 {
 		t += 1
 	}
@@ -92,7 +92,7 @@ func HUEToRGB(p, q, t float64) float64 {
 	return p
 }
 
-func RGBToHSL(r, g, b uint8) (h, s, l float64) {
+func RGBToHSL(r, g, b uint32) (h, s, l float64) {
 	fR := float64(r) / 255
 	fG := float64(g) / 255
 	fB := float64(b) / 255
