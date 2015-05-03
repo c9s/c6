@@ -274,6 +274,14 @@ func (parser *Parser) ParseExpression() ast.Expression {
 		parser.next()
 		if term := parser.ParseTerm(); term != nil {
 			expr = ast.NewUnaryExpression(ast.ConvertTokenTypeToOpType(tok.Type), term)
+
+			if uexpr, ok := expr.(*ast.UnaryExpression); ok {
+				// if it's evaluatable just return the evaluated value.
+				if val := uexpr.Evaluate(nil); val != nil {
+					expr = ast.Expression(val)
+				}
+			}
+
 		} else {
 			parser.restore(pos)
 			return nil
@@ -294,7 +302,16 @@ func (parser *Parser) ParseExpression() ast.Expression {
 		parser.next()
 
 		if rightTerm := parser.ParseTerm(); rightTerm != nil {
-			expr = ast.NewBinaryExpression(ast.ConvertTokenTypeToOpType(rightTok.Type), expr, rightTerm)
+			var bexpr = ast.NewBinaryExpression(ast.ConvertTokenTypeToOpType(rightTok.Type), expr, rightTerm)
+
+			if val := bexpr.Evaluate(nil); val != nil {
+
+				expr = ast.Expression(val)
+
+			} else {
+				// wrap the existing expression with the new binary expression object
+				expr = ast.Expression(bexpr)
+			}
 		} else {
 			panic("right term is not parseable.")
 		}

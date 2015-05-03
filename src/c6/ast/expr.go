@@ -1,5 +1,7 @@
 package ast
 
+import "fmt"
+
 type Expression interface {
 	// Evaluate() Value
 	String() string
@@ -62,12 +64,20 @@ func (self *BinaryExpression) Evaluate(symTable *SymTable) Value {
 		lval = expr.Evaluate(symTable)
 	case *UnaryExpression:
 		lval = expr.Evaluate(symTable)
+	case *Number:
+		lval = Value(expr)
+	case *Length:
+		lval = Value(expr)
 	}
 	switch expr := self.Right.(type) {
 	case *UnaryExpression:
 		rval = expr.Evaluate(symTable)
 	case *BinaryExpression:
 		rval = expr.Evaluate(symTable)
+	case *Number:
+		rval = Value(expr)
+	case *Length:
+		rval = Value(expr)
 	}
 	if lval != nil && rval != nil {
 		return Compute(self.Op, lval, rval)
@@ -80,14 +90,15 @@ func NewBinaryExpression(op OpType, left Expression, right Expression) *BinaryEx
 }
 
 func Compute(op OpType, a Value, b Value) Value {
-
 	switch op {
 	case OpAdd:
 		switch ta := a.(type) {
 		case *Length:
 			switch tb := b.(type) {
 			case *Length:
-				return LengthAddLength(ta, tb)
+				val := LengthAddLength(ta, tb)
+				fmt.Printf("evaluated value: %+v\n", val)
+				return val
 			}
 		}
 	}

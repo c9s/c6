@@ -1,4 +1,6 @@
 package ast
 
 // type Value struct {}
-type Value interface{}
+type Value interface {
+	String() string
+}

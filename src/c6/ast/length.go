@@ -1,6 +1,7 @@
 package ast
 
 import "strconv"
+import "fmt"
 
 type Length struct {
 	Value float64
@@ -27,18 +28,20 @@ func NewLength(val float64, unit UnitType, token *Token) *Length {
 
 func LengthSubLength(a *Length, b *Length) *Length {
 	if a.Unit != b.Unit {
-		panic("Incompatable unit")
+		fmt.Printf("Incompatible unit %s != %s.  %v - %v \n", a.Unit, b.Unit, a, b)
+		return nil
 	}
 	var result = a.Value - b.Value
-	return NewLength(result, UNIT_NONE, nil)
+	return NewLength(result, a.Unit, nil)
 }
 
 func LengthAddLength(a *Length, b *Length) *Length {
 	if a.Unit != b.Unit {
-		panic("Incompatable unit")
+		fmt.Printf("Incompatible unit %s != %s.  %v + %v \n", a.Unit, b.Unit, a, b)
+		return nil
 	}
 	var result = a.Value + b.Value
-	return NewLength(result, UNIT_NONE, nil)
+	return NewLength(result, a.Unit, nil)
 }
 
 /*
@@ -56,7 +59,7 @@ func LengthDivLength(a *Length, b *Length) *Length {
 		}
 		return NewLength(result, unit, nil)
 	}
-	panic("Incompatable unit")
+	return nil
 }
 
 /*
@@ -74,7 +77,7 @@ func LengthMulLength(a *Length, b *Length) *Length {
 		}
 		return NewLength(result, unit, nil)
 	}
-	panic("Incompatable unit")
+	return nil
 }
 
 func LengthMulNumber(a *Length, b *Number) *Length {
