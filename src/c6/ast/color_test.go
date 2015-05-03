@@ -57,7 +57,7 @@ func TestHSVColorRedToRGB(t *testing.T) {
 
 func TestHSVColorGreenToRGB(t *testing.T) {
 	var c = NewHSVColor(120, 0.5, 1, nil)
-	assert.Equal(t, "rgb(255, 128, 128)", c.RGBColor().String())
+	assert.Equal(t, "rgb(128, 255, 128)", c.RGBColor().String())
 
 	var h, s, v = RGBToHSV(0, 255, 0)
 	assert.Equal(t, 120.0, h)

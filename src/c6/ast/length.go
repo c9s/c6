@@ -44,14 +44,34 @@ func LengthAddLength(a *Length, b *Length) *Length {
 10px / 3, 10 / 3, 10px / 10px is allowed here
 */
 func LengthDivLength(a *Length, b *Length) *Length {
-	var result = a.Value / b.Value
-	return NewLength(result, UNIT_NONE, nil)
+	if a.Unit == UNIT_NONE || b.Unit == UNIT_NONE || a.Unit == b.Unit {
+		var result = a.Value / b.Value
+		var unit = UNIT_NONE
+		if a.Unit != UNIT_NONE {
+			unit = a.Unit
+		}
+		if b.Unit != UNIT_NONE {
+			unit = b.Unit
+		}
+		return NewLength(result, unit, nil)
+	}
+	panic("Incompatable unit")
 }
 
 /*
 3 * 10px, 10px * 3, 10px * 10px is allowed here
 */
 func LengthMulLength(a *Length, b *Length) *Length {
-	var result = a.Value * b.Value
-	return NewLength(result, UNIT_NONE, nil)
+	if a.Unit == UNIT_NONE || b.Unit == UNIT_NONE || a.Unit == b.Unit {
+		var result = a.Value * b.Value
+		var unit = UNIT_NONE
+		if a.Unit != UNIT_NONE {
+			unit = a.Unit
+		}
+		if b.Unit != UNIT_NONE {
+			unit = b.Unit
+		}
+		return NewLength(result, unit, nil)
+	}
+	panic("Incompatable unit")
 }
