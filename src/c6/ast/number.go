@@ -4,36 +4,23 @@ import "strconv"
 
 type Number struct {
 	Value float64
-	Unit  UnitType
 	Token *Token
 }
 
-func (num *Number) GetUnit() UnitType {
-	return num.Unit
-}
-
 func NewNumberInt64(num int64, token *Token) *Number {
-	return &Number{float64(num), UNIT_NONE, token}
+	return &Number{float64(num), token}
 }
 
 func NewNumber(num float64, token *Token) *Number {
-	return &Number{num, UNIT_NONE, token}
+	return &Number{num, token}
 }
 
 func (num Number) CanBeValue()      {}
 func (num Number) CanBeNode()       {}
 func (num Number) CanBeExpression() {}
 
-func (num *Number) SetUnit(unit UnitType) {
-	num.Unit = unit
-}
-
 func (num Number) String() (out string) {
-	out += strconv.FormatFloat(num.Value, 'G', -1, 64)
-	if num.Unit != UNIT_NONE {
-		out += num.Unit.UnitString()
-	}
-	return out
+	return strconv.FormatFloat(num.Value, 'G', -1, 64)
 }
 
 /*
@@ -60,24 +47,9 @@ Invalid expression
 
 */
 
-// Check the unit of the number operands to see if they're computable.
-func NumberUnitCompatible(a *Number, b *Number) bool {
-	var unitA = a.GetUnit()
-	var unitB = b.GetUnit()
-	// If any of them is without unit
-	return unitA == UNIT_NONE || unitB == UNIT_NONE || unitA == unitB
-}
-
 func NumberSub(a *Number, b *Number) *Number {
-	var unitA = a.GetUnit()
-	var unitB = b.GetUnit()
-	if unitA != unitB {
-		panic("Can't compute number: incompatible number unit.")
-	}
-
 	var result = a.Value - b.Value
 	var num = NewNumber(result, nil)
-	num.SetUnit(unitA)
 	return num
 }
 
@@ -85,68 +57,19 @@ func NumberSub(a *Number, b *Number) *Number {
 10px / 3, 10 / 3, 10px / 10px is allowed here
 */
 func NumberDiv(a *Number, b *Number) *Number {
-	var unitA = a.GetUnit()
-	var unitB = b.GetUnit()
-
-	// 10 / 3px is invalid
-	if unitA == UNIT_NONE && unitB != UNIT_NONE {
-		panic("Invalid number divisor")
-	}
-
-	var unitC UnitType = unitA
-
-	// 10px / 10px = 1
-	if unitA == unitB {
-		unitC = UNIT_NONE
-	}
-
 	var result = a.Value / b.Value
-	var num = NewNumber(result, nil)
-	num.SetUnit(unitC)
-	return num
-	return nil
+	return NewNumber(result, nil)
 }
 
 /*
 3 * 10px, 10px * 3, 10px * 10px is allowed here
 */
 func NumberMul(a *Number, b *Number) *Number {
-	var unitA = a.GetUnit()
-	var unitB = b.GetUnit()
-	if !(unitA == UNIT_NONE || unitB == UNIT_NONE || unitA == unitB) {
-		panic("Invalid number multiply expression")
-	}
-
-	var unitC UnitType = UNIT_NONE
-	if unitA != UNIT_NONE {
-		unitC = unitA
-	} else if unitB != UNIT_NONE {
-		unitC = unitB
-	}
-
 	var result = a.Value * b.Value
-	var num = NewNumber(result, nil)
-	num.SetUnit(unitC)
-	return num
+	return NewNumber(result, nil)
 }
 
 func NumberAdd(a *Number, b *Number) *Number {
-	var unitA = a.GetUnit()
-	var unitB = b.GetUnit()
-
-	if unitA != unitB {
-		panic("Can't compute number: incompatible number unit.")
-	}
-
-	var unitC UnitType = UNIT_NONE
-	if unitA != UNIT_NONE {
-		unitC = unitA
-	} else if unitB != UNIT_NONE {
-		unitC = unitB
-	}
-
 	var result = a.Value + b.Value
-	var num = NewNumber(result, nil)
-	num.SetUnit(unitC)
-	return num
+	return NewNumber(result, nil)
 }
