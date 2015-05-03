@@ -25,7 +25,18 @@ func NewLength(val float64, unit UnitType, token *Token) *Length {
 }
 
 func LengthSubLength(a *Length, b *Length) *Length {
+	if a.Unit != b.Unit {
+		panic("Incompatable unit")
+	}
 	var result = a.Value - b.Value
+	return NewLength(result, UNIT_NONE, nil)
+}
+
+func LengthAddLength(a *Length, b *Length) *Length {
+	if a.Unit != b.Unit {
+		panic("Incompatable unit")
+	}
+	var result = a.Value + b.Value
 	return NewLength(result, UNIT_NONE, nil)
 }
 
@@ -42,10 +53,5 @@ func LengthDivLength(a *Length, b *Length) *Length {
 */
 func LengthMulLength(a *Length, b *Length) *Length {
 	var result = a.Value * b.Value
-	return NewLength(result, UNIT_NONE, nil)
-}
-
-func LengthAddLength(a *Length, b *Length) *Length {
-	var result = a.Value + b.Value
 	return NewLength(result, UNIT_NONE, nil)
 }
