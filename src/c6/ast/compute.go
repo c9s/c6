@@ -12,6 +12,8 @@ const (
 	HexColorValue            = 2
 	RGBAColorValue           = 3
 	RGBColorValue            = 4
+	ListValue                = 5
+	MapValue                 = 6
 )
 
 /*
@@ -19,21 +21,23 @@ Value
 */
 type ComputeFunction func(a Value, b Value) Value
 
-var computableMatrix [5][5]bool = [5][5]bool{
+const ValueTypeNum = 7
+
+var computableMatrix [ValueTypeNum][ValueTypeNum]bool = [ValueTypeNum][ValueTypeNum]bool{
 	/* NumberValue */
-	[5]bool{false, false, false, false},
+	[ValueTypeNum]bool{false, false, false, false, false, false, false},
 
 	/* LengthValue */
-	[5]bool{false, false, false, false},
+	[ValueTypeNum]bool{false, false, false, false, false, false, false},
 
 	/* HexColorValue */
-	[5]bool{false, false, false, false},
+	[ValueTypeNum]bool{false, false, false, false, false, false, false},
 
 	/* RGBAColorValue */
-	[5]bool{false, false, false, false},
+	[ValueTypeNum]bool{false, false, false, false, false, false, false},
 
 	/* RGBColorValue */
-	[5]bool{false, false, false, false},
+	[ValueTypeNum]bool{false, false, false, false, false, false, false},
 }
 
 /**

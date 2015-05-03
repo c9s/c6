@@ -2,6 +2,7 @@ package ast
 
 type Expression interface {
 	CanBeExpression()
+	// Evaluate() Value
 	String() string
 }
 
@@ -12,6 +13,17 @@ type UnaryExpression struct {
 
 func NewUnaryExpression(op OpType, expr Expression) *UnaryExpression {
 	return &UnaryExpression{op, expr}
+}
+
+func (self *UnaryExpression) Evaluate() Value {
+	if self.Op == OpAdd {
+		// TODO: call Evaluate()
+		return Value(self.Expr)
+	} else if self.Op == OpSub {
+		// TODO: call Evaluate()
+		return Value(self.Expr)
+	}
+	return nil
 }
 
 func (self UnaryExpression) CanBeExpression() {}
@@ -34,6 +46,17 @@ func (self BinaryExpression) String() (out string) {
 	out += self.Right.String()
 	out += ")"
 	return out
+}
+
+func (self *BinaryExpression) Evaluate() Value {
+	if self.Op == OpAdd {
+		// TODO: call Evaluate()
+		return Value(self.Left)
+	} else if self.Op == OpSub {
+		// TODO: call Evaluate()
+		return Value(self.Left)
+	}
+	return nil
 }
 
 func NewBinaryExpression(op OpType, left Expression, right Expression) *BinaryExpression {

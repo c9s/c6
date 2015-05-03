@@ -11,6 +11,9 @@ type Length struct {
 func (self Length) CanBeValue()      {}
 func (self Length) CanBeExpression() {}
 func (self Length) CanBeNode()       {}
+func (self Length) GetValueType() ValueType {
+	return LengthValue
+}
 
 func (self Length) String() (out string) {
 	out += strconv.FormatFloat(self.Value, 'G', -1, 64)
