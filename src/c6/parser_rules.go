@@ -84,7 +84,7 @@ works for:
 	'10' 'em'
 	'0.2' 'em'
 */
-func (parser *Parser) ParseNumber() *ast.Number {
+func (parser *Parser) ParseNumber() ast.Expression {
 	var pos = parser.Pos
 	debug("ParseNumber at %d", parser.Pos)
 
@@ -102,7 +102,8 @@ func (parser *Parser) ParseNumber() *ast.Number {
 		negative = false
 	}
 
-	var number *ast.Number
+	var val float64
+	var tok2 = parser.peek()
 
 	if tok.Type == ast.T_INTEGER {
 
@@ -113,7 +114,7 @@ func (parser *Parser) ParseNumber() *ast.Number {
 		if negative {
 			i = -i
 		}
-		number = ast.NewNumberInt64(i, tok)
+		val = float64(i)
 
 	} else if tok.Type == ast.T_FLOAT {
 
@@ -124,7 +125,7 @@ func (parser *Parser) ParseNumber() *ast.Number {
 		if negative {
 			f = -f
 		}
-		number = ast.NewNumber(f, tok)
+		val = f
 
 	} else {
 		// unknown token
@@ -132,14 +133,12 @@ func (parser *Parser) ParseNumber() *ast.Number {
 		return nil
 	}
 
-	// parse the number unit
-	var tok2 = parser.peek()
 	if tok2.IsOneOfTypes([]ast.TokenType{ast.T_UNIT_PX, ast.T_UNIT_PT, ast.T_UNIT_CM, ast.T_UNIT_EM, ast.T_UNIT_MM, ast.T_UNIT_REM, ast.T_UNIT_DEG, ast.T_UNIT_PERCENT}) {
 		// consume the unit token
 		parser.next()
-		number.SetUnit(ast.ConvertTokenTypeToUnitType(tok2.Type))
+		return ast.NewLength(val, ast.ConvertTokenTypeToUnitType(tok2.Type), tok)
 	}
-	return number
+	return ast.NewNumber(val, tok)
 }
 
 func (parser *Parser) ParseFunctionCall() *ast.FunctionCall {
