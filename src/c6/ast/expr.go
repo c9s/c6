@@ -1,7 +1,5 @@
 package ast
 
-import "fmt"
-
 type Expression interface {
 	// Evaluate() Value
 	String() string
