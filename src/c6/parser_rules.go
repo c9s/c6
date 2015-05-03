@@ -74,16 +74,6 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 	return &ruleset
 }
 
-/**
-This method returns objects with ast.Number interface
-
-works for:
-
-	'10'
-	'10' 'px'
-	'10' 'em'
-	'0.2' 'em'
-*/
 func (parser *Parser) ParseNumber() ast.Expression {
 	var pos = parser.Pos
 	debug("ParseNumber at %d", parser.Pos)
