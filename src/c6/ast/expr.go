@@ -97,7 +97,17 @@ func Compute(op OpType, a Value, b Value) Value {
 			switch tb := b.(type) {
 			case *Length:
 				val := LengthAddLength(ta, tb)
-				fmt.Printf("evaluated value: %+v\n", val)
+				fmt.Printf("Added value: %+v\n", val)
+				return val
+			}
+		}
+	case OpSub:
+		switch ta := a.(type) {
+		case *Length:
+			switch tb := b.(type) {
+			case *Length:
+				val := LengthSubLength(ta, tb)
+				fmt.Printf("Substracted value: %+v\n", val)
 				return val
 			}
 		}
