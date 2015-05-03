@@ -83,3 +83,12 @@ func LengthMulNumber(a *Length, b *Number) *Length {
 func NumberMulLength(a *Number, b *Length) *Length {
 	return NewLength(a.Value*b.Value, b.Unit, nil)
 }
+
+func LengthDivNumber(a *Length, b *Number) *Length {
+	return NewLength(a.Value/b.Value, a.Unit, nil)
+}
+
+func NumberDivLength(a *Number, b *Length) *Length {
+	panic("Number can't be divided by length")
+	return nil
+}
