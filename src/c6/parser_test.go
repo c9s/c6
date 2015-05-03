@@ -81,13 +81,28 @@ func TestParserVariableAssignmentWithInterpolation(t *testing.T) {
 	fmt.Printf("%+v\n", block.Statements[0])
 }
 
-func TestParserVariableAssignmentWithSimpleExpresion(t *testing.T) {
+func TestParserVariableAssignmentLengthPlusLength(t *testing.T) {
 	var block = RunParserTest(`$foo: 10px + 20px;`)
 	fmt.Printf("%+v\n", block)
 }
 
+func TestParserVariableAssignmentNumberPlusNumberMulLength(t *testing.T) {
+	var block = RunParserTest(`$foo: (10 + 20) * 3px;`)
+	fmt.Printf("%+v\n", block)
+}
+
 func TestParserVariableAssignmentWithHexColorAddOperation(t *testing.T) {
-	var block = RunParserTest(`$foo: #000 + 1;`)
+	var block = RunParserTest(`$foo: #000 + 10;`)
+	fmt.Printf("%+v\n", block)
+}
+
+func TestParserVariableAssignmentWithHexColorMulOperation(t *testing.T) {
+	var block = RunParserTest(`$foo: #010101 * 20;`)
+	fmt.Printf("%+v\n", block)
+}
+
+func TestParserVariableAssignmentWithHexColorDivOperation(t *testing.T) {
+	var block = RunParserTest(`$foo: #121212 / 2;`)
 	fmt.Printf("%+v\n", block)
 }
 

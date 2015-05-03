@@ -351,7 +351,7 @@ func (parser *Parser) ParseMap() ast.Expression {
 			return nil
 		}
 
-		if parser.expect(ast.T_COLON) == nil {
+		if parser.accept(ast.T_COLON) == nil {
 			parser.restore(pos)
 			return nil
 		}
@@ -414,22 +414,32 @@ func (parser *Parser) ParseInterp() ast.Expression {
 	return interp
 }
 
-func (parser *Parser) ParseValue() ast.Expression {
+/**
+The stop token is used from variable assignment expression,
+ we expect ';' semicolon at the end of expression to avoid the ambiguity of list, map and expression.
+*/
+func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 	debug("ParseValue")
 	var pos = parser.Pos
 
 	// try parse map
 	debug("Trying ParseMap")
 	if mapValue := parser.ParseMap(); mapValue != nil {
-		debug("OK ParseMap")
-		return mapValue
+		var tok = parser.peek()
+		if stopTokType == 0 || tok.Type == stopTokType {
+			debug("OK ParseMap")
+			return mapValue
+		}
 	}
 	parser.restore(pos)
 
 	debug("ParseList trying")
 	if listValue := parser.ParseList(); listValue != nil {
-		debug("ParseList OK: %+v", listValue)
-		return listValue
+		var tok = parser.peek()
+		if stopTokType == 0 || tok.Type == stopTokType {
+			debug("ParseList OK: %+v", listValue)
+			return listValue
+		}
 	}
 
 	debug("ParseList failed, restoring to %d", pos)
@@ -474,7 +484,7 @@ func (parser *Parser) ParseValue() ast.Expression {
 	*/
 }
 
-func (parser *Parser) ParseList() *ast.List {
+func (parser *Parser) ParseList() ast.Expression {
 	debug("ParseList at %d", parser.Pos)
 	var pos = parser.Pos
 	var list = parser.ParseCommaSepList()
@@ -486,7 +496,7 @@ func (parser *Parser) ParseList() *ast.List {
 	return list
 }
 
-func (parser *Parser) ParseCommaSepList() *ast.List {
+func (parser *Parser) ParseCommaSepList() ast.Expression {
 	debug("ParseCommaSepList at %d", parser.Pos)
 	var list = ast.NewList()
 	list.Separator = ", "
@@ -511,21 +521,27 @@ func (parser *Parser) ParseCommaSepList() *ast.List {
 				debug("Appending sublist %+v", list)
 				list.Append(sublist)
 			} else {
-				if list.Len() > 0 {
-					return list
-				}
-				return nil
+				break
 			}
 		}
 
 		if parser.accept(ast.T_COMMA) == nil {
-			debug("Returning comma-separated list: %+v\n", list)
-			return list
+			break
 		}
 		tok = parser.peek()
 	}
-	debug("Returning comma-separated list: %+v\n", list)
-	// XXX: if there is only one item in the list, we can reduce it to element.
+
+	debug("Returning comma-separated list: (%+v)", list)
+
+	if list.Len() == 0 {
+
+		return nil
+
+	} else if list.Len() == 1 {
+
+		return list.Expressions[0]
+
+	}
 	return list
 }
 
@@ -553,7 +569,8 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 		panic("Expecting colon after variable name")
 	}
 
-	var expr = parser.ParseValue()
+	// Expecting semicolon at the end of the statement
+	var expr = parser.ParseValue(ast.T_SEMICOLON)
 	if expr == nil {
 		panic("Expecting value after variable assignment.")
 	}
@@ -564,7 +581,7 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 	return ast.NewVariableAssignment(variable, expr)
 }
 
-func (parser *Parser) ParseSpaceSepList() *ast.List {
+func (parser *Parser) ParseSpaceSepList() ast.Expression {
 	debug("ParseSpaceSepList at %d", parser.Pos)
 
 	var list = ast.NewList()
@@ -595,7 +612,11 @@ func (parser *Parser) ParseSpaceSepList() *ast.List {
 		}
 	}
 	debug("Returning space-sep list: %+v", list)
-	if list.Len() > 0 {
+	if list.Len() == 0 {
+		return nil
+	} else if list.Len() == 1 {
+		return list.Expressions[0]
+	} else if list.Len() > 1 {
 		return list
 	}
 	return nil

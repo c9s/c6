@@ -106,6 +106,16 @@ func Compute(op OpType, a Value, b Value) Value {
 			case *Number:
 				return HexColorAddNumber(ta, tb)
 			}
+		case *RGBColor:
+			switch tb := b.(type) {
+			case *Number:
+				return RGBColorAddNumber(ta, tb)
+			}
+		case *RGBAColor:
+			switch tb := b.(type) {
+			case *Number:
+				return RGBAColorAddNumber(ta, tb)
+			}
 		}
 	case OpSub:
 		switch ta := a.(type) {
@@ -129,21 +139,41 @@ func Compute(op OpType, a Value, b Value) Value {
 			case *Number:
 				return HexColorSubNumber(ta, tb)
 			}
+
+		case *RGBColor:
+			switch tb := b.(type) {
+			case *Number:
+				return RGBColorSubNumber(ta, tb)
+			}
+
+		case *RGBAColor:
+			switch tb := b.(type) {
+			case *Number:
+				return RGBAColorSubNumber(ta, tb)
+			}
 		}
 	case OpMul:
 		switch ta := a.(type) {
+
 		case *Length:
 			switch tb := b.(type) {
 			case *Length:
-				val := LengthMulLength(ta, tb)
-				fmt.Printf("Multiplied value: %+v\n", val)
-				return val
+				return LengthMulLength(ta, tb)
 			case *Number:
-				val := LengthMulNumber(ta, tb)
-				fmt.Printf("Multiplied value: %+v\n", val)
-				return val
+				return LengthMulNumber(ta, tb)
 			}
 
+		case *RGBColor:
+			switch tb := b.(type) {
+			case *Number:
+				return RGBColorMulNumber(ta, tb)
+			}
+
+		case *RGBAColor:
+			switch tb := b.(type) {
+			case *Number:
+				return RGBAColorMulNumber(ta, tb)
+			}
 		}
 	}
 	return nil
