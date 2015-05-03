@@ -1,6 +1,7 @@
 package ast
 
 import "fmt"
+import "math"
 
 type RGBAColor struct {
 	R     uint32
@@ -33,8 +34,7 @@ func RGBAColorAddNumber(c *RGBAColor, n *Number) *RGBAColor {
 	var r = c.R + val
 	var g = c.G + val
 	var b = c.B + val
-	// var a = c.A + n.Value
-	return NewRGBAColor(r, g, b, nil)
+	return NewRGBAColor(r, g, b, c.A, nil)
 }
 
 func RGBAColorSubNumber(c *RGBAColor, n *Number) *RGBAColor {
@@ -42,7 +42,7 @@ func RGBAColorSubNumber(c *RGBAColor, n *Number) *RGBAColor {
 	var r = uintsub(c.R, val)
 	var g = uintsub(c.G, val)
 	var b = uintsub(c.B, val)
-	return NewRGBAColor(r, g, b, nil)
+	return NewRGBAColor(r, g, b, c.A, nil)
 }
 
 func RGBAColorMulNumber(c *RGBAColor, n *Number) *RGBAColor {
@@ -50,7 +50,7 @@ func RGBAColorMulNumber(c *RGBAColor, n *Number) *RGBAColor {
 	var r = c.R * val
 	var g = c.G * val
 	var b = c.B * val
-	return NewRGBAColor(r, g, b, nil)
+	return NewRGBAColor(r, g, b, c.A, nil)
 }
 
 func RGBAColorDivNumber(c *RGBAColor, n *Number) *RGBAColor {
@@ -58,7 +58,7 @@ func RGBAColorDivNumber(c *RGBAColor, n *Number) *RGBAColor {
 	var r = math.Floor(float64(c.R) / val)
 	var g = math.Floor(float64(c.G) / val)
 	var b = math.Floor(float64(c.B) / val)
-	return NewRGBAColor(uint32(r), uint32(g), uint32(b), nil)
+	return NewRGBAColor(uint32(r), uint32(g), uint32(b), c.A, nil)
 }
 
 func NewRGBAColor(r, g, b uint32, a float32, token *Token) *RGBAColor {

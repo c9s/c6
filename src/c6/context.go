@@ -1,11 +1,11 @@
-package runtime
+package c6
 
 import "c6/ast"
 
 type Context struct {
 	RuleSetStack   []*ast.RuleSet
-	SymTableStack  []*SymTable
-	GlobalSymTable SymTable
+	SymTableStack  []*ast.SymTable
+	GlobalSymTable ast.SymTable
 }
 
 func (context *Context) GetVariable(name string) *ast.Variable {
