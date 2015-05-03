@@ -19,3 +19,14 @@ func (self *Block) AppendStatement(stm Statement) {
 func (self *Block) Statement(idx uint) Statement {
 	return self.Statements[idx]
 }
+
+/*
+func (self Block) String() string {
+	for _, statement := range self.Statements {
+		switch t := statement.(type) {
+			case *VariabeAssignment:
+				t.String()
+		}
+	}
+}
+*/

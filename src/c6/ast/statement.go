@@ -2,6 +2,7 @@ package ast
 
 type Statement interface {
 	CanBeStatement()
+	String() string
 }
 
 /*

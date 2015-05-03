@@ -7,6 +7,11 @@ type ImportStatement struct {
 
 func (self ImportStatement) CanBeStatement() {}
 
+func (self ImportStatement) String() string {
+	return ""
+}
+
 // for Url()
 type Url string
+
 type RelativeUrl string

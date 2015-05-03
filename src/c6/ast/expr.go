@@ -111,6 +111,21 @@ func Compute(op OpType, a Value, b Value) Value {
 				return val
 			}
 		}
+	case OpMul:
+		switch ta := a.(type) {
+		case *Length:
+			switch tb := b.(type) {
+			case *Length:
+				val := LengthMulLength(ta, tb)
+				fmt.Printf("Multiplied value: %+v\n", val)
+				return val
+			case *Number:
+				val := LengthMulNumber(ta, tb)
+				fmt.Printf("Multiplied value: %+v\n", val)
+				return val
+			}
+
+		}
 	}
 	return nil
 }

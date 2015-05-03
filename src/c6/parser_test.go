@@ -72,7 +72,7 @@ func TestParserVariableAssignmentWithMorePlus(t *testing.T) {
 }
 
 func TestParserVariableAssignmentWithComplexExpression(t *testing.T) {
-	var block = RunParserTest(`$foo: 12px * (20px + 20px) + 4px / 2px;`)
+	var block = RunParserTest(`$foo: 12px * (20px + 20px) + 4px / 2;`)
 	fmt.Printf("%+v\n", block.Statements[0])
 }
 
