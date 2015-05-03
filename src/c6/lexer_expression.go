@@ -80,6 +80,18 @@ func lexExpression(l *Lexer) stateFn {
 
 		l.emit(ast.T_NULL)
 
+	} else if r == 'a' && l.match("and") {
+
+		l.emit(ast.T_AND)
+
+	} else if r == 'o' && l.match("or") {
+
+		l.emit(ast.T_OR)
+
+	} else if r == 'x' && l.match("xor") {
+
+		l.emit(ast.T_XOR)
+
 	} else if unicode.IsDigit(r) {
 
 		if fn := lexNumber(l); fn != nil {

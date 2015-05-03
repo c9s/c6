@@ -80,7 +80,7 @@ const (
 	T_PARENT_SELECTOR        // SASS parent selector
 	T_PSEUDO_SELECTOR        // :hover, :visited , ...
 	T_INTERPOLATION_SELECTOR // selector with interpolation: '#{ ... }'
-	T_LITERAL_CONCAT                 // used to concat selectors and interpolation
+	T_LITERAL_CONCAT         // used to concat selectors and interpolation
 
 	// for Microsoft 'progid:' token
 	T_MS_PROGID
@@ -91,8 +91,12 @@ const (
 	T_CHILD_SELECTOR      // E '>' F
 	T_ADJACENT_SELECTOR   // E '+' F
 
-	T_OR   // 'or' used in conditional query
-	T_AND  // 'and' used in conditional query
+	T_IF
+	T_ELSE
+
+	T_OR  // 'or' used in conditional query
+	T_AND // 'and' used in conditional query
+	T_XOR
 	T_PLUS // E '+' F
 	T_GT   // E '>' F
 	T_BRACE_START
