@@ -423,26 +423,27 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 	var pos = parser.Pos
 
 	// try parse map
-	debug("Trying ParseMap")
+	debug("Trying Map")
 	if mapValue := parser.ParseMap(); mapValue != nil {
 		var tok = parser.peek()
 		if stopTokType == 0 || tok.Type == stopTokType {
-			debug("OK ParseMap")
+			debug("OK List")
 			return mapValue
 		}
 	}
+	debug("Map parse failed, restoring to %d", pos)
 	parser.restore(pos)
 
-	debug("ParseList trying")
+	debug("Trying List")
 	if listValue := parser.ParseList(); listValue != nil {
 		var tok = parser.peek()
 		if stopTokType == 0 || tok.Type == stopTokType {
-			debug("ParseList OK: %+v", listValue)
+			debug("OK List: %+v", listValue)
 			return listValue
 		}
 	}
 
-	debug("ParseList failed, restoring to %d", pos)
+	debug("List parse failed, restoring to %d", pos)
 	parser.restore(pos)
 	/*
 		if stringTerm := parser.ParseInterp(); stringTerm != nil {
