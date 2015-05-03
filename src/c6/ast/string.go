@@ -7,9 +7,7 @@ type String struct {
 	Token *Token
 }
 
-func (self String) CanBeValue() {}
 
-func (self String) CanBeExpression() {}
 func (self String) String() string {
 	return self.Value
 }

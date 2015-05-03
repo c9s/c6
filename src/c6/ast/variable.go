@@ -7,7 +7,6 @@ type Variable struct {
 	Token     *Token
 }
 
-func (self Variable) CanBeExpression() {}
 func (self Variable) CanBeNode()       {}
 
 func (self *Variable) SetScopeRule(scope *RuleSet) {

@@ -21,7 +21,6 @@ func (self LiteralConcat) String() (out string) {
 	return out
 }
 
-func (self LiteralConcat) CanBeExpression() {}
 
 func (self *LiteralConcat) AppendExpression(expr Expression) {
 	self.Expressions = append(self.Expressions, expr)

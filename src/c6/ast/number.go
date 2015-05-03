@@ -15,10 +15,6 @@ func NewNumber(num float64, token *Token) *Number {
 	return &Number{num, token}
 }
 
-func (num Number) CanBeValue()      {}
-func (num Number) CanBeNode()       {}
-func (num Number) CanBeExpression() {}
-
 func (self Number) GetValueType() ValueType {
 	return NumberValue
 }

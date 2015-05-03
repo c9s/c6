@@ -5,7 +5,6 @@ type Ident struct {
 	Token Token
 }
 
-func (self Ident) CanBeExpression() {}
 func (self Ident) CanBeNode()       {}
 func (self Ident) String() string {
 	return self.Ident

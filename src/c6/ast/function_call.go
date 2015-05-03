@@ -6,7 +6,6 @@ type FunctionCall struct {
 	Token     *Token
 }
 
-func (self FunctionCall) CanBeExpression() {}
 func (self FunctionCall) CanBeNode()       {}
 func (self FunctionCall) String() (out string) {
 	out = self.Function + "("

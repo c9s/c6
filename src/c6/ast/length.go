@@ -8,9 +8,7 @@ type Length struct {
 	Token *Token
 }
 
-func (self Length) CanBeValue()      {}
-func (self Length) CanBeExpression() {}
-func (self Length) CanBeNode()       {}
+func (self Length) CanBeNode() {}
 func (self Length) GetValueType() ValueType {
 	return LengthValue
 }

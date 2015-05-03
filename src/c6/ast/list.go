@@ -7,9 +7,6 @@ type List struct {
 	Expressions []Expression
 }
 
-func (list List) CanBeExpression() {}
-func (list List) CanBeValue()      {}
-
 func (self List) GetValueType() ValueType {
 	return ListValue
 }

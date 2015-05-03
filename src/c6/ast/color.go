@@ -21,10 +21,8 @@ type HexColor struct {
 	Token *Token
 }
 
-func (self HexColor) CanBeExpression() {}
 func (self HexColor) CanBeNode()       {}
 func (self HexColor) CanBeColor()      {}
-func (self HexColor) CanBeValue()      {}
 func (self HexColor) String() string {
 	return "#" + string(self.Hex)
 }
@@ -76,10 +74,8 @@ type RGBAColor struct {
 	Token *Token
 }
 
-func (self RGBAColor) CanBeExpression() {}
-func (self RGBAColor) CanBeNode()       {}
-func (self RGBAColor) CanBeColor()      {}
-func (self RGBAColor) CanBeValue()      {}
+func (self RGBAColor) CanBeNode()  {}
+func (self RGBAColor) CanBeColor() {}
 
 // NOTE: 8 char hex color is only supported by IE.
 func (self RGBAColor) Hex() Hex {
@@ -101,11 +97,9 @@ type RGBColor struct {
 	Token *Token
 }
 
-func (self RGBColor) CanBeExpression() {}
 func (self RGBColor) CanBeNode()       {}
 func (self RGBColor) CanBeColor()      {}
 
-func (self RGBColor) CanBeValue() {}
 
 func (self RGBColor) Hex() Hex {
 	return Hex(fmt.Sprintf("#%02X%02X%02X", self.R, self.G, self.B))
