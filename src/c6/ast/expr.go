@@ -64,9 +64,7 @@ func (self *BinaryExpression) Evaluate(symTable *SymTable) Value {
 		lval = expr.Evaluate(symTable)
 	case *UnaryExpression:
 		lval = expr.Evaluate(symTable)
-	case *Number:
-		lval = Value(expr)
-	case *Length:
+	case *Number, *Length, *HexColor:
 		lval = Value(expr)
 	}
 	switch expr := self.Right.(type) {
@@ -74,9 +72,7 @@ func (self *BinaryExpression) Evaluate(symTable *SymTable) Value {
 		rval = expr.Evaluate(symTable)
 	case *BinaryExpression:
 		rval = expr.Evaluate(symTable)
-	case *Number:
-		rval = Value(expr)
-	case *Length:
+	case *Number, *Length, *HexColor:
 		rval = Value(expr)
 	}
 	if lval != nil && rval != nil {
@@ -93,22 +89,45 @@ func Compute(op OpType, a Value, b Value) Value {
 	switch op {
 	case OpAdd:
 		switch ta := a.(type) {
+		case *Number:
+			switch tb := b.(type) {
+			case *Number:
+				return NumberAddNumber(ta, tb)
+			case *HexColor:
+				return HexColorAddNumber(tb, ta)
+			}
 		case *Length:
 			switch tb := b.(type) {
 			case *Length:
-				val := LengthAddLength(ta, tb)
-				fmt.Printf("Added value: %+v\n", val)
-				return val
+				return LengthAddLength(ta, tb)
+			}
+		case *HexColor:
+			switch tb := b.(type) {
+			case *Number:
+				return HexColorAddNumber(ta, tb)
 			}
 		}
 	case OpSub:
 		switch ta := a.(type) {
+
+		case *Number:
+			switch tb := b.(type) {
+			case *Number:
+				return NumberSubNumber(ta, tb)
+			}
+
 		case *Length:
 			switch tb := b.(type) {
 			case *Length:
 				val := LengthSubLength(ta, tb)
 				fmt.Printf("Substracted value: %+v\n", val)
 				return val
+			}
+
+		case *HexColor:
+			switch tb := b.(type) {
+			case *Number:
+				return HexColorSubNumber(ta, tb)
 			}
 		}
 	case OpMul:

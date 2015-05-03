@@ -86,6 +86,11 @@ func TestParserVariableAssignmentWithSimpleExpresion(t *testing.T) {
 	fmt.Printf("%+v\n", block)
 }
 
+func TestParserVariableAssignmentWithHexColorAddOperation(t *testing.T) {
+	var block = RunParserTest(`$foo: #000 + 1;`)
+	fmt.Printf("%+v\n", block)
+}
+
 func TestParserVariableAssignmentWithPxValue(t *testing.T) {
 	var block = RunParserTest(`$foo: 10px;`)
 	fmt.Printf("%+v\n", block)

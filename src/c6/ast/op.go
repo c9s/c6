@@ -11,6 +11,7 @@ const (
 	OpMul
 	OpPow
 	OpConcat
+	OpLiteralConcat
 )
 
 func ConvertTokenTypeToOpType(tokenType TokenType) OpType {
@@ -25,6 +26,7 @@ func ConvertTokenTypeToOpType(tokenType TokenType) OpType {
 		return OpDiv
 	case T_LITERAL_CONCAT:
 		return OpConcat
+		// return OpLiteralConcat
 	}
 	panic("unknown token type")
 	return OpNone

@@ -203,6 +203,11 @@ func (parser *Parser) ParseFactor() ast.Expression {
 		tok = parser.next()
 		return ast.Expression(ast.NewString(tok))
 
+	} else if tok.Type == ast.T_HEX_COLOR {
+
+		parser.next()
+		return ast.Expression(ast.NewHexColorFromToken(tok))
+
 	} else if tok.Type == ast.T_INTEGER || tok.Type == ast.T_FLOAT {
 
 		// reduce number
@@ -213,12 +218,6 @@ func (parser *Parser) ParseFactor() ast.Expression {
 
 		var fcall = parser.ParseFunctionCall()
 		return ast.Expression(*fcall)
-
-	} else if tok.Type == ast.T_HEX_COLOR {
-
-		panic("hex color is not implemented yet")
-
-		// TODO: Add more incorrect cases here
 
 	} else {
 

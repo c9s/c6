@@ -1,5 +1,6 @@
 package ast
 
+import "math"
 import "strconv"
 import "fmt"
 
@@ -21,15 +22,59 @@ type HexColor struct {
 	Token *Token
 }
 
-func (self HexColor) CanBeNode()       {}
-func (self HexColor) CanBeColor()      {}
+func (self HexColor) CanBeNode()  {}
+func (self HexColor) CanBeColor() {}
 func (self HexColor) String() string {
 	return "#" + string(self.Hex)
+}
+
+func NewHexColorFromToken(token *Token) *HexColor {
+	return NewHexColor(token.Str, token)
 }
 
 func NewHexColor(hex string, token *Token) *HexColor {
 	var r, g, b, _ = HexToRGBA(hex)
 	return &HexColor{Hex(hex), r, g, b, token}
+}
+
+func HexColorAddNumber(c *HexColor, num *Number) *HexColor {
+	r := c.R + uint32(num.Value)
+	g := c.G + uint32(num.Value)
+	b := c.B + uint32(num.Value)
+	hex := Hex(fmt.Sprintf("#%02X%02X%02X", r, g, b))
+	return &HexColor{hex, r, g, b, nil}
+}
+
+func uintsub(a, b uint32) uint32 {
+	if a > b {
+		return a - b
+	}
+	return 0
+}
+
+func HexColorSubNumber(c *HexColor, num *Number) *HexColor {
+	val := uint32(num.Value)
+	r := uintsub(c.R, val)
+	g := uintsub(c.G, val)
+	b := uintsub(c.B, val)
+	hex := Hex(fmt.Sprintf("#%02X%02X%02X", r, g, b))
+	return &HexColor{hex, r, g, b, nil}
+}
+
+func HexColorMulNumber(color *HexColor, num *Number) *HexColor {
+	r := uint32(math.Floor(float64(color.R) * num.Value))
+	g := uint32(math.Floor(float64(color.G) * num.Value))
+	b := uint32(math.Floor(float64(color.B) * num.Value))
+	hex := Hex(fmt.Sprintf("#%02X%02X%02X", r, g, b))
+	return &HexColor{hex, r, g, b, nil}
+}
+
+func HexColorDivNumber(color *HexColor, num *Number) *HexColor {
+	r := uint32(math.Floor(float64(color.R) / num.Value))
+	g := uint32(math.Floor(float64(color.G) / num.Value))
+	b := uint32(math.Floor(float64(color.B) / num.Value))
+	hex := Hex(fmt.Sprintf("#%02X%02X%02X", r, g, b))
+	return &HexColor{hex, r, g, b, nil}
 }
 
 // HexToRGB converts an Hex string to a RGB triple.
@@ -53,62 +98,4 @@ func HexToRGBA(h string) (uint32, uint32, uint32, float32) {
 		}
 	}
 	return 0, 0, 0, 0
-}
-
-func NewRGBColorWithHexCode(hex string, token *Token) *RGBColor {
-	var r, g, b, _ = HexToRGBA(hex)
-	return &RGBColor{r, g, b, token}
-}
-
-// Factor functions
-func NewRGBAColorWithHexCode(hex string, token *Token) *RGBAColor {
-	var r, g, b, a = HexToRGBA(hex)
-	return &RGBAColor{r, g, b, a, token}
-}
-
-type RGBAColor struct {
-	R     uint32
-	G     uint32
-	B     uint32
-	A     float32
-	Token *Token
-}
-
-func (self RGBAColor) CanBeNode()  {}
-func (self RGBAColor) CanBeColor() {}
-
-// NOTE: 8 char hex color is only supported by IE.
-func (self RGBAColor) Hex() Hex {
-	return Hex(fmt.Sprintf("#%02X%02X%02X", self.R, self.G, self.B))
-}
-
-func (self RGBAColor) String() string {
-	return fmt.Sprintf("rgba(%d, %d, %d, %g)", self.R, self.G, self.B, self.A)
-}
-
-func NewRGBAColor(r, g, b uint32, a float32, token *Token) *RGBAColor {
-	return &RGBAColor{r, g, b, a, token}
-}
-
-type RGBColor struct {
-	R     uint32
-	G     uint32
-	B     uint32
-	Token *Token
-}
-
-func (self RGBColor) CanBeNode()       {}
-func (self RGBColor) CanBeColor()      {}
-
-
-func (self RGBColor) Hex() Hex {
-	return Hex(fmt.Sprintf("#%02X%02X%02X", self.R, self.G, self.B))
-}
-
-func (self RGBColor) String() string {
-	return fmt.Sprintf("rgb(%d, %d, %d)", self.R, self.G, self.B)
-}
-
-func NewRGBColor(r, g, b uint32, token *Token) *RGBColor {
-	return &RGBColor{r, g, b, token}
 }
