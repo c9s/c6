@@ -43,7 +43,8 @@ func getFileTypeByExtension(extension string) uint {
 }
 
 type Parser struct {
-	Input chan *ast.Token
+	Context *Context
+	Input   chan *ast.Token
 
 	// integer for counting token
 	Pos         int
@@ -51,11 +52,8 @@ type Parser struct {
 	Tokens      []*ast.Token
 }
 
-func NewParser() *Parser {
-	p := Parser{}
-	p.Pos = 0
-	p.Tokens = []*ast.Token{}
-	return &p
+func NewParser(context *Context) *Parser {
+	return &Parser{context, nil, 0, 0, []*ast.Token{}}
 }
 
 func (parser *Parser) parseFile(path string) error {

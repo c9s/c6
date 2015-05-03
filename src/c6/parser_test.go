@@ -8,12 +8,12 @@ import "fmt"
 
 func RunParserTest(code string) *ast.Block {
 	fmt.Printf("Test parsing: %s\n", code)
-	var parser = NewParser()
+	var parser = NewParser(NewContext())
 	return parser.parseScss(code)
 }
 
 func TestParserParseImportRuleWithUrl(t *testing.T) {
-	parser := NewParser()
+	parser := NewParser(NewContext())
 	block := parser.parseScss(`@import url("http://foo.com/bar.css");`)
 
 	rule, ok := block.Statement(0).(*ast.ImportStatement)
@@ -31,7 +31,7 @@ func TestParserParseImportRuleWithUrl(t *testing.T) {
 }
 
 func TestParserParseImportRuleWithString(t *testing.T) {
-	parser := NewParser()
+	parser := NewParser(NewContext())
 	block := parser.parseScss(`@import "foo.css";`)
 
 	rule, ok := block.Statement(0).(*ast.ImportStatement)
@@ -130,14 +130,14 @@ func TestParserMassiveRules(t *testing.T) {
 	}
 	for _, buffer := range buffers {
 		fmt.Printf("Input %s\n", buffer)
-		var parser = NewParser()
+		var parser = NewParser(NewContext())
 		var block = parser.parseScss(buffer)
 		fmt.Printf("%+v\n", block)
 	}
 }
 
 func TestParserParseTypeSelectorRule(t *testing.T) {
-	parser := NewParser()
+	parser := NewParser(NewContext())
 	block := parser.parseScss(`div { width: auto; }`)
 
 	ruleset, ok := block.Statements[0].(*ast.RuleSet)
