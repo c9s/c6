@@ -6,9 +6,9 @@ before_install:
   - export PATH="$PATH:$TRAVIS_BUILD_DIR/vendor/bin"
 
 script:
-  - go generate c6/ast c6
-  - go build c6
-  - go test -coverprofile=profile.cov c6
+  - go generate c6 c6/ast
+  - go build c6 c6/ast
+  - go test -coverprofile=profile.cov c6 c6/ast
 
 after_success:
   - vendor/bin/goveralls -coverprofile=profile.cov -service=travis-ci

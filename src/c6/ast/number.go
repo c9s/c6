@@ -47,7 +47,7 @@ Invalid expression
 
 */
 
-func NumberSub(a *Number, b *Number) *Number {
+func NumberSubNumber(a *Number, b *Number) *Number {
 	var result = a.Value - b.Value
 	var num = NewNumber(result, nil)
 	return num
@@ -56,7 +56,7 @@ func NumberSub(a *Number, b *Number) *Number {
 /*
 10px / 3, 10 / 3, 10px / 10px is allowed here
 */
-func NumberDiv(a *Number, b *Number) *Number {
+func NumberDivNumber(a *Number, b *Number) *Number {
 	var result = a.Value / b.Value
 	return NewNumber(result, nil)
 }
@@ -64,12 +64,12 @@ func NumberDiv(a *Number, b *Number) *Number {
 /*
 3 * 10px, 10px * 3, 10px * 10px is allowed here
 */
-func NumberMul(a *Number, b *Number) *Number {
+func NumberMulNumber(a *Number, b *Number) *Number {
 	var result = a.Value * b.Value
 	return NewNumber(result, nil)
 }
 
-func NumberAdd(a *Number, b *Number) *Number {
+func NumberAddNumber(a *Number, b *Number) *Number {
 	var result = a.Value + b.Value
 	return NewNumber(result, nil)
 }
