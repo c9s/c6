@@ -9,6 +9,11 @@ type List struct {
 
 func (list List) CanBeExpression() {}
 func (list List) CanBeValue()      {}
+
+func (self List) GetValueType() ValueType {
+	return ListValue
+}
+
 func (list List) String() string {
 	var exprstrs []string
 	for _, expr := range list.Expressions {
