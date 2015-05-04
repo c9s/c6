@@ -57,7 +57,9 @@ To run specific test
   - [x] MS filter.  `progid:DXImageTransform.Microsoft....`
   - [x] Variable names
   - [x] Variable assignment
-  - [x] `s` second, `ms` unit lexing support.
+  - [x] Time unit support. `s` second, `ms` ... etc
+  - [x] Angle unit support.
+  - [x] Resolution unit support.
   - [x] Unicode Range support: <https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-range>
   - [ ] Media Query
 - [ ] Syntax

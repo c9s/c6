@@ -7,16 +7,50 @@ type UnitType int
 
 const (
 	UNIT_NONE UnitType = iota
-	UNIT_PX
-	UNIT_PT
+
+	/**
+	Length Unit
+	@see https://developer.mozilla.org/en-US/docs/Web/CSS/length
+	*/
 	UNIT_EM
-	UNIT_CM
-	UNIT_MM
+	UNIT_EX
+	UNIT_CH
 	UNIT_REM
+
+	// Absolute length
+	UNIT_CM
+	UNIT_IN
+	UNIT_MM
+	UNIT_PC
+	UNIT_PT
+	UNIT_PX
+
+	// Viewport-percentage lengths
+	UNIT_VH
+	UNIT_VW
+	UNIT_VMIN
+	UNIT_VMAX
+
+	/**
+	Angle
+	@see https://developer.mozilla.org/en-US/docs/Web/CSS/angle
+	*/
 	UNIT_DEG
+	UNIT_GRAD
+	UNIT_RAD
+	UNIT_TURN
+
 	UNIT_PERCENT
 	UNIT_SECOND
 	UNIT_MILLISECOND
+
+	/**
+	Resolution Unit
+	@see https://developer.mozilla.org/en-US/docs/Web/CSS/resolution
+	*/
+	UNIT_DPI
+	UNIT_DPPX
+	UNIT_DPCM
 )
 
 func (unit UnitType) UnitString() string {
@@ -41,6 +75,12 @@ func (unit UnitType) UnitString() string {
 		return "s"
 	case UNIT_MILLISECOND:
 		return "ms"
+	case UNIT_DPI:
+		return "dpi"
+	case UNIT_DPPX:
+		return "dppx"
+	case UNIT_DPCM:
+		return "dpcm"
 	case UNIT_NONE:
 		return ""
 	default:
@@ -70,6 +110,12 @@ func ConvertTokenTypeToUnitType(tokenType TokenType) UnitType {
 		return UNIT_MILLISECOND
 	case T_UNIT_PERCENT:
 		return UNIT_PERCENT
+	case T_UNIT_DPI:
+		return UNIT_DPI
+	case T_UNIT_DPPX:
+		return UNIT_DPPX
+	case T_UNIT_DPCM:
+		return UNIT_DPCM
 	default:
 		panic(fmt.Errorf("Unknown Token Type for converting unit type. Got '%s'", tokenType))
 	}
