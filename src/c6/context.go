@@ -1,26 +1,24 @@
 package c6
 
 import "c6/ast"
-import "container/list"
 
 /**
 The Context contains all runtime variables and ruleset stack
 */
 type Context struct {
-	RuleSetList []*ast.RuleSet
+	RuleSetStack []*ast.RuleSet
 
 	// SymTableStack  []*ast.SymTable
 	GlobalSymTable ast.SymTable
 }
 
 func NewContext() *Context {
-	var ruleSetStack = list.New()
-	var context = &Context{ruleSetStack, ast.SymTable{}}
+	var context = &Context{[]*ast.RuleSet{}, ast.SymTable{}}
 	return context
 }
 
 func (context *Context) PushRuleSet(ruleSet *ast.RuleSet) {
-	var newStack = append(context.RuleSetList, ruleSet)
+	var newStack = append(context.RuleSetStack, ruleSet)
 	context.RuleSetStack = newStack
 }
 
@@ -36,13 +34,15 @@ func (context *Context) PopRuleSet() *ast.RuleSet {
 }
 
 func (context *Context) GetVariable(name string) *ast.Variable {
-	var idx = len(context.SymTableStack) - 1
-	for ; idx > 0; idx-- {
-		stack := context.SymTableStack[idx]
-		if variable := stack.FindVariable(name); variable != nil {
-			return variable
+	/*
+		var idx = len(context.SymTableStack) - 1
+		for ; idx > 0; idx-- {
+			stack := context.SymTableStack[idx]
+			if variable := stack.FindVariable(name); variable != nil {
+				return variable
+			}
 		}
-	}
+	*/
 	return nil
 }
 

@@ -20,3 +20,8 @@ Append a Declaration
 func (self *DeclarationBlock) Append(decl Declaration) {
 	self.Declarations = append(self.Declarations, decl)
 }
+
+func (self *DeclarationBlock) AppendSubRuleSet(ruleset *RuleSet) {
+	newRuleSets := append(self.SubRuleSets, ruleset)
+	self.SubRuleSets = newRuleSets
+}
