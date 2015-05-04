@@ -39,9 +39,10 @@ func (self UnaryExpression) String() string {
 }
 
 type BinaryExpression struct {
-	Op    OpType
-	Left  Expression
-	Right Expression
+	Op      OpType
+	Left    Expression
+	Right   Expression
+	Grouped bool
 }
 
 func (self BinaryExpression) String() (out string) {
@@ -51,6 +52,20 @@ func (self BinaryExpression) String() (out string) {
 	out += self.Right.String()
 	out += ")"
 	return out
+}
+
+func (self *BinaryExpression) ShallDivide() bool {
+	if self.Op == OpDiv {
+		a, aok := self.Left.(*Length)
+		b, bok := self.Right.(*Length)
+
+		// it's not grouped, we should inflate it as string
+		if aok && bok && self.Grouped == false {
+			return true
+		}
+	}
+	// otherwise we can divide the value
+	return false
 }
 
 func (self *BinaryExpression) Evaluate(symTable *SymTable) Value {
@@ -79,6 +94,6 @@ func (self *BinaryExpression) Evaluate(symTable *SymTable) Value {
 	return nil
 }
 
-func NewBinaryExpression(op OpType, left Expression, right Expression) *BinaryExpression {
-	return &BinaryExpression{op, left, right}
+func NewBinaryExpression(op OpType, left Expression, right Expression, grouped bool) *BinaryExpression {
+	return &BinaryExpression{op, left, right, grouped}
 }
