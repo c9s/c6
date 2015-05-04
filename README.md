@@ -57,6 +57,7 @@ To run specific test
   - [x] MS filter.  `progid:DXImageTransform.Microsoft....`
   - [x] Variable names
   - [x] Variable assignment
+  - [x] `s` second, `ms` unit lexing support.
   - [ ] Media Query
 - [ ] Syntax
   - [ ] built-in `@import-once`
