@@ -91,6 +91,8 @@ const (
 	T_CHILD_SELECTOR      // E '>' F
 	T_ADJACENT_SELECTOR   // E '+' F
 
+	T_UNICODE_RANGE
+
 	T_IF
 	T_ELSE
 

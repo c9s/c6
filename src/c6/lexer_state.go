@@ -93,6 +93,7 @@ func lexUnicodeRange(l *Lexer) stateFn {
 	if l.length() < 4 {
 		panic("Unicode-range requires at least 4 characters. see https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-range for more information")
 	}
+	l.emit(ast.T_UNICODE_RANGE)
 	return nil
 }
 
