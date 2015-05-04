@@ -64,6 +64,10 @@ func ConvertTokenTypeToUnitType(tokenType TokenType) UnitType {
 		return UNIT_REM
 	case T_UNIT_DEG:
 		return UNIT_DEG
+	case T_UNIT_SECOND:
+		return UNIT_SECOND
+	case T_UNIT_MILLISECOND:
+		return UNIT_MILLISECOND
 	case T_UNIT_PERCENT:
 		return UNIT_PERCENT
 	default:
