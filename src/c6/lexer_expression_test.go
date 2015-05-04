@@ -57,6 +57,27 @@ func TestLexerExpressionFunction(t *testing.T) {
 	l.close()
 }
 
+func TestLexerExpressionUnicodeRange1(t *testing.T) {
+	l := NewLexerWithString(`U+0025-00FF`)
+	l.runFrom(lexExpression)
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_UNICODE_RANGE})
+	l.close()
+}
+
+func TestLexerExpressionUnicodeRange2(t *testing.T) {
+	l := NewLexerWithString(`U+26`)
+	l.runFrom(lexExpression)
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_UNICODE_RANGE})
+	l.close()
+}
+
+func TestLexerExpressionUnicodeRange3(t *testing.T) {
+	l := NewLexerWithString(`U+0025`)
+	l.runFrom(lexExpression)
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_UNICODE_RANGE})
+	l.close()
+}
+
 func TestLexerExpressionVariableMinusVariable(t *testing.T) {
 	l := NewLexerWithString(`$foo - $bar`)
 	l.runFrom(lexExpression)

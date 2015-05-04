@@ -1,11 +1,12 @@
 package c6
 
-import "unicode"
-
-// import "strings"
-import "fmt"
-import "errors"
-import "c6/ast"
+import (
+	"unicode"
+	// import "strings"
+	"c6/ast"
+	"errors"
+	"fmt"
+)
 
 type stateFn func(*Lexer) stateFn
 
@@ -85,13 +86,13 @@ func lexUnicodeRange(l *Lexer) stateFn {
 	l.match("U+")
 
 	var r = l.next()
-	for unicode.IsLetter(r) || (r >= 'A' && r <= 'F') || (r >= 'a' && r <= 'f') || r == '-' {
+	for unicode.IsDigit(r) || (r >= 'A' && r <= 'F') || (r >= 'a' && r <= 'f') || r == '-' {
 		r = l.next()
 	}
 	l.backup()
 
 	if l.length() < 4 {
-		panic("Unicode-range requires at least 4 characters. see https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-range for more information")
+		panic(fmt.Errorf("Unicode-range requires at least 4 characters, we got %d. see https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-range for more information", l.length()))
 	}
 	l.emit(ast.T_UNICODE_RANGE)
 	return nil

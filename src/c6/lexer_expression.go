@@ -92,9 +92,13 @@ func lexExpression(l *Lexer) stateFn {
 
 		l.emit(ast.T_XOR)
 
-	} else if r == 'U' && l.peek() == '+' {
+	} else if r == 'U' && l.peekBy(2) == '+' {
 
 		lexUnicodeRange(l)
+
+	} else if unicode.IsLetter(r) {
+
+		lexIdentifier(l)
 
 	} else if unicode.IsDigit(r) {
 
@@ -168,10 +172,6 @@ func lexExpression(l *Lexer) stateFn {
 	} else if r == '$' {
 
 		lexVariableName(l)
-
-	} else if unicode.IsLetter(r) {
-
-		lexIdentifier(l)
 
 	} else if r == EOF {
 
