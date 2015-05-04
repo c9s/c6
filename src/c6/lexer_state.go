@@ -450,6 +450,12 @@ func lexNumberUnit(l *Lexer) stateFn {
 		l.emit(ast.T_UNIT_SECOND)
 	} else if l.match("ms") {
 		l.emit(ast.T_UNIT_MILLISECOND)
+	} else if l.match("dpi") {
+		l.emit(ast.T_UNIT_DPI)
+	} else if l.match("dpcm") {
+		l.emit(ast.T_UNIT_DPCM)
+	} else if l.match("dppx") {
+		l.emit(ast.T_UNIT_DPPX)
 	} else if l.match("%") {
 		l.emit(ast.T_UNIT_PERCENT)
 	} else if l.peek() == ';' {
