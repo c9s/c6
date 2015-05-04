@@ -58,6 +58,7 @@ To run specific test
   - [x] Variable names
   - [x] Variable assignment
   - [x] `s` second, `ms` unit lexing support.
+  - [x] Unicode Range support: <https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-range>
   - [ ] Media Query
 - [ ] Syntax
   - [ ] built-in `@import-once`
