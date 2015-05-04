@@ -394,6 +394,12 @@ func lexHexColor(l *Lexer) stateFn {
 	return lexExpression
 }
 
+/**
+
+CSS time unit
+
+@see https://developer.mozilla.org/zh-TW/docs/Web/CSS/time
+*/
 func lexNumberUnit(l *Lexer) stateFn {
 	if l.match("px") {
 		l.emit(ast.T_UNIT_PX)
@@ -409,6 +415,10 @@ func lexNumberUnit(l *Lexer) stateFn {
 		l.emit(ast.T_UNIT_REM)
 	} else if l.match("deg") {
 		l.emit(ast.T_UNIT_DEG)
+	} else if l.match("s") {
+		l.emit(ast.T_UNIT_SECOND)
+	} else if l.match("ms") {
+		l.emit(ast.T_UNIT_MILLISECOND)
 	} else if l.match("%") {
 		l.emit(ast.T_UNIT_PERCENT)
 	} else if l.peek() == ';' {

@@ -15,6 +15,8 @@ const (
 	UNIT_REM
 	UNIT_DEG
 	UNIT_PERCENT
+	UNIT_SECOND
+	UNIT_MILLISECOND
 )
 
 func (unit UnitType) UnitString() string {
@@ -35,6 +37,10 @@ func (unit UnitType) UnitString() string {
 		return "deg"
 	case UNIT_PERCENT:
 		return "%"
+	case UNIT_SECOND:
+		return "s"
+	case UNIT_MILLISECOND:
+		return "ms"
 	case UNIT_NONE:
 		return ""
 	default:
