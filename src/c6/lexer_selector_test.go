@@ -357,6 +357,8 @@ func TestLexerRuleWithSubRuleWithParentSelector(t *testing.T) {
 
 func TestLexerSelectorPseudoElementBefore(t *testing.T) {
 	AssertLexerTokenSequence(t, `::before {  }`, []ast.TokenType{ast.T_PSEUDO_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	AssertLexerTokenSequence(t, `::after {  }`, []ast.TokenType{ast.T_PSEUDO_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	AssertLexerTokenSequence(t, `::first-line {  }`, []ast.TokenType{ast.T_PSEUDO_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
 }
 
 func TestLexerSelectorInterpolationSuffix(t *testing.T) {
