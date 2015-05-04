@@ -56,7 +56,7 @@ func NewParser(context *Context) *Parser {
 	return &Parser{context, nil, 0, 0, []*ast.Token{}}
 }
 
-func (parser *Parser) parseFile(path string) error {
+func (parser *Parser) ParseFile(path string) error {
 	ext := filepath.Ext(path)
 	filetype := getFileTypeByExtension(ext)
 	_ = filetype
