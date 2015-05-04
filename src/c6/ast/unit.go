@@ -8,9 +8,9 @@ type UnitType int
 const (
 	UNIT_NONE UnitType = iota
 
-	/**
-	Length Unit
-	@see https://developer.mozilla.org/en-US/docs/Web/CSS/length
+	/*
+		Length Unit
+		@see https://developer.mozilla.org/en-US/docs/Web/CSS/length
 	*/
 	UNIT_EM
 	UNIT_EX
@@ -31,9 +31,9 @@ const (
 	UNIT_VMIN
 	UNIT_VMAX
 
-	/**
-	Angle
-	@see https://developer.mozilla.org/en-US/docs/Web/CSS/angle
+	/*
+		Angle
+		@see https://developer.mozilla.org/en-US/docs/Web/CSS/angle
 	*/
 	UNIT_DEG
 	UNIT_GRAD
@@ -41,12 +41,17 @@ const (
 	UNIT_TURN
 
 	UNIT_PERCENT
+
+	/*
+		Time Unit
+		@see https://developer.mozilla.org/zh-TW/docs/Web/CSS/time
+	*/
 	UNIT_SECOND
 	UNIT_MILLISECOND
 
-	/**
-	Resolution Unit
-	@see https://developer.mozilla.org/en-US/docs/Web/CSS/resolution
+	/*
+		Resolution Unit
+		@see https://developer.mozilla.org/en-US/docs/Web/CSS/resolution
 	*/
 	UNIT_DPI
 	UNIT_DPPX
