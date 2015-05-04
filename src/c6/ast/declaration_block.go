@@ -9,6 +9,9 @@ DeclarationBlock.
 */
 type DeclarationBlock struct {
 	Declarations []Declaration
+
+	// Nested rulesets
+	SubRuleSets []*RuleSet
 }
 
 /**

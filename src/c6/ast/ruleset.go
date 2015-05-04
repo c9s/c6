@@ -14,11 +14,12 @@ func (self *RuleSet) AppendSelector(sel Selector) {
 	self.Selectors = append(self.Selectors, sel)
 }
 
-func (self *RuleSet) AppendDeclaration(dec Declaration) {
+func (self *RuleSet) AppendSubRuleSet(ruleset *RuleSet) {
+	self.DeclarationBlock.AppendSubRuleSet(ruleset)
 }
 
-func (self *RuleSet) AppendSubRuleSet() {
-
+func (self *RuleSet) GetSubRuleSets() []*RuleSet {
+	return self.DeclarationBlock.SubRuleSets
 }
 
 // Complete the statement interface
