@@ -1,5 +1,8 @@
 package ast
 
+/*
+XXX: This smells bad, and but we don't want to put all ast node types in one classes...
+*/
 type SymTable map[string]*Variable
 
 func (self SymTable) AddVariable(v *Variable) {
