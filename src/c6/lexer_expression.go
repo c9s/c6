@@ -92,6 +92,10 @@ func lexExpression(l *Lexer) stateFn {
 
 		l.emit(ast.T_XOR)
 
+	} else if r == 'U' && l.peek() == '+' {
+
+		lexUnicodeRange(l)
+
 	} else if unicode.IsDigit(r) {
 
 		if fn := lexNumber(l); fn != nil {

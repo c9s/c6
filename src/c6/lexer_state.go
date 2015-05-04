@@ -67,6 +67,35 @@ func lexCommentLine(l *Lexer, emit bool) stateFn {
 	return nil
 }
 
+/*
+Lex unicode range, used in `content` property.
+
+@see https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-range
+
+Formal syntax: <urange>#
+        where: <urange> = single_codepoint | codepoint_range | wildcard_range
+
+	unicode-range: U+26               // single_codepoint
+	unicode-range: U+0025-00FF        // codepoint_range
+	unicode-range: U+4??              // wildcard_range
+	unicode-range: U+0025-00FF, U+4?? // multiple values can be separated by commas
+
+*/
+func lexUnicodeRange(l *Lexer) stateFn {
+	l.match("U+")
+
+	var r = l.next()
+	for unicode.IsLetter(r) || (r >= 'A' && r <= 'F') || (r >= 'a' && r <= 'f') || r == '-' {
+		r = l.next()
+	}
+	l.backup()
+
+	if l.length() < 4 {
+		panic("Unicode-range requires at least 4 characters. see https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-range for more information")
+	}
+	return nil
+}
+
 func lexCommentBlock(l *Lexer, emit bool) stateFn {
 	if !l.match("/*") {
 		return nil
