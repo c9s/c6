@@ -355,20 +355,16 @@ func TestLexerRuleWithSubRuleWithParentSelector(t *testing.T) {
 	l.close()
 }
 
+func TestLexerSelectorPseudoElementBefore(t *testing.T) {
+	AssertLexerTokenSequence(t, `::before {  }`, []ast.TokenType{ast.T_PSEUDO_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+}
+
 func TestLexerSelectorInterpolationSuffix(t *testing.T) {
-	l := NewLexerWithString(`#myPost#{ abc } {  }`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_INTERPOLATION_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
-	l.close()
+	AssertLexerTokenSequence(t, `#myPost#{ abc } {  }`, []ast.TokenType{ast.T_INTERPOLATION_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
 }
 
 func TestLexerSelectorInterpolationPrefix(t *testing.T) {
-	l := NewLexerWithString(`#{ abc }#myPost {  }`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_INTERPOLATION_SELECTOR, ast.T_ID_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
-	l.close()
+	AssertLexerTokenSequence(t, `#{ abc }#myPost {  }`, []ast.TokenType{ast.T_INTERPOLATION_SELECTOR, ast.T_ID_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
 }
 
 func TestLexerSelectorInterpolationWithPseudoSelector(t *testing.T) {

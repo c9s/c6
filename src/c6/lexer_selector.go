@@ -154,6 +154,10 @@ func lexPseudoSelector(l *Lexer) stateFn {
 	if r != ':' {
 		l.error("Unexpected token '%s' for pseudo selector.", r)
 	}
+
+	// support CSS3 syntax for `::before` and `::after`
+	// @see https://developer.mozilla.org/en-US/docs/Web/CSS/::before
+	l.accept(":")
 	l.ignore()
 
 	r = l.next()
