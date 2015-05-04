@@ -3,6 +3,7 @@ package ast
 type RuleSet struct {
 	Selectors        []Selector
 	DeclarationBlock *DeclarationBlock
+	SymTable         *SymTable
 }
 
 func NewRuleSet() *RuleSet {
