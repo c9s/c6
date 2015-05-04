@@ -176,9 +176,8 @@ func (parser *Parser) ParseFactor() ast.Expression {
 	debug("ParseFactor => peek: %s", tok)
 
 	if tok.Type == ast.T_PAREN_START {
-
 		parser.expect(ast.T_PAREN_START)
-		var expr = parser.ParseExpression()
+		var expr = parser.ParseExpression(true)
 		parser.expect(ast.T_PAREN_END)
 		return expr
 
@@ -241,9 +240,9 @@ func (parser *Parser) ParseTerm() ast.Expression {
 		parser.next()
 		if term := parser.ParseTerm(); term != nil {
 			if tok.Type == ast.T_MUL {
-				return ast.NewBinaryExpression(ast.OpMul, factor, term)
+				return ast.NewBinaryExpression(ast.OpMul, factor, term, false)
 			} else if tok.Type == ast.T_DIV {
-				return ast.NewBinaryExpression(ast.OpDiv, factor, term)
+				return ast.NewBinaryExpression(ast.OpDiv, factor, term, false)
 			}
 		} else {
 			panic("Unexpected token after * and /")
@@ -260,12 +259,11 @@ We here treat the property values as expressions:
 	margin: {expression};
 
 */
-func (parser *Parser) ParseExpression() ast.Expression {
+func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 	var pos = parser.Pos
-
 	debug("ParseExpression")
 
-	// plus or minus. this creates an unary expression that holds the later term.
+	// plus or minus. This creates an unary expression that holds the later term.
 	// this is for:  +3 or -4
 	var tok = parser.peek()
 	var expr ast.Expression
@@ -301,7 +299,8 @@ func (parser *Parser) ParseExpression() ast.Expression {
 		parser.next()
 
 		if rightTerm := parser.ParseTerm(); rightTerm != nil {
-			var bexpr = ast.NewBinaryExpression(ast.ConvertTokenTypeToOpType(rightTok.Type), expr, rightTerm)
+			// XXX: check parenthesis
+			var bexpr = ast.NewBinaryExpression(ast.ConvertTokenTypeToOpType(rightTok.Type), expr, rightTerm, inParenthesis)
 
 			if val := bexpr.Evaluate(nil); val != nil {
 
@@ -319,21 +318,6 @@ func (parser *Parser) ParseExpression() ast.Expression {
 	return expr
 }
 
-/*
-func (parser *Parser) ParseMap() *ast.Map {
-	var tok = parser.next()
-	if tok.Type != ast.T_PAREN_START {
-		panic("Map Syntax error: expecting '('")
-	}
-
-	tok = parser.next()
-	if tok.Type != ast.T_IDENT {
-		panic("Map Syntax error: expecting ident or expression after '('")
-	}
-	return nil
-}
-*/
-
 func (parser *Parser) ParseMap() ast.Expression {
 	var pos = parser.Pos
 	var tok = parser.next()
@@ -345,7 +329,7 @@ func (parser *Parser) ParseMap() ast.Expression {
 
 	tok = parser.peek()
 	for tok.Type != ast.T_PAREN_END {
-		var keyExpr = parser.ParseExpression()
+		var keyExpr = parser.ParseExpression(false)
 		if keyExpr == nil {
 			parser.restore(pos)
 			return nil
@@ -356,7 +340,7 @@ func (parser *Parser) ParseMap() ast.Expression {
 			return nil
 		}
 
-		var valueExpr = parser.ParseExpression()
+		var valueExpr = parser.ParseExpression(false)
 		if valueExpr == nil {
 			parser.restore(pos)
 			return nil
@@ -408,7 +392,7 @@ func (parser *Parser) ParseInterp() ast.Expression {
 	}
 
 	parser.accept(ast.T_INTERPOLATION_START)
-	var innerExpr = parser.ParseExpression()
+	var innerExpr = parser.ParseExpression(true)
 	var endTok = parser.expect(ast.T_INTERPOLATION_END)
 	var interp = ast.NewInterpolation(innerExpr, startTok, endTok)
 	return interp
@@ -459,30 +443,7 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 		}
 	*/
 	debug("ParseExpression trying", pos)
-	return parser.ParseExpression()
-	/*
-		var tok = parser.peek()
-
-		// list or map starts with '('
-		if tok.Type == ast.T_PAREN_START {
-			if expr := parser.ParseExpression(); expr != nil {
-				return expr
-			}
-		}
-
-		tok = parser.peek()
-		if tok.Type == ast.T_COLON {
-			// it's a map
-		}
-
-		tok = parser.peek()
-		if tok.Type == ast.T_PAREN_START {
-			// parser.ParseMapOrList()
-		} else {
-			parser.ParseList()
-		}
-		return nil
-	*/
+	return parser.ParseExpression(false)
 }
 
 func (parser *Parser) ParseList() ast.Expression {
@@ -600,7 +561,7 @@ func (parser *Parser) ParseSpaceSepList() ast.Expression {
 
 	tok = parser.peek()
 	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
-		var subexpr = parser.ParseExpression()
+		var subexpr = parser.ParseExpression(true)
 		if subexpr != nil {
 			debug("Parsed Expression: %+v", subexpr)
 			list.Append(subexpr)
