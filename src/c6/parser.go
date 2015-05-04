@@ -59,13 +59,17 @@ func NewParser(context *Context) *Parser {
 func (parser *Parser) ParseFile(path string) error {
 	ext := filepath.Ext(path)
 	filetype := getFileTypeByExtension(ext)
-	_ = filetype
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
 		return err
 	}
+
 	var code string = string(data)
-	_ = code
+	switch filetype {
+	case ScssFileType:
+		parser.ParseScss(code)
+		break
+	}
 	return nil
 }
 
@@ -190,7 +194,7 @@ func (self *Parser) eof() bool {
 	return tok == nil
 }
 
-func (parser *Parser) parseScss(code string) *ast.Block {
+func (parser *Parser) ParseScss(code string) *ast.Block {
 	l := NewLexerWithString(code)
 	l.run()
 	parser.Input = l.getOutput()

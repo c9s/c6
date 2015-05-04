@@ -9,12 +9,12 @@ import "fmt"
 func RunParserTest(code string) *ast.Block {
 	fmt.Printf("Test parsing: %s\n", code)
 	var parser = NewParser(NewContext())
-	return parser.parseScss(code)
+	return parser.ParseScss(code)
 }
 
 func TestParserParseImportRuleWithUrl(t *testing.T) {
 	parser := NewParser(NewContext())
-	block := parser.parseScss(`@import url("http://foo.com/bar.css");`)
+	block := parser.ParseScss(`@import url("http://foo.com/bar.css");`)
 
 	rule, ok := block.Statement(0).(*ast.ImportStatement)
 	assert.True(t, ok, "Convert to ImportStatement OK")
@@ -32,7 +32,7 @@ func TestParserParseImportRuleWithUrl(t *testing.T) {
 
 func TestParserParseImportRuleWithString(t *testing.T) {
 	parser := NewParser(NewContext())
-	block := parser.parseScss(`@import "foo.css";`)
+	block := parser.ParseScss(`@import "foo.css";`)
 
 	rule, ok := block.Statement(0).(*ast.ImportStatement)
 	assert.True(t, ok, "Convert to ImportStatement OK")
@@ -131,14 +131,14 @@ func TestParserMassiveRules(t *testing.T) {
 	for _, buffer := range buffers {
 		fmt.Printf("Input %s\n", buffer)
 		var parser = NewParser(NewContext())
-		var block = parser.parseScss(buffer)
+		var block = parser.ParseScss(buffer)
 		fmt.Printf("%+v\n", block)
 	}
 }
 
 func TestParserParseTypeSelectorRule(t *testing.T) {
 	parser := NewParser(NewContext())
-	block := parser.parseScss(`div { width: auto; }`)
+	block := parser.ParseScss(`div { width: auto; }`)
 
 	ruleset, ok := block.Statements[0].(*ast.RuleSet)
 	assert.True(t, ok)
@@ -152,7 +152,7 @@ func TestParserParseTypeSelectorRule(t *testing.T) {
 /*
 func TestParserParseEmptyRuleWithClassSelector(t *testing.T) {
 	parser := NewParser()
-	parser.parseScss(`.test {  }`)
+	parser.ParseScss(`.test {  }`)
 
 	var token *Token
 
@@ -176,7 +176,7 @@ func TestParserParseEmptyRuleWithClassSelector(t *testing.T) {
 func TestParserPeekBy(t *testing.T) {
 	parser := NewParser()
 	assert.NotNil(t, parser)
-	parser.parseScss(`.test {  }`)
+	parser.ParseScss(`.test {  }`)
 
 	var token *Token
 
