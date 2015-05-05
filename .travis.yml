@@ -9,6 +9,7 @@ script:
   - make
   - make test
   - make cov
+  - make benchcmp
 
 after_success:
   - vendor/bin/goveralls -coverprofile=c6.cov -service=travis-ci
