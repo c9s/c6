@@ -95,6 +95,10 @@ const (
 
 	T_IF
 	T_ELSE
+	T_ELSE_IF
+	T_INCLUDE
+	T_MIXIN
+	T_FUNCTION
 
 	T_OR  // 'or' used in conditional query
 	T_AND // 'and' used in conditional query

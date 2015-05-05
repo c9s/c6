@@ -13,6 +13,18 @@ type stateFn func(*Lexer) stateFn
 const LETTERS = "zxcvbnmasdfghjklqwertyuiop"
 const DIGITS = "1234567890"
 
+var atRuleTokenMap = KeywordTokenMap{
+	/* CSS */
+	"@import":   ast.T_IMPORT,
+	"@media":    ast.T_MEDIA,
+	"@if":       ast.T_IF,
+	"@else":     ast.T_ELSE,
+	"@else if":  ast.T_ELSE_IF,
+	"@include":  ast.T_INCLUDE,
+	"@function": ast.T_FUNCTION,
+	"@mixin":    ast.T_MIXIN,
+}
+
 var exprTokenMap = KeywordTokenMap{
 	"true":  ast.T_TRUE,
 	"false": ast.T_FALSE,
@@ -223,96 +235,57 @@ func lexUrl(l *Lexer) {
 }
 
 /*
-func lexMediaQuery(l *Lexer) stateFn {
-	if !unicode.IsLetter(l.peek()) {
-		return nil
-	}
-
-	var r = l.next()
-	for {
-		r = l.next()
-	}
-	l.backup()
-	for unicode.IsLetter(r) {
-		r = l.next()
-	}
-	l.backup()
-	l.ignoreSpaces()
-
-	if l.peek() == ',' {
-		l.next()
-		l.emit(T_COMMA)
-	}
-}
-*/
-
-/*
 
 Currently the @import rule only supports '@import url(...) media;
 
 @see https://developer.mozilla.org/en-US/docs/Web/CSS/@import for more @import syntax support
 */
 func lexAtRule(l *Lexer) stateFn {
-	t := l.peek()
-	if t != '@' {
-		return nil
-	}
-	l.next()
-	if l.match("import ") {
 
-		l.emit(ast.T_IMPORT)
-		l.ignoreSpaces()
+	var tokType = l.matchKeywordMap(atRuleTokenMap)
+	if tokType > 0 {
+		switch tokType {
+		case ast.T_IMPORT:
+			l.ignoreSpaces()
+			lexUrl(l)
+			l.ignoreSpaces()
+			// looks like a media list
+			for unicode.IsLetter(l.peek()) {
+				l.next()
+			}
+			if l.precedeStartOffset() {
+				l.emit(ast.T_MEDIA)
+			}
+			return lexStatement
 
-		lexUrl(l)
-		l.ignoreSpaces()
+		case ast.T_MEDIA:
+			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
+			}
 
-		// looks like a media list
-		for unicode.IsLetter(l.peek()) {
-			l.next()
+			l.ignoreSpaces()
+			return lexStatement
+
+		case ast.T_CHARSET:
+			l.ignoreSpaces()
+			return lexStatement
+
+		case ast.T_MIXIN:
+			panic("@mixin is not supported yet.")
+
+		case ast.T_INCLUDE:
+			panic("@include is not supported yet")
+
+		case ast.T_FUNCTION:
+			panic("@function is not supported yet")
+
+		default:
+			var r = l.next()
+			for unicode.IsLetter(r) {
+				r = l.next()
+			}
+			l.backup()
+			panic(fmt.Errorf("Unsupported at-rule directive '%s'", l.current()))
 		}
-		if l.precedeStartOffset() {
-			l.emit(ast.T_MEDIA)
-		}
-		return lexStatement
-
-	} else if l.match("media") {
-
-		l.emit(ast.T_MEDIA)
-
-		for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
-		}
-
-		l.ignoreSpaces()
-		return lexStatement
-
-	} else if l.match("charset") {
-
-		l.emit(ast.T_CHARSET)
-		l.ignoreSpaces()
-		return lexStatement
-
-	} else if l.match("mixin") {
-
-		panic("@mixin is not supported yet.")
-
-	} else if l.match("include") {
-
-		panic("@include is not supported yet")
-
-	} else if l.match("function") {
-
-		panic("@function is not supported yet")
-
-	} else {
-
-		var r = l.next()
-		for unicode.IsLetter(r) {
-			r = l.next()
-		}
-		l.backup()
-
-		panic(fmt.Errorf("Unsupported at-rule directive '%s'", l.current()))
-
 	}
 	return nil
 }
