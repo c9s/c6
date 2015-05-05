@@ -133,10 +133,14 @@ To run specific test
 
 ## Reference
 
+SASS Reference <http://sass-lang.com/documentation/file.SASS_REFERENCE.html>
+
 A feature check list from libsass:
 
-- https://github.com/sass/libsass/releases/tag/3.2.0
-- https://github.com/sass/sass/issues/1094
+- <https://github.com/sass/libsass/releases/tag/3.2.0>
+- <https://github.com/sass/sass/issues/1094>
+
+Grammar Ambiguity <https://www.facebook.com/cindylinz/posts/10202186527405801?hc_location=ufi>
 
 
 ## Community
