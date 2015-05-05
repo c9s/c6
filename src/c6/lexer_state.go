@@ -286,6 +286,7 @@ func lexAtRule(l *Lexer) stateFn {
 		return lexStatement
 
 	} else if l.match("charset") {
+
 		l.emit(ast.T_CHARSET)
 		l.ignoreSpaces()
 		return lexStatement
@@ -304,7 +305,13 @@ func lexAtRule(l *Lexer) stateFn {
 
 	} else {
 
-		panic("Unsupported at-rule directive")
+		var r = l.next()
+		for unicode.IsLetter(r) {
+			r = l.next()
+		}
+		l.backup()
+
+		panic(fmt.Errorf("Unsupported at-rule directive '%s'", l.current()))
 
 	}
 	return nil
