@@ -21,7 +21,7 @@ if [[ -n $GOVENDOR ]] ; then
 fi
 
 # export GOPATH=$GOLIB
-export PATH=$GOLIB/bin:$PATH
+export PATH=$GOVENDOR/bin:$GOLIB/bin:$PATH
 if [[ -e golang ]] ; then 
     export PATH=$(pwd)/golang/go/bin:$PATH
 fi
