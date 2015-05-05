@@ -105,7 +105,6 @@ func (self *Parser) expect(tokenType ast.TokenType) *ast.Token {
 		panic(fmt.Errorf("Expecting %s, Got %s", tokenType, tok))
 	}
 	return tok
-
 }
 
 func (self *Parser) acceptTypes(types []ast.TokenType) bool {

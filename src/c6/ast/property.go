@@ -1,5 +1,7 @@
 package ast
 
+import "strings"
+
 /**
 An property may contains interpolation
 */
@@ -22,11 +24,27 @@ func (self Property) AppendValue(value Expression) {
 	self.Values = append(self.Values, value)
 }
 
+func (self Property) String() (out string) {
+	out = self.Name.String() + ":"
+
+	var items = []string{}
+
+	for _, expr := range self.Values {
+		items = append(items, expr.String())
+	}
+	out += strings.Join(items, " ")
+	return out
+}
+
 type PropertyName struct {
-	String string
+	Name string
 	// If there is an interpolation in the property name
 	Interpolation bool
 	Token         *Token
+}
+
+func (self PropertyName) String() string {
+	return self.Name
 }
 
 func NewPropertyName(tok *Token) *PropertyName {
