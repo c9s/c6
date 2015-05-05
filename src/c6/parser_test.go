@@ -51,6 +51,23 @@ func TestParserParseImportRuleWithMediaList(t *testing.T) {
 	_ = block
 }
 
+func TestParserParseCSS3Gradient(t *testing.T) {
+	// some test cases from htmldog
+	// @see http://www.htmldog.com/guides/css/advanced/gradients/
+	var buffers = []string{
+		`div { background: repeating-linear-gradient(white, black 10px, white 20px); }`,
+		`div { background: linear-gradient(135deg, hsl(36,100%,50%) 10%, hsl(72,100%,50%) 60%, white 90%); }`,
+		`div { background: linear-gradient(black 0, white 100%); }`,
+		`div { background: radial-gradient(#06c 0, #fc0 50%, #039 100%); }`,
+		`div { background: linear-gradient(red 0%, green 33.3%, blue 66.7%, black 100%); }`,
+		`div { background: background: -webkit-radial-gradient(100px 200px, circle closest-side, black, white); }`,
+	}
+	for _, buffer := range buffers {
+		var block = RunParserTest(buffer)
+		fmt.Printf("%+v\n", block)
+	}
+}
+
 func TestParserPropertyListExpression(t *testing.T) {
 	var buffers []string = []string{
 		`div { width: 1px; }`,
