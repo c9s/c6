@@ -363,16 +363,16 @@ ignore space characters
 
 return true if there is space
 */
-func (l *Lexer) ignoreSpaces() bool {
-	var space = false
+func (l *Lexer) ignoreSpaces() int {
+	var space = 0
 	for {
 		var r rune = l.peek()
 		if r == '\n' {
-			space = true
+			space++
 			l.Line++
 			l.next()
 		} else if r == ' ' || r == '\t' || r == '\r' {
-			space = true
+			space++
 			l.next()
 		} else {
 			break

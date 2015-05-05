@@ -5,9 +5,18 @@ import "testing"
 import "fmt"
 import "c6/ast"
 
+func AssertLexerTokenSequenceFromState(t *testing.T, scss string, fn stateFn, tokenList []ast.TokenType) {
+	fmt.Printf("Testing SCSS: %s\n", scss)
+	var lexer = NewLexerWithString(scss)
+	assert.NotNil(t, lexer)
+	lexer.runFrom(fn)
+	lexer.run()
+	AssertTokenSequence(t, lexer, tokenList)
+	lexer.close()
+}
+
 func AssertLexerTokenSequence(t *testing.T, scss string, tokenList []ast.TokenType) {
 	fmt.Printf("Testing SCSS: %s\n", scss)
-
 	var lexer = NewLexerWithString(scss)
 	assert.NotNil(t, lexer)
 	lexer.run()

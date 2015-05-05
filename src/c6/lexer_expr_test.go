@@ -5,43 +5,47 @@ import "c6/ast"
 
 // import "github.com/stretchr/testify/assert"
 
+func TestLexerIdentifier(t *testing.T) {
+	AssertLexerTokenSequenceFromState(t, `none`, lexExpression2, []ast.TokenType{ast.T_IDENT})
+}
+
+func TestLexerIdentifierWithTrailingInterp(t *testing.T) {
+	AssertLexerTokenSequenceFromState(t, `none#{ 10 + 10 }`, lexExpression2, []ast.TokenType{
+		ast.T_IDENT, ast.T_LITERAL_CONCAT, ast.T_INTERPOLATION_START,
+		ast.T_INTEGER, ast.T_PLUS, ast.T_INTEGER,
+		ast.T_INTERPOLATION_END})
+}
+
+func TestLexerIdentifierWithLeadingInterp(t *testing.T) {
+	AssertLexerTokenSequenceFromState(t, `#{ 10 + 10 }none`, lexExpression2, []ast.TokenType{
+		ast.T_INTERPOLATION_START,
+		ast.T_INTEGER, ast.T_PLUS, ast.T_INTEGER,
+		ast.T_INTERPOLATION_END, ast.T_LITERAL_CONCAT, ast.T_IDENT})
+}
+
 func TestLexerExpression(t *testing.T) {
-	l := NewLexerWithString(`$foo`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_VARIABLE})
-	l.close()
+	AssertLexerTokenSequenceFromState(t, `$foo`, lexExpression2, []ast.TokenType{ast.T_VARIABLE})
 }
 
 func TestLexerHexColor3Letter(t *testing.T) {
-	l := NewLexerWithString(`#fff`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_HEX_COLOR})
-	l.close()
+	AssertLexerTokenSequenceFromState(t, `#fff`, lexExpression2, []ast.TokenType{ast.T_HEX_COLOR})
 }
 
 func TestLexerHexColor6Letter(t *testing.T) {
-	l := NewLexerWithString(`#ffffff`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_HEX_COLOR})
-	l.close()
+	AssertLexerTokenSequenceFromState(t, `#ffffff`, lexExpression2, []ast.TokenType{ast.T_HEX_COLOR})
 }
 
 func TestLexerFunctionCall(t *testing.T) {
-	l := NewLexerWithString(`rgba(0,0,0,0)`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_FUNCTION_NAME, ast.T_PAREN_START,
+	AssertLexerTokenSequenceFromState(t, `rgba(0,0,0,0)`, lexExpression2, []ast.TokenType{ast.T_FUNCTION_NAME, ast.T_PAREN_START,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER,
 		ast.T_PAREN_END})
-	l.close()
 }
 
 func TestLexerExpressionFunction(t *testing.T) {
-	l := NewLexerWithString(`rgba(0,0,0,0) - rgba(255,255,255,0)`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{
+	AssertLexerTokenSequenceFromState(t, `rgba(0,0,0,0) - rgba(255,255,255,0)`, lexExpression2, []ast.TokenType{
 		ast.T_FUNCTION_NAME, ast.T_PAREN_START,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_COMMA,
@@ -54,89 +58,52 @@ func TestLexerExpressionFunction(t *testing.T) {
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_PAREN_END,
 	})
-	l.close()
 }
 
 func TestLexerExpressionUnicodeRange1(t *testing.T) {
-	l := NewLexerWithString(`U+0025-00FF`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_UNICODE_RANGE})
-	l.close()
+	AssertLexerTokenSequenceFromState(t, `U+0025-00FF`, lexExpression2, []ast.TokenType{ast.T_UNICODE_RANGE})
 }
 
 func TestLexerExpressionUnicodeRange2(t *testing.T) {
-	l := NewLexerWithString(`U+26`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_UNICODE_RANGE})
-	l.close()
+	AssertLexerTokenSequenceFromState(t, `U+26`, lexExpression2, []ast.TokenType{ast.T_UNICODE_RANGE})
 }
 
 func TestLexerExpressionUnicodeRange3(t *testing.T) {
-	l := NewLexerWithString(`U+0025`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_UNICODE_RANGE})
-	l.close()
+	AssertLexerTokenSequenceFromState(t, `U+0025`, lexExpression2, []ast.TokenType{ast.T_UNICODE_RANGE})
 }
 
 func TestLexerExpressionVariableMinusVariable(t *testing.T) {
-	l := NewLexerWithString(`$foo - $bar`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_VARIABLE, ast.T_MINUS, ast.T_VARIABLE})
-	l.close()
+	AssertLexerTokenSequenceFromState(t, `$foo - $bar`, lexExpression2, []ast.TokenType{ast.T_VARIABLE, ast.T_MINUS, ast.T_VARIABLE})
 }
 
 func TestLexerExpressionVariableNameWithDashSeparator(t *testing.T) {
-	l := NewLexerWithString(`$a-b + 3px`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_VARIABLE, ast.T_PLUS, ast.T_INTEGER, ast.T_UNIT_PX})
-	l.close()
+	AssertLexerTokenSequenceFromState(t, `$a-b + 3px`, lexExpression2, []ast.TokenType{ast.T_VARIABLE, ast.T_PLUS, ast.T_INTEGER, ast.T_UNIT_PX})
 }
 
 func TestLexerExpressionMinus3(t *testing.T) {
-	l := NewLexerWithString(`$foo - 3`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_VARIABLE, ast.T_MINUS, ast.T_INTEGER})
-	l.close()
+	AssertLexerTokenSequenceFromState(t, `$foo - 3`, lexExpression2, []ast.TokenType{ast.T_VARIABLE, ast.T_MINUS, ast.T_INTEGER})
 }
 
 func TestLexerExpressionMinus43(t *testing.T) {
-	l := NewLexerWithString(`$foo-4-3`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_VARIABLE, ast.T_MINUS, ast.T_INTEGER, ast.T_MINUS, ast.T_INTEGER})
-	l.close()
+	AssertLexerTokenSequenceFromState(t, `$foo-4-3`, lexExpression2, []ast.TokenType{ast.T_VARIABLE, ast.T_MINUS, ast.T_INTEGER, ast.T_MINUS, ast.T_INTEGER})
 }
 
 func TestLexerExpressionMinus4neg3(t *testing.T) {
-	l := NewLexerWithString(`$foo-4--3`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_VARIABLE, ast.T_MINUS, ast.T_INTEGER, ast.T_MINUS, ast.T_MINUS, ast.T_INTEGER})
-	l.close()
+	AssertLexerTokenSequenceFromState(t, `$foo-4--3`, lexExpression2, []ast.TokenType{ast.T_VARIABLE, ast.T_MINUS, ast.T_INTEGER, ast.T_MINUS, ast.T_MINUS, ast.T_INTEGER})
 }
 
 func TestLexerExpressionMinus3WithoutSpace(t *testing.T) {
-	l := NewLexerWithString(`$foo-3`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_VARIABLE, ast.T_MINUS, ast.T_INTEGER})
-	l.close()
+	AssertLexerTokenSequenceFromState(t, `$foo-3`, lexExpression2, []ast.TokenType{ast.T_VARIABLE, ast.T_MINUS, ast.T_INTEGER})
 }
 
 func TestLexerExpressionPlus3WithoutSpace(t *testing.T) {
-	l := NewLexerWithString(`$foo+3`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_VARIABLE, ast.T_PLUS, ast.T_INTEGER})
-	l.close()
+	AssertLexerTokenSequenceFromState(t, `$foo+3`, lexExpression2, []ast.TokenType{ast.T_VARIABLE, ast.T_PLUS, ast.T_INTEGER})
 }
 
 func TestLexerExpressionDiv3WithoutSpace(t *testing.T) {
-	l := NewLexerWithString(`$foo/3`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_VARIABLE, ast.T_DIV, ast.T_INTEGER})
-	l.close()
+	AssertLexerTokenSequenceFromState(t, `$foo/3`, lexExpression2, []ast.TokenType{ast.T_VARIABLE, ast.T_DIV, ast.T_INTEGER})
 }
 
 func TestLexerExpressionMul3WithoutSpace(t *testing.T) {
-	l := NewLexerWithString(`$foo*3`)
-	l.runFrom(lexExpression)
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_VARIABLE, ast.T_MUL, ast.T_INTEGER})
-	l.close()
+	AssertLexerTokenSequenceFromState(t, `$foo*3`, lexExpression2, []ast.TokenType{ast.T_VARIABLE, ast.T_MUL, ast.T_INTEGER})
 }

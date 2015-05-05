@@ -181,10 +181,17 @@ func lexExpression(l *Lexer) stateFn {
 Lexing expression with interpolation support.
 */
 func lexExpression2(l *Lexer) stateFn {
-	var leadingSpace = l.ignoreSpaces()
+	var leadingSpaces = l.ignoreSpaces()
 
 	var r = l.peek()
 	var r2 = l.peekBy(2)
+	var lastToken = l.lastToken()
+
+	if leadingSpaces == 0 && lastToken != nil && lastToken.Type == ast.T_INTERPOLATION_END {
+		l.emit(ast.T_LITERAL_CONCAT)
+	} else if leadingSpaces == 0 && l.Offset > 0 && r == '#' && r2 == '{' {
+		l.emit(ast.T_LITERAL_CONCAT)
+	}
 
 	if l.matchKeywordMap(exprTokenMap) {
 
@@ -268,14 +275,11 @@ func lexExpression2(l *Lexer) stateFn {
 		// solution here..
 		if l.peekBy(2) == '{' {
 
-			// found interpolation
-			if !leadingSpace {
-				l.emit(ast.T_LITERAL_CONCAT)
-			}
 			lexInterpolation2(l)
-			return nil
+
+		} else {
+			lexHexColor(l)
 		}
-		lexHexColor(l)
 
 	} else if r == '"' || r == '\'' {
 
