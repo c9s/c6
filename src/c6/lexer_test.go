@@ -177,15 +177,39 @@ func TestLexerVariableWithPtValue(t *testing.T) {
 	})
 }
 
-func TestLexerVariableWithPxValue(t *testing.T) {
+func TestLexerVariableWithLengthValue(t *testing.T) {
 	AssertLexerTokenSequence(t, `$foo: 10px;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON,
 	})
-}
-
-func TestLexerVariableWithEmValue(t *testing.T) {
 	AssertLexerTokenSequence(t, `$foo: 0.3em;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_EM, ast.T_SEMICOLON,
+	})
+	AssertLexerTokenSequence(t, `$foo: 0.3rem;`, []ast.TokenType{
+		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_REM, ast.T_SEMICOLON,
+	})
+	AssertLexerTokenSequence(t, `$foo: 0.3pt;`, []ast.TokenType{
+		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_PT, ast.T_SEMICOLON,
+	})
+	AssertLexerTokenSequence(t, `$foo: 0.3in;`, []ast.TokenType{
+		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_IN, ast.T_SEMICOLON,
+	})
+	AssertLexerTokenSequence(t, `$foo: 0.3cm;`, []ast.TokenType{
+		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_CM, ast.T_SEMICOLON,
+	})
+	AssertLexerTokenSequence(t, `$foo: 0.3ch;`, []ast.TokenType{
+		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_CH, ast.T_SEMICOLON,
+	})
+}
+
+func TestLexerVariableWithDpiValue(t *testing.T) {
+	AssertLexerTokenSequence(t, `$foo: 0.3dpi;`, []ast.TokenType{
+		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_DPI, ast.T_SEMICOLON,
+	})
+	AssertLexerTokenSequence(t, `$foo: 0.3dpcm;`, []ast.TokenType{
+		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_DPCM, ast.T_SEMICOLON,
+	})
+	AssertLexerTokenSequence(t, `$foo: 0.3dppx;`, []ast.TokenType{
+		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_DPPX, ast.T_SEMICOLON,
 	})
 }
 

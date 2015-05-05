@@ -440,6 +440,10 @@ func lexNumberUnit(l *Lexer) stateFn {
 		l.emit(ast.T_UNIT_EM)
 	} else if l.match("cm") {
 		l.emit(ast.T_UNIT_CM)
+	} else if l.match("ch") {
+		l.emit(ast.T_UNIT_CH)
+	} else if l.match("in") {
+		l.emit(ast.T_UNIT_IN)
 	} else if l.match("mm") {
 		l.emit(ast.T_UNIT_MM)
 	} else if l.match("rem") {

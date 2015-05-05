@@ -71,8 +71,7 @@ To run specific test
   - [x] Parse Expression
   - [x] Parse Space-Sep List
   - [x] Parse Comma-Sep List
-  - [-] Parse Map (tests required)
-  - [ ] Parse Condition
+  - [x] Parse Map (tests required)
   - [x] Parse Selector
   - [ ] Parse Selector with interpolation
   - [x] Parse RuleSet
@@ -82,6 +81,7 @@ To run specific test
   - [ ] Parse PropertyName with interpolation
   - [-] Parse PropertyValue
   - [-] Parse PropertyValue with interpolation
+  - [ ] Parse conditions
   - [ ] Parse Nested RuleSet
   - [ ] Parse options: `!default`, `!global`, `!optional`
   - [ ] Parse CSS Hack for different browser (support more syntax sugar for this)
@@ -89,6 +89,7 @@ To run specific test
   - [ ] Parse `@mixin` statement
   - [ ] Parse `@include` statement
   - [ ] Parse `@function` statement
+  - [ ] Parse keyword arguments for `@function`
   - [ ] Parse `@media` statement
   - [ ] Parse `@switch` statement
   - [ ] Parse `@case` statement
