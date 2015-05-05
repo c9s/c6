@@ -86,6 +86,7 @@ To run specific test
   - [ ] Parse Nested RuleSet
   - [ ] Parse options: `!default`, `!global`, `!optional`
   - [ ] Parse CSS Hack for different browser (support more syntax sugar for this)
+  - [ ] Parse `@font-face` block
   - [ ] Parse `@if` statement
   - [ ] Parse `@mixin` statement
   - [ ] Parse `@include` statement
