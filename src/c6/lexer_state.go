@@ -425,44 +425,47 @@ func lexHexColor(l *Lexer) stateFn {
 	return lexExpression
 }
 
-/**
+var unitTokenMap = map[string]ast.TokenType{
+	"px":   ast.T_UNIT_PX,
+	"pt":   ast.T_UNIT_PT,
+	"pc":   ast.T_UNIT_PC,
+	"em":   ast.T_UNIT_EM,
+	"cm":   ast.T_UNIT_CM,
+	"ex":   ast.T_UNIT_EX,
+	"ch":   ast.T_UNIT_CH,
+	"in":   ast.T_UNIT_IN,
+	"mm":   ast.T_UNIT_MM,
+	"rem":  ast.T_UNIT_REM,
+	"vh":   ast.T_UNIT_VH,
+	"vw":   ast.T_UNIT_VW,
+	"vmin": ast.T_UNIT_VMIN,
+	"vmax": ast.T_UNIT_VMAX,
+	"deg":  ast.T_UNIT_DEG,
+	"grad": ast.T_UNIT_GRAD,
+	"rad":  ast.T_UNIT_RAD,
+	"turn": ast.T_UNIT_TURN,
+	"dpi":  ast.T_UNIT_DPI,
+	"dpcm": ast.T_UNIT_DPCM,
+	"dppx": ast.T_UNIT_DPPX,
+	"s":    ast.T_UNIT_SECOND,
+	"ms":   ast.T_UNIT_MILLISECOND,
+	"%":    ast.T_UNIT_PERCENT,
+}
 
+/**
 CSS time unit
 
 @see https://developer.mozilla.org/zh-TW/docs/Web/CSS/time
 */
 func lexNumberUnit(l *Lexer) stateFn {
-	if l.match("px") {
-		l.emit(ast.T_UNIT_PX)
-	} else if l.match("pt") {
-		l.emit(ast.T_UNIT_PT)
-	} else if l.match("em") {
-		l.emit(ast.T_UNIT_EM)
-	} else if l.match("cm") {
-		l.emit(ast.T_UNIT_CM)
-	} else if l.match("ch") {
-		l.emit(ast.T_UNIT_CH)
-	} else if l.match("in") {
-		l.emit(ast.T_UNIT_IN)
-	} else if l.match("mm") {
-		l.emit(ast.T_UNIT_MM)
-	} else if l.match("rem") {
-		l.emit(ast.T_UNIT_REM)
-	} else if l.match("deg") {
-		l.emit(ast.T_UNIT_DEG)
-	} else if l.match("s") {
-		l.emit(ast.T_UNIT_SECOND)
-	} else if l.match("ms") {
-		l.emit(ast.T_UNIT_MILLISECOND)
-	} else if l.match("dpi") {
-		l.emit(ast.T_UNIT_DPI)
-	} else if l.match("dpcm") {
-		l.emit(ast.T_UNIT_DPCM)
-	} else if l.match("dppx") {
-		l.emit(ast.T_UNIT_DPPX)
-	} else if l.match("%") {
-		l.emit(ast.T_UNIT_PERCENT)
-	} else if l.peek() == ';' {
+
+	for key, tokenType := range unitTokenMap {
+		if l.match(key) {
+			l.emit(tokenType)
+			break
+		}
+	}
+	if l.peek() == ';' {
 		return lexStatement
 	}
 	return lexExpression
