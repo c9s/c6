@@ -51,6 +51,7 @@ To run specific test
   - [x] Property value list
   - [x] Comma-separated list
   - [x] Space-separated list
+  - [x] `@if` , `@else` , `@else if`
   - [x] Hex color
   - [x] Functions
   - [x] Vendor prefix properties

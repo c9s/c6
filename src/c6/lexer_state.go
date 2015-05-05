@@ -13,6 +13,13 @@ type stateFn func(*Lexer) stateFn
 const LETTERS = "zxcvbnmasdfghjklqwertyuiop"
 const DIGITS = "1234567890"
 
+var flagTokenMap = KeywordTokenMap{
+	"!global":    ast.T_GLOBAL,
+	"!default":   ast.T_DEFAULT,
+	"!important": ast.T_IMPORTANT,
+	"!optional":  ast.T_OPTIONAL,
+}
+
 var atRuleTokenMap = KeywordTokenMap{
 	/* CSS */
 	"@import":   ast.T_IMPORT,
@@ -580,15 +587,6 @@ func lexStatement(l *Lexer) stateFn {
 	}
 	return nil
 }
-
-/*
-func lexKeywords(l *Lexer) stateFn {
-	// "!global"
-	// "!important"
-	// "!optional"
-	// !default
-}
-*/
 
 func lexStart(l *Lexer) stateFn {
 	return lexStatement

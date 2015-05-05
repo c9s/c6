@@ -100,6 +100,12 @@ const (
 	T_MIXIN
 	T_FUNCTION
 
+	// Flag token types
+	T_GLOBAL
+	T_DEFAULT
+	T_IMPORTANT
+	T_OPTIONAL
+
 	T_OR  // 'or' used in conditional query
 	T_AND // 'and' used in conditional query
 	T_XOR
