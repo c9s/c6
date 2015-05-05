@@ -471,8 +471,7 @@ func (parser *Parser) ParseList() ast.Expression {
 
 func (parser *Parser) ParseCommaSepList() ast.Expression {
 	debug("ParseCommaSepList at %d", parser.Pos)
-	var list = ast.NewList()
-	list.Separator = ", "
+	var list = ast.NewCommaSepList()
 
 	var tok = parser.peek()
 	for tok.Type != ast.T_COMMA && tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
@@ -557,7 +556,7 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 func (parser *Parser) ParseSpaceSepList() ast.Expression {
 	debug("ParseSpaceSepList at %d", parser.Pos)
 
-	var list = ast.NewList()
+	var list = ast.NewSpaceSepList()
 	list.Separator = " "
 
 	var tok = parser.peek()
@@ -601,7 +600,7 @@ We treat the property value section as a list value, which is separated by ',' o
 func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *ast.Property) *ast.List {
 	debug("ParsePropertyValue")
 	// var tok = parser.peek()
-	var list = ast.NewList()
+	var list = ast.NewSpaceSepList()
 
 	var tok = parser.peek()
 	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {

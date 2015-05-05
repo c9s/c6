@@ -29,6 +29,14 @@ func (list *List) Append(expr Expression) {
 }
 
 // By the default, the separator is space
-func NewList() *List {
+func NewList(sep string) *List {
+	return &List{sep, []Expression{}}
+}
+
+func NewSpaceSepList() *List {
 	return &List{" ", []Expression{}}
+}
+
+func NewCommaSepList() *List {
+	return &List{", ", []Expression{}}
 }
