@@ -656,3 +656,20 @@ func TestLexerMediaQueryConditionWithExpressions(t *testing.T) {
 			ast.T_BRACE_END,
 		})
 }
+
+func TestLexerMediaQueryConditionSimpleMaxWidth(t *testing.T) {
+	code := `
+	@media (max-width: 1024px) {
+		html, body, .container-base, .top-bar {
+			width: 1024px;
+		}
+	}
+	`
+	AssertLexerTokenSequence(t, code, []ast.TokenType{
+		ast.T_MEDIA, ast.T_PAREN_START, ast.T_IDENT, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_PAREN_END, ast.T_BRACE_START,
+		ast.T_TYPE_SELECTOR, ast.T_COMMA, ast.T_TYPE_SELECTOR, ast.T_COMMA, ast.T_CLASS_SELECTOR, ast.T_COMMA, ast.T_CLASS_SELECTOR, ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON,
+		ast.T_BRACE_END,
+		ast.T_BRACE_END,
+	})
+}
