@@ -289,8 +289,11 @@ func lexAtRule(l *Lexer) stateFn {
 		l.emit(ast.T_CHARSET)
 		l.ignoreSpaces()
 		return lexStatement
+
 	} else {
-		panic("Unknown at-rule directive")
+
+		panic("Unsupported at-rule directive")
+
 	}
 	return nil
 }
