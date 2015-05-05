@@ -415,7 +415,7 @@ func lexHexColor(l *Lexer) stateFn {
 	}
 
 	r = l.next()
-	for unicode.IsLetter(r) || unicode.IsDigit(r) {
+	for unicode.In(r, unicode.ASCII_Hex_Digit) {
 		r = l.next()
 	}
 	l.backup()
