@@ -138,10 +138,12 @@ A feature check list from libsass:
 - https://github.com/sass/sass/issues/1094
 
 
-## Channel
+## Community
 
-We are on Slack channel `#c6`, go invite yourself here:
+- Slack: we are on Slack channel `#c6`, go invite yourself here:
 <https://docs.google.com/forms/d/11KpalZc6AUuQYf7vz531ys0pLEC9csjkC6QyC_hJQEg/viewform>
+
+- Our Official Twitter Channel: <https://twitter.com/C6SASS>
 
 ## License
 
