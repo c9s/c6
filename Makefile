@@ -6,9 +6,10 @@ test: all
 	go test c6/ast
 	go test c6
 
-bench: all
-	go test -bench=. c6
-
+benchcmp: all
+	# go test -run=NONE -bench=. c6 >| benchmarks/old.txt
+	go test -run=NONE -bench=. c6 >| benchmarks/new.txt
+	vendor/bin/benchcmp benchmarks/old.txt benchmarks/new.txt
 
 cov:
 	go test -coverprofile=c6.cov c6

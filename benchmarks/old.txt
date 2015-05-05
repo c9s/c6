@@ -1,0 +1,3 @@
+PASS
+BenchmarkLexer	  100000	     21309 ns/op
+ok  	c6	2.345s
