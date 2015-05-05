@@ -290,6 +290,18 @@ func lexAtRule(l *Lexer) stateFn {
 		l.ignoreSpaces()
 		return lexStatement
 
+	} else if l.match("mixin") {
+
+		panic("@mixin is not supported yet.")
+
+	} else if l.match("include") {
+
+		panic("@include is not supported yet")
+
+	} else if l.match("function") {
+
+		panic("@function is not supported yet")
+
 	} else {
 
 		panic("Unsupported at-rule directive")
