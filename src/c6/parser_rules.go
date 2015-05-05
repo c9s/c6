@@ -12,13 +12,29 @@ func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
 	var token = parser.peek()
 
 	if token.Type == ast.T_IMPORT {
+
 		return parser.ParseImportStatement()
+
 	} else if token.Type == ast.T_VARIABLE {
+
 		return parser.ParseVariableAssignment()
+
+	} else if token.Type == ast.T_IF {
+
+		return parser.ParseIfStatement()
+
 	} else if token.IsSelector() {
+
 		return parser.ParseRuleSet(parentRuleSet)
+
 	}
 	return nil
+}
+
+func (parser *Parser) ParseIfStatement() ast.Statement {
+
+	return nil
+
 }
 
 func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {

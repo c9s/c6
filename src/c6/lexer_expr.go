@@ -158,7 +158,7 @@ func lexExpression(l *Lexer) stateFn {
 	} else if r == '=' {
 
 		l.next()
-		l.emit(ast.T_EQUAL)
+		l.emit(ast.T_ATTR_EQUAL)
 
 	} else if r == '#' {
 

@@ -1,10 +1,11 @@
 package c6
 
-import "testing"
-import "c6/ast"
-import "github.com/stretchr/testify/assert"
-
-import "fmt"
+import (
+	"c6/ast"
+	"fmt"
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
 
 func RunParserTest(code string) *ast.Block {
 	fmt.Printf("Test parsing: %s\n", code)
@@ -60,7 +61,7 @@ func TestParserParseCSS3Gradient(t *testing.T) {
 		`div { background: linear-gradient(black 0, white 100%); }`,
 		`div { background: radial-gradient(#06c 0, #fc0 50%, #039 100%); }`,
 		`div { background: linear-gradient(red 0%, green 33.3%, blue 66.7%, black 100%); }`,
-		`div { background: background: -webkit-radial-gradient(100px 200px, circle closest-side, black, white); }`,
+		`div { background: -webkit-radial-gradient(100px 200px, circle closest-side, black, white); }`,
 	}
 	for _, buffer := range buffers {
 		var block = RunParserTest(buffer)
@@ -169,9 +170,21 @@ func TestParserParseTypeSelectorRule(t *testing.T) {
 
 	t.Logf("%+v\n", ruleset.Selectors)
 	t.Logf("%+v\n", ruleset.DeclarationBlock)
-
-	// _ = block
 }
+
+/*
+func TestParserIfStatementTrueCondition(t *testing.T) {
+	parser := NewParser(NewContext())
+	block := parser.ParseScss(`
+	div {
+		@if true {
+			color: red;
+		}
+	}
+	`)
+	_ = block
+}
+*/
 
 /*
 func TestParserParseEmptyRuleWithClassSelector(t *testing.T) {

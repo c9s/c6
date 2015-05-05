@@ -269,11 +269,18 @@ func lexAtRule(l *Lexer) stateFn {
 		case ast.T_MEDIA:
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
-
 			l.ignoreSpaces()
+			// go back to block state for lexing
 			return lexStatement
 
 		case ast.T_CHARSET:
+			l.ignoreSpaces()
+			return lexStatement
+
+		case ast.T_IF:
+			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
+			}
+			// go back to block state for lexing
 			l.ignoreSpaces()
 			return lexStatement
 

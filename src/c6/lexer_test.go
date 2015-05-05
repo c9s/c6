@@ -500,9 +500,9 @@ func TestLexerMSFilterGradient(t *testing.T) {
 		ast.T_MS_PROGID,
 		ast.T_FUNCTION_NAME,
 		ast.T_PAREN_START,
-		ast.T_MS_PARAM_NAME, ast.T_EQUAL, ast.T_INTEGER, ast.T_COMMA,
-		ast.T_MS_PARAM_NAME, ast.T_EQUAL, ast.T_Q_STRING, ast.T_COMMA,
-		ast.T_MS_PARAM_NAME, ast.T_EQUAL, ast.T_Q_STRING,
+		ast.T_MS_PARAM_NAME, ast.T_ATTR_EQUAL, ast.T_INTEGER, ast.T_COMMA,
+		ast.T_MS_PARAM_NAME, ast.T_ATTR_EQUAL, ast.T_Q_STRING, ast.T_COMMA,
+		ast.T_MS_PARAM_NAME, ast.T_ATTR_EQUAL, ast.T_Q_STRING,
 		ast.T_PAREN_END,
 		ast.T_SEMICOLON,
 		ast.T_BRACE_END,
@@ -521,8 +521,8 @@ func TestLexerMSFilterBasicImage(t *testing.T) {
 		ast.T_MS_PROGID,
 		ast.T_FUNCTION_NAME,
 		ast.T_PAREN_START,
-		ast.T_MS_PARAM_NAME, ast.T_EQUAL, ast.T_INTEGER, ast.T_COMMA,
-		ast.T_MS_PARAM_NAME, ast.T_EQUAL, ast.T_INTEGER,
+		ast.T_MS_PARAM_NAME, ast.T_ATTR_EQUAL, ast.T_INTEGER, ast.T_COMMA,
+		ast.T_MS_PARAM_NAME, ast.T_ATTR_EQUAL, ast.T_INTEGER,
 		ast.T_PAREN_END,
 		ast.T_SEMICOLON,
 		ast.T_BRACE_END,
@@ -645,6 +645,55 @@ func TestLexerMapValue(t *testing.T) {
 		ast.T_SEMICOLON,
 	})
 }
+
+/**********************************************************************
+If Statement Test Case
+***********************************************************************/
+func TestLexerIfStatementTrueCondition(t *testing.T) {
+	AssertLexerTokenSequence(t, `
+	@if true {
+		color: red;
+	}
+	`, []ast.TokenType{ast.T_IF, ast.T_TRUE, ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_COLON,
+		ast.T_IDENT,
+		ast.T_SEMICOLON,
+		ast.T_BRACE_END,
+	})
+}
+
+func TestLexerIfStatementFalseCondition(t *testing.T) {
+	AssertLexerTokenSequence(t, `
+	@if false {
+		color: red;
+	}
+	`, []ast.TokenType{ast.T_IF, ast.T_FALSE, ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_COLON,
+		ast.T_IDENT,
+		ast.T_SEMICOLON,
+		ast.T_BRACE_END,
+	})
+}
+
+func TestLexerIfStatementTrueOrFalseCondition(t *testing.T) {
+	AssertLexerTokenSequence(t, `
+	@if true or false {
+		color: red;
+	}
+	`, []ast.TokenType{ast.T_IF, ast.T_TRUE, ast.T_OR, ast.T_FALSE, ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_COLON,
+		ast.T_IDENT,
+		ast.T_SEMICOLON,
+		ast.T_BRACE_END,
+	})
+}
+
+/**********************************************************************
+Media Query Test Case
+***********************************************************************/
 
 func TestLexerMediaQueryCondition(t *testing.T) {
 	AssertLexerTokenSequence(t, `@media screen and (orientation: landscape) { }`,

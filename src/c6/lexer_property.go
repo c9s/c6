@@ -45,7 +45,7 @@ func lexMicrosoftProgIdFunction(l *Lexer) stateFn {
 		l.backup()
 		l.emit(ast.T_MS_PARAM_NAME)
 		l.accept("=")
-		l.emit(ast.T_EQUAL)
+		l.emit(ast.T_ATTR_EQUAL)
 
 		lexExpression(l)
 

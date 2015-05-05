@@ -119,9 +119,16 @@ const (
 	T_BRACKET_LEFT
 	T_ATTRIBUTE_NAME
 	T_BRACKET_RIGHT
-	T_EQUAL       // for '='
-	T_TILDE_EQUAL // for '~='
-	T_PIPE_EQUAL  // for '|='
+
+	T_EQUAL // for '=='
+	// T_GT    // greater than for '>'
+	T_GE // for '>='
+	T_LT // less than for '<'
+	T_LE // for '<='
+
+	T_ATTR_EQUAL        // for '=', used in attribute selector
+	T_ATTR_TILDE_EQUAL  // for '~='
+	T_ATTR_HYPHEN_EQUAL // for '|='
 	T_VARIABLE
 
 	T_IMPORT

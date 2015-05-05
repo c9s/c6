@@ -75,13 +75,13 @@ func lexAttributeSelector(l *Lexer) stateFn {
 
 		if r == '=' {
 			l.next()
-			l.emit(ast.T_EQUAL)
+			l.emit(ast.T_ATTR_EQUAL)
 			attrOp = true
 		} else if l.match("~=") {
-			l.emit(ast.T_TILDE_EQUAL)
+			l.emit(ast.T_ATTR_TILDE_EQUAL)
 			attrOp = true
 		} else if l.match("|=") {
-			l.emit(ast.T_PIPE_EQUAL)
+			l.emit(ast.T_ATTR_HYPHEN_EQUAL)
 			attrOp = true
 		}
 

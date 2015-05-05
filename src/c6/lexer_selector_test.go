@@ -54,7 +54,7 @@ func TestLexerRuleWithAttributeSelectorEqualToUnquoteString(t *testing.T) {
 	l := NewLexerWithString(`[lang=en] {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_EQUAL, ast.T_UNQUOTE_STRING, ast.T_BRACKET_RIGHT, ast.T_BRACE_START, ast.T_BRACE_END})
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_ATTR_EQUAL, ast.T_UNQUOTE_STRING, ast.T_BRACKET_RIGHT, ast.T_BRACE_START, ast.T_BRACE_END})
 	l.close()
 }
 
@@ -62,7 +62,7 @@ func TestLexerRuleWithAttributeSelectorEqualToQQString(t *testing.T) {
 	l := NewLexerWithString(`[lang="en"] {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_EQUAL, ast.T_QQ_STRING, ast.T_BRACKET_RIGHT, ast.T_BRACE_START, ast.T_BRACE_END})
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_ATTR_EQUAL, ast.T_QQ_STRING, ast.T_BRACKET_RIGHT, ast.T_BRACE_START, ast.T_BRACE_END})
 	l.close()
 }
 
@@ -70,7 +70,7 @@ func TestLexerRuleWithAttributeSelectorContainsQQString(t *testing.T) {
 	l := NewLexerWithString(`[lang~="en"] {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_TILDE_EQUAL, ast.T_QQ_STRING, ast.T_BRACKET_RIGHT, ast.T_BRACE_START, ast.T_BRACE_END})
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_ATTR_TILDE_EQUAL, ast.T_QQ_STRING, ast.T_BRACKET_RIGHT, ast.T_BRACE_START, ast.T_BRACE_END})
 	l.close()
 }
 
@@ -78,7 +78,7 @@ func TestLexerRuleWithAttributeSelectorAfterTagNameContainsQQString2(t *testing.
 	l := NewLexerWithString(`a[rel~="copyright"] {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_TILDE_EQUAL, ast.T_QQ_STRING, ast.T_BRACKET_RIGHT, ast.T_BRACE_START, ast.T_BRACE_END})
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_ATTR_TILDE_EQUAL, ast.T_QQ_STRING, ast.T_BRACKET_RIGHT, ast.T_BRACE_START, ast.T_BRACE_END})
 	l.close()
 }
 
@@ -102,9 +102,9 @@ func TestLexerRuleAttributeSelectorGrouping(t *testing.T) {
 	l.run()
 	AssertTokenSequence(t, l, []ast.TokenType{
 
-		ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_EQUAL, ast.T_UNQUOTE_STRING, ast.T_BRACKET_RIGHT, ast.T_COMMA,
-		ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_EQUAL, ast.T_UNQUOTE_STRING, ast.T_BRACKET_RIGHT, ast.T_COMMA,
-		ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_EQUAL, ast.T_UNQUOTE_STRING, ast.T_BRACKET_RIGHT,
+		ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_ATTR_EQUAL, ast.T_UNQUOTE_STRING, ast.T_BRACKET_RIGHT, ast.T_COMMA,
+		ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_ATTR_EQUAL, ast.T_UNQUOTE_STRING, ast.T_BRACKET_RIGHT, ast.T_COMMA,
+		ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_ATTR_EQUAL, ast.T_UNQUOTE_STRING, ast.T_BRACKET_RIGHT,
 
 		ast.T_BRACE_START,
 		ast.T_BRACE_END})
@@ -117,8 +117,8 @@ func TestLexerRuleWithCombinedAttributeSelector(t *testing.T) {
 	l.run()
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_TYPE_SELECTOR,
-		ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_EQUAL, ast.T_QQ_STRING, ast.T_BRACKET_RIGHT,
-		ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_EQUAL, ast.T_QQ_STRING, ast.T_BRACKET_RIGHT,
+		ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_ATTR_EQUAL, ast.T_QQ_STRING, ast.T_BRACKET_RIGHT,
+		ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME, ast.T_ATTR_EQUAL, ast.T_QQ_STRING, ast.T_BRACKET_RIGHT,
 		ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
@@ -195,7 +195,7 @@ func TestLexerRuleAttributeSelectorWithInterpolationInAttributeName2(t *testing.
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_BRACKET_LEFT,
 		ast.T_ATTRIBUTE_NAME,
-		ast.T_EQUAL,
+		ast.T_ATTR_EQUAL,
 		ast.T_QQ_STRING,
 		ast.T_BRACKET_RIGHT,
 		ast.T_BRACE_START, ast.T_BRACE_END})
@@ -211,7 +211,7 @@ func TestLexerRuleUniversalSelectorPlusClassSelectorPlusAttributeSelector(t *tes
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACKET_LEFT,
 		ast.T_ATTRIBUTE_NAME,
-		ast.T_EQUAL,
+		ast.T_ATTR_EQUAL,
 		ast.T_QQ_STRING,
 		ast.T_BRACKET_RIGHT,
 		ast.T_BRACE_START, ast.T_BRACE_END})

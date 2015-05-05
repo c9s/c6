@@ -80,8 +80,8 @@ To run specific test
   - [x] Parse Variable Assignment Statement
   - [x] Parse PropertyName
   - [ ] Parse PropertyName with interpolation
-  - [-] Parse PropertyValue
-  - [-] Parse PropertyValue with interpolation
+  - [x] Parse PropertyValue
+  - [x] Parse PropertyValue with interpolation
   - [ ] Parse conditions
   - [ ] Parse Nested RuleSet
   - [ ] Parse options: `!default`, `!global`, `!optional`
