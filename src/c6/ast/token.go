@@ -137,6 +137,9 @@ const (
 	T_UNIT_PX
 	T_UNIT_REM
 
+	T_UNIT_HZ
+	T_UNIT_KHZ
+
 	// Resolution
 	T_UNIT_DPI
 	T_UNIT_DPCM

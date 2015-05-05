@@ -57,6 +57,13 @@ const (
 	UNIT_DPI
 	UNIT_DPPX
 	UNIT_DPCM
+
+	/*
+		Frequency unit
+		@see https://developer.mozilla.org/en-US/docs/Web/CSS/frequency
+	*/
+	UNIT_HZ
+	UNIT_KHZ
 )
 
 func (unit UnitType) UnitString() string {
