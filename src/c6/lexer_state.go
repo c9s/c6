@@ -22,14 +22,15 @@ var flagTokenMap = KeywordTokenMap{
 
 var atRuleTokenMap = KeywordTokenMap{
 	/* CSS */
-	"@import":   ast.T_IMPORT,
-	"@media":    ast.T_MEDIA,
-	"@if":       ast.T_IF,
-	"@else":     ast.T_ELSE,
-	"@else if":  ast.T_ELSE_IF,
-	"@include":  ast.T_INCLUDE,
-	"@function": ast.T_FUNCTION,
-	"@mixin":    ast.T_MIXIN,
+	"@import":    ast.T_IMPORT,
+	"@media":     ast.T_MEDIA,
+	"@if":        ast.T_IF,
+	"@else":      ast.T_ELSE,
+	"@else if":   ast.T_ELSE_IF,
+	"@include":   ast.T_INCLUDE,
+	"@function":  ast.T_FUNCTION,
+	"@mixin":     ast.T_MIXIN,
+	"@font-face": ast.T_FONT_FACE,
 }
 
 var exprTokenMap = KeywordTokenMap{
