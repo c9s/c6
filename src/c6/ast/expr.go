@@ -63,7 +63,7 @@ The the divide expression will only be evaluated in the following 3 conditions:
 
 @see http://sass-lang.com/documentation/file.SASS_REFERENCE.html#division-and-slash
 */
-func (self *BinaryExpression) ShallDivide() bool {
+func (self *BinaryExpression) IsCssSlash() bool {
 	if self.Op == OpDiv {
 		_, aok := self.Left.(*Length)
 		_, bok := self.Right.(*Length)
@@ -78,6 +78,11 @@ func (self *BinaryExpression) ShallDivide() bool {
 }
 
 func (self *BinaryExpression) Evaluate(symTable *SymTable) Value {
+	if self.IsCssSlash() {
+		// return string object without quote
+		return NewString(0, self.Left.(*Length).String()+"/"+self.Right.(*Length).String(), nil)
+	}
+
 	var lval Value = nil
 	var rval Value = nil
 

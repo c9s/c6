@@ -200,7 +200,7 @@ func (parser *Parser) ParseFactor() ast.Expression {
 	} else if tok.Type == ast.T_IDENT {
 
 		tok = parser.next()
-		return ast.Expression(ast.NewString(tok))
+		return ast.Expression(ast.NewStringWithToken(tok))
 
 	} else if tok.Type == ast.T_HEX_COLOR {
 
@@ -373,7 +373,7 @@ func (parser *Parser) ParseString() ast.Expression {
 	} else if tok.Type == ast.T_IDENT {
 
 		tok = parser.next()
-		return ast.Expression(ast.NewString(tok))
+		return ast.Expression(ast.NewStringWithToken(tok))
 
 	} else if tok.Type == ast.T_INTERPOLATION_START {
 
@@ -443,6 +443,15 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 			expr = ast.NewLiteralConcat(expr, rightExpr)
 			tok = parser.peek()
 		}
+
+		if bexpr, ok := expr.(*ast.BinaryExpression); ok {
+			// try to evaluate
+			if value := bexpr.Evaluate(nil); value != nil {
+				return value
+			}
+		}
+
+		// if we can't evaluate the value, just return the expression tree
 		return expr
 	}
 	return nil

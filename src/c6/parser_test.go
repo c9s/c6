@@ -66,6 +66,13 @@ func TestParserPropertyListExpression(t *testing.T) {
 	}
 }
 
+func TestParserFontCssSlash(t *testing.T) {
+	// should be plain CSS, no division
+	// TODO: verify this case
+	var block = RunParserTest(`.foo { font: 12px/24px; }`)
+	fmt.Printf("%+v\n", block)
+}
+
 func TestParserVariableAssignmentWithMorePlus(t *testing.T) {
 	var block = RunParserTest(`$foo: 12px + 20px + 20px;`)
 	fmt.Printf("%+v\n", block)
