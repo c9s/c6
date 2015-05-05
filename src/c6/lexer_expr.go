@@ -81,7 +81,7 @@ func lexExpression(l *Lexer) stateFn {
 		}
 	}
 
-	if l.matchKeywordMap(exprTokenMap) {
+	if l.matchKeywordMap(exprTokenMap) != 0 {
 
 	} else if r == 'U' && r2 == '+' {
 

@@ -337,7 +337,7 @@ func (l *Lexer) match(str string) bool {
 
 type KeywordTokenMap map[string]ast.TokenType
 
-func (l *Lexer) matchKeywordMap(keywords KeywordTokenMap) bool {
+func (l *Lexer) matchKeywordMap(keywords KeywordTokenMap) ast.TokenType {
 	for str, tokType := range keywords {
 		l.remember()
 		if l.match(str) {
@@ -348,10 +348,10 @@ func (l *Lexer) matchKeywordMap(keywords KeywordTokenMap) bool {
 				continue
 			}
 			l.emit(tokType)
-			return true
+			return tokType
 		}
 	}
-	return false
+	return 0
 }
 
 func (l *Lexer) precedeStartOffset() bool {
