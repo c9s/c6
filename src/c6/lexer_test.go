@@ -177,6 +177,21 @@ func TestLexerVariableAssignmentWithInterp(t *testing.T) {
 	})
 }
 
+func TestLexerVariableAssignmentWithIdent(t *testing.T) {
+	AssertLexerTokenSequence(t, `$media: screen;`, []ast.TokenType{
+		ast.T_VARIABLE, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
+	})
+	AssertLexerTokenSequence(t, `$feature: -webkit-min-device-pixel-ratio;`, []ast.TokenType{
+		ast.T_VARIABLE, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
+	})
+}
+
+func TestLexerVariableAssignmentWithFloatingNumber(t *testing.T) {
+	AssertLexerTokenSequence(t, `$value: 1.5;`, []ast.TokenType{
+		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_SEMICOLON,
+	})
+}
+
 func TestLexerVariableAssignmentWithPtValue(t *testing.T) {
 	AssertLexerTokenSequence(t, `$foo: 10pt;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PT, ast.T_SEMICOLON,
