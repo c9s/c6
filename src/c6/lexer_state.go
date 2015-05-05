@@ -13,40 +13,49 @@ type stateFn func(*Lexer) stateFn
 const LETTERS = "zxcvbnmasdfghjklqwertyuiop"
 const DIGITS = "1234567890"
 
-var LexKeywords = map[string]int{}
+var exprTokenMap = KeywordTokenMap{
+	"true":  ast.T_TRUE,
+	"false": ast.T_FALSE,
+	"null":  ast.T_NULL,
+	"and":   ast.T_AND,
+	"or":    ast.T_OR,
+	"xor":   ast.T_XOR,
+}
+
+var unitTokenMap = KeywordTokenMap{
+	"px":  ast.T_UNIT_PX,
+	"pt":  ast.T_UNIT_PT,
+	"pc":  ast.T_UNIT_PC,
+	"em":  ast.T_UNIT_EM,
+	"cm":  ast.T_UNIT_CM,
+	"ex":  ast.T_UNIT_EX,
+	"ch":  ast.T_UNIT_CH,
+	"in":  ast.T_UNIT_IN,
+	"mm":  ast.T_UNIT_MM,
+	"rem": ast.T_UNIT_REM,
+	"vh":  ast.T_UNIT_VH,
+	"vw":  ast.T_UNIT_VW,
+
+	"Hz":  ast.T_UNIT_HZ,
+	"kHz": ast.T_UNIT_KHZ,
+
+	"vmin": ast.T_UNIT_VMIN,
+	"vmax": ast.T_UNIT_VMAX,
+	"deg":  ast.T_UNIT_DEG,
+	"grad": ast.T_UNIT_GRAD,
+	"rad":  ast.T_UNIT_RAD,
+	"turn": ast.T_UNIT_TURN,
+	"dpi":  ast.T_UNIT_DPI,
+	"dpcm": ast.T_UNIT_DPCM,
+	"dppx": ast.T_UNIT_DPPX,
+	"s":    ast.T_UNIT_SECOND,
+	"ms":   ast.T_UNIT_MILLISECOND,
+	"%":    ast.T_UNIT_PERCENT,
+}
 
 func (l *Lexer) error(msg string, r rune) {
 	var err = errors.New(fmt.Sprintf(msg, string(r)))
 	panic(err)
-}
-
-func (l *Lexer) emitIfKeywordMatches() bool {
-	l.remember()
-	for keyword, typ := range LexKeywords {
-		var match bool = true
-	next_keyword:
-		for _, sc := range keyword {
-			c := l.next()
-			if c == EOF {
-				match = false
-				break next_keyword
-			}
-			if sc != c {
-				match = false
-				break next_keyword
-			}
-		}
-		if match {
-			c := l.next()
-			if c == '\n' || c == EOF || c == ' ' || c == '\t' || unicode.IsSymbol(c) {
-				l.backup()
-				l.emit(ast.TokenType(typ))
-				return true
-			}
-		}
-		l.rollback()
-	}
-	return false
 }
 
 func lexCommentLine(l *Lexer, emit bool) stateFn {
@@ -435,37 +444,6 @@ func lexHexColor(l *Lexer) stateFn {
 	}
 	l.emit(ast.T_HEX_COLOR)
 	return lexExpression
-}
-
-var unitTokenMap = KeywordTokenMap{
-	"px":  ast.T_UNIT_PX,
-	"pt":  ast.T_UNIT_PT,
-	"pc":  ast.T_UNIT_PC,
-	"em":  ast.T_UNIT_EM,
-	"cm":  ast.T_UNIT_CM,
-	"ex":  ast.T_UNIT_EX,
-	"ch":  ast.T_UNIT_CH,
-	"in":  ast.T_UNIT_IN,
-	"mm":  ast.T_UNIT_MM,
-	"rem": ast.T_UNIT_REM,
-	"vh":  ast.T_UNIT_VH,
-	"vw":  ast.T_UNIT_VW,
-
-	"Hz":  ast.T_UNIT_HZ,
-	"kHz": ast.T_UNIT_KHZ,
-
-	"vmin": ast.T_UNIT_VMIN,
-	"vmax": ast.T_UNIT_VMAX,
-	"deg":  ast.T_UNIT_DEG,
-	"grad": ast.T_UNIT_GRAD,
-	"rad":  ast.T_UNIT_RAD,
-	"turn": ast.T_UNIT_TURN,
-	"dpi":  ast.T_UNIT_DPI,
-	"dpcm": ast.T_UNIT_DPCM,
-	"dppx": ast.T_UNIT_DPPX,
-	"s":    ast.T_UNIT_SECOND,
-	"ms":   ast.T_UNIT_MILLISECOND,
-	"%":    ast.T_UNIT_PERCENT,
 }
 
 /**

@@ -62,22 +62,13 @@ func lexIdentifier(l *Lexer) stateFn {
 	return lexExpression
 }
 
-var exprKeywords = KeywordTokenMap{
-	"true":  ast.T_TRUE,
-	"false": ast.T_FALSE,
-	"null":  ast.T_NULL,
-	"and":   ast.T_AND,
-	"or":    ast.T_OR,
-	"xor":   ast.T_XOR,
-}
-
 func lexExpression(l *Lexer) stateFn {
 	l.ignoreSpaces()
 
 	var r = l.peek()
 	var r2 = l.peekBy(2)
 
-	if l.matchKeywordMap(exprKeywords) {
+	if l.matchKeywordMap(exprTokenMap) {
 
 	} else if r == 'U' && r2 == '+' {
 
