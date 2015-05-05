@@ -127,8 +127,13 @@ func lexExpression(l *Lexer) stateFn {
 
 	} else if r == '/' {
 
-		l.next()
-		l.emit(ast.T_DIV)
+		if r2 == '*' {
+			// don't emit the comment inside the expression
+			lexComment(l, false)
+		} else {
+			l.next()
+			l.emit(ast.T_DIV)
+		}
 
 	} else if r == ':' { // a port of map
 
