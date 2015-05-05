@@ -3,11 +3,11 @@ all:
 	go install -x c6 c6/ast
 
 test: all
-	go test -i c6/ast
-	go test -i c6
+	go test c6/ast
+	go test c6
 
 bench: all
-	go test -i -bench=. c6
+	go test -bench=. c6
 
 
 cov:
