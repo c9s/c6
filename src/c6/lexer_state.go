@@ -278,9 +278,10 @@ func lexAtRule(l *Lexer) stateFn {
 	} else if l.match("media") {
 
 		l.emit(ast.T_MEDIA)
-		l.ignoreSpaces()
+
 		for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 		}
+
 		l.ignoreSpaces()
 		return lexStatement
 

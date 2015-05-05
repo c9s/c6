@@ -642,17 +642,17 @@ func TestLexerMediaQueryCondition(t *testing.T) {
 		})
 }
 
-/*
 func TestLexerMediaQueryConditionWithExpressions(t *testing.T) {
 	AssertLexerTokenSequence(t, `@media #{$media} and ($feature: $value) {
   .sidebar {
     width: 500px;
   }
 }`,
-		[]ast.TokenType{ast.T_MEDIA, ast.T_IDENT, ast.T_AND,
-			ast.T_PAREN_START, ast.T_IDENT, ast.T_COLON, ast.T_IDENT, ast.T_PAREN_END,
+		[]ast.TokenType{ast.T_MEDIA, ast.T_INTERPOLATION_START, ast.T_VARIABLE, ast.T_INTERPOLATION_END, ast.T_AND,
+			ast.T_PAREN_START, ast.T_VARIABLE, ast.T_COLON, ast.T_VARIABLE, ast.T_PAREN_END,
 			ast.T_BRACE_START,
+			ast.T_CLASS_SELECTOR,
+			ast.T_BRACE_START, ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON, ast.T_BRACE_END,
 			ast.T_BRACE_END,
 		})
 }
-*/
