@@ -108,17 +108,18 @@ To run specific test
   - [x] Variable statements
   - [ ] If Condition
   - [ ] If Else If, Else Condition
-  - [ ] Built-in color keyword table
+  - [x] Built-in color keyword table
   - [ ] Hex Color computation
   - [ ] HSL Color computation
-  - [ ] Number operation: add, sub, mul, div
-  - [ ] Length operation: number operation for px, pt, em, rem, cm ...etc
+  - [x] Number operation: add, sub, mul, div
+  - [x] Length operation: number operation for px, pt, em, rem, cm ...etc
   - [ ] Expression evaluation
   - [ ] Media Query conditions
 - [ ] CodeGen
   - [ ] NestedStyleCompiler
     - [ ] .... list ast nodes here ....
 
+<!--
 ## Features
 
 - [ ] import directory: https://github.com/sass/sass/issues/690
@@ -128,6 +129,7 @@ To run specific test
 - [ ] `@use` directive: https://github.com/nex3/sass/issues/353#issuecomment-5146513 
 - [ ] conditional import: https://github.com/sass/sass/issues/451
 - [ ] `@sprite` syntax sugar
+-->
 
 
 
