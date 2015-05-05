@@ -106,6 +106,8 @@ const (
 	T_IMPORTANT
 	T_OPTIONAL
 
+	T_FONT_FACE
+
 	T_OR  // 'or' used in conditional query
 	T_AND // 'and' used in conditional query
 	T_XOR
