@@ -177,6 +177,12 @@ func TestLexerVariableWithPtValue(t *testing.T) {
 	})
 }
 
+func TestLexerVariableWithLengthValueStartWithDot(t *testing.T) {
+	AssertLexerTokenSequence(t, `$foo: .3em;`, []ast.TokenType{
+		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_PX, ast.T_SEMICOLON,
+	})
+}
+
 func TestLexerVariableWithLengthValue(t *testing.T) {
 	AssertLexerTokenSequence(t, `$foo: 10px;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON,

@@ -1,7 +1,8 @@
 package ast
 
 import "fmt"
-import "strings"
+
+// import "strings"
 
 //go:generate stringer -type=UnitType token.go unit.go
 type UnitType int
@@ -98,9 +99,12 @@ func (unit UnitType) UnitString() string {
 	case UNIT_NONE:
 		return ""
 	default:
-		// For undefined unit, convert the unit name dynamically
-		var str = unit.String()
-		return strings.ToLower(str[len("UNIT_"):])
+		panic(fmt.Errorf("Unsupported unit type: %s", unit))
+		/*
+			// For undefined unit, convert the unit name dynamically
+			var str = unit.String()
+			return strings.ToLower(str[len("UNIT_"):])
+		*/
 	}
 }
 

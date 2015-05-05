@@ -480,6 +480,12 @@ func lexNumber(l *Lexer) stateFn {
 
 	var floatPoint = false
 
+	// allow floating number started with '.'
+	if r == '.' {
+		r = l.next()
+		floatPoint = true
+	}
+
 	for unicode.IsDigit(r) {
 		r = l.next()
 		if r == '.' {
