@@ -335,6 +335,25 @@ func (l *Lexer) match(str string) bool {
 	return true
 }
 
+type KeywordTokenMap map[string]ast.TokenType
+
+func (l *Lexer) matchKeywordMap(keywords KeywordTokenMap) bool {
+	for str, tokType := range keywords {
+		l.remember()
+		if l.match(str) {
+			var r = l.peek()
+			if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' || r == '-' {
+				// try next one
+				l.rollback()
+				continue
+			}
+			l.emit(tokType)
+			return true
+		}
+	}
+	return false
+}
+
 func (l *Lexer) precedeStartOffset() bool {
 	return l.Offset > l.Start
 }

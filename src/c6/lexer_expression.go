@@ -62,29 +62,13 @@ func lexIdentifier(l *Lexer) stateFn {
 	return lexExpression
 }
 
-func lexKeywords(l *Lexer) bool {
-	var keywords = map[string]ast.TokenType{
-		"true":  ast.T_TRUE,
-		"false": ast.T_FALSE,
-		"null":  ast.T_NULL,
-		"and":   ast.T_AND,
-		"or":    ast.T_OR,
-		"xor":   ast.T_XOR,
-	}
-	for str, tokType := range keywords {
-		l.remember()
-		if l.match(str) {
-			var r = l.peek()
-			if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' || r == '-' {
-				// try next one
-				l.rollback()
-				continue
-			}
-			l.emit(tokType)
-			return true
-		}
-	}
-	return false
+var exprKeywords = KeywordTokenMap{
+	"true":  ast.T_TRUE,
+	"false": ast.T_FALSE,
+	"null":  ast.T_NULL,
+	"and":   ast.T_AND,
+	"or":    ast.T_OR,
+	"xor":   ast.T_XOR,
 }
 
 func lexExpression(l *Lexer) stateFn {
@@ -93,11 +77,7 @@ func lexExpression(l *Lexer) stateFn {
 	var r = l.peek()
 	var r2 = l.peekBy(2)
 
-	if r == 't' && l.match("true") {
-
-		l.emit(ast.T_TRUE)
-
-	} else if lexKeywords(l) {
+	if l.matchKeywordMap(exprKeywords) {
 
 	} else if r == 'U' && r2 == '+' {
 

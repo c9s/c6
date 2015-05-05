@@ -437,7 +437,7 @@ func lexHexColor(l *Lexer) stateFn {
 	return lexExpression
 }
 
-var unitTokenMap = map[string]ast.TokenType{
+var unitTokenMap = KeywordTokenMap{
 	"px":  ast.T_UNIT_PX,
 	"pt":  ast.T_UNIT_PT,
 	"pc":  ast.T_UNIT_PC,
@@ -474,12 +474,7 @@ CSS time unit
 @see https://developer.mozilla.org/zh-TW/docs/Web/CSS/time
 */
 func lexNumberUnit(l *Lexer) stateFn {
-	for key, tokenType := range unitTokenMap {
-		if l.match(key) {
-			l.emit(tokenType)
-			break
-		}
-	}
+	l.matchKeywordMap(unitTokenMap)
 	if l.peek() == ';' {
 		return lexStatement
 	}
