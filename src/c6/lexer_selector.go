@@ -16,7 +16,6 @@ func isSelectorOperatorToken(r rune) bool {
 func isSelector(t ast.TokenType) bool {
 	return t == ast.T_CLASS_SELECTOR ||
 		t == ast.T_ID_SELECTOR ||
-		t == ast.T_CLASS_SELECTOR ||
 		t == ast.T_TYPE_SELECTOR ||
 		t == ast.T_UNIVERSAL_SELECTOR ||
 		t == ast.T_PARENT_SELECTOR || // SASS parent selector
