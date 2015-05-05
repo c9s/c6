@@ -167,6 +167,10 @@ func TestLexerRuleWithVariableAsPropertyValue(t *testing.T) {
 		ast.T_BRACE_END})
 }
 
+func TestLexerVariableAssignmentWithCommentBlock(t *testing.T) {
+	AssertLexerTokenSequence(t, `$favorite: /* comment */ #fff;`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON})
+}
+
 func TestLexerVariableAssignment(t *testing.T) {
 	AssertLexerTokenSequence(t, `$favorite: #fff;`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON})
 }
