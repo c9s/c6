@@ -361,15 +361,9 @@ func lexSemiColon(l *Lexer) stateFn {
 func lexVariableAssignment(l *Lexer) stateFn {
 	lexVariableName(l)
 	lexColon(l)
-	l.ignoreSpaces()
-
 	var r = l.peek()
 	for r != ';' && r != '}' && r != EOF {
 		lexExpression(l)
-		l.ignoreSpaces()
-		if l.accept(",") {
-			l.emit(ast.T_COMMA)
-		}
 		r = l.peek()
 	}
 	// l.backup()

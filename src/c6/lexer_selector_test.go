@@ -21,11 +21,9 @@ func TestLexerRuleWithTagNameSelector(t *testing.T) {
 }
 
 func TestLexerRuleWithTagNameSelectorWithProperty(t *testing.T) {
-	l := NewLexerWithString(`div { width: 200px; }`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_BRACE_START, ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON, ast.T_BRACE_END})
-	l.close()
+	AssertLexerTokenSequence(t, `div { width: 200px; }`, []ast.TokenType{
+		ast.T_TYPE_SELECTOR, ast.T_BRACE_START, ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON, ast.T_BRACE_END,
+	})
 }
 
 func TestLexerRuleWithTagNameSelectorForDiv(t *testing.T) {

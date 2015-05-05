@@ -43,7 +43,12 @@ func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []ast.TokenType) []as
 	for _, expectingToken := range tokenList {
 
 		var token = <-l.Output
-		assert.NotNil(t, token)
+
+		if token == nil {
+			failure = true
+			OutputRed("not ok ---- got nil expecting %s", expectingToken.String())
+			break
+		}
 
 		tokens = append(tokens, *token)
 

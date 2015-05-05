@@ -429,21 +429,23 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 
 	debug("List parse failed, restoring to %d", pos)
 	parser.restore(pos)
-	/*
-		if stringTerm := parser.ParseInterp(); stringTerm != nil {
-			var tok = parser.peek()
-			for tok.Type == ast.T_LITERAL_CONCAT {
-				var rightExpr = parser.ParseExpression()
-				stringTerm = ast.NewBinaryExpression(ast.OpConcat, stringTerm, rightExpr)
-				tok = parser.peek()
-			}
-			return stringTerm
-		} else {
-			// for other possible string concat expression
-		}
-	*/
 	debug("ParseExpression trying", pos)
-	return parser.ParseExpression(false)
+
+	if expr := parser.ParseExpression(false); expr != nil {
+		var tok = parser.peek()
+		for tok.Type == ast.T_LITERAL_CONCAT {
+			parser.accept(ast.T_LITERAL_CONCAT)
+
+			var rightExpr = parser.ParseExpression(false)
+			if rightExpr == nil {
+				panic("Expecting expression or ident after the literal concat operator.")
+			}
+			expr = ast.NewLiteralConcat(expr, rightExpr)
+			tok = parser.peek()
+		}
+		return expr
+	}
+	return nil
 }
 
 func (parser *Parser) ParseList() ast.Expression {

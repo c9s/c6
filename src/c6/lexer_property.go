@@ -16,20 +16,6 @@ func lexPropertyNameToken(l *Lexer) stateFn {
 	return nil
 }
 
-func lexPropertyEnd(l *Lexer) stateFn {
-	// try ';' or '}'
-	var r = l.next()
-	if r == ';' {
-		l.emit(ast.T_SEMICOLON)
-	} else if r == '}' {
-		// emit another semicolon here for parser simplicity?
-		l.emit(ast.T_BRACE_END)
-	} else {
-		l.backup()
-	}
-	return nil
-}
-
 func lexMicrosoftProgIdFunction(l *Lexer) stateFn {
 	var r = l.next()
 	for unicode.IsLetter(r) || unicode.IsDigit(r) || r == '.' || r == '_' {
@@ -112,40 +98,38 @@ func lexProperty(l *Lexer) stateFn {
 
 	lexColon(l)
 
+	l.remember()
+	l.ignoreSpaces()
+
 	// for IE filter syntax like:
 	//    progid:DXImageTransform.Microsoft.MotionBlur(strength=13, direction=310)
 	if l.match("progid:") {
 		l.emit(ast.T_MS_PROGID)
 		lexMicrosoftProgIdFunction(l)
+	} else {
+		l.rollback()
 	}
 
 	r = l.peek()
 	for r != ';' && r != '}' && r != EOF {
-
-		if l.peek() == '#' && l.peekBy(2) == '{' {
-			lexInterpolation2(l)
-
-			// See if it's the end of property
-			r = l.peek()
-			if !unicode.IsSpace(r) && r != '}' && r != ';' && r != ':' {
-				l.emit(ast.T_LITERAL_CONCAT)
-			}
-		}
-
-		if lexExpression(l) != nil {
-			if l.peek() == '#' && l.peekBy(2) == '{' {
-				l.emit(ast.T_LITERAL_CONCAT)
-			}
-		}
-
-		l.ignoreSpaces()
-		if l.accept(",") {
-			l.emit(ast.T_COMMA)
-		}
-
+		lexExpression(l)
 		r = l.peek()
 	}
-	lexPropertyEnd(l)
+
+	// the semicolon in the last declaration is optional.
+	l.ignoreSpaces()
+	if l.accept(";") {
+		l.emit(ast.T_SEMICOLON)
+	}
+
+	l.ignoreSpaces()
+	r = l.next()
+	if r == '}' {
+		// emit another semicolon here for parser simplicity?
+		l.emit(ast.T_BRACE_END)
+	} else {
+		l.backup()
+	}
 	return lexStatement
 }
 
@@ -156,6 +140,5 @@ func lexColon(l *Lexer) stateFn {
 		l.error("Expecting ':' token, Got '%s'", r)
 	}
 	l.emit(ast.T_COLON)
-	l.ignoreSpaces()
 	return nil
 }

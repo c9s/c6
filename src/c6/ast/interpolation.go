@@ -6,7 +6,8 @@ type Interpolation struct {
 	EndToken   *Token
 }
 
-func (self Interpolation) CanBeNode()       {}
+func (self Interpolation) CanBeNode() {}
+
 func (self Interpolation) String() string {
 	return self.Expression.String()
 }

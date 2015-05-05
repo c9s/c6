@@ -76,13 +76,10 @@ func TestParserVariableAssignmentWithComplexExpression(t *testing.T) {
 	fmt.Printf("%+v\n", block.Statements[0])
 }
 
-/*
-FIXME:
 func TestParserVariableAssignmentWithInterpolation(t *testing.T) {
 	var block = RunParserTest(`$foo: #{ 10 + 20 }px;`)
 	fmt.Printf("%+v\n", block.Statements[0])
 }
-*/
 
 func TestParserVariableAssignmentLengthPlusLength(t *testing.T) {
 	var block = RunParserTest(`$foo: 10px + 20px;`)

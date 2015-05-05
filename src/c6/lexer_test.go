@@ -171,19 +171,25 @@ func TestLexerVariableAssignment(t *testing.T) {
 	AssertLexerTokenSequence(t, `$favorite: #fff;`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON})
 }
 
-func TestLexerVariableWithPtValue(t *testing.T) {
+func TestLexerVariableAssignmentWithInterp(t *testing.T) {
+	AssertLexerTokenSequence(t, `$favorite: #{ 10 + 2 }px;`, []ast.TokenType{
+		ast.T_VARIABLE, ast.T_COLON, ast.T_INTERPOLATION_START, ast.T_INTEGER, ast.T_PLUS, ast.T_INTEGER, ast.T_INTERPOLATION_END, ast.T_LITERAL_CONCAT, ast.T_IDENT, ast.T_SEMICOLON,
+	})
+}
+
+func TestLexerVariableAssignmentWithPtValue(t *testing.T) {
 	AssertLexerTokenSequence(t, `$foo: 10pt;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PT, ast.T_SEMICOLON,
 	})
 }
 
-func TestLexerVariableWithLengthValueStartWithDot(t *testing.T) {
+func TestLexerVariableAssignmentWithLengthValueStartWithDot(t *testing.T) {
 	AssertLexerTokenSequence(t, `$foo: .3em;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_EM, ast.T_SEMICOLON,
 	})
 }
 
-func TestLexerVariableWithLengthValue(t *testing.T) {
+func TestLexerVariableAssignmentWithLengthValue(t *testing.T) {
 	AssertLexerTokenSequence(t, `$foo: 10px;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON,
 	})
@@ -207,7 +213,7 @@ func TestLexerVariableWithLengthValue(t *testing.T) {
 	})
 }
 
-func TestLexerVariableWithDpiValue(t *testing.T) {
+func TestLexerVariableAssignmentWithDpiValue(t *testing.T) {
 	AssertLexerTokenSequence(t, `$foo: 0.3dpi;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_DPI, ast.T_SEMICOLON,
 	})
@@ -219,7 +225,7 @@ func TestLexerVariableWithDpiValue(t *testing.T) {
 	})
 }
 
-func TestLexerVariableWithPercent(t *testing.T) {
+func TestLexerVariableAssignmentWithPercent(t *testing.T) {
 	AssertLexerTokenSequence(t, `width: 20%;`, []ast.TokenType{
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PERCENT, ast.T_SEMICOLON,
 	})

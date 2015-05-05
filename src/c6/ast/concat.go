@@ -6,34 +6,14 @@ A struct that contains many concatable strings
 	{any}{expression}{any}
 */
 type LiteralConcat struct {
-	Expressions []Expression
+	Left  Expression
+	Right Expression
 }
 
-func NewLiteralConcat() *LiteralConcat {
-	return &LiteralConcat{[]Expression{}}
+func NewLiteralConcat(left, right Expression) *LiteralConcat {
+	return &LiteralConcat{left, right}
 }
 
-func (self LiteralConcat) String() (out string) {
-	out = ""
-	for _, expr := range self.Expressions {
-		out += expr.String()
-	}
-	return out
+func (self LiteralConcat) String() string {
+	return self.Left.String() + self.Right.String()
 }
-
-
-func (self *LiteralConcat) AppendExpression(expr Expression) {
-	self.Expressions = append(self.Expressions, expr)
-}
-
-/*
-func (self Concat) String() string {
-	var out string = ""
-
-	for _, expr := range self.Expressions {
-		_ = expr
-		// expr.String()
-	}
-	return out
-}
-*/
