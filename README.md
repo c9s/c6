@@ -138,6 +138,11 @@ A feature check list from libsass:
 - https://github.com/sass/sass/issues/1094
 
 
+## Channel
+
+We are on Slack channel `#c6`, go invite yourself here:
+<https://docs.google.com/forms/d/11KpalZc6AUuQYf7vz531ys0pLEC9csjkC6QyC_hJQEg/viewform>
+
 ## License
 
 MPL License <https://www.mozilla.org/MPL/2.0/>
