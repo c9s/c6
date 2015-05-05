@@ -61,7 +61,7 @@ To run specific test
   - [x] Angle unit support.
   - [x] Resolution unit support.
   - [x] Unicode Range support: <https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-range>
-  - [ ] Media Query
+  - [x] Media Query
 - [ ] Syntax
   - [ ] built-in `@import-once`
 - [ ] Built-in Functions

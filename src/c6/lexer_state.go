@@ -258,7 +258,7 @@ func lexAtRule(l *Lexer) stateFn {
 		return nil
 	}
 	l.next()
-	if l.match("import") {
+	if l.match("import ") {
 
 		l.emit(ast.T_IMPORT)
 		l.ignoreSpaces()
@@ -280,6 +280,11 @@ func lexAtRule(l *Lexer) stateFn {
 		l.emit(ast.T_MEDIA)
 		l.ignoreSpaces()
 		for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
+			/*
+				if l.peek() == '#' && l.peekBy(2) == '{' {
+					lexInterpolation2(l)
+				}
+			*/
 		}
 		// fmt.Println(string(l.peek()))
 		l.ignoreSpaces()

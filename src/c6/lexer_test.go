@@ -608,7 +608,7 @@ func TestLexerMapValue(t *testing.T) {
 	})
 }
 
-func TestLexerMediaCondition(t *testing.T) {
+func TestLexerMediaQueryCondition(t *testing.T) {
 	AssertLexerTokenSequence(t, `@media screen and (orientation: landscape) { }`,
 		[]ast.TokenType{ast.T_MEDIA, ast.T_IDENT, ast.T_AND,
 			ast.T_PAREN_START, ast.T_IDENT, ast.T_COLON, ast.T_IDENT, ast.T_PAREN_END,
@@ -616,3 +616,18 @@ func TestLexerMediaCondition(t *testing.T) {
 			ast.T_BRACE_END,
 		})
 }
+
+/*
+func TestLexerMediaQueryConditionWithExpressions(t *testing.T) {
+	AssertLexerTokenSequence(t, `@media #{$media} and ($feature: $value) {
+  .sidebar {
+    width: 500px;
+  }
+}`,
+		[]ast.TokenType{ast.T_MEDIA, ast.T_IDENT, ast.T_AND,
+			ast.T_PAREN_START, ast.T_IDENT, ast.T_COLON, ast.T_IDENT, ast.T_PAREN_END,
+			ast.T_BRACE_START,
+			ast.T_BRACE_END,
+		})
+}
+*/
