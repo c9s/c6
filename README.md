@@ -85,11 +85,14 @@ To run specific test
   - [ ] Parse Nested RuleSet
   - [ ] Parse options: `!default`, `!global`, `!optional`
   - [ ] Parse CSS Hack for different browser (support more syntax sugar for this)
-  - [ ] Parse `@if`
-  - [ ] Parse `@mixin`
-  - [ ] Parse `@include`
-  - [ ] Parse `@function`
-  - [ ] Parse `@media`
+  - [ ] Parse `@if` statement
+  - [ ] Parse `@mixin` statement
+  - [ ] Parse `@include` statement
+  - [ ] Parse `@function` statement
+  - [ ] Parse `@media` statement
+  - [ ] Parse `@switch` statement
+  - [ ] Parse `@case` statement
+  - [ ] Parse `@use` statement
 - [ ] Building AST
   - [x] RuleSet
   - [x] DeclarationBlock
