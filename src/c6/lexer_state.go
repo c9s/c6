@@ -245,31 +245,43 @@ Currently the @import rule only supports '@import url(...) media;
 */
 func lexAtRule(l *Lexer) stateFn {
 	t := l.peek()
+	if t != '@' {
+		return nil
+	}
+	l.next()
+	if l.match("import") {
 
-	if t == '@' {
-		l.next()
-		if l.match("import") {
-			l.emit(ast.T_IMPORT)
-			l.ignoreSpaces()
+		l.emit(ast.T_IMPORT)
+		l.ignoreSpaces()
 
-			lexUrl(l)
-			l.ignoreSpaces()
+		lexUrl(l)
+		l.ignoreSpaces()
 
-			// looks like a media list
-			for unicode.IsLetter(l.peek()) {
-				l.next()
-			}
-			if l.precedeStartOffset() {
-				l.emit(ast.T_MEDIA)
-			}
-			return lexStatement
-		} else if l.match("charset") {
-			l.emit(ast.T_CHARSET)
-			l.ignoreSpaces()
-			return lexStatement
-		} else {
-			panic("Unknown at-rule directive")
+		// looks like a media list
+		for unicode.IsLetter(l.peek()) {
+			l.next()
 		}
+		if l.precedeStartOffset() {
+			l.emit(ast.T_MEDIA)
+		}
+		return lexStatement
+
+	} else if l.match("media") {
+
+		l.emit(ast.T_MEDIA)
+		l.ignoreSpaces()
+		for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
+		}
+		// fmt.Println(string(l.peek()))
+		l.ignoreSpaces()
+		return lexStatement
+
+	} else if l.match("charset") {
+		l.emit(ast.T_CHARSET)
+		l.ignoreSpaces()
+		return lexStatement
+	} else {
+		panic("Unknown at-rule directive")
 	}
 	return nil
 }
@@ -462,7 +474,6 @@ CSS time unit
 @see https://developer.mozilla.org/zh-TW/docs/Web/CSS/time
 */
 func lexNumberUnit(l *Lexer) stateFn {
-
 	for key, tokenType := range unitTokenMap {
 		if l.match(key) {
 			l.emit(tokenType)
@@ -483,6 +494,9 @@ func lexNumber(l *Lexer) stateFn {
 	// allow floating number started with '.'
 	if r == '.' {
 		r = l.next()
+		if !unicode.IsDigit(r) {
+			l.error("Expecting digits after '.'. Got %s", r)
+		}
 		floatPoint = true
 	}
 

@@ -179,7 +179,7 @@ func TestLexerVariableWithPtValue(t *testing.T) {
 
 func TestLexerVariableWithLengthValueStartWithDot(t *testing.T) {
 	AssertLexerTokenSequence(t, `$foo: .3em;`, []ast.TokenType{
-		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_PX, ast.T_SEMICOLON,
+		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_EM, ast.T_SEMICOLON,
 	})
 }
 
@@ -606,4 +606,13 @@ func TestLexerMapValue(t *testing.T) {
 
 		ast.T_SEMICOLON,
 	})
+}
+
+func TestLexerMediaCondition(t *testing.T) {
+	AssertLexerTokenSequence(t, `@media screen and (orientation: landscape) { }`,
+		[]ast.TokenType{ast.T_MEDIA, ast.T_IDENT, ast.T_AND,
+			ast.T_PAREN_START, ast.T_IDENT, ast.T_COLON, ast.T_IDENT, ast.T_PAREN_END,
+			ast.T_BRACE_START,
+			ast.T_BRACE_END,
+		})
 }

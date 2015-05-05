@@ -62,37 +62,44 @@ func lexIdentifier(l *Lexer) stateFn {
 	return lexExpression
 }
 
+func lexKeywords(l *Lexer) bool {
+	var keywords = map[string]ast.TokenType{
+		"true":  ast.T_TRUE,
+		"false": ast.T_FALSE,
+		"null":  ast.T_NULL,
+		"and":   ast.T_AND,
+		"or":    ast.T_OR,
+		"xor":   ast.T_XOR,
+	}
+	for str, tokType := range keywords {
+		l.remember()
+		if l.match(str) {
+			var r = l.peek()
+			if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' || r == '-' {
+				// try next one
+				l.rollback()
+				continue
+			}
+			l.emit(tokType)
+			return true
+		}
+	}
+	return false
+}
+
 func lexExpression(l *Lexer) stateFn {
 	l.ignoreSpaces()
 
 	var r = l.peek()
+	var r2 = l.peekBy(2)
 
 	if r == 't' && l.match("true") {
 
 		l.emit(ast.T_TRUE)
 
-	} else if r == 'f' && l.match("false") {
+	} else if lexKeywords(l) {
 
-		l.emit(ast.T_FALSE)
-		return lexExpression
-
-	} else if r == 'n' && l.match("null") {
-
-		l.emit(ast.T_NULL)
-
-	} else if r == 'a' && l.match("and") {
-
-		l.emit(ast.T_AND)
-
-	} else if r == 'o' && l.match("or") {
-
-		l.emit(ast.T_OR)
-
-	} else if r == 'x' && l.match("xor") {
-
-		l.emit(ast.T_XOR)
-
-	} else if r == 'U' && l.peekBy(2) == '+' {
+	} else if r == 'U' && r2 == '+' {
 
 		lexUnicodeRange(l)
 
@@ -100,8 +107,16 @@ func lexExpression(l *Lexer) stateFn {
 
 		lexIdentifier(l)
 
+	} else if r == '.' && unicode.IsDigit(r2) {
+
+		// lexNumber may return lexNumber unit
+		if fn := lexNumber(l); fn != nil {
+			fn(l)
+		}
+
 	} else if unicode.IsDigit(r) {
 
+		// lexNumber may return lexNumber unit
 		if fn := lexNumber(l); fn != nil {
 			fn(l)
 		}
