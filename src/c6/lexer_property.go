@@ -123,12 +123,8 @@ func lexProperty(l *Lexer) stateFn {
 	}
 
 	l.ignoreSpaces()
-	r = l.next()
-	if r == '}' {
-		// emit another semicolon here for parser simplicity?
+	if l.accept("}") {
 		l.emit(ast.T_BRACE_END)
-	} else {
-		l.backup()
 	}
 	return lexStatement
 }
