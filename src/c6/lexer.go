@@ -358,13 +358,21 @@ func (l *Lexer) precedeStartOffset() bool {
 	return l.Offset > l.Start
 }
 
-func (l *Lexer) ignoreSpaces() {
+/*
+ignore space characters
+
+return true if there is space
+*/
+func (l *Lexer) ignoreSpaces() bool {
+	var space = false
 	for {
 		var r rune = l.peek()
 		if r == '\n' {
+			space = true
 			l.Line++
 			l.next()
 		} else if r == ' ' || r == '\t' || r == '\r' {
+			space = true
 			l.next()
 		} else {
 			break
@@ -372,6 +380,7 @@ func (l *Lexer) ignoreSpaces() {
 	}
 	// Update the token start offset to latest offset
 	l.Start = l.Offset
+	return space
 }
 
 func (l *Lexer) dispatchFn(fn stateFn) stateFn {
