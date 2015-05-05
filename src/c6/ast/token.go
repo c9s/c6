@@ -111,7 +111,10 @@ const (
 	T_TILDE_EQUAL // for '~='
 	T_PIPE_EQUAL  // for '|='
 	T_VARIABLE
+
 	T_IMPORT
+	T_AT_RULE
+
 	T_CHARSET
 	T_QQ_STRING
 	T_Q_STRING
