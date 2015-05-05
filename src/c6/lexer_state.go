@@ -280,13 +280,7 @@ func lexAtRule(l *Lexer) stateFn {
 		l.emit(ast.T_MEDIA)
 		l.ignoreSpaces()
 		for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
-			/*
-				if l.peek() == '#' && l.peekBy(2) == '{' {
-					lexInterpolation2(l)
-				}
-			*/
 		}
-		// fmt.Println(string(l.peek()))
 		l.ignoreSpaces()
 		return lexStatement
 
@@ -371,27 +365,11 @@ func lexVariableAssignment(l *Lexer) stateFn {
 
 	var r = l.peek()
 	for r != ';' && r != '}' && r != EOF {
-		if l.peek() == '#' && l.peekBy(2) == '{' {
-			lexInterpolation2(l)
-
-			// See if it's the end of property
-			r = l.peek()
-			if !unicode.IsSpace(r) && r != '}' && r != ';' && r != ':' {
-				l.emit(ast.T_LITERAL_CONCAT)
-			}
-		}
-
-		if lexExpression(l) != nil {
-			if l.peek() == '#' && l.peekBy(2) == '{' {
-				l.emit(ast.T_LITERAL_CONCAT)
-			}
-		}
-
+		lexExpression(l)
 		l.ignoreSpaces()
 		if l.accept(",") {
 			l.emit(ast.T_COMMA)
 		}
-
 		r = l.peek()
 	}
 	// l.backup()
