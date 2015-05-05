@@ -6,10 +6,10 @@ test: all
 	go test c6/ast
 	go test c6
 
-bench-update:
+benchupdate:
 	go test -run=NONE -bench=. c6 >| benchmarks/old.txt
 
-bench-cmp: all
+benchcmp: all
 	go test -run=NONE -bench=. c6 >| benchmarks/new.txt
 	vendor/bin/benchcmp benchmarks/old.txt benchmarks/new.txt
 
