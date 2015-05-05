@@ -598,6 +598,19 @@ func TestLexerInterpolationPropertyName2(t *testing.T) {
 	})
 }
 
+func BenchmarkLexer(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		// Fib(10)
+		var l = NewLexerWithString(`.test, .foo, .bar { color: #fff; }`)
+		var o = l.getOutput()
+		l.run()
+		var token = <-o
+		for ; token != nil; token = <-o {
+		}
+		l.close()
+	}
+}
+
 func TestLexerRuleWithSubRule(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test {
 		-webkit-transition: none;
