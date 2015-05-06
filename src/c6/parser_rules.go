@@ -66,10 +66,10 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 		panic("if statement syntax error")
 	}
 	var block = parser.ParseBlock()
-	var ifstm = ast.NewIf()
-	ifstm.Condition = condition
-	ifstm.Block = block
-	return ifstm
+	var stm = ast.NewIfStatement()
+	stm.Condition = condition
+	stm.Block = block
+	return stm
 
 }
 

@@ -1,21 +1,21 @@
 package ast
 
-type If struct {
+type IfStatement struct {
 	Condition Expression
 	Block     *Block
-	ElseIfs   []*If
+	ElseIfs   []*IfStatement
 }
 
-func (stm If) CanBeStatement() {}
+func (stm IfStatement) CanBeStatement() {}
 
-func (stm If) AppendElseIf(ifStm *If) {
+func (stm IfStatement) AppendElseIf(ifStm *IfStatement) {
 	stm.ElseIfs = append(stm.ElseIfs, ifStm)
 }
 
-func (stm If) String() string {
+func (stm IfStatement) String() string {
 	return "(if statement STRING() un-implemented)"
 }
 
-func NewIf() *If {
-	return &If{}
+func NewIfStatement() *IfStatement {
+	return &IfStatement{}
 }
