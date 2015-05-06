@@ -13,3 +13,6 @@ script:
 
 after_success:
   - vendor/bin/goveralls -coverprofile=c6.cov -service=travis-ci
+cache:
+  directories:
+    - vendor
