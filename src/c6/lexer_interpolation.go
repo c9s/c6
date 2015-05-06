@@ -2,7 +2,7 @@ package c6
 
 import "c6/ast"
 
-// import "unicode"
+import "unicode"
 
 /*
 There are 3 scope that users may use interpolation syntax:
@@ -22,7 +22,11 @@ func lexInterpolation(l *Lexer, emit bool) stateFn {
 				l.emit(ast.T_INTERPOLATION_START)
 			}
 
-			l.ignoreSpaces()
+			r = l.next()
+			for unicode.IsSpace(r) {
+				r = l.next()
+			}
+			l.backup()
 
 			// find the end of interpolation end brace
 			r = l.next()

@@ -79,17 +79,28 @@ const (
 	T_CLASS_SELECTOR
 	T_TYPE_SELECTOR
 	T_UNIVERSAL_SELECTOR
-	T_PARENT_SELECTOR        // SASS parent selector
-	T_PSEUDO_SELECTOR        // :hover, :visited , ...
-	T_INTERPOLATION_SELECTOR // selector with interpolation: '#{ ... }'
-	T_LITERAL_CONCAT         // used to concat selectors and interpolation
+	T_PARENT_SELECTOR   // SASS parent selector
+	T_PSEUDO_SELECTOR   // :hover, :visited , ...
+	T_FUNCTIONAL_PSEUDO // lang(...), nth(...)
 
-	// for Microsoft 'progid:' token
+	/*
+		An interpolation selector token presents one or two more selector strings,
+		which may contains an expression that change the type of the selector.
+	*/
+	T_INTERPOLATION_SELECTOR // selector with interpolation: '#{ ... }'
+
+	/*
+		The literal concat means we would concat two string without quotes.
+		This is used for concating strings or expression with interpolation sections.
+	*/
+	T_LITERAL_CONCAT // used to concat selectors and interpolation
+
+	// for Microsoft 'progid:' token, we don't have choice.
 	T_MS_PROGID
 
 	// Selector relationship
 	T_AND_SELECTOR                // {parent-selector}{child-selector} { }
-	T_DESCENDANT_COMBINATOR         // E ' ' F
+	T_DESCENDANT_COMBINATOR       // E ' ' F
 	T_CHILD_COMBINATOR            // E '>' F
 	T_ADJACENT_SIBLING_COMBINATOR // E '+' F
 	T_GENERAL_SIBLING_COMBINATOR  // E '~' F

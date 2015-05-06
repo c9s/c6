@@ -284,9 +284,18 @@ func (l *Lexer) createToken(tokenType ast.TokenType) *ast.Token {
 	return &token
 }
 
-// emit a token to the channel
-func (l *Lexer) emit(tokenType ast.TokenType) {
+/*
+Emit a token to the channel
+
+emit(ast.T_SEMICOLON)
+
+emit(ast.T_PSEUDO_SELECTOR, true) // contains interpolation
+*/
+func (l *Lexer) emit(tokenType ast.TokenType, params ...bool) {
 	token := l.createToken(tokenType)
+	if len(params) > 0 && params[0] {
+		token.ContainsInterpolation = true
+	}
 	l.emitToken(token)
 }
 
