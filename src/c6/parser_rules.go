@@ -61,14 +61,39 @@ func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
 
 func (parser *Parser) ParseIfStatement() ast.Statement {
 	parser.expect(ast.T_IF)
-	var conditions = parser.ParseCondition()
-	_ = conditions
-	return nil
+	condition := parser.ParseCondition()
+	if condition == nil {
+		panic("if statement syntax error")
+	}
+	var block = parser.ParseBlock()
+	var ifstm = ast.NewIf()
+	ifstm.Condition = condition
+	ifstm.Block = block
+	return ifstm
 
 }
 
 func (parser *Parser) ParseCondition() ast.Expression {
-	return nil
+	var tok = parser.peek()
+	var expr ast.Expression = nil
+
+	// Boolean 'Not'
+	if tok.Type == ast.T_LOGICAL_NOT {
+		var _expr = parser.ParseExpression(false)
+		expr = ast.NewUnaryExpression(ast.NewOpWithToken(tok), _expr)
+	} else {
+		expr = parser.ParseExpression(false)
+	}
+
+	tok = parser.peek()
+	for tok.Type == ast.T_LOGICAL_OR || tok.Type == ast.T_LOGICAL_AND {
+		parser.next()
+		if subexpr := parser.ParseExpression(false); subexpr != nil {
+			expr = ast.NewBinaryExpression(ast.NewOpWithToken(tok), expr, subexpr, false)
+		}
+		tok = parser.peek()
+	}
+	return expr
 }
 
 func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
@@ -329,7 +354,6 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 					expr = ast.Expression(val)
 				}
 			}
-
 		} else {
 			parser.restore(pos)
 			return nil

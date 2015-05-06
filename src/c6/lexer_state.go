@@ -37,9 +37,10 @@ var exprTokenMap = KeywordTokenMap{
 	"true":  ast.T_TRUE,
 	"false": ast.T_FALSE,
 	"null":  ast.T_NULL,
-	"and":   ast.T_AND,
-	"or":    ast.T_OR,
-	"xor":   ast.T_XOR,
+	"and":   ast.T_LOGICAL_AND,
+	"not":   ast.T_LOGICAL_NOT,
+	"or":    ast.T_LOGICAL_OR,
+	"xor":   ast.T_LOGICAL_XOR,
 }
 
 var unitTokenMap = KeywordTokenMap{

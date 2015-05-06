@@ -683,7 +683,7 @@ func TestLexerIfStatementTrueOrFalseCondition(t *testing.T) {
 		color: red;
 	}
 	`, []ast.TokenType{
-		ast.T_IF, ast.T_TRUE, ast.T_OR, ast.T_FALSE, ast.T_BRACE_START,
+		ast.T_IF, ast.T_TRUE, ast.T_LOGICAL_OR, ast.T_FALSE, ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
 		ast.T_IDENT,
@@ -707,7 +707,7 @@ Media Query Test Case
 
 func TestLexerMediaQueryCondition(t *testing.T) {
 	AssertLexerTokenSequence(t, `@media screen and (orientation: landscape) { }`,
-		[]ast.TokenType{ast.T_MEDIA, ast.T_IDENT, ast.T_AND,
+		[]ast.TokenType{ast.T_MEDIA, ast.T_IDENT, ast.T_LOGICAL_AND,
 			ast.T_PAREN_START, ast.T_IDENT, ast.T_COLON, ast.T_IDENT, ast.T_PAREN_END,
 			ast.T_BRACE_START,
 			ast.T_BRACE_END,
@@ -720,7 +720,7 @@ func TestLexerMediaQueryConditionWithExpressions(t *testing.T) {
     width: 500px;
   }
 }`,
-		[]ast.TokenType{ast.T_MEDIA, ast.T_INTERPOLATION_START, ast.T_VARIABLE, ast.T_INTERPOLATION_END, ast.T_AND,
+		[]ast.TokenType{ast.T_MEDIA, ast.T_INTERPOLATION_START, ast.T_VARIABLE, ast.T_INTERPOLATION_END, ast.T_LOGICAL_AND,
 			ast.T_PAREN_START, ast.T_VARIABLE, ast.T_COLON, ast.T_VARIABLE, ast.T_PAREN_END,
 			ast.T_BRACE_START,
 			ast.T_CLASS_SELECTOR,

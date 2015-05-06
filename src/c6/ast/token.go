@@ -127,10 +127,10 @@ const (
 
 	T_FONT_FACE
 
-	T_NOT // 'not' used in conditions
-	T_OR  // 'or' used in conditions query
-	T_AND // 'and' used in conditions query
-	T_XOR
+	T_LOGICAL_NOT // 'not' used in conditions
+	T_LOGICAL_OR  // 'or' used in conditions query
+	T_LOGICAL_AND // 'and' used in conditions query
+	T_LOGICAL_XOR
 
 	/*
 		expression operators
