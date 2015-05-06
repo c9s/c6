@@ -4,12 +4,17 @@ type IfStatement struct {
 	Condition Expression
 	Block     *Block
 	ElseIfs   []*IfStatement
+	ElseBlock *Block
 }
 
 func (stm IfStatement) CanBeStatement() {}
 
 func (stm IfStatement) AppendElseIf(ifStm *IfStatement) {
 	stm.ElseIfs = append(stm.ElseIfs, ifStm)
+}
+
+func (stm IfStatement) SetElseBlock(block *Block) {
+	stm.ElseBlock = block
 }
 
 func (stm IfStatement) String() string {
