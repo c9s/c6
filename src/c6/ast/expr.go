@@ -57,8 +57,8 @@ This method needs to be called on the top caller to prevent unexpected result.
 */
 func (self *BinaryExpression) IsCssSlash() bool {
 	if self.Op.Type == T_DIV {
-		_, aok := self.Left.(*Length)
-		_, bok := self.Right.(*Length)
+		_, aok := self.Left.(*Number)
+		_, bok := self.Right.(*Number)
 
 		// it's not grouped, we should inflate it as string
 		if aok && bok && self.Grouped == false {
