@@ -6,6 +6,10 @@ type SymTableItem interface{}
 
 type SymTable map[string]SymTableItem
 
+func NewSymTable() *SymTable {
+	return &SymTable{}
+}
+
 func (self SymTable) Set(name string, v SymTableItem) {
 	self[name] = v
 }
