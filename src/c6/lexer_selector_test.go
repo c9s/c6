@@ -247,7 +247,7 @@ func TestLexerRuleChildSelector(t *testing.T) {
 	l.run()
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_TYPE_SELECTOR, ast.T_CLASS_SELECTOR,
-		ast.T_GT,
+		ast.T_CHILD_SELECTOR,
 		ast.T_TYPE_SELECTOR, ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START, ast.T_BRACE_END})
 	l.close()

@@ -142,7 +142,7 @@ func lexChildSelector(l *Lexer) stateFn {
 	if r != '>' {
 		l.error("Unexpected token '%s' for child selector.", r)
 	}
-	l.emit(ast.T_GT)
+	l.emit(ast.T_CHILD_SELECTOR)
 	return lexSelectors
 }
 

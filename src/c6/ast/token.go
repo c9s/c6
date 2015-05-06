@@ -111,8 +111,7 @@ const (
 	T_OR  // 'or' used in conditional query
 	T_AND // 'and' used in conditional query
 	T_XOR
-	T_PLUS // E '+' F
-	T_GT   // E '>' F
+	T_PLUS
 	T_BRACE_START
 	T_BRACE_END
 	T_LANG_CODE // 'en', 'fr', 'fr-ca'
@@ -121,10 +120,10 @@ const (
 	T_BRACKET_RIGHT
 
 	T_EQUAL // for '=='
-	// T_GT    // greater than for '>'
-	T_GE // for '>='
-	T_LT // less than for '<'
-	T_LE // for '<='
+	T_GT    // greater than for '>'
+	T_GE    // for '>='
+	T_LT    // less than for '<'
+	T_LE    // for '<='
 
 	T_ATTR_EQUAL        // for '=', used in attribute selector
 	T_ATTR_TILDE_EQUAL  // for '~='
