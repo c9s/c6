@@ -103,21 +103,23 @@ The operator precedence is described here
 */
 func (parser *Parser) ParseCondition() ast.Expression {
 	debug("ParseCondition")
-	var tok = parser.peek()
-	var expr ast.Expression = nil
 
 	// Boolean 'Not'
+	var tok = parser.peek()
 	if tok.Type == ast.T_LOGICAL_NOT {
-		var _expr = parser.ParseExpression(false)
-		expr = ast.NewUnaryExpression(ast.NewOpWithToken(tok), _expr)
-	} else {
-		expr = parser.ParseExpression(false)
+		var logicexpr = parser.ParseLogicExpression()
+		return ast.NewUnaryExpression(ast.NewOpWithToken(tok), logicexpr)
 	}
+	return parser.ParseLogicExpression()
+}
 
-	tok = parser.peek()
-	for tok != nil && (tok.Type == ast.T_LOGICAL_OR || tok.Type == ast.T_LOGICAL_AND) {
+func (parser *Parser) ParseLogicExpression() ast.Expression {
+	debug("ParseLogicExpression")
+	var expr = parser.ParseLogicANDExpression()
+	var tok = parser.peek()
+	for tok != nil && tok.Type == ast.T_LOGICAL_OR {
 		parser.next()
-		if subexpr := parser.ParseExpression(false); subexpr != nil {
+		if subexpr := parser.ParseLogicANDExpression(); subexpr != nil {
 			expr = ast.NewBinaryExpression(ast.NewOpWithToken(tok), expr, subexpr, false)
 		}
 		tok = parser.peek()
@@ -125,16 +127,32 @@ func (parser *Parser) ParseCondition() ast.Expression {
 	return expr
 }
 
-func (parser *Parser) ParseConditionalOr() ast.Expression {
-	return nil
+func (parser *Parser) ParseLogicANDExpression() ast.Expression {
+	debug("ParseLogicANDExpression")
+	var expr = parser.ParseComparisonExpression()
+	var tok = parser.peek()
+	for tok != nil && tok.Type == ast.T_LOGICAL_AND {
+		parser.next()
+		if subexpr := parser.ParseComparisonExpression(); subexpr != nil {
+			expr = ast.NewBinaryExpression(ast.NewOpWithToken(tok), expr, subexpr, false)
+		}
+		tok = parser.peek()
+	}
+	return expr
 }
 
-func (parser *Parser) ParseConditionalAnd() ast.Expression {
-	return nil
-}
-
-func (parser *Parser) ParseComparison() ast.Expression {
-	return nil
+func (parser *Parser) ParseComparisonExpression() ast.Expression {
+	debug("ParseComparisonExpression")
+	var expr = parser.ParseExpression(false)
+	var tok = parser.peek()
+	for tok != nil && (tok.Type == ast.T_EQUAL || tok.Type == ast.T_UNEQUAL || tok.Type == ast.T_GT || tok.Type == ast.T_GE || tok.Type == ast.T_LE || tok.Type == ast.T_LT) {
+		parser.next()
+		if subexpr := parser.ParseExpression(false); subexpr != nil {
+			expr = ast.NewBinaryExpression(ast.NewOpWithToken(tok), expr, subexpr, false)
+		}
+		tok = parser.peek()
+	}
+	return expr
 }
 
 func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
