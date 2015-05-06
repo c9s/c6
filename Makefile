@@ -1,6 +1,6 @@
 all:
 	go generate c6 c6/ast
-	go install -x c6 c6/ast
+	go install c6 c6/ast c6/runtime
 
 test: all
 	go test c6/ast
