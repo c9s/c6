@@ -452,6 +452,9 @@ func lexNumberUnit(l *Lexer) stateFn {
 	return lexExpression
 }
 
+/**
+@see https://developer.mozilla.org/en-US/docs/Web/CSS/number
+*/
 func lexNumber(l *Lexer) stateFn {
 	var r = l.next()
 
@@ -466,7 +469,7 @@ func lexNumber(l *Lexer) stateFn {
 		floatPoint = true
 	}
 
-	for unicode.IsDigit(r) {
+	for unicode.IsDigit(r) || r == 'e' {
 		r = l.next()
 		if r == '.' {
 			floatPoint = true
