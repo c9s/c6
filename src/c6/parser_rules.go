@@ -69,8 +69,15 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 	var stm = ast.NewIfStatement()
 	stm.Condition = condition
 	stm.Block = block
-	return stm
 
+	// If these is more else if statement
+	var tok = parser.peek()
+	for tok.Type == ast.T_ELSE_IF {
+		parser.next()
+
+		tok = parser.peek()
+	}
+	return stm
 }
 
 func (parser *Parser) ParseCondition() ast.Expression {
