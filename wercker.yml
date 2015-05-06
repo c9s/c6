@@ -4,4 +4,10 @@ build:
   steps:
     - script:
         name: Build
-        code: 'make'
+        code: |
+          make
+
+    - script:
+        name: Test
+        code: |
+          make test
