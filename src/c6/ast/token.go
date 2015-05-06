@@ -27,7 +27,7 @@ func (tok Token) IsString() bool {
 	return tok.Type == T_QQ_STRING || tok.Type == T_Q_STRING || tok.Type == T_UNQUOTE_STRING
 }
 
-func (tok Token) IsSelectorOp() bool {
+func (tok Token) IsSelectorCombinator() bool {
 	return tok.Type == T_ADJACENT_SIBLING_COMBINATOR ||
 		tok.Type == T_CHILD_COMBINATOR ||
 		tok.Type == T_GENERAL_SIBLING_COMBINATOR ||
@@ -35,17 +35,22 @@ func (tok Token) IsSelectorOp() bool {
 }
 
 func (tok Token) IsSelector() bool {
-	return tok.Type == T_TYPE_SELECTOR ||
-		tok.Type == T_UNIVERSAL_SELECTOR ||
-		tok.Type == T_ID_SELECTOR ||
-		tok.Type == T_CLASS_SELECTOR ||
-		tok.Type == T_PARENT_SELECTOR ||
-		tok.Type == T_PSEUDO_SELECTOR ||
-		tok.Type == T_ADJACENT_SIBLING_COMBINATOR ||
-		tok.Type == T_GENERAL_SIBLING_COMBINATOR ||
-		tok.Type == T_CHILD_COMBINATOR ||
-		tok.Type == T_DESCENDANT_COMBINATOR ||
-		tok.Type == T_PARENT_SELECTOR
+	switch tok.Type {
+	case T_TYPE_SELECTOR, T_UNIVERSAL_SELECTOR, T_ID_SELECTOR,
+		T_CLASS_SELECTOR, T_PARENT_SELECTOR, T_PSEUDO_SELECTOR,
+		T_ADJACENT_SIBLING_COMBINATOR, T_GENERAL_SIBLING_COMBINATOR,
+		T_CHILD_COMBINATOR, T_DESCENDANT_COMBINATOR:
+		return true
+	}
+	return false
+}
+
+func (tok Token) IsComparisonOperator() bool {
+	switch tok.Type {
+	case T_EQUAL, T_UNEQUAL, T_GT, T_LT, T_GE, T_LE:
+		return true
+	}
+	return false
 }
 
 func (tok Token) IsOneOfTypes(types []TokenType) bool {
