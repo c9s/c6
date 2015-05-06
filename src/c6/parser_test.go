@@ -65,7 +65,6 @@ func TestParserIfTrueStatement(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
-/*
 func TestParserIfFalseElseStatement(t *testing.T) {
 	var stmts = RunParserTest(`@if false {  } @else {  }`)
 	assert.Equal(t, 1, len(stmts))
@@ -75,7 +74,16 @@ func TestParserIfFalseOrTrueElseStatement(t *testing.T) {
 	var stmts = RunParserTest(`@if false or true {  } @else {  }`)
 	assert.Equal(t, 1, len(stmts))
 }
-*/
+
+func TestParserIfTrueAndTrueOrFalseElseStatement(t *testing.T) {
+	var stmts = RunParserTest(`@if true and true or true {  } @else {  }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserIfTrueAndTrueOrFalseElseStatement2(t *testing.T) {
+	var stmts = RunParserTest(`@if (true and true) or true {  } @else {  }`)
+	assert.Equal(t, 1, len(stmts))
+}
 
 func TestParserParseCSS3Gradient(t *testing.T) {
 	// some test cases from htmldog

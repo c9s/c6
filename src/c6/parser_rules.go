@@ -143,8 +143,17 @@ func (parser *Parser) ParseLogicANDExpression() ast.Expression {
 
 func (parser *Parser) ParseComparisonExpression() ast.Expression {
 	debug("ParseComparisonExpression")
-	var expr = parser.ParseExpression(false)
+
 	var tok = parser.peek()
+	if tok.Type == ast.T_PAREN_START {
+		parser.accept(ast.T_PAREN_START)
+		var expr = parser.ParseLogicExpression()
+		parser.expect(ast.T_PAREN_END)
+		return expr
+	}
+
+	var expr = parser.ParseExpression(false)
+	tok = parser.peek()
 	for tok != nil && tok.IsComparisonOperator() {
 		parser.next()
 		if subexpr := parser.ParseExpression(false); subexpr != nil {
