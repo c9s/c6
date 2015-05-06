@@ -1,5 +1,8 @@
 all:
 	go generate c6 c6/ast
+	go build c6 c6/ast c6/runtime
+
+install:
 	go install c6 c6/ast c6/runtime
 
 test: all
