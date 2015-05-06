@@ -13,6 +13,12 @@ func (self *Block) SetStatements(stms []Statement) {
 	self.Statements = stms
 }
 
+func (self *Block) MergeBlock(block *Block) {
+	for _, stm := range block.Statements {
+		self.Statements = append(self.Statements, stm)
+	}
+}
+
 // Append a statement interface object on the slice
 // It needs to be a pointer
 func (self *Block) AppendStatement(stm Statement) {
