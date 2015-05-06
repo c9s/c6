@@ -125,6 +125,12 @@ func lexExpression(l *Lexer) stateFn {
 		l.next()
 		l.emit(ast.T_PLUS)
 
+	} else if r == '&' {
+
+		// '&' is allowed in expression, to make sure there is a parent selector
+		l.next()
+		l.emit(ast.T_PARENT_SELECTOR)
+
 	} else if r == '%' {
 
 		// TODO: placeholders start with '%'

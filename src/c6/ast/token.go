@@ -152,8 +152,8 @@ const (
 	T_GE    // for '>='
 	T_LE    // for '<='
 
-	T_ASSIGN
-	T_ATTR_EQUAL        // for '=', used in attribute selector
+	T_ASSIGN            // for '='
+	T_ATTR_EQUAL        // for '=' inside attribute selecctors
 	T_ATTR_TILDE_EQUAL  // for '~='
 	T_ATTR_HYPHEN_EQUAL // for '|='
 	T_VARIABLE
