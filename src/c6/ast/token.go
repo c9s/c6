@@ -127,8 +127,9 @@ const (
 
 	T_FONT_FACE
 
-	T_OR  // 'or' used in conditional query
-	T_AND // 'and' used in conditional query
+	T_NOT // 'not' used in conditions
+	T_OR  // 'or' used in conditions query
+	T_AND // 'and' used in conditions query
 	T_XOR
 
 	/*
