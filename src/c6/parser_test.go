@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func RunParserTest(code string) *ast.Block {
+func RunParserTest(code string) []ast.Statement {
 	fmt.Printf("Test parsing: %s\n", code)
 	var parser = NewParser(NewContext())
 	return parser.ParseScss(code)
@@ -15,9 +15,13 @@ func RunParserTest(code string) *ast.Block {
 
 func TestParserParseImportRuleWithUrl(t *testing.T) {
 	parser := NewParser(NewContext())
-	block := parser.ParseScss(`@import url("http://foo.com/bar.css");`)
+	stmts := parser.ParseScss(`@import url("http://foo.com/bar.css");`)
 
-	rule, ok := block.Statement(0).(*ast.ImportStatement)
+	if len(stmts) == 0 {
+		t.Fatal("Returned 0 statements")
+	}
+
+	rule, ok := stmts[0].(*ast.ImportStatement)
 	assert.True(t, ok, "Convert to ImportStatement OK")
 	assert.NotNil(t, rule)
 
@@ -33,9 +37,13 @@ func TestParserParseImportRuleWithUrl(t *testing.T) {
 
 func TestParserParseImportRuleWithString(t *testing.T) {
 	parser := NewParser(NewContext())
-	block := parser.ParseScss(`@import "foo.css";`)
+	stmts := parser.ParseScss(`@import "foo.css";`)
 
-	rule, ok := block.Statement(0).(*ast.ImportStatement)
+	if len(stmts) == 0 {
+		t.Fatal("Returned 0 statements")
+	}
+
+	rule, ok := stmts[0].(*ast.ImportStatement)
 	assert.True(t, ok, "Convert to ImportStatement OK")
 	assert.NotNil(t, rule)
 
@@ -48,8 +56,8 @@ func TestParserParseImportRuleWithString(t *testing.T) {
 }
 
 func TestParserParseImportRuleWithMediaList(t *testing.T) {
-	var block = RunParserTest(`@import url("foo.css") screen;`)
-	_ = block
+	var stmts = RunParserTest(`@import url("foo.css") screen;`)
+	assert.Equal(t, 1, len(stmts))
 }
 
 func TestParserParseCSS3Gradient(t *testing.T) {
@@ -97,43 +105,43 @@ func TestParserVariableAssignmentWithMorePlus(t *testing.T) {
 }
 
 func TestParserVariableAssignmentWithComplexExpression(t *testing.T) {
-	var block = RunParserTest(`$foo: 12px * (20px + 20px) + 4px / 2;`)
-	fmt.Printf("%+v\n", block.Statements[0])
+	var stmts = RunParserTest(`$foo: 12px * (20px + 20px) + 4px / 2;`)
+	fmt.Printf("%+v\n", stmts[0])
 }
 
 func TestParserVariableAssignmentWithInterpolation(t *testing.T) {
-	var block = RunParserTest(`$foo: #{ 10 + 20 }px;`)
-	fmt.Printf("%+v\n", block.Statements[0])
+	var stmts = RunParserTest(`$foo: #{ 10 + 20 }px;`)
+	fmt.Printf("%+v\n", stmts[0])
 }
 
 func TestParserVariableAssignmentLengthPlusLength(t *testing.T) {
-	var block = RunParserTest(`$foo: 10px + 20px;`)
-	fmt.Printf("%+v\n", block)
+	var stmts = RunParserTest(`$foo: 10px + 20px;`)
+	fmt.Printf("%+v\n", stmts)
 }
 
 func TestParserVariableAssignmentNumberPlusNumberMulLength(t *testing.T) {
-	var block = RunParserTest(`$foo: (10 + 20) * 3px;`)
-	fmt.Printf("%+v\n", block)
+	var stmts = RunParserTest(`$foo: (10 + 20) * 3px;`)
+	fmt.Printf("%+v\n", stmts)
 }
 
 func TestParserVariableAssignmentWithHexColorAddOperation(t *testing.T) {
-	var block = RunParserTest(`$foo: #000 + 10;`)
-	fmt.Printf("%+v\n", block)
+	var stmts = RunParserTest(`$foo: #000 + 10;`)
+	fmt.Printf("%+v\n", stmts)
 }
 
 func TestParserVariableAssignmentWithHexColorMulOperation(t *testing.T) {
-	var block = RunParserTest(`$foo: #010101 * 20;`)
-	fmt.Printf("%+v\n", block)
+	var stmts = RunParserTest(`$foo: #010101 * 20;`)
+	fmt.Printf("%+v\n", stmts)
 }
 
 func TestParserVariableAssignmentWithHexColorDivOperation(t *testing.T) {
-	var block = RunParserTest(`$foo: #121212 / 2;`)
-	fmt.Printf("%+v\n", block)
+	var stmts = RunParserTest(`$foo: #121212 / 2;`)
+	fmt.Printf("%+v\n", stmts)
 }
 
 func TestParserVariableAssignmentWithPxValue(t *testing.T) {
-	var block = RunParserTest(`$foo: 10px;`)
-	fmt.Printf("%+v\n", block)
+	var stmts = RunParserTest(`$foo: 10px;`)
+	fmt.Printf("%+v\n", stmts)
 }
 
 func TestParserMassiveRules(t *testing.T) {
@@ -156,16 +164,16 @@ func TestParserMassiveRules(t *testing.T) {
 	for _, buffer := range buffers {
 		fmt.Printf("Input %s\n", buffer)
 		var parser = NewParser(NewContext())
-		var block = parser.ParseScss(buffer)
-		fmt.Printf("%+v\n", block)
+		var stmts = parser.ParseScss(buffer)
+		fmt.Printf("%+v\n", stmts)
 	}
 }
 
 func TestParserParseTypeSelectorRule(t *testing.T) {
 	parser := NewParser(NewContext())
-	block := parser.ParseScss(`div { width: auto; }`)
+	stmts := parser.ParseScss(`div { width: auto; }`)
 
-	ruleset, ok := block.Statements[0].(*ast.RuleSet)
+	ruleset, ok := stmts[0].(*ast.RuleSet)
 	assert.True(t, ok)
 
 	t.Logf("%+v\n", ruleset.Selectors)

@@ -16,18 +16,23 @@ func (parser *Parser) ParseBlock() *ast.Block {
 }
 
 func (parser *Parser) ParseStatements(parentRuleSet *ast.RuleSet) []ast.Statement {
-	var stmts []ast.Statement
-	var stm = parser.ParseStatement(parentRuleSet)
-
-	for !parser.eof() && stm != nil {
-		stmts = append(stmts, stm)
-		stm = parser.ParseStatement(parentRuleSet)
+	var stmts []ast.Statement = []ast.Statement{}
+	for !parser.eof() {
+		if stmt := parser.ParseStatement(parentRuleSet); stmt != nil {
+			stmts = append(stmts, stmt)
+		} else {
+			break
+		}
 	}
 	return stmts
 }
 
 func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
 	var token = parser.peek()
+
+	if token == nil {
+		return nil
+	}
 
 	if token.Type == ast.T_IMPORT {
 
@@ -45,6 +50,9 @@ func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
 
 		return parser.ParseRuleSet(parentRuleSet)
 
+	} else {
+		// XXX:
+		panic("parse failed, unknown token")
 	}
 	return nil
 }
@@ -60,7 +68,7 @@ func (parser *Parser) ParseCondition() ast.Expression {
 }
 
 func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
-	var ruleset = ast.RuleSet{}
+	var ruleset = ast.NewRuleSet()
 	var tok = parser.next()
 
 	for tok.IsSelector() {
@@ -108,8 +116,8 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 	parser.backup()
 
 	// parse declaration block
-	ruleset.DeclarationBlock = parser.ParseDeclarationBlock(&ruleset)
-	return &ruleset
+	ruleset.DeclarationBlock = parser.ParseDeclarationBlock(ruleset)
+	return ruleset
 }
 
 func (parser *Parser) ParseNumber() ast.Expression {
@@ -701,7 +709,7 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 	var tok = parser.next()
 
 	// Create the import statement node
-	var rule = ast.ImportStatement{}
+	var stm = ast.NewImportStatement()
 
 	tok = parser.peek()
 	// expecting url(..)
@@ -709,7 +717,7 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 		parser.advance()
 
 		if tok.Str != "url" {
-			panic("invalid function for @import rule.")
+			panic("invalid function for @import statement.")
 		}
 
 		if tok = parser.next(); tok.Type != ast.T_PAREN_START {
@@ -717,7 +725,7 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 		}
 
 		tok = parser.next()
-		rule.Url = ast.Url(tok.Str)
+		stm.Url = ast.Url(tok.Str)
 
 		if tok = parser.next(); tok.Type != ast.T_PAREN_END {
 			panic("expecting parenthesis after url")
@@ -725,7 +733,7 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 
 	} else if tok.IsString() {
 		parser.advance()
-		rule.Url = ast.RelativeUrl(tok.Str)
+		stm.Url = ast.RelativeUrl(tok.Str)
 	}
 
 	/*
@@ -738,7 +746,7 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 	tok = parser.peek()
 	if tok.Type == ast.T_MEDIA {
 		parser.advance()
-		rule.MediaList = append(rule.MediaList, tok.Str)
+		stm.MediaList = append(stm.MediaList, tok.Str)
 	}
 
 	// must be ast.T_SEMICOLON
@@ -746,5 +754,5 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 	if tok.Type != ast.T_SEMICOLON {
 		panic(ParserError{";", tok.Str})
 	}
-	return &rule
+	return stm
 }

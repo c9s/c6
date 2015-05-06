@@ -20,7 +20,7 @@ type ParserError struct {
 	ActualToken    string
 }
 
-const debugParser = false
+const debugParser = true
 
 func debug(format string, args ...interface{}) {
 	if debugParser {
@@ -193,12 +193,9 @@ func (self *Parser) eof() bool {
 	return tok == nil
 }
 
-func (parser *Parser) ParseScss(code string) *ast.Block {
+func (parser *Parser) ParseScss(code string) []ast.Statement {
 	l := NewLexerWithString(code)
 	l.run()
 	parser.Input = l.getOutput()
-	block := ast.Block{}
-	stmts := parser.ParseStatements(nil)
-	block.Statements = stmts
-	return &block
+	return parser.ParseStatements(nil)
 }

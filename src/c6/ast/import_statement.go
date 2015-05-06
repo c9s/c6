@@ -5,10 +5,14 @@ type ImportStatement struct {
 	MediaList []string
 }
 
+func NewImportStatement() *ImportStatement {
+	return &ImportStatement{nil, []string{}}
+}
+
 func (self ImportStatement) CanBeStatement() {}
 
 func (self ImportStatement) String() string {
-	return ""
+	return "@import ..."
 }
 
 // for Url()

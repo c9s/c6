@@ -26,5 +26,5 @@ func (self *RuleSet) GetSubRuleSets() []*RuleSet {
 func (self *RuleSet) CanBeStatement() {}
 
 func (self RuleSet) String() string {
-	return ""
+	return "String() not implemented yet."
 }
