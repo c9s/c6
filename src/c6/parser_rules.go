@@ -386,7 +386,7 @@ func (parser *Parser) ParseFactor() ast.Expression {
 	} else if tok.Type == ast.T_FUNCTION_NAME {
 
 		var fcall = parser.ParseFunctionCall()
-		return ast.Expression(*fcall)
+		return ast.Expression(fcall)
 
 	} else {
 
