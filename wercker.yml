@@ -1,1 +1,6 @@
-box: wercker/default
+box: google/golang
+build:
+  steps:
+    - script:
+        name: Build
+        code: 'make'
