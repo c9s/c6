@@ -5,8 +5,8 @@ package ast
 
 /*
 func TestBinaryExprString(t *testing.T) {
-	var num1 = NewNumber(2, nil)
-	var num2 = NewNumber(3, nil)
+	var num1 = NewNumber(2, nil, nil)
+	var num2 = NewNumber(3, nil, nil)
 	var expr = NewBinaryExpression(N, num1, num2, false)
 	t.Logf("%s", expr.String())
 

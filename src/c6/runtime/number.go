@@ -27,7 +27,7 @@ Invalid expression
 
 func NumberSubNumber(a *ast.Number, b *ast.Number) *ast.Number {
 	var result = a.Value - b.Value
-	return ast.NewNumber(result, nil)
+	return ast.NewNumber(result, nil, nil)
 }
 
 /*
@@ -35,7 +35,7 @@ func NumberSubNumber(a *ast.Number, b *ast.Number) *ast.Number {
 */
 func NumberDivNumber(a *ast.Number, b *ast.Number) *ast.Number {
 	var result = a.Value / b.Value
-	return ast.NewNumber(result, nil)
+	return ast.NewNumber(result, nil, nil)
 }
 
 /*
@@ -43,12 +43,12 @@ func NumberDivNumber(a *ast.Number, b *ast.Number) *ast.Number {
 */
 func NumberMulNumber(a *ast.Number, b *ast.Number) *ast.Number {
 	var result = a.Value * b.Value
-	return ast.NewNumber(result, nil)
+	return ast.NewNumber(result, nil, nil)
 }
 
 func NumberAddNumber(a *ast.Number, b *ast.Number) *ast.Number {
 	var result = a.Value + b.Value
-	return ast.NewNumber(result, nil)
+	return ast.NewNumber(result, nil, nil)
 }
 
 func NumberMulLength(a *ast.Number, b *ast.Length) *ast.Length {

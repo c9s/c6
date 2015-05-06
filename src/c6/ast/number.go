@@ -4,23 +4,24 @@ import "strconv"
 
 type Number struct {
 	Value float64
+	Unit  *Unit
 	Token *Token
 }
 
-func NewNumberInt64(num int64, token *Token) *Number {
-	return &Number{float64(num), token}
-}
-
-func NewNumber(num float64, token *Token) *Number {
-	return &Number{num, token}
+func NewNumber(num float64, unit *Unit, token *Token) *Number {
+	return &Number{num, unit, token}
 }
 
 func (self Number) GetValueType() ValueType {
 	return NumberValue
 }
 
-func (num Number) String() (out string) {
-	return strconv.FormatFloat(num.Value, 'G', -1, 64)
+func (self Number) String() (out string) {
+	out += strconv.FormatFloat(self.Value, 'G', -1, 64)
+	if self.Unit != nil {
+		out += self.Unit.String()
+	}
+	return out
 }
 
 func (num Number) Boolean() bool {

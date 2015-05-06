@@ -45,6 +45,16 @@ func (tok Token) IsSelector() bool {
 	return false
 }
 
+func (tok Token) IsLengthUnit() bool {
+	switch tok.Type {
+	case T_UNIT_EM, T_UNIT_EX, T_UNIT_CH, T_UNIT_REM, T_UNIT_CM, T_UNIT_IN,
+		T_UNIT_MM, T_UNIT_PC, T_UNIT_PT, T_UNIT_PX, T_UNIT_VH, T_UNIT_VW,
+		T_UNIT_VMIN, T_UNIT_VMAX:
+		return true
+	}
+	return false
+}
+
 func (tok Token) IsUnit() bool {
 	switch tok.Type {
 	case T_UNIT_NONE, T_UNIT_PERCENT, T_UNIT_SECOND, T_UNIT_MILLISECOND,

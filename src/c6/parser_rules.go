@@ -283,7 +283,7 @@ func (parser *Parser) ParseNumber() ast.Expression {
 		parser.next()
 		return ast.NewLength(val, ast.NewUnitWithToken(tok2), tok)
 	}
-	return ast.NewNumber(val, tok)
+	return ast.NewNumber(val, nil, tok)
 }
 
 func (parser *Parser) ParseFunctionCall() *ast.FunctionCall {
