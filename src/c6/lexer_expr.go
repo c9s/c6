@@ -185,6 +185,13 @@ func lexExpression(l *Lexer) stateFn {
 		} else {
 			l.emit(ast.T_GT)
 		}
+
+	} else if r == '!' && r2 == '=' {
+
+		l.next()
+		l.next()
+		l.emit(ast.T_UNEQUAL)
+
 	} else if r == '=' {
 
 		l.next()
