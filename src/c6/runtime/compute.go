@@ -1,6 +1,5 @@
 package runtime
 
-import "fmt"
 import "c6/ast"
 
 /*
@@ -14,9 +13,6 @@ var computableMatrix [ValueTypeNum][ValueTypeNum]bool = [ValueTypeNum][ValueType
 	/* NumberValue */
 	[ValueTypeNum]bool{false, false, false, false, false, false, false},
 
-	/* LengthValue */
-	[ValueTypeNum]bool{false, false, false, false, false, false, false},
-
 	/* HexColorValue */
 	[ValueTypeNum]bool{false, false, false, false, false, false, false},
 
@@ -28,14 +24,11 @@ var computableMatrix [ValueTypeNum][ValueTypeNum]bool = [ValueTypeNum][ValueType
 }
 
 /**
-Each row: [5]ComputeFunction{ NumberValue, LengthValue, HexColorValue, RGBAColorValue, RGBColorValue }
+Each row: [5]ComputeFunction{ NumberValue, HexColorValue, RGBAColorValue, RGBColorValue }
 */
 var computeFunctionMatrix [5][5]ComputeFunction = [5][5]ComputeFunction{
 
 	/* NumberValue */
-	[5]ComputeFunction{nil, nil, nil, nil, nil},
-
-	/* LengthValue */
 	[5]ComputeFunction{nil, nil, nil, nil, nil},
 
 	/* HexColorValue */
@@ -59,11 +52,6 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 			case *ast.HexColor:
 				return HexColorAddNumber(tb, ta)
 			}
-		case *ast.Length:
-			switch tb := b.(type) {
-			case *ast.Length:
-				return LengthAddLength(ta, tb)
-			}
 		case *ast.HexColor:
 			switch tb := b.(type) {
 			case *ast.Number:
@@ -82,21 +70,11 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 		}
 	case ast.T_MINUS:
 		switch ta := a.(type) {
-
 		case *ast.Number:
 			switch tb := b.(type) {
 			case *ast.Number:
 				return NumberSubNumber(ta, tb)
 			}
-
-		case *ast.Length:
-			switch tb := b.(type) {
-			case *ast.Length:
-				val := LengthSubLength(ta, tb)
-				fmt.Printf("Substracted value: %+v\n", val)
-				return val
-			}
-
 		case *ast.HexColor:
 			switch tb := b.(type) {
 			case *ast.Number:
@@ -118,12 +96,10 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 	case ast.T_MUL:
 		switch ta := a.(type) {
 
-		case *ast.Length:
+		case *ast.Number:
 			switch tb := b.(type) {
-			case *ast.Length:
-				return LengthMulLength(ta, tb)
 			case *ast.Number:
-				return LengthMulNumber(ta, tb)
+				return NumberMulNumber(ta, tb)
 			}
 
 		case *ast.RGBColor:
@@ -145,7 +121,7 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) ast.Value {
 	if expr.IsCssSlash() {
 		// return string object without quote
-		return ast.NewString(0, expr.Left.(*ast.Length).String()+"/"+expr.Right.(*ast.Length).String(), nil)
+		return ast.NewString(0, expr.Left.(*ast.Number).String()+"/"+expr.Right.(*ast.Number).String(), nil)
 	}
 
 	var lval ast.Value = nil
@@ -156,7 +132,7 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) as
 		lval = EvaluateBinaryExpression(expr, symTable)
 	case *ast.UnaryExpression:
 		lval = EvaluateUnaryExpression(expr, symTable)
-	case *ast.Number, *ast.Length, *ast.HexColor:
+	case *ast.Number, *ast.HexColor:
 		lval = ast.Value(expr)
 	}
 	switch expr := expr.Right.(type) {
@@ -164,7 +140,7 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) as
 		rval = EvaluateUnaryExpression(expr, symTable)
 	case *ast.BinaryExpression:
 		rval = EvaluateBinaryExpression(expr, symTable)
-	case *ast.Number, *ast.Length, *ast.HexColor:
+	case *ast.Number, *ast.HexColor:
 		rval = ast.Value(expr)
 	}
 	if lval != nil && rval != nil {
@@ -185,8 +161,6 @@ func EvaluateUnaryExpression(expr *ast.UnaryExpression, symTable *SymTable) ast.
 	if expr.Op.Type == ast.T_DIV {
 		switch n := val.(type) {
 		case *ast.Number:
-			n.Value = -n.Value
-		case *ast.Length:
 			n.Value = -n.Value
 		}
 	}
