@@ -201,6 +201,23 @@ func IsConstantValue(val ast.Value) bool {
 	return false
 }
 
+func EvaluateExpressionInBooleanContext(anyexpr ast.Expression, symTable *SymTable) ast.Value {
+	switch expr := anyexpr.(type) {
+
+	case *ast.BinaryExpression:
+		return EvaluateBinaryExpressionInBooleanContext(expr, symTable)
+
+	case *ast.UnaryExpression:
+		return EvaluateUnaryExpressionInBooleanContext(expr, symTable)
+
+	default:
+		if bval, ok := expr.(ast.BooleanValue); ok {
+			return ast.NewBoolean(bval.Boolean())
+		}
+	}
+	return nil
+}
+
 func EvaluateBinaryExpressionInBooleanContext(expr *ast.BinaryExpression, symTable *SymTable) ast.Value {
 
 	var lval ast.Value = nil

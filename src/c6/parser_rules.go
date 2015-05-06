@@ -66,7 +66,30 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 	if condition == nil {
 		panic("if statement syntax error")
 	}
+
 	var block = parser.ParseBlock()
+
+	// TODO: select passed condition and merge block
+	// try to simplify the condition without context and symbol table
+	var mergeBlock = false
+	var ignoreBlock = false
+	var val = runtime.EvaluateExpressionInBooleanContext(condition, nil)
+	// check if the expression is evaluated
+	if runtime.IsConstantValue(val) {
+		if b, ok := val.(ast.BooleanValue); ok {
+			if b.Boolean() {
+				mergeBlock = true
+			} else {
+				ignoreBlock = true
+			}
+		}
+	}
+	if mergeBlock {
+		// TODO: merge with subblock with the current block
+	} else if ignoreBlock {
+
+	}
+
 	var stm = ast.NewIfStatement(condition, block)
 
 	// If these is more else if statement
@@ -79,12 +102,10 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 		var elseifblock = parser.ParseBlock()
 		var elseIfStm = ast.NewIfStatement(condition, elseifblock)
 		stm.AppendElseIf(elseIfStm)
-
 		tok = parser.peek()
 	}
 
 	tok = parser.peek()
-
 	if tok != nil && tok.Type == ast.T_ELSE {
 		parser.next()
 
