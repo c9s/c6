@@ -72,11 +72,11 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 			}
 			ruleset.AppendSelector(sel)
 
-		case ast.T_ADJACENT_SELECTOR:
+		case ast.T_ADJACENT_SIBLING_COMBINATOR:
 			ruleset.AppendSelector(ast.AdjacentSelector{})
-		case ast.T_CHILD_SELECTOR:
+		case ast.T_CHILD_COMBINATOR:
 			ruleset.AppendSelector(ast.ChildSelector{})
-		case ast.T_DESCENDANT_SELECTOR:
+		case ast.T_DESCENDANT_COMBINATOR:
 			ruleset.AppendSelector(ast.DescendantSelector{})
 		default:
 			panic(fmt.Errorf("Unexpected selector token: %+v", tok))

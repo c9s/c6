@@ -155,10 +155,38 @@ func lexExpression(l *Lexer) stateFn {
 		l.next()
 		l.emit(ast.T_PAREN_END)
 
+	} else if r == '<' {
+
+		l.next()
+		if r2 == '=' {
+			l.next()
+			l.emit(ast.T_LE)
+		} else {
+			l.emit(ast.T_LT)
+		}
+
+	} else if r == '>' {
+		l.next()
+		if r2 == '=' {
+			l.next()
+			l.emit(ast.T_GE)
+		} else {
+			l.emit(ast.T_GT)
+		}
 	} else if r == '=' {
 
 		l.next()
-		l.emit(ast.T_ATTR_EQUAL)
+
+		if r2 == '=' {
+
+			l.next()
+			l.emit(ast.T_EQUAL)
+
+		} else {
+
+			l.emit(ast.T_ASSIGN)
+
+		}
 
 	} else if r == '#' {
 

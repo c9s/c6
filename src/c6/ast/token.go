@@ -28,9 +28,10 @@ func (tok Token) IsString() bool {
 }
 
 func (tok Token) IsSelectorOp() bool {
-	return tok.Type == T_ADJACENT_SELECTOR ||
-		tok.Type == T_CHILD_SELECTOR ||
-		tok.Type == T_DESCENDANT_SELECTOR
+	return tok.Type == T_ADJACENT_SIBLING_COMBINATOR ||
+		tok.Type == T_CHILD_COMBINATOR ||
+		tok.Type == T_GENERAL_SIBLING_COMBINATOR ||
+		tok.Type == T_DESCENDANT_COMBINATOR
 }
 
 func (tok Token) IsSelector() bool {
@@ -40,9 +41,10 @@ func (tok Token) IsSelector() bool {
 		tok.Type == T_CLASS_SELECTOR ||
 		tok.Type == T_PARENT_SELECTOR ||
 		tok.Type == T_PSEUDO_SELECTOR ||
-		tok.Type == T_ADJACENT_SELECTOR ||
-		tok.Type == T_CHILD_SELECTOR ||
-		tok.Type == T_DESCENDANT_SELECTOR ||
+		tok.Type == T_ADJACENT_SIBLING_COMBINATOR ||
+		tok.Type == T_GENERAL_SIBLING_COMBINATOR ||
+		tok.Type == T_CHILD_COMBINATOR ||
+		tok.Type == T_DESCENDANT_COMBINATOR ||
 		tok.Type == T_PARENT_SELECTOR
 }
 
@@ -86,10 +88,11 @@ const (
 	T_MS_PROGID
 
 	// Selector relationship
-	T_AND_SELECTOR        // {parent-selector}{child-selector} { }
-	T_DESCENDANT_SELECTOR // E ' ' F
-	T_CHILD_SELECTOR      // E '>' F
-	T_ADJACENT_SELECTOR   // E '+' F
+	T_AND_SELECTOR                // {parent-selector}{child-selector} { }
+	T_DESCENDANT_COMBINATOR         // E ' ' F
+	T_CHILD_COMBINATOR            // E '>' F
+	T_ADJACENT_SIBLING_COMBINATOR // E '+' F
+	T_GENERAL_SIBLING_COMBINATOR  // E '~' F
 
 	T_UNICODE_RANGE
 
@@ -121,10 +124,11 @@ const (
 
 	T_EQUAL // for '=='
 	T_GT    // greater than for '>'
-	T_GE    // for '>='
 	T_LT    // less than for '<'
+	T_GE    // for '>='
 	T_LE    // for '<='
 
+	T_ASSIGN
 	T_ATTR_EQUAL        // for '=', used in attribute selector
 	T_ATTR_TILDE_EQUAL  // for '~='
 	T_ATTR_HYPHEN_EQUAL // for '|='

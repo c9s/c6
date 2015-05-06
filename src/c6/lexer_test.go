@@ -449,7 +449,7 @@ func TestLexerCommentBlockBeforeRuleSet(t *testing.T) {
 	.test .foo { }`, []ast.TokenType{
 		ast.T_COMMENT_BLOCK,
 		ast.T_CLASS_SELECTOR,
-		ast.T_DESCENDANT_SELECTOR,
+		ast.T_DESCENDANT_COMBINATOR,
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
 		ast.T_BRACE_END,
@@ -459,7 +459,7 @@ func TestLexerCommentBlockBeforeRuleSet(t *testing.T) {
 func TestLexerCommentBlockBetweenSelectors(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test /* comment between selector and block */ .foo { }`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_DESCENDANT_SELECTOR,
+		ast.T_DESCENDANT_COMBINATOR,
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START,
 		ast.T_BRACE_END,

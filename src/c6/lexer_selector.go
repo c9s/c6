@@ -142,7 +142,7 @@ func lexChildSelector(l *Lexer) stateFn {
 	if r != '>' {
 		l.error("Unexpected token '%s' for child selector.", r)
 	}
-	l.emit(ast.T_CHILD_SELECTOR)
+	l.emit(ast.T_CHILD_COMBINATOR)
 	return lexSelectors
 }
 
@@ -236,7 +236,7 @@ func lexSelectors(l *Lexer) stateFn {
 			return nil
 		}
 		if foundSpace && r != ',' && r != '{' && !isSelectorOperatorToken(r) {
-			l.emit(ast.T_DESCENDANT_SELECTOR)
+			l.emit(ast.T_DESCENDANT_COMBINATOR)
 		} else {
 			l.ignore()
 		}
@@ -307,7 +307,7 @@ func lexSelectors(l *Lexer) stateFn {
 
 	} else if r == '+' {
 		l.next()
-		l.emit(ast.T_ADJACENT_SELECTOR)
+		l.emit(ast.T_ADJACENT_SIBLING_COMBINATOR)
 		return lexSelectors
 	} else if r == ' ' {
 		for r == ' ' {

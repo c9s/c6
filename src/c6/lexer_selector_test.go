@@ -139,14 +139,14 @@ func TestLexerRuleWithTagNameAndClassSelector(t *testing.T) {
 func TestLexerRuleForDescendantTagNameSelectorWithoutSpace(t *testing.T) {
 	l := NewLexerWithString(`div input{}`)
 	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_DESCENDANT_SELECTOR, ast.T_TYPE_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_DESCENDANT_COMBINATOR, ast.T_TYPE_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
 	l.close()
 }
 
 func TestLexerRuleForDescendantTagNameSelector(t *testing.T) {
 	l := NewLexerWithString(`div input {  }`)
 	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_DESCENDANT_SELECTOR, ast.T_TYPE_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_DESCENDANT_COMBINATOR, ast.T_TYPE_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
 	l.close()
 }
 
@@ -154,7 +154,7 @@ func TestLexerRuleForDescendantClassSelector(t *testing.T) {
 	l := NewLexerWithString(`.foo .bar {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_CLASS_SELECTOR, ast.T_DESCENDANT_SELECTOR, ast.T_CLASS_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_CLASS_SELECTOR, ast.T_DESCENDANT_COMBINATOR, ast.T_CLASS_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
 	l.close()
 }
 
@@ -162,7 +162,7 @@ func TestLexerRuleForDescendantClassSelectorAndTagNameSelector(t *testing.T) {
 	l := NewLexerWithString(`div.foo span.bar {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_CLASS_SELECTOR, ast.T_DESCENDANT_SELECTOR, ast.T_TYPE_SELECTOR, ast.T_CLASS_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_CLASS_SELECTOR, ast.T_DESCENDANT_COMBINATOR, ast.T_TYPE_SELECTOR, ast.T_CLASS_SELECTOR, ast.T_BRACE_START, ast.T_BRACE_END})
 	l.close()
 }
 
@@ -235,7 +235,7 @@ func TestLexerRuleAdjacentSelector(t *testing.T) {
 	l.run()
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_ADJACENT_SELECTOR,
+		ast.T_ADJACENT_SIBLING_COMBINATOR,
 		ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START, ast.T_BRACE_END})
 	l.close()
@@ -247,7 +247,7 @@ func TestLexerRuleChildSelector(t *testing.T) {
 	l.run()
 	AssertTokenSequence(t, l, []ast.TokenType{
 		ast.T_TYPE_SELECTOR, ast.T_CLASS_SELECTOR,
-		ast.T_CHILD_SELECTOR,
+		ast.T_CHILD_COMBINATOR,
 		ast.T_TYPE_SELECTOR, ast.T_CLASS_SELECTOR,
 		ast.T_BRACE_START, ast.T_BRACE_END})
 	l.close()
