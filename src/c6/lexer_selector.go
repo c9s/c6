@@ -108,7 +108,6 @@ func lexAttributeSelector(l *Lexer) stateFn {
 
 func lexClassSelector(l *Lexer) stateFn {
 	l.accept(".")
-	l.ignore()
 
 	var r = l.next()
 	if !unicode.IsLetter(r) {
@@ -297,8 +296,9 @@ func lexSelectors(l *Lexer) stateFn {
 			token.ContainsInterpolation = true
 			l.emitToken(token)
 			return lexSelectors
+		} else {
+			return lexIdSelector
 		}
-		return lexIdSelector
 
 	} else if r == '>' {
 
@@ -423,11 +423,6 @@ func lexLang(l *Lexer) stateFn {
 func lexIdSelector(l *Lexer) stateFn {
 	var foundInterpolation = false
 	var r = l.next()
-	if r != '#' {
-		l.error("Expecting '#' for lexing identifier, Got '%s'", r)
-	}
-	l.ignore()
-
 	r = l.next()
 	if !unicode.IsLetter(r) && r != '#' && l.peek() != '{' {
 		l.error("An identifier should start with at least a letter, Got '%s'", r)
