@@ -469,13 +469,19 @@ func lexNumber(l *Lexer) stateFn {
 		floatPoint = true
 	}
 
-	for unicode.IsDigit(r) || r == 'e' {
+	for unicode.IsDigit(r) {
 		r = l.next()
 		if r == '.' {
 			floatPoint = true
 			r = l.next()
 			if !unicode.IsDigit(r) {
 				l.error("Expecting at least one digit after the floating point, got '%s'", r)
+			}
+		} else if r == 'e' {
+			var r2 = l.peek()
+			// not scientific notation
+			if !unicode.IsDigit(r2) && (r2 != '-' && !unicode.IsDigit(l.peekBy(2))) {
+				break
 			}
 		}
 	}
