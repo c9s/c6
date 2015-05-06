@@ -135,6 +135,7 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) as
 	case *ast.Number, *ast.HexColor:
 		lval = ast.Value(expr)
 	}
+
 	switch expr := expr.Right.(type) {
 	case *ast.UnaryExpression:
 		rval = EvaluateUnaryExpression(expr, symTable)
@@ -157,8 +158,8 @@ func EvaluateUnaryExpression(expr *ast.UnaryExpression, symTable *SymTable) ast.
 		val = EvaluateUnaryExpression(uexpr, symTable)
 	}
 
-	// negative value
-	if expr.Op.Type == ast.T_DIV {
+	switch expr.Op.Type {
+	case ast.T_MINUS:
 		switch n := val.(type) {
 		case *ast.Number:
 			n.Value = -n.Value
