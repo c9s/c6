@@ -51,6 +51,8 @@ The the divide expression will only be evaluated in the following 3 conditions:
 	2. If the value is surrounded by parentheses.
 	3. If the value is used as part of another arithmetic expression.
 
+This method needs to be called on the top caller to prevent unexpected result.
+
 @see http://sass-lang.com/documentation/file.SASS_REFERENCE.html#division-and-slash
 */
 func (self *BinaryExpression) IsCssSlash() bool {
