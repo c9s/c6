@@ -10,8 +10,10 @@ import "c6/ast"
 import "c6/runtime"
 
 func (parser *Parser) ParseBlock() *ast.Block {
+	parser.expect(ast.T_BRACE_START)
 	var block = ast.NewBlock()
 	block.Statements = parser.ParseStatements(nil)
+	parser.expect(ast.T_BRACE_END)
 	return block
 }
 
@@ -58,7 +60,9 @@ func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
 }
 
 func (parser *Parser) ParseIfStatement() ast.Statement {
-
+	parser.expect(ast.T_IF)
+	var conditions = parser.ParseCondition()
+	_ = conditions
 	return nil
 
 }
