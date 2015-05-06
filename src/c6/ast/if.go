@@ -21,6 +21,6 @@ func (stm IfStatement) String() string {
 	return "(if statement STRING() un-implemented)"
 }
 
-func NewIfStatement() *IfStatement {
-	return &IfStatement{}
+func NewIfStatement(condition Expression, block *Block) *IfStatement {
+	return &IfStatement{condition, block, []*IfStatement{}, nil}
 }

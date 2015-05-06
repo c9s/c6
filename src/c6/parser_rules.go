@@ -66,17 +66,32 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 		panic("if statement syntax error")
 	}
 	var block = parser.ParseBlock()
-	var stm = ast.NewIfStatement()
-	stm.Condition = condition
-	stm.Block = block
+	var stm = ast.NewIfStatement(condition, block)
 
 	// If these is more else if statement
 	var tok = parser.peek()
 	for tok.Type == ast.T_ELSE_IF {
 		parser.next()
 
+		// XXX: handle error here
+		var condition = parser.ParseCondition()
+		var elseifblock = parser.ParseBlock()
+		var elseIfStm = ast.NewIfStatement(condition, elseifblock)
+		stm.AppendElseIf(elseIfStm)
+
 		tok = parser.peek()
 	}
+
+	tok = parser.peek()
+
+	if tok.Type == ast.T_ELSE {
+		parser.next()
+
+		// XXX: handle error here
+		var elseBlock = parser.ParseBlock()
+		stm.ElseBlock = elseBlock
+	}
+
 	return stm
 }
 
