@@ -1,61 +1,65 @@
 package runtime
 
 import "c6/ast"
-
-/*
-For color type, we treat them as vector. a vector can be computed with scalar or another vector.
-
-Valid expression:
-
-	#aaa / 3
-	#bb * 3
-	#bb - #cc
-	3px - 3px
-	3px + 3px
-
-Invalid expression
-
-- Number can't be the dividend.
-- Hex Color can't divisor.
-
-	3 / #aaa
-	3 - #bbb
-	3px - 3
-	6em - 3px
-
-*/
+import "fmt"
 
 func NumberSubNumber(a *ast.Number, b *ast.Number) *ast.Number {
+	if a.Unit.Type != b.Unit.Type {
+		fmt.Printf("Incompatible unit %s != %s.  %v - %v \n", a.Unit, b.Unit, a, b)
+		return nil
+	}
 	var result = a.Value - b.Value
-	return ast.NewNumber(result, nil, nil)
+	return ast.NewNumber(result, a.Unit, nil)
+}
+
+func NumberAddNumber(a *ast.Number, b *ast.Number) *ast.Number {
+	if (a.Unit == nil && b.Unit == nil) || (a.Unit != nil && b.Unit != nil && a.Unit.Type == b.Unit.Type) {
+		return ast.NewNumber(a.Value+b.Value, a.Unit, nil)
+	}
+	fmt.Printf("Incompatible unit %s != %s.  %v + %v \n", a.Unit, b.Unit, a, b)
+	return nil
 }
 
 /*
 10px / 3, 10 / 3, 10px / 10px is allowed here
 */
 func NumberDivNumber(a *ast.Number, b *ast.Number) *ast.Number {
-	var result = a.Value / b.Value
-	return ast.NewNumber(result, nil, nil)
+	if (a.Unit == nil && b.Unit == nil) || (a.Unit != nil && b.Unit != nil && a.Unit.Type == b.Unit.Type) {
+		return ast.NewNumber(a.Value/b.Value, nil, nil)
+	}
+
+	if a.Unit == nil || b.Unit == nil || a.Unit.Type == b.Unit.Type {
+		var result = a.Value / b.Value
+		var unit *ast.Unit = nil
+		if a.Unit != nil {
+			unit = a.Unit
+		}
+		if b.Unit != nil {
+			unit = b.Unit
+		}
+		return ast.NewNumber(result, unit, nil)
+	}
+	return nil
 }
 
 /*
 3 * 10px, 10px * 3, 10px * 10px is allowed here
 */
 func NumberMulNumber(a *ast.Number, b *ast.Number) *ast.Number {
-	var result = a.Value * b.Value
-	return ast.NewNumber(result, nil, nil)
-}
+	if a.Unit == nil && b.Unit == nil {
+		return ast.NewNumber(a.Value*b.Value, nil, nil)
+	}
 
-func NumberAddNumber(a *ast.Number, b *ast.Number) *ast.Number {
-	var result = a.Value + b.Value
-	return ast.NewNumber(result, nil, nil)
-}
-
-func NumberMulLength(a *ast.Number, b *ast.Length) *ast.Length {
-	return ast.NewLength(a.Value*b.Value, b.Unit, nil)
-}
-
-func NumberDivLength(a *ast.Number, b *ast.Length) *ast.Length {
-	panic("Number can't be divided by length")
+	if a.Unit == nil || b.Unit == nil || a.Unit.Type == b.Unit.Type {
+		var result = a.Value * b.Value
+		var unit *ast.Unit = nil
+		if a.Unit != nil {
+			unit = a.Unit
+		}
+		if b.Unit != nil {
+			unit = b.Unit
+		}
+		return ast.NewNumber(result, unit, nil)
+	}
 	return nil
 }

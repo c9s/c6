@@ -281,7 +281,7 @@ func (parser *Parser) ParseNumber() ast.Expression {
 	if tok2.IsUnit() {
 		// consume the unit token
 		parser.next()
-		return ast.NewLength(val, ast.NewUnitWithToken(tok2), tok)
+		return ast.NewNumber(val, ast.NewUnitWithToken(tok2), tok)
 	}
 	return ast.NewNumber(val, nil, tok)
 }
