@@ -147,11 +147,12 @@ const (
 	T_ATTRIBUTE_NAME
 	T_BRACKET_RIGHT
 
-	T_EQUAL // for '=='
-	T_GT    // greater than for '>'
-	T_LT    // less than for '<'
-	T_GE    // for '>='
-	T_LE    // for '<='
+	T_EQUAL   // for '=='
+	T_UNEQUAL // for '!='
+	T_GT      // greater than for '>'
+	T_LT      // less than for '<'
+	T_GE      // for '>='
+	T_LE      // for '<='
 
 	T_ASSIGN            // for '='
 	T_ATTR_EQUAL        // for '=' inside attribute selecctors
