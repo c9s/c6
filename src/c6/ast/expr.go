@@ -27,7 +27,9 @@ type BinaryExpression struct {
 func (self BinaryExpression) String() (out string) {
 	out += "("
 	out += self.Left.String()
-	out += " " + self.Op.String() + " "
+	if self.Op != nil {
+		out += " " + self.Op.String() + " "
+	}
 	out += self.Right.String()
 	out += ")"
 	return out
