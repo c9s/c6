@@ -5,6 +5,10 @@ type Unit struct {
 	Token *Token
 }
 
+func NewUnit(unitType TokenType, token *Token) *Unit {
+	return &Unit{unitType, token}
+}
+
 func NewUnitWithToken(token *Token) *Unit {
 	return &Unit{token.Type, token}
 }

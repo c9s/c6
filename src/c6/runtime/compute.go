@@ -42,6 +42,10 @@ var computeFunctionMatrix [5][5]ComputeFunction = [5][5]ComputeFunction{
 	[5]ComputeFunction{nil, nil, nil, nil, nil},
 }
 
+func ComputeBoolean(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
+	return nil
+}
+
 func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 	switch op.Type {
 	case ast.T_PLUS:
@@ -94,9 +98,29 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 				return RGBAColorSubNumber(ta, tb)
 			}
 		}
+
+	case ast.T_DIV:
+		switch ta := a.(type) {
+		case *ast.Number:
+			switch tb := b.(type) {
+			case *ast.Number:
+				return NumberDivNumber(ta, tb)
+			}
+		case *ast.RGBColor:
+			switch tb := b.(type) {
+			case *ast.Number:
+				return RGBColorDivNumber(ta, tb)
+			}
+
+		case *ast.RGBAColor:
+			switch tb := b.(type) {
+			case *ast.Number:
+				return RGBAColorDivNumber(ta, tb)
+			}
+		}
+
 	case ast.T_MUL:
 		switch ta := a.(type) {
-
 		case *ast.Number:
 			switch tb := b.(type) {
 			case *ast.Number:
