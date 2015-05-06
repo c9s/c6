@@ -682,12 +682,22 @@ func TestLexerIfStatementTrueOrFalseCondition(t *testing.T) {
 	@if true or false {
 		color: red;
 	}
-	`, []ast.TokenType{ast.T_IF, ast.T_TRUE, ast.T_OR, ast.T_FALSE, ast.T_BRACE_START,
+	`, []ast.TokenType{
+		ast.T_IF, ast.T_TRUE, ast.T_OR, ast.T_FALSE, ast.T_BRACE_START,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
 		ast.T_BRACE_END,
+	})
+}
+
+func TestLexerIfStatementFunctionCallEqualToNumber(t *testing.T) {
+	AssertLexerTokenSequence(t, `
+	@if type-of(nth($x, 3)) == 10 {
+	}
+	`, []ast.TokenType{
+		ast.T_IF, ast.T_FUNCTION_NAME, ast.T_PAREN_START, ast.T_FUNCTION_NAME, ast.T_PAREN_START, ast.T_VARIABLE, ast.T_COMMA, ast.T_INTEGER, ast.T_PAREN_END, ast.T_PAREN_END, ast.T_EQUAL, ast.T_INTEGER, ast.T_BRACE_START,
 	})
 }
 
