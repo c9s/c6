@@ -25,6 +25,12 @@ func (self *Block) AppendStatement(stm Statement) {
 	self.Statements = append(self.Statements, stm)
 }
 
+func (self *Block) AppendStatements(stmts []Statement) {
+	for _, stm := range stmts {
+		self.Statements = append(self.Statements, stm)
+	}
+}
+
 // Return the reference of the statement
 func (self *Block) Statement(idx uint) Statement {
 	return self.Statements[idx]
