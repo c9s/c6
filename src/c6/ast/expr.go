@@ -33,6 +33,17 @@ func (self BinaryExpression) String() (out string) {
 	return out
 }
 
+/*
+If any of left or right is variable, than it's constant expression
+
+Please note thist method does not test CSS slash, the caller should handle by itself.
+*/
+func (self BinaryExpression) IsConstantExpression() bool {
+	_, ok1 := self.Left.(*Variable)
+	_, ok2 := self.Right.(*Variable)
+	return ok1 || ok2
+}
+
 /**
 The the divide expression will only be evaluated in the following 3 conditions:
 
