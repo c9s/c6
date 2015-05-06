@@ -137,22 +137,11 @@ func lexParentSelector(l *Lexer) stateFn {
 	return lexSelectors
 }
 
-func lexChildSelector(l *Lexer) stateFn {
-	var r = l.next()
-	if r != '>' {
-		l.error("Unexpected token '%s' for child selector.", r)
-	}
-	l.emit(ast.T_CHILD_COMBINATOR)
-	return lexSelectors
-}
-
 func lexPseudoSelector(l *Lexer) stateFn {
 	var foundInterpolation = false
 
+	// the first ':'
 	var r = l.next()
-	if r != ':' {
-		l.error("Unexpected token '%s' for pseudo selector.", r)
-	}
 
 	// support CSS3 syntax for `::before` and `::after`
 	// @see https://developer.mozilla.org/en-US/docs/Web/CSS/::before
@@ -257,7 +246,11 @@ func lexSelectors(l *Lexer) stateFn {
 	} else if r == ':' {
 		return lexPseudoSelector
 	} else if r == '&' {
-		return lexParentSelector
+
+		l.next()
+		l.emit(ast.T_PARENT_SELECTOR)
+		return lexSelectors
+
 	} else if r == '*' {
 		return lexUniversalSelector
 	} else if r == '#' {
@@ -295,8 +288,13 @@ func lexSelectors(l *Lexer) stateFn {
 			return lexSelectors
 		}
 		return lexIdSelector
+
 	} else if r == '>' {
-		return lexChildSelector
+
+		l.next()
+		l.emit(ast.T_CHILD_COMBINATOR)
+		return lexSelectors
+
 	} else if r == ',' {
 
 		l.next()
@@ -310,14 +308,20 @@ func lexSelectors(l *Lexer) stateFn {
 		l.emit(ast.T_ADJACENT_SIBLING_COMBINATOR)
 		return lexSelectors
 	} else if r == ' ' {
+
+		l.next()
 		for r == ' ' {
 			r = l.next()
 		}
 		l.backup()
 		l.ignore()
+
 		return lexSelectors
+
 	} else if r == '{' {
+
 		return lexStatement
+
 	} else {
 		l.error("Unexpected token '%s' for lexing selector.", r)
 	}
