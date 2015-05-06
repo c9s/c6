@@ -89,7 +89,7 @@ To run specific test
   - [ ] Parse options: `!default`, `!global`, `!optional`
   - [ ] Parse CSS Hack for different browser (support more syntax sugar for this)
   - [ ] Parse `@font-face` block
-  - [ ] Parse `@if` statement
+  - [x] Parse `@if` statement
   - [ ] Parse `@mixin` statement
   - [ ] Parse `@include` statement
   - [ ] Parse `@function` statement
@@ -109,14 +109,15 @@ To run specific test
   - [x] FunctionCall
   - [x] Expression with interpolation
   - [x] Variable statements
-  - [ ] If Condition
-  - [ ] If Else If, Else Condition
+  - [x] If Condition
+  - [x] If Else If, Else Condition
   - [x] Built-in color keyword table
-  - [ ] Hex Color computation
+  - [x] Hex Color computation
   - [ ] HSL Color computation
   - [x] Number operation: add, sub, mul, div
   - [x] Length operation: number operation for px, pt, em, rem, cm ...etc
-  - [ ] Expression evaluation
+  - [x] Expression evaluation
+  - [ ] Boolean expression evaluation
   - [ ] Media Query conditions
 - [ ] CodeGen
   - [ ] NestedStyleCompiler
