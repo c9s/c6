@@ -4,6 +4,19 @@ import "c6/ast"
 import "fmt"
 
 /*
+Used for Incompatible unit, data type or unsupported operations
+*/
+type ComputeError struct {
+	Message string
+	Left    ast.Value
+	Right   ast.Value
+}
+
+func (self ComputeError) Error() string {
+	return self.Message
+}
+
+/*
 Value
 */
 type ComputeFunction func(a ast.Value, b ast.Value) ast.Value
