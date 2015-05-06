@@ -216,7 +216,7 @@ func EvaluateBinaryExpressionInBooleanContext(expr *ast.BinaryExpression, symTab
 	// operands
 	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor:
 		if bval, ok := lval.(ast.BooleanValue); ok {
-			rval = ast.NewBoolean(bval.Boolean())
+			lval = ast.NewBoolean(bval.Boolean())
 		} else {
 			panic(fmt.Errorf("BooleanValue interface is not support for %+v", lval))
 		}
@@ -261,32 +261,65 @@ func EvaluateUnaryExpressionInBooleanContext(expr *ast.UnaryExpression, symTable
 	return val
 }
 
-func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) ast.Value {
-	if expr.IsCssSlash() {
-		// return string object without quote
-		return ast.NewString(0, expr.Left.(*ast.Number).String()+"/"+expr.Right.(*ast.Number).String(), nil)
+/*
+EvaluateExpression calls EvaluateBinaryExpression. except EvaluateExpression prevents calculate css slash as division.
+otherwise it's the same as EvaluateBinaryExpression.
+*/
+func EvaluateExpression(expr ast.Expression, symTable *SymTable) ast.Value {
+
+	switch t := expr.(type) {
+
+	case *ast.BinaryExpression:
+		if t.IsCssSlash() {
+			// return string object without quote
+			return ast.NewString(0, t.Left.(*ast.Number).String()+"/"+t.Right.(*ast.Number).String(), nil)
+		}
+		return EvaluateBinaryExpression(t, symTable)
+
+	case *ast.UnaryExpression:
+		return EvaluateUnaryExpression(t, symTable)
+
+	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor:
+		return ast.Value(expr)
 	}
 
+	panic("Unsupported expression type")
+	return nil
+}
+
+/**
+EvaluateBinaryExpression recursively.
+*/
+func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) ast.Value {
 	var lval ast.Value = nil
 	var rval ast.Value = nil
 
 	switch expr := expr.Left.(type) {
+
 	case *ast.BinaryExpression:
 		lval = EvaluateBinaryExpression(expr, symTable)
+
 	case *ast.UnaryExpression:
 		lval = EvaluateUnaryExpression(expr, symTable)
+
 	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor:
 		lval = ast.Value(expr)
+
 	}
 
 	switch expr := expr.Right.(type) {
+
 	case *ast.UnaryExpression:
 		rval = EvaluateUnaryExpression(expr, symTable)
+
 	case *ast.BinaryExpression:
 		rval = EvaluateBinaryExpression(expr, symTable)
+
 	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor:
 		rval = ast.Value(expr)
+
 	}
+
 	if lval != nil && rval != nil {
 		return Compute(expr.Op, lval, rval)
 	}
