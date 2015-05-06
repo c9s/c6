@@ -193,6 +193,14 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 	return nil
 }
 
+func IsConstantValue(val ast.Value) bool {
+	switch val.(type) {
+	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor:
+		return true
+	}
+	return false
+}
+
 func EvaluateBinaryExpressionInBooleanContext(expr *ast.BinaryExpression, symTable *SymTable) ast.Value {
 
 	var lval ast.Value = nil
