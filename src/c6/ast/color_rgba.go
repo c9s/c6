@@ -19,6 +19,10 @@ func NewRGBAColorWithHexCode(hex string, token *Token) *RGBAColor {
 func (self RGBAColor) CanBeNode()  {}
 func (self RGBAColor) CanBeColor() {}
 
+func (self RGBAColor) Boolean() bool {
+	return true
+}
+
 // NOTE: 8 char hex color is only supported by IE.
 func (self RGBAColor) Hex() Hex {
 	return Hex(fmt.Sprintf("#%02X%02X%02X", self.R, self.G, self.B))
@@ -45,6 +49,10 @@ type RGBColor struct {
 
 func (self RGBColor) CanBeNode()  {}
 func (self RGBColor) CanBeColor() {}
+
+func (self RGBColor) Boolean() bool {
+	return true
+}
 
 func (self RGBColor) Hex() Hex {
 	return Hex(fmt.Sprintf("#%02X%02X%02X", self.R, self.G, self.B))

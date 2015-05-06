@@ -25,3 +25,10 @@ func NewStringWithToken(token *Token) *String {
 func NewString(quote byte, value string, token *Token) *String {
 	return &String{quote, value, token}
 }
+
+/*
+When string length is greater than 0, return true for boolean context
+*/
+func (str String) Boolean() bool {
+	return len(str.Value) > 0
+}

@@ -7,6 +7,13 @@ type List struct {
 	Expressions []Expression
 }
 
+/*
+When there is more than one item, we return true for boolean context
+*/
+func (self List) Boolean() bool {
+	return len(self.Expressions) > 0
+}
+
 func (self List) GetValueType() ValueType {
 	return ListValue
 }
