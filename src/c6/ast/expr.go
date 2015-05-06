@@ -34,7 +34,8 @@ func (self BinaryExpression) String() (out string) {
 }
 
 /*
-If any of left or right is variable, than it's constant expression
+If any of left or right is variable, than it's constant expression. this is
+used to eliminate simple expression when the parser is parsing...
 
 Please note thist method does not test CSS slash, the caller should handle by itself.
 
