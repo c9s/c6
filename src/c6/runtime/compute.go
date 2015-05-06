@@ -1,6 +1,7 @@
 package runtime
 
 import "c6/ast"
+import "fmt"
 
 /*
 Value
@@ -163,6 +164,12 @@ func EvaluateUnaryExpression(expr *ast.UnaryExpression, symTable *SymTable) ast.
 		switch n := val.(type) {
 		case *ast.Number:
 			n.Value = -n.Value
+		}
+	case ast.T_LOGICAL_NOT:
+		if bval, ok := val.(ast.BooleanValue); ok {
+			return ast.NewBoolean(bval.Boolean())
+		} else {
+			panic(fmt.Errorf("BooleanValue interface is not support for %+v", val))
 		}
 	}
 	return val

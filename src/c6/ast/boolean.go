@@ -30,6 +30,10 @@ func NewBooleanFalse(token *Token) *Boolean {
 	return &Boolean{false, token}
 }
 
+func NewBoolean(val bool) *Boolean {
+	return &Boolean{val, nil}
+}
+
 func NewBooleanWithToken(token *Token) *Boolean {
 	val, err := strconv.ParseBool(token.Str)
 	if err != nil {
