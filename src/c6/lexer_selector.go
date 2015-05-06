@@ -107,13 +107,10 @@ func lexAttributeSelector(l *Lexer) stateFn {
 }
 
 func lexClassSelector(l *Lexer) stateFn {
-	var r = l.next()
-	if r != '.' {
-		l.error("Unexpected token for class selector. got '%s'", r)
-	}
+	l.accept(".")
 	l.ignore()
 
-	r = l.next()
+	var r = l.next()
 	if !unicode.IsLetter(r) {
 		l.error("Expecting letter for class selector. got '%s'", r)
 		return nil
@@ -192,13 +189,21 @@ func lexUniversalSelector(l *Lexer) stateFn {
 
 	r = l.peek()
 	if r == '.' {
+
 		return lexClassSelector
+
 	} else if r == '[' {
+
 		return lexAttributeSelector
+
 	} else if r == ':' {
+
 		return lexPseudoSelector
+
 	} else if r == '#' {
+
 		return lexIdSelector
+
 	}
 	return lexSelectors
 }
@@ -240,11 +245,17 @@ func lexSelectors(l *Lexer) stateFn {
 	if unicode.IsLetter(r) {
 		return lexTypeSelector
 	} else if r == '[' {
+
 		return lexAttributeSelector
+
 	} else if r == '.' {
+
 		return lexClassSelector
+
 	} else if r == ':' {
+
 		return lexPseudoSelector
+
 	} else if r == '&' {
 
 		l.next()
