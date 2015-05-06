@@ -43,10 +43,21 @@ var computeFunctionMatrix [5][5]ComputeFunction = [5][5]ComputeFunction{
 }
 
 func ComputeBoolean(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
+	if op == nil {
+		panic("op can't be nil")
+	}
+	switch op.Type {
+	case ast.T_LOGICAL_AND:
+
+	case ast.T_LOGICAL_OR:
+	}
 	return nil
 }
 
 func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
+	if op == nil {
+		panic("op can't be nil")
+	}
 	switch op.Type {
 	case ast.T_PLUS:
 		switch ta := a.(type) {
@@ -106,12 +117,16 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 			case *ast.Number:
 				return NumberDivNumber(ta, tb)
 			}
+		case *ast.HexColor:
+			switch tb := b.(type) {
+			case *ast.Number:
+				return HexColorDivNumber(ta, tb)
+			}
 		case *ast.RGBColor:
 			switch tb := b.(type) {
 			case *ast.Number:
 				return RGBColorDivNumber(ta, tb)
 			}
-
 		case *ast.RGBAColor:
 			switch tb := b.(type) {
 			case *ast.Number:
@@ -125,6 +140,12 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 			switch tb := b.(type) {
 			case *ast.Number:
 				return NumberMulNumber(ta, tb)
+			}
+
+		case *ast.HexColor:
+			switch tb := b.(type) {
+			case *ast.Number:
+				return HexColorMulNumber(ta, tb)
 			}
 
 		case *ast.RGBColor:
