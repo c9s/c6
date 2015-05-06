@@ -145,7 +145,7 @@ func (parser *Parser) ParseComparisonExpression() ast.Expression {
 	debug("ParseComparisonExpression")
 	var expr = parser.ParseExpression(false)
 	var tok = parser.peek()
-	for tok != nil && (tok.Type == ast.T_EQUAL || tok.Type == ast.T_UNEQUAL || tok.Type == ast.T_GT || tok.Type == ast.T_GE || tok.Type == ast.T_LE || tok.Type == ast.T_LT) {
+	for tok != nil && tok.IsComparisonOperator() {
 		parser.next()
 		if subexpr := parser.ParseExpression(false); subexpr != nil {
 			expr = ast.NewBinaryExpression(ast.NewOpWithToken(tok), expr, subexpr, false)
