@@ -178,7 +178,7 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) as
 		lval = EvaluateBinaryExpression(expr, symTable)
 	case *ast.UnaryExpression:
 		lval = EvaluateUnaryExpression(expr, symTable)
-	case *ast.Number, *ast.HexColor:
+	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor:
 		lval = ast.Value(expr)
 	}
 
@@ -187,7 +187,7 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) as
 		rval = EvaluateUnaryExpression(expr, symTable)
 	case *ast.BinaryExpression:
 		rval = EvaluateBinaryExpression(expr, symTable)
-	case *ast.Number, *ast.HexColor:
+	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor:
 		rval = ast.Value(expr)
 	}
 	if lval != nil && rval != nil {
