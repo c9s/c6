@@ -164,38 +164,46 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 		switch tok.Type {
 
 		case ast.T_TYPE_SELECTOR:
-			sel := ast.TypeSelector{tok.Str}
+			sel := &ast.TypeSelector{tok.Str}
 			ruleset.AppendSelector(sel)
 
 		case ast.T_UNIVERSAL_SELECTOR:
-			sel := ast.UniversalSelector{}
+			sel := &ast.UniversalSelector{}
 			ruleset.AppendSelector(sel)
 
 		case ast.T_ID_SELECTOR:
-			sel := ast.IdSelector{tok.Str}
+			sel := &ast.IdSelector{tok.Str}
 			ruleset.AppendSelector(sel)
 
 		case ast.T_CLASS_SELECTOR:
-			sel := ast.ClassSelector{tok.Str}
+			sel := &ast.ClassSelector{tok.Str}
 			ruleset.AppendSelector(sel)
 
 		case ast.T_PARENT_SELECTOR:
-			sel := ast.ParentSelector{parentRuleSet}
+
+			sel := &ast.ParentSelector{parentRuleSet}
 			ruleset.AppendSelector(sel)
 
 		case ast.T_PSEUDO_SELECTOR:
-			sel := ast.PseudoSelector{tok.Str, ""}
+
+			sel := &ast.PseudoSelector{tok.Str, ""}
 			if nextTok := parser.peek(); nextTok.Type == ast.T_LANG_CODE {
 				sel.C = nextTok.Str
 			}
 			ruleset.AppendSelector(sel)
 
 		case ast.T_ADJACENT_SIBLING_COMBINATOR:
-			ruleset.AppendSelector(ast.AdjacentSelector{})
+
+			ruleset.AppendSelector(&ast.AdjacentSelector{})
+
 		case ast.T_CHILD_COMBINATOR:
-			ruleset.AppendSelector(ast.ChildSelector{})
+
+			ruleset.AppendSelector(&ast.ChildSelector{})
+
 		case ast.T_DESCENDANT_COMBINATOR:
-			ruleset.AppendSelector(ast.DescendantSelector{})
+
+			ruleset.AppendSelector(&ast.DescendantSelector{})
+
 		default:
 			panic(fmt.Errorf("Unexpected selector token: %+v", tok))
 		}
@@ -270,7 +278,7 @@ func (parser *Parser) ParseNumber() ast.Expression {
 		return nil
 	}
 
-	if tok2.IsOneOfTypes([]ast.TokenType{ast.T_UNIT_PX, ast.T_UNIT_PT, ast.T_UNIT_CM, ast.T_UNIT_EM, ast.T_UNIT_MM, ast.T_UNIT_REM, ast.T_UNIT_DEG, ast.T_UNIT_PERCENT}) {
+	if tok2.IsUnit() {
 		// consume the unit token
 		parser.next()
 		return ast.NewLength(val, ast.NewUnitWithToken(tok2), tok)
