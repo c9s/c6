@@ -7,6 +7,7 @@ package c6
 import "fmt"
 import "strconv"
 import "c6/ast"
+import "c6/runtime"
 
 func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
 	var token = parser.peek()
@@ -289,8 +290,9 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 			expr = ast.NewUnaryExpression(ast.ConvertTokenTypeToOpType(tok.Type), term)
 
 			if uexpr, ok := expr.(*ast.UnaryExpression); ok {
+
 				// if it's evaluatable just return the evaluated value.
-				if val := uexpr.Evaluate(nil); val != nil {
+				if val := runtime.EvaluateUnaryExpression(uexpr, nil); val != nil {
 					expr = ast.Expression(val)
 				}
 			}
@@ -318,7 +320,7 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 			// XXX: check parenthesis
 			var bexpr = ast.NewBinaryExpression(ast.ConvertTokenTypeToOpType(rightTok.Type), expr, rightTerm, inParenthesis)
 
-			if val := bexpr.Evaluate(nil); val != nil {
+			if val := runtime.EvaluateBinaryExpression(bexpr, nil); val != nil {
 
 				expr = ast.Expression(val)
 
@@ -462,7 +464,7 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 
 		if bexpr, ok := expr.(*ast.BinaryExpression); ok {
 			// try to evaluate
-			if value := bexpr.Evaluate(nil); value != nil {
+			if value := runtime.EvaluateBinaryExpression(bexpr, nil); value != nil {
 				return value
 			}
 		}
