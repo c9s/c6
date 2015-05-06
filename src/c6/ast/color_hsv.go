@@ -13,6 +13,10 @@ type HSVColor struct {
 func (self HSVColor) CanBeColor() {}
 func (self HSVColor) CanBeNode()  {}
 
+func (self HSVColor) Boolean() bool {
+	return true
+}
+
 func (c HSVColor) RGBAColor() *RGBAColor {
 	r, g, b := HSVToRGB(c.H, c.S, c.V)
 	return NewRGBAColor(uint32(r), uint32(g), uint32(b), 1, nil)

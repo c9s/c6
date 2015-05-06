@@ -13,6 +13,10 @@ func (self Length) GetValueType() ValueType {
 	return LengthValue
 }
 
+func (self Length) Boolean() bool {
+	return self.Value > 0
+}
+
 func (self Length) String() (out string) {
 	out += strconv.FormatFloat(self.Value, 'G', -1, 64)
 	if self.Unit != nil {

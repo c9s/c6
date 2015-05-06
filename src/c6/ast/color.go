@@ -21,8 +21,14 @@ type HexColor struct {
 	Token *Token
 }
 
-func (self HexColor) CanBeNode()  {}
+func (self HexColor) CanBeNode() {}
+
 func (self HexColor) CanBeColor() {}
+
+func (self HexColor) Boolean() bool {
+	return true
+}
+
 func (self HexColor) String() string {
 	return "#" + string(self.Hex)
 }

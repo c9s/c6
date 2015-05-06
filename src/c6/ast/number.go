@@ -22,3 +22,7 @@ func (self Number) GetValueType() ValueType {
 func (num Number) String() (out string) {
 	return strconv.FormatFloat(num.Value, 'G', -1, 64)
 }
+
+func (num Number) Boolean() bool {
+	return num.Value > 0
+}

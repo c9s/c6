@@ -2,9 +2,17 @@ package ast
 
 import "strconv"
 
+type BooleanValue interface {
+	Boolean() bool
+}
+
 type Boolean struct {
 	Value bool
 	Token *Token
+}
+
+func (self Boolean) Boolean() bool {
+	return self.Value
 }
 
 func (self Boolean) String() string {

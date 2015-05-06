@@ -51,6 +51,10 @@ func (self HSLAColor) String() string {
 	return fmt.Sprintf("hsl(%G, %G, %G, %G)", self.H, self.S, self.L, self.A)
 }
 
+func (self HSLAColor) Boolean() bool {
+	return true
+}
+
 func NewHSLAColor(h, s, v, a float64, token *Token) *HSLAColor {
 	return &HSLAColor{h, s, v, a, token}
 }
