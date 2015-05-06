@@ -12,6 +12,8 @@ feature requests.
 [![Coverage Status](https://coveralls.io/repos/c9s/c6/badge.svg)](https://coveralls.io/r/c9s/c6)
 [![GoDoc](https://godoc.org/github.com/c9s/c6/src/c6?status.svg)](https://godoc.org/github.com/c9s/c6/src/c6)
 
+[![wercker status](https://app.wercker.com/status/13aa03443c40dedeeabda923e1a95180/m "wercker status")](https://app.wercker.com/project/bykey/13aa03443c40dedeeabda923e1a95180)
+
 ## Setup
 
 Setup GOPATH:

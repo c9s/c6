@@ -1,4 +1,5 @@
-box: wercker/default
+box: google/golang
+
 build:
   steps:
     - script:
