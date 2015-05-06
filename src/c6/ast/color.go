@@ -1,6 +1,5 @@
 package ast
 
-import "math"
 import "strconv"
 import "fmt"
 
@@ -35,46 +34,6 @@ func NewHexColorFromToken(token *Token) *HexColor {
 func NewHexColor(hex string, token *Token) *HexColor {
 	var r, g, b, _ = HexToRGBA(hex)
 	return &HexColor{Hex(hex), r, g, b, token}
-}
-
-func HexColorAddNumber(c *HexColor, num *Number) *HexColor {
-	r := c.R + uint32(num.Value)
-	g := c.G + uint32(num.Value)
-	b := c.B + uint32(num.Value)
-	hex := Hex(fmt.Sprintf("#%02X%02X%02X", r, g, b))
-	return &HexColor{hex, r, g, b, nil}
-}
-
-func uintsub(a, b uint32) uint32 {
-	if a > b {
-		return a - b
-	}
-	return 0
-}
-
-func HexColorSubNumber(c *HexColor, num *Number) *HexColor {
-	val := uint32(num.Value)
-	r := uintsub(c.R, val)
-	g := uintsub(c.G, val)
-	b := uintsub(c.B, val)
-	hex := Hex(fmt.Sprintf("#%02X%02X%02X", r, g, b))
-	return &HexColor{hex, r, g, b, nil}
-}
-
-func HexColorMulNumber(color *HexColor, num *Number) *HexColor {
-	r := uint32(math.Floor(float64(color.R) * num.Value))
-	g := uint32(math.Floor(float64(color.G) * num.Value))
-	b := uint32(math.Floor(float64(color.B) * num.Value))
-	hex := Hex(fmt.Sprintf("#%02X%02X%02X", r, g, b))
-	return &HexColor{hex, r, g, b, nil}
-}
-
-func HexColorDivNumber(color *HexColor, num *Number) *HexColor {
-	r := uint32(math.Floor(float64(color.R) / num.Value))
-	g := uint32(math.Floor(float64(color.G) / num.Value))
-	b := uint32(math.Floor(float64(color.B) / num.Value))
-	hex := Hex(fmt.Sprintf("#%02X%02X%02X", r, g, b))
-	return &HexColor{hex, r, g, b, nil}
 }
 
 // HexToRGB converts an Hex string to a RGB triple.
