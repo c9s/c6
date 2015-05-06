@@ -1,12 +1,16 @@
 all:
-	go generate c6 c6/ast
-	go build c6 c6/ast c6/runtime
+	go generate c6/ast
+	go generate c6
+	go build c6/ast 
+	go build c6/runtime
+	go build c6
 
 install:
-	go install c6 c6/ast c6/runtime
+	go install c6/...
 
 test: all
 	go test c6/ast
+	go test c6/runtime
 	go test c6
 
 benchupdate:
