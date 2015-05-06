@@ -37,6 +37,8 @@ func (self BinaryExpression) String() (out string) {
 If any of left or right is variable, than it's constant expression
 
 Please note thist method does not test CSS slash, the caller should handle by itself.
+
+This works for both boolean evaluation and arithmetic evaluation.
 */
 func (self BinaryExpression) IsConstantExpression() bool {
 	_, ok1 := self.Left.(*Variable)
