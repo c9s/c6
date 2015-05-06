@@ -210,13 +210,13 @@ func lexExpression(l *Lexer) stateFn {
 
 		lexVariableName(l)
 
-	} else if r == EOF {
+	} else if r == EOF || r == '}' || r == '{' || r == ';' { // let expression lexer stop before the start or end of block.
 
 		return nil
 
 	} else {
 
-		// for ';' and '}'
+		// anything else expression lexer don't know
 		return nil
 
 	}
