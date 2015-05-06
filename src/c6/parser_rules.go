@@ -9,6 +9,23 @@ import "strconv"
 import "c6/ast"
 import "c6/runtime"
 
+func (parser *Parser) ParseBlock() *ast.Block {
+	var block = ast.NewBlock()
+	block.Statements = parser.ParseStatements(nil)
+	return block
+}
+
+func (parser *Parser) ParseStatements(parentRuleSet *ast.RuleSet) []ast.Statement {
+	var stmts []ast.Statement
+	var stm = parser.ParseStatement(parentRuleSet)
+
+	for !parser.eof() && stm != nil {
+		stmts = append(stmts, stm)
+		stm = parser.ParseStatement(parentRuleSet)
+	}
+	return stmts
+}
+
 func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
 	var token = parser.peek()
 
@@ -36,6 +53,10 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 
 	return nil
 
+}
+
+func (parser *Parser) ParseCondition() ast.Expression {
+	return nil
 }
 
 func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {

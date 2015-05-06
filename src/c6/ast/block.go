@@ -4,6 +4,10 @@ type Block struct {
 	Statements []Statement
 }
 
+func NewBlock() *Block {
+	return &Block{}
+}
+
 // Override the statements
 func (self *Block) SetStatements(stms []Statement) {
 	self.Statements = stms

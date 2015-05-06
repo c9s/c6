@@ -197,13 +197,8 @@ func (parser *Parser) ParseScss(code string) *ast.Block {
 	l := NewLexerWithString(code)
 	l.run()
 	parser.Input = l.getOutput()
-
 	block := ast.Block{}
-	for !parser.eof() {
-		stm := parser.ParseStatement(nil)
-		if stm != nil {
-			block.AppendStatement(stm)
-		}
-	}
+	stmts := parser.ParseStatements(nil)
+	block.Statements = stmts
 	return &block
 }
