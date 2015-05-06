@@ -250,7 +250,6 @@ Currently the @import rule only supports '@import url(...) media;
 @see https://developer.mozilla.org/en-US/docs/Web/CSS/@import for more @import syntax support
 */
 func lexAtRule(l *Lexer) stateFn {
-
 	var tokType = l.matchKeywordMap(atRuleTokenMap)
 	if tokType > 0 {
 		switch tokType {
@@ -278,11 +277,14 @@ func lexAtRule(l *Lexer) stateFn {
 			l.ignoreSpaces()
 			return lexStatement
 
-		case ast.T_IF:
+		case ast.T_IF, ast.T_ELSE_IF:
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
 			// go back to block state for lexing
 			l.ignoreSpaces()
+			return lexStatement
+
+		case ast.T_ELSE:
 			return lexStatement
 
 		case ast.T_MIXIN:
@@ -300,7 +302,7 @@ func lexAtRule(l *Lexer) stateFn {
 				r = l.next()
 			}
 			l.backup()
-			panic(fmt.Errorf("Unsupported at-rule directive '%s'", l.current()))
+			panic(fmt.Errorf("Unsupported at-rule directive '%s' %s", l.current(), tokType))
 		}
 	}
 	return nil

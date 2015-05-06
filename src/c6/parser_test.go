@@ -60,6 +60,23 @@ func TestParserParseImportRuleWithMediaList(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserIfTrueStatement(t *testing.T) {
+	var stmts = RunParserTest(`@if true {  }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+/*
+func TestParserIfFalseElseStatement(t *testing.T) {
+	var stmts = RunParserTest(`@if false {  } @else {  }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserIfFalseOrTrueElseStatement(t *testing.T) {
+	var stmts = RunParserTest(`@if false or true {  } @else {  }`)
+	assert.Equal(t, 1, len(stmts))
+}
+*/
+
 func TestParserParseCSS3Gradient(t *testing.T) {
 	// some test cases from htmldog
 	// @see http://www.htmldog.com/guides/css/advanced/gradients/

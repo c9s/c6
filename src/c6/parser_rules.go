@@ -10,6 +10,7 @@ import "c6/ast"
 import "c6/runtime"
 
 func (parser *Parser) ParseBlock() *ast.Block {
+	debug("ParseBlock")
 	parser.expect(ast.T_BRACE_START)
 	var block = ast.NewBlock()
 	block.Statements = parser.ParseStatements(nil)
@@ -19,6 +20,7 @@ func (parser *Parser) ParseBlock() *ast.Block {
 
 func (parser *Parser) ParseStatements(parentRuleSet *ast.RuleSet) []ast.Statement {
 	var stmts []ast.Statement = []ast.Statement{}
+	// stop at t_brace end
 	for !parser.eof() {
 		if stmt := parser.ParseStatement(parentRuleSet); stmt != nil {
 			stmts = append(stmts, stmt)
@@ -53,8 +55,7 @@ func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
 		return parser.ParseRuleSet(parentRuleSet)
 
 	} else {
-		// XXX:
-		panic("parse failed, unknown token")
+		// panic(fmt.Errorf("parse failed, unknown token", parser.peek()))
 	}
 	return nil
 }
@@ -70,7 +71,7 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 
 	// If these is more else if statement
 	var tok = parser.peek()
-	for tok.Type == ast.T_ELSE_IF {
+	for tok != nil && tok.Type == ast.T_ELSE_IF {
 		parser.next()
 
 		// XXX: handle error here
@@ -84,7 +85,7 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 
 	tok = parser.peek()
 
-	if tok.Type == ast.T_ELSE {
+	if tok != nil && tok.Type == ast.T_ELSE {
 		parser.next()
 
 		// XXX: handle error here
@@ -95,7 +96,13 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 	return stm
 }
 
+/*
+The operator precedence is described here
+
+@see http://introcs.cs.princeton.edu/java/11precedence/
+*/
 func (parser *Parser) ParseCondition() ast.Expression {
+	debug("ParseCondition")
 	var tok = parser.peek()
 	var expr ast.Expression = nil
 
@@ -108,7 +115,7 @@ func (parser *Parser) ParseCondition() ast.Expression {
 	}
 
 	tok = parser.peek()
-	for tok.Type == ast.T_LOGICAL_OR || tok.Type == ast.T_LOGICAL_AND {
+	for tok != nil && (tok.Type == ast.T_LOGICAL_OR || tok.Type == ast.T_LOGICAL_AND) {
 		parser.next()
 		if subexpr := parser.ParseExpression(false); subexpr != nil {
 			expr = ast.NewBinaryExpression(ast.NewOpWithToken(tok), expr, subexpr, false)
@@ -116,6 +123,18 @@ func (parser *Parser) ParseCondition() ast.Expression {
 		tok = parser.peek()
 	}
 	return expr
+}
+
+func (parser *Parser) ParseConditionalOr() ast.Expression {
+	return nil
+}
+
+func (parser *Parser) ParseConditionalAnd() ast.Expression {
+	return nil
+}
+
+func (parser *Parser) ParseComparison() ast.Expression {
+	return nil
 }
 
 func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
@@ -307,9 +326,24 @@ func (parser *Parser) ParseFactor() ast.Expression {
 		var str = ast.NewStringWithQuote('\'', tok)
 		return ast.Expression(str)
 
+	} else if tok.Type == ast.T_TRUE {
+
+		parser.next()
+		return ast.NewBooleanTrue(tok)
+
+	} else if tok.Type == ast.T_FALSE {
+
+		parser.next()
+		return ast.NewBooleanFalse(tok)
+
+	} else if tok.Type == ast.T_NULL {
+
+		parser.next()
+		return ast.NewNullWithToken(tok)
+
 	} else if tok.Type == ast.T_IDENT {
 
-		tok = parser.next()
+		parser.next()
 		return ast.Expression(ast.NewStringWithToken(tok))
 
 	} else if tok.Type == ast.T_HEX_COLOR {
@@ -376,7 +410,7 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 	// plus or minus. This creates an unary expression that holds the later term.
 	// this is for:  +3 or -4
 	var tok = parser.peek()
-	var expr ast.Expression
+	var expr ast.Expression = nil
 	if tok.Type == ast.T_PLUS || tok.Type == ast.T_MINUS {
 		parser.next()
 		if term := parser.ParseTerm(); term != nil {
