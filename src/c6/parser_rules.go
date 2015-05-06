@@ -257,9 +257,9 @@ func (parser *Parser) ParseTerm() ast.Expression {
 		parser.next()
 		if term := parser.ParseTerm(); term != nil {
 			if tok.Type == ast.T_MUL {
-				return ast.NewBinaryExpression(ast.OpMul, factor, term, false)
+				return ast.NewBinaryExpression(ast.NewOpWithToken(tok), factor, term, false)
 			} else if tok.Type == ast.T_DIV {
-				return ast.NewBinaryExpression(ast.OpDiv, factor, term, false)
+				return ast.NewBinaryExpression(ast.NewOpWithToken(tok), factor, term, false)
 			}
 		} else {
 			panic("Unexpected token after * and /")
@@ -287,7 +287,7 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 	if tok.Type == ast.T_PLUS || tok.Type == ast.T_MINUS {
 		parser.next()
 		if term := parser.ParseTerm(); term != nil {
-			expr = ast.NewUnaryExpression(ast.ConvertTokenTypeToOpType(tok.Type), term)
+			expr = ast.NewUnaryExpression(ast.NewOpWithToken(tok), term)
 
 			if uexpr, ok := expr.(*ast.UnaryExpression); ok {
 
@@ -318,7 +318,7 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 
 		if rightTerm := parser.ParseTerm(); rightTerm != nil {
 			// XXX: check parenthesis
-			var bexpr = ast.NewBinaryExpression(ast.ConvertTokenTypeToOpType(rightTok.Type), expr, rightTerm, inParenthesis)
+			var bexpr = ast.NewBinaryExpression(ast.NewOpWithToken(rightTok), expr, rightTerm, inParenthesis)
 
 			if val := runtime.EvaluateBinaryExpression(bexpr, nil); val != nil {
 

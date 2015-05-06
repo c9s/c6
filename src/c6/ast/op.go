@@ -4,39 +4,31 @@ package ast
 type OpType int
 
 const (
-	OpNone OpType = iota
-	OpAdd
-	OpSub
-	OpDiv
-	OpMul
-	OpPow
-	OpConcat
-	OpLiteralConcat
+	OpNone          OpType = 0
+	OpAdd                  = T_PLUS
+	OpSub                  = T_MINUS
+	OpDiv                  = T_DIV
+	OpMul                  = T_MUL
+	OpConcat               = T_CONCAT
+	OpLiteralConcat        = T_LITERAL_CONCAT
 )
 
-func ConvertTokenTypeToOpType(tokenType TokenType) OpType {
-	switch tokenType {
-	case T_PLUS:
-		return OpAdd
-	case T_MINUS:
-		return OpSub
-	case T_MUL:
-		return OpMul
-	case T_DIV:
-		return OpDiv
-	case T_LITERAL_CONCAT:
-		return OpConcat
-		// return OpLiteralConcat
-	}
-	panic("unknown token type")
-	return OpNone
-}
-
 type Op struct {
-	Type  OpType
+	Type  TokenType
 	Token *Token
 }
 
-func NewOp(opType OpType, token *Token) *Op {
+func NewOpWithToken(token *Token) *Op {
+	return &Op{token.Type, token}
+}
+
+func NewOp(opType TokenType, token *Token) *Op {
 	return &Op{opType, token}
+}
+
+func (op Op) String() string {
+	if op.Token != nil {
+		return op.Token.Str
+	}
+	return string(op.Type)
 }

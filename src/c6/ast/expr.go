@@ -5,11 +5,11 @@ type Expression interface {
 }
 
 type UnaryExpression struct {
-	Op   OpType
+	Op   *Op
 	Expr Expression
 }
 
-func NewUnaryExpression(op OpType, expr Expression) *UnaryExpression {
+func NewUnaryExpression(op *Op, expr Expression) *UnaryExpression {
 	return &UnaryExpression{op, expr}
 }
 
@@ -18,7 +18,7 @@ func (self UnaryExpression) String() string {
 }
 
 type BinaryExpression struct {
-	Op      OpType
+	Op      *Op
 	Left    Expression
 	Right   Expression
 	Grouped bool
@@ -43,7 +43,7 @@ The the divide expression will only be evaluated in the following 3 conditions:
 @see http://sass-lang.com/documentation/file.SASS_REFERENCE.html#division-and-slash
 */
 func (self *BinaryExpression) IsCssSlash() bool {
-	if self.Op == OpDiv {
+	if self.Op.Type == T_DIV {
 		_, aok := self.Left.(*Length)
 		_, bok := self.Right.(*Length)
 
@@ -56,6 +56,6 @@ func (self *BinaryExpression) IsCssSlash() bool {
 	return false
 }
 
-func NewBinaryExpression(op OpType, left Expression, right Expression, grouped bool) *BinaryExpression {
+func NewBinaryExpression(op *Op, left Expression, right Expression, grouped bool) *BinaryExpression {
 	return &BinaryExpression{op, left, right, grouped}
 }

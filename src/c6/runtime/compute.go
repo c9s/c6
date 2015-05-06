@@ -274,9 +274,9 @@ func RGBAColorDivNumber(c *ast.RGBAColor, n *ast.Number) *ast.RGBAColor {
 	return ast.NewRGBAColor(uint32(r), uint32(g), uint32(b), c.A, nil)
 }
 
-func Compute(op ast.OpType, a ast.Value, b ast.Value) ast.Value {
-	switch op {
-	case ast.OpAdd:
+func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
+	switch op.Type {
+	case ast.T_PLUS:
 		switch ta := a.(type) {
 		case *ast.Number:
 			switch tb := b.(type) {
@@ -306,7 +306,7 @@ func Compute(op ast.OpType, a ast.Value, b ast.Value) ast.Value {
 				return RGBAColorAddNumber(ta, tb)
 			}
 		}
-	case ast.OpSub:
+	case ast.T_MINUS:
 		switch ta := a.(type) {
 
 		case *ast.Number:
@@ -341,7 +341,7 @@ func Compute(op ast.OpType, a ast.Value, b ast.Value) ast.Value {
 				return RGBAColorSubNumber(ta, tb)
 			}
 		}
-	case ast.OpMul:
+	case ast.T_MUL:
 		switch ta := a.(type) {
 
 		case *ast.Length:
@@ -408,7 +408,7 @@ func EvaluateUnaryExpression(expr *ast.UnaryExpression, symTable *SymTable) ast.
 	}
 
 	// negative value
-	if expr.Op == ast.OpSub {
+	if expr.Op.Type == ast.T_DIV {
 		switch n := val.(type) {
 		case *ast.Number:
 			n.Value = -n.Value

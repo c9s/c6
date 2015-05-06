@@ -95,6 +95,11 @@ const (
 	*/
 	T_LITERAL_CONCAT // used to concat selectors and interpolation
 
+	/*
+		This is for normal string concat
+	*/
+	T_CONCAT
+
 	// for Microsoft 'progid:' token, we don't have choice.
 	T_MS_PROGID
 
