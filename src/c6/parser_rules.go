@@ -149,6 +149,19 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 	return ruleset
 }
 
+func (parser *Parser) ParseBoolean() ast.Expression {
+	var tok = parser.peek()
+
+	if tok.Type == ast.T_TRUE {
+		parser.next()
+		return ast.NewBooleanTrue(tok)
+	} else if tok.Type == ast.T_FALSE {
+		parser.next()
+		return ast.NewBooleanFalse(tok)
+	}
+	return nil
+}
+
 func (parser *Parser) ParseNumber() ast.Expression {
 	var pos = parser.Pos
 	debug("ParseNumber at %d", parser.Pos)
