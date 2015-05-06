@@ -67,6 +67,20 @@ MapPairList := MapPair ',' MapPairList
 MapPair := Expression ':' Value
 
 
+IfStatement := 'if' <Condition> <Block>
+
+Condition := <CompareCondition> ['and' <CompareCondition>]
+           | <CompareCondition> ['or' <CompareCondition>]
+
+CompareCondition := <Expression> ['==' <Expression>]
+          | <Expression> ['>=' <Expression>]
+          | <Expression> ['!=' <Expression>]
+          | <Expression> ['>' <Expression>]
+          | <Expression> ['<' <Expression>]
+
+
+
+
 
 Terminals
 ----------------
