@@ -4,11 +4,16 @@ import "c6/ast"
 import "testing"
 import "github.com/stretchr/testify/assert"
 
-func TestComputeNumber(t *testing.T) {
+func TestComputeNumberAddNumber(t *testing.T) {
 	val := Compute(ast.NewOp(ast.T_PLUS, nil), ast.NewNumber(10, nil, nil), ast.NewNumber(3, nil, nil))
 	num, ok := val.(*ast.Number)
 	assert.True(t, ok)
 	assert.Equal(t, 13.0, num.Value)
+}
+
+func TestComputeNumberAddNumberIncompatibleUnit(t *testing.T) {
+	val := Compute(ast.NewOp(ast.T_PLUS, nil), ast.NewNumber(10, ast.NewUnit(ast.T_UNIT_PX, nil), nil), ast.NewNumber(3, ast.NewUnit(ast.T_UNIT_PT, nil), nil))
+	assert.Nil(t, val)
 }
 
 func TestComputeNumberMulWithUnit(t *testing.T) {
