@@ -245,11 +245,16 @@ func EvaluateBinaryExpressionInBooleanContext(expr *ast.BinaryExpression, symTab
 
 func EvaluateUnaryExpressionInBooleanContext(expr *ast.UnaryExpression, symTable *SymTable) ast.Value {
 	var val ast.Value = nil
-	if bexpr, ok := expr.Expr.(*ast.BinaryExpression); ok {
-		val = EvaluateBinaryExpression(bexpr, symTable)
-	} else if uexpr, ok := expr.Expr.(*ast.UnaryExpression); ok {
-		val = EvaluateUnaryExpression(uexpr, symTable)
+
+	switch t := expr.Expr.(type) {
+	case *ast.BinaryExpression:
+		val = EvaluateBinaryExpression(t, symTable)
+	case *ast.UnaryExpression:
+		val = EvaluateUnaryExpression(t, symTable)
+	default:
+		val = ast.Value(t)
 	}
+
 	switch expr.Op.Type {
 	case ast.T_LOGICAL_NOT:
 		if bval, ok := val.(ast.BooleanValue); ok {
@@ -262,8 +267,9 @@ func EvaluateUnaryExpressionInBooleanContext(expr *ast.UnaryExpression, symTable
 }
 
 /*
-EvaluateExpression calls EvaluateBinaryExpression. except EvaluateExpression prevents calculate css slash as division.
-otherwise it's the same as EvaluateBinaryExpression.
+EvaluateExpression calls EvaluateBinaryExpression. except EvaluateExpression
+prevents calculate css slash as division.  otherwise it's the same as
+EvaluateBinaryExpression.
 */
 func EvaluateExpression(expr ast.Expression, symTable *SymTable) ast.Value {
 
@@ -328,10 +334,14 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) as
 
 func EvaluateUnaryExpression(expr *ast.UnaryExpression, symTable *SymTable) ast.Value {
 	var val ast.Value = nil
-	if bexpr, ok := expr.Expr.(*ast.BinaryExpression); ok {
-		val = EvaluateBinaryExpression(bexpr, symTable)
-	} else if uexpr, ok := expr.Expr.(*ast.UnaryExpression); ok {
-		val = EvaluateUnaryExpression(uexpr, symTable)
+
+	switch t := expr.Expr.(type) {
+	case *ast.BinaryExpression:
+		val = EvaluateBinaryExpression(t, symTable)
+	case *ast.UnaryExpression:
+		val = EvaluateUnaryExpression(t, symTable)
+	default:
+		val = ast.Value(t)
 	}
 
 	switch expr.Op.Type {
