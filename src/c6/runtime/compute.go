@@ -140,7 +140,7 @@ func NumberAddNumber(a *ast.Number, b *ast.Number) *ast.Number {
 }
 
 func LengthSubLength(a *ast.Length, b *ast.Length) *ast.Length {
-	if a.Unit != b.Unit {
+	if a.Unit.Type != b.Unit.Type {
 		fmt.Printf("Incompatible unit %s != %s.  %v - %v \n", a.Unit, b.Unit, a, b)
 		return nil
 	}
@@ -149,7 +149,7 @@ func LengthSubLength(a *ast.Length, b *ast.Length) *ast.Length {
 }
 
 func LengthAddLength(a *ast.Length, b *ast.Length) *ast.Length {
-	if a.Unit != b.Unit {
+	if a.Unit.Type != b.Unit.Type {
 		fmt.Printf("Incompatible unit %s != %s.  %v + %v \n", a.Unit, b.Unit, a, b)
 		return nil
 	}
@@ -161,13 +161,13 @@ func LengthAddLength(a *ast.Length, b *ast.Length) *ast.Length {
 10px / 3, 10 / 3, 10px / 10px is allowed here
 */
 func LengthDivLength(a *ast.Length, b *ast.Length) *ast.Length {
-	if a.Unit == ast.UNIT_NONE || b.Unit == ast.UNIT_NONE || a.Unit == b.Unit {
+	if a.Unit.Type == ast.T_UNIT_NONE || b.Unit.Type == ast.T_UNIT_NONE || a.Unit.Type == b.Unit.Type {
 		var result = a.Value / b.Value
-		var unit = ast.UNIT_NONE
-		if a.Unit != ast.UNIT_NONE {
+		var unit *ast.Unit = nil
+		if a.Unit.Type != ast.T_UNIT_NONE {
 			unit = a.Unit
 		}
-		if b.Unit != ast.UNIT_NONE {
+		if b.Unit.Type != ast.T_UNIT_NONE {
 			unit = b.Unit
 		}
 		return ast.NewLength(result, unit, nil)
@@ -179,13 +179,13 @@ func LengthDivLength(a *ast.Length, b *ast.Length) *ast.Length {
 3 * 10px, 10px * 3, 10px * 10px is allowed here
 */
 func LengthMulLength(a *ast.Length, b *ast.Length) *ast.Length {
-	if a.Unit == ast.UNIT_NONE || b.Unit == ast.UNIT_NONE || a.Unit == b.Unit {
+	if a.Unit.Type == ast.T_UNIT_NONE || b.Unit.Type == ast.T_UNIT_NONE || a.Unit.Type == b.Unit.Type {
 		var result = a.Value * b.Value
-		var unit = ast.UNIT_NONE
-		if a.Unit != ast.UNIT_NONE {
+		var unit *ast.Unit = nil
+		if a.Unit.Type != ast.T_UNIT_NONE {
 			unit = a.Unit
 		}
-		if b.Unit != ast.UNIT_NONE {
+		if b.Unit.Type != ast.T_UNIT_NONE {
 			unit = b.Unit
 		}
 		return ast.NewLength(result, unit, nil)

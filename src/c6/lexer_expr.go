@@ -125,6 +125,12 @@ func lexExpression(l *Lexer) stateFn {
 		l.next()
 		l.emit(ast.T_PLUS)
 
+	} else if r == '%' {
+
+		// TODO: placeholders start with '%'
+		l.next()
+		l.emit(ast.T_MOD)
+
 	} else if r == '/' {
 
 		if r2 == '*' {

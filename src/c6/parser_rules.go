@@ -143,7 +143,7 @@ func (parser *Parser) ParseNumber() ast.Expression {
 	if tok2.IsOneOfTypes([]ast.TokenType{ast.T_UNIT_PX, ast.T_UNIT_PT, ast.T_UNIT_CM, ast.T_UNIT_EM, ast.T_UNIT_MM, ast.T_UNIT_REM, ast.T_UNIT_DEG, ast.T_UNIT_PERCENT}) {
 		// consume the unit token
 		parser.next()
-		return ast.NewLength(val, ast.ConvertTokenTypeToUnitType(tok2.Type), tok)
+		return ast.NewLength(val, ast.NewUnitWithToken(tok2), tok)
 	}
 	return ast.NewNumber(val, tok)
 }

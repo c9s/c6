@@ -130,7 +130,15 @@ const (
 	T_OR  // 'or' used in conditional query
 	T_AND // 'and' used in conditional query
 	T_XOR
-	T_PLUS
+
+	/*
+		expression operators
+	*/
+	T_PLUS  // for '+'
+	T_DIV   // for '-'
+	T_MUL   // for '*'
+	T_MINUS // for '-'
+	T_MOD   // for '%'
 	T_BRACE_START
 	T_BRACE_END
 	T_LANG_CODE // 'en', 'fr', 'fr-ca'
@@ -162,29 +170,40 @@ const (
 	T_CONSTANT
 	T_INTEGER
 	T_FLOAT
+
+	/*
+		unit tokens
+	*/
+	T_UNIT_NONE
 	T_UNIT_PERCENT
+
+	/*
+		Time Unit
+		@see https://developer.mozilla.org/zh-TW/docs/Web/CSS/time
+	*/
 	T_UNIT_SECOND
 	T_UNIT_MILLISECOND
 
-	// Length
-	T_UNIT_CH
-	T_UNIT_CM
+	/*
+		Length
+	*/
+
+	/*
+		Length Unit
+		@see https://developer.mozilla.org/en-US/docs/Web/CSS/length
+	*/
 	T_UNIT_EM
 	T_UNIT_EX
+	T_UNIT_CH
+	T_UNIT_REM
+
+	// Absolute length
+	T_UNIT_CM
 	T_UNIT_IN
 	T_UNIT_MM
 	T_UNIT_PC
 	T_UNIT_PT
 	T_UNIT_PX
-	T_UNIT_REM
-
-	T_UNIT_HZ
-	T_UNIT_KHZ
-
-	// Resolution
-	T_UNIT_DPI
-	T_UNIT_DPCM
-	T_UNIT_DPPX
 
 	// Viewport-percentage lengths
 	T_UNIT_VH
@@ -192,7 +211,25 @@ const (
 	T_UNIT_VMIN
 	T_UNIT_VMAX
 
-	// Angle
+	/*
+		Frequency unit
+		@see https://developer.mozilla.org/en-US/docs/Web/CSS/frequency
+	*/
+	T_UNIT_HZ
+	T_UNIT_KHZ
+
+	/*
+		Resolution Unit
+		@see https://developer.mozilla.org/en-US/docs/Web/CSS/resolution
+	*/
+	T_UNIT_DPI
+	T_UNIT_DPCM
+	T_UNIT_DPPX
+
+	/*
+		Angle
+		@see https://developer.mozilla.org/en-US/docs/Web/CSS/angle
+	*/
 	T_UNIT_DEG
 	T_UNIT_GRAD
 	T_UNIT_RAD
@@ -205,7 +242,4 @@ const (
 	T_INTERPOLATION_START
 	T_INTERPOLATION_INNER
 	T_INTERPOLATION_END
-	T_DIV
-	T_MUL
-	T_MINUS
 )
