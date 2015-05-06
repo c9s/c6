@@ -5,6 +5,8 @@ import "fmt"
 
 /*
 Used for Incompatible unit, data type or unsupported operations
+
+TODO: This is not used yet. our compute functions should return error if possible
 */
 type ComputeError struct {
 	Message string
