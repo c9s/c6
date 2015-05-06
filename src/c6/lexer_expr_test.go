@@ -72,6 +72,18 @@ func TestLexerExpressionUnicodeRange3(t *testing.T) {
 	AssertLexerTokenSequenceFromState(t, `U+0025`, lexExpression, []ast.TokenType{ast.T_UNICODE_RANGE})
 }
 
+func TestLexerExpressionNumberWithScientificNotation(t *testing.T) {
+	AssertLexerTokenSequenceFromState(t, `10e3`, lexExpression, []ast.TokenType{ast.T_INTEGER})
+}
+
+func TestLexerExpressionNumberWithScientificNotation2(t *testing.T) {
+	AssertLexerTokenSequenceFromState(t, `3.4e-2`, lexExpression, []ast.TokenType{ast.T_FLOAT})
+}
+
+func TestLexerExpressionNumberWithScientificNotation3(t *testing.T) {
+	AssertLexerTokenSequenceFromState(t, `3.1415e-5`, lexExpression, []ast.TokenType{ast.T_FLOAT})
+}
+
 func TestLexerExpressionVariableMinusVariable(t *testing.T) {
 	AssertLexerTokenSequenceFromState(t, `$foo - $bar`, lexExpression, []ast.TokenType{ast.T_VARIABLE, ast.T_MINUS, ast.T_VARIABLE})
 }
