@@ -63,8 +63,22 @@ func ComputeBoolean(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 	}
 	switch op.Type {
 	case ast.T_LOGICAL_AND:
+		switch ta := a.(type) {
+		case *ast.Boolean:
+			switch tb := b.(type) {
+			case *ast.Boolean:
+				return ast.NewBoolean(ta.Value && tb.Value)
+			}
+		}
 
 	case ast.T_LOGICAL_OR:
+		switch ta := a.(type) {
+		case *ast.Boolean:
+			switch tb := b.(type) {
+			case *ast.Boolean:
+				return ast.NewBoolean(ta.Value || tb.Value)
+			}
+		}
 	}
 	return nil
 }
@@ -179,6 +193,66 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 	return nil
 }
 
+func EvaluateBinaryExpressionInBooleanContext(expr *ast.BinaryExpression, symTable *SymTable) ast.Value {
+
+	var lval ast.Value = nil
+	var rval ast.Value = nil
+
+	switch expr := expr.Left.(type) {
+	case *ast.UnaryExpression:
+		lval = EvaluateUnaryExpressionInBooleanContext(expr, symTable)
+
+	case *ast.BinaryExpression:
+		lval = EvaluateBinaryExpressionInBooleanContext(expr, symTable)
+
+	// operands
+	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor:
+		if bval, ok := lval.(ast.BooleanValue); ok {
+			rval = ast.NewBoolean(bval.Boolean())
+		} else {
+			panic(fmt.Errorf("BooleanValue interface is not support for %+v", lval))
+		}
+	}
+
+	switch expr := expr.Right.(type) {
+	case *ast.UnaryExpression:
+		rval = EvaluateUnaryExpressionInBooleanContext(expr, symTable)
+
+	case *ast.BinaryExpression:
+		rval = EvaluateBinaryExpressionInBooleanContext(expr, symTable)
+
+	// operands
+	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor:
+		if bval, ok := rval.(ast.BooleanValue); ok {
+			rval = ast.NewBoolean(bval.Boolean())
+		} else {
+			panic(fmt.Errorf("BooleanValue interface is not support for %+v", rval))
+		}
+	}
+	if lval != nil && rval != nil {
+		return ComputeBoolean(expr.Op, lval, rval)
+	}
+	return nil
+}
+
+func EvaluateUnaryExpressionInBooleanContext(expr *ast.UnaryExpression, symTable *SymTable) ast.Value {
+	var val ast.Value = nil
+	if bexpr, ok := expr.Expr.(*ast.BinaryExpression); ok {
+		val = EvaluateBinaryExpression(bexpr, symTable)
+	} else if uexpr, ok := expr.Expr.(*ast.UnaryExpression); ok {
+		val = EvaluateUnaryExpression(uexpr, symTable)
+	}
+	switch expr.Op.Type {
+	case ast.T_LOGICAL_NOT:
+		if bval, ok := val.(ast.BooleanValue); ok {
+			return ast.NewBoolean(bval.Boolean())
+		} else {
+			panic(fmt.Errorf("BooleanValue interface is not support for %+v", val))
+		}
+	}
+	return val
+}
+
 func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) ast.Value {
 	if expr.IsCssSlash() {
 		// return string object without quote
@@ -224,12 +298,6 @@ func EvaluateUnaryExpression(expr *ast.UnaryExpression, symTable *SymTable) ast.
 		switch n := val.(type) {
 		case *ast.Number:
 			n.Value = -n.Value
-		}
-	case ast.T_LOGICAL_NOT:
-		if bval, ok := val.(ast.BooleanValue); ok {
-			return ast.NewBoolean(bval.Boolean())
-		} else {
-			panic(fmt.Errorf("BooleanValue interface is not support for %+v", val))
 		}
 	}
 	return val
