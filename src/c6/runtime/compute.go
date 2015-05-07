@@ -88,6 +88,70 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 		panic("op can't be nil")
 	}
 	switch op.Type {
+
+	case ast.T_EQUAL:
+
+		switch ta := a.(type) {
+		case *ast.Boolean:
+			switch tb := b.(type) {
+			case *ast.Boolean:
+				return ast.NewBoolean(ta.Value == tb.Value)
+			}
+		case *ast.Number:
+			switch tb := b.(type) {
+			case *ast.Number:
+				/*
+					if IsComparable(ta, tb) {
+
+					}
+				*/
+				return ast.NewBoolean(ta.Value == tb.Value)
+			}
+		}
+
+	case ast.T_UNEQUAL:
+	case ast.T_GT:
+	case ast.T_GE:
+	case ast.T_LT:
+	case ast.T_LE:
+
+	case ast.T_LOGICAL_AND:
+
+		switch ta := a.(type) {
+		case *ast.Boolean:
+			switch tb := b.(type) {
+
+			case *ast.Boolean:
+				return ast.NewBoolean(ta.Value && tb.Value)
+
+			// For other data type, we cast to boolean
+			default:
+				if bv, ok := b.(ast.BooleanValue); ok {
+					return ast.NewBoolean(bv.Boolean())
+				}
+			}
+		}
+
+	case ast.T_LOGICAL_OR:
+
+		switch ta := a.(type) {
+		case *ast.Boolean:
+			switch tb := b.(type) {
+
+			case *ast.Boolean:
+				return ast.NewBoolean(ta.Value || tb.Value)
+
+			// For other data type, we cast to boolean
+			default:
+				if bv, ok := b.(ast.BooleanValue); ok {
+					return ast.NewBoolean(bv.Boolean())
+				}
+			}
+		}
+
+	/*
+		arith expr
+	*/
 	case ast.T_PLUS:
 		switch ta := a.(type) {
 		case *ast.Number:
@@ -195,7 +259,7 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 
 func IsConstantValue(val ast.Value) bool {
 	switch val.(type) {
-	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor:
+	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor, *ast.Boolean:
 		return true
 	}
 	return false
@@ -230,13 +294,8 @@ func EvaluateBinaryExpressionInBooleanContext(expr *ast.BinaryExpression, symTab
 	case *ast.BinaryExpression:
 		lval = EvaluateBinaryExpressionInBooleanContext(expr, symTable)
 
-	// operands
-	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor:
-		if bval, ok := lval.(ast.BooleanValue); ok {
-			lval = ast.NewBoolean(bval.Boolean())
-		} else {
-			panic(fmt.Errorf("BooleanValue interface is not support for %+v", lval))
-		}
+	default:
+		lval = expr
 	}
 
 	switch expr := expr.Right.(type) {
@@ -246,14 +305,10 @@ func EvaluateBinaryExpressionInBooleanContext(expr *ast.BinaryExpression, symTab
 	case *ast.BinaryExpression:
 		rval = EvaluateBinaryExpressionInBooleanContext(expr, symTable)
 
-	// operands
-	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor:
-		if bval, ok := rval.(ast.BooleanValue); ok {
-			rval = ast.NewBoolean(bval.Boolean())
-		} else {
-			panic(fmt.Errorf("BooleanValue interface is not support for %+v", rval))
-		}
+	default:
+		rval = expr
 	}
+
 	if lval != nil && rval != nil {
 		return ComputeBoolean(expr.Op, lval, rval)
 	}
@@ -302,7 +357,7 @@ func EvaluateExpression(expr ast.Expression, symTable *SymTable) ast.Value {
 	case *ast.UnaryExpression:
 		return EvaluateUnaryExpression(t, symTable)
 
-	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor:
+	default:
 		return ast.Value(expr)
 
 	}
@@ -331,9 +386,8 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) as
 	case *ast.UnaryExpression:
 		lval = EvaluateUnaryExpression(expr, symTable)
 
-	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor:
+	default:
 		lval = ast.Value(expr)
-
 	}
 
 	switch expr := expr.Right.(type) {
@@ -344,9 +398,8 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) as
 	case *ast.BinaryExpression:
 		rval = EvaluateBinaryExpression(expr, symTable)
 
-	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor:
+	default:
 		rval = ast.Value(expr)
-
 	}
 
 	if lval != nil && rval != nil {

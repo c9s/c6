@@ -3,6 +3,16 @@ package runtime
 import "c6/ast"
 import "fmt"
 
+func NumberComparable(a *ast.Number, b *ast.Number) bool {
+	if a.Unit == nil && b.Unit == nil {
+		return true
+	}
+	if a.Unit != nil && b.Unit != nil && a.Unit.Type == b.Unit.Type {
+		return true
+	}
+	return true
+}
+
 func NumberSubNumber(a *ast.Number, b *ast.Number) *ast.Number {
 	if a.Unit.Type != b.Unit.Type {
 		fmt.Printf("Incompatible unit %s != %s.  %v - %v \n", a.Unit, b.Unit, a, b)

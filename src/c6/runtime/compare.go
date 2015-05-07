@@ -29,16 +29,13 @@ func IsComparable(av ast.Value, bv ast.Value) bool {
 			return true
 		}
 
+	/*
+		For numbers, we compare the unit
+	*/
 	case *ast.Number:
 		switch b := bv.(type) {
 		case *ast.Number:
-			if (a.Unit == nil && b.Unit == nil) || (a.Unit != nil && b.Unit != nil) {
-				return true
-			}
-			if a.Unit != nil && b.Unit != nil && a.Unit.Type != b.Unit.Type {
-				return false
-			}
-			return true
+			return NumberComparable(a, b)
 		}
 	}
 	return false
