@@ -98,6 +98,28 @@ To run specific test
   - [ ] Parse `@switch` statement
   - [ ] Parse `@case` statement
   - [ ] Parse `@use` statement
+- [ ] SASS Built-in Functions
+  - [ ] RGB functions
+    - [ ] `rgb($red, $green, $blue)`
+    - [ ] `rgba($red, $green, $blue, $alpha)`
+    - [ ] `red($color)`
+    - [ ] `green($color)`
+    - [ ] `blue($color)`
+    - [ ] `mix($color1, $color2, [$weight])`
+  - [ ] HSL Functions
+    - [ ] `hsl($hue, $saturation, $lightness)`
+    - [ ] `hsla($hue, $saturation, $lightness, $alpha)`
+    - [ ] `hue($color)`
+    - [ ] `saturation($color)`
+    - [ ] `lightness($color)`
+    - [ ] `adjust-hue($color, $degrees)`
+    - [ ] `lighten($color, $amount)`
+    - [ ] `darken($color, $amount)`
+    - [ ] `saturate($color, $amount)`
+    - [ ] `desaturate($color, $amount)`
+    - [ ] `grayscale($color)`
+    - [ ] `complement($color)`
+    - [ ] `invert($color)`
 - [ ] Building AST
   - [x] RuleSet
   - [x] DeclarationBlock
