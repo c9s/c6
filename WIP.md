@@ -1,49 +1,40 @@
-Working In Progress
-======================
+======
 
-Major Components
-----------------
+VariableAssignment Flag support:
 
-- Parser
-- Server
-- Client
+- [ ] Add Flag struct to VariableAssignment struct
+- [ ] Parse Flag keywords and push to VariableAssignment struct
 
-Parser
--------------
+CharsetStatement support
 
-Server
--------------
+- [ ] Add CharsetStatement struct
+- [ ] Add Encoding field
+- [ ] Add ParseCharsetStatement method to parser.
 
-### Commands
+SymbolTable
 
-- `check`
-- `parse`
-- `complete`
-- `compile`
-- `minify`
-- `optimize`
+- [ ] Register parsed variable to the scope symbol table.
+  - [ ] RuleSet symbol table
+  - [ ] Global symbol table
+- [ ] Add symbol table lookup method to the expression evaluator.
+  - Add type switch case for ast.Variable struct
 
-#### `check`
+Optimizer
 
-The check command checks the syntax and reports error.
+- [ ] Constant Value elimination optimizer for VariableAssignment.
+- [ ] Call IfStatementOptimizer after the if statement is parsed.
 
-`check` also implictly parse the file and create a parse tree in the memory.
+CSS Slash and Divide
 
-Protocol:
+- [ ] Review Declaration String() interface.
+- [ ] Test simple ruleset output.
+- [ ] Add test utility function that accept: {input scss} and {output css}.
+- [ ] Add expr stringer test case for `font: 12px/20px`.
+- [ ] Add expr stringer test case for expressions like 12px/20px + 13px.
 
-    check {path}
+Nested properties
 
-Response:
-
-    {line}:{type}:{suggest}:{message}
-
-Sample Response:
-
-    23:error:append_comma:Missing comma at the end
-
-#### `parse`
-
-Parse a scss file and save the syntax tree, symbol table in the memory.
-
-`parse /path/to/file.scss`
+- [ ] Allow declaration block after the colon of property name.
+- [ ] Allow declaration block after the property value.
+- [ ] `lexPropertyValue` should check if there is another '{' token, then we should go to `lexStatement` state.
 
