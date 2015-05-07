@@ -54,6 +54,7 @@ To run specific test
   - [x] Comma-separated list
   - [x] Space-separated list
   - [x] `@if` , `@else` , `@else if`
+  - [x] Flags: `!default`, `!important`, `!optional`, `!global`
   - [x] Hex color
   - [x] Functions
   - [x] Vendor prefix properties
@@ -86,7 +87,7 @@ To run specific test
   - [x] Parse PropertyValue with interpolation
   - [x] Parse conditions
   - [ ] Parse Nested RuleSet
-  - [ ] Parse options: `!default`, `!global`, `!optional`
+  - [x] Parse options: `!default`, `!global`, `!optional`
   - [ ] Parse CSS Hack for different browser (support more syntax sugar for this)
   - [ ] Parse `@font-face` block
   - [x] Parse `@if` statement
