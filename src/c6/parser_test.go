@@ -90,6 +90,21 @@ func TestParserIfComparisonGreaterThan(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserIfComparisonGreaterEqual(t *testing.T) {
+	var stmts = RunParserTest(`@if (3+3) >= 2 {  } @else {  }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserIfComparisonLessThan(t *testing.T) {
+	var stmts = RunParserTest(`@if (3+3) < 2 {  } @else {  }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserIfComparisonLessEqual(t *testing.T) {
+	var stmts = RunParserTest(`@if (3+3) <= 2 {  } @else {  }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserIfComparisonEqual(t *testing.T) {
 	var stmts = RunParserTest(`@if (3+3) == 6 {  } @else {  }`)
 	assert.Equal(t, 1, len(stmts))
