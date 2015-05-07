@@ -13,9 +13,28 @@ func NewOp(opType TokenType, token *Token) *Op {
 	return &Op{opType, token}
 }
 
+func OpTokenName(tokType TokenType) string {
+	switch tokType {
+	case T_DIV:
+		return "/"
+	case T_MUL:
+		return "*"
+	case T_MINUS:
+		return "-"
+	case T_PLUS:
+		return "+"
+	case T_PAREN_START:
+		return "("
+	case T_PAREN_END:
+		return ")"
+	}
+	panic("Unsupported token type")
+	return ""
+}
+
 func (op Op) String() string {
 	if op.Token != nil {
 		return op.Token.Str
 	}
-	return string(op.Type)
+	return OpTokenName(op.Type)
 }

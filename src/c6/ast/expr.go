@@ -24,14 +24,15 @@ type BinaryExpression struct {
 	Grouped bool
 }
 
-func (self BinaryExpression) String() (out string) {
-	out += "("
-	out += self.Left.String()
-	if self.Op != nil {
-		out += " " + self.Op.String() + " "
+func (self BinaryExpression) String() string {
+	if self.Op == nil {
+		panic("Missing operator")
 	}
-	out += self.Right.String()
-	out += ")"
+
+	var out = self.Left.String() + self.Op.String() + self.Right.String()
+	if self.Grouped {
+		return "(" + out + ")"
+	}
 	return out
 }
 
