@@ -1,18 +1,5 @@
 package ast
 
-//go:generate stringer -type=OpType op.go token.go
-type OpType int
-
-const (
-	OpNone          OpType = 0
-	OpAdd                  = T_PLUS
-	OpSub                  = T_MINUS
-	OpDiv                  = T_DIV
-	OpMul                  = T_MUL
-	OpConcat               = T_CONCAT
-	OpLiteralConcat        = T_LITERAL_CONCAT
-)
-
 type Op struct {
 	Type  TokenType
 	Token *Token
