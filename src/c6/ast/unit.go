@@ -1,5 +1,7 @@
 package ast
 
+import "strings"
+
 type Unit struct {
 	Type  TokenType
 	Token *Token
@@ -17,5 +19,6 @@ func (unit Unit) String() string {
 	if unit.Token != nil {
 		return unit.Token.Str
 	}
-	return string(unit.Type.String())
+	var name = string(unit.Type.String())
+	return strings.ToLower(strings.TrimPrefix(name, "T_UNIT_"))
 }
