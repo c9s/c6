@@ -13,7 +13,7 @@ func RunParserTest(code string) []ast.Statement {
 	return parser.ParseScss(code)
 }
 
-func TestParserParseImportRuleWithUrl(t *testing.T) {
+func TestParserImportRuleWithUrl(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`@import url("http://foo.com/bar.css");`)
 
@@ -35,7 +35,7 @@ func TestParserParseImportRuleWithUrl(t *testing.T) {
 	assert.Equal(t, "http://foo.com/bar.css", string(url))
 }
 
-func TestParserParseImportRuleWithString(t *testing.T) {
+func TestParserImportRuleWithString(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`@import "foo.css";`)
 
@@ -55,7 +55,7 @@ func TestParserParseImportRuleWithString(t *testing.T) {
 	assert.Equal(t, "foo.css", string(url))
 }
 
-func TestParserParseImportRuleWithMediaList(t *testing.T) {
+func TestParserImportRuleWithMediaList(t *testing.T) {
 	var stmts = RunParserTest(`@import url("foo.css") screen;`)
 	assert.Equal(t, 1, len(stmts))
 }
@@ -85,7 +85,7 @@ func TestParserIfTrueAndTrueOrFalseElseStatement2(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
-func TestParserParseCSS3Gradient(t *testing.T) {
+func TestParserCSS3Gradient(t *testing.T) {
 	// some test cases from htmldog
 	// @see http://www.htmldog.com/guides/css/advanced/gradients/
 	var buffers = []string{
@@ -194,7 +194,7 @@ func TestParserMassiveRules(t *testing.T) {
 	}
 }
 
-func TestParserParseTypeSelectorRule(t *testing.T) {
+func TestParserTypeSelectorRule(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`div { width: auto; }`)
 
@@ -220,7 +220,7 @@ func TestParserIfStatementTrueCondition(t *testing.T) {
 */
 
 /*
-func TestParserParseEmptyRuleWithClassSelector(t *testing.T) {
+func TestParserEmptyRuleWithClassSelector(t *testing.T) {
 	parser := NewParser()
 	parser.ParseScss(`.test {  }`)
 
