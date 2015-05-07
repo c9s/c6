@@ -45,6 +45,14 @@ func (tok Token) IsSelector() bool {
 	return false
 }
 
+func (tok Token) IsFlagKeyword() bool {
+	switch tok.Type {
+	case T_DEFAULT, T_OPTIONAL, T_GLOBAL, T_IMPORTANT:
+		return true
+	}
+	return false
+}
+
 func (tok Token) IsLengthUnit() bool {
 	switch tok.Type {
 	case T_UNIT_EM, T_UNIT_EX, T_UNIT_CH, T_UNIT_REM, T_UNIT_CM, T_UNIT_IN,

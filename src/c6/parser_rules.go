@@ -611,6 +611,7 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 	debug("Trying Map")
 	if mapValue := parser.ParseMap(); mapValue != nil {
 		var tok = parser.peek()
+
 		if stopTokType == 0 || tok.Type == stopTokType {
 			debug("OK List")
 			return mapValue
@@ -748,10 +749,28 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 		panic("Expecting value after variable assignment.")
 	}
 
+	var stm = ast.NewVariableAssignment(variable, expr)
+
+	var tok = parser.peek()
+	for tok.IsFlagKeyword() {
+		parser.next()
+
+		switch tok.Type {
+		case ast.T_DEFAULT:
+			stm.Default = true
+		case ast.T_OPTIONAL:
+			stm.Optional = true
+		case ast.T_IMPORTANT:
+			stm.Important = true
+		case ast.T_GLOBAL:
+			stm.Global = true
+		}
+	}
+
 	parser.expect(ast.T_SEMICOLON)
 
 	// Reduce list or map here
-	return ast.NewVariableAssignment(variable, expr)
+	return stm
 }
 
 func (parser *Parser) ParseSpaceSepList() ast.Expression {
