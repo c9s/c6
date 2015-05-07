@@ -1,14 +1,14 @@
 package ast
 
 type CharsetStatement struct {
-	Charset string
-	Token   *Token
+	Encoding string
+	Token    *Token
 }
 
 func (self CharsetStatement) CanBeStatement() {}
 
 func (self CharsetStatement) String() string {
-	return "@charset " + self.Charset + ";"
+	return "@charset " + self.Encoding + ";"
 }
 
 func NewCharsetStatementWithToken(token *Token) *CharsetStatement {

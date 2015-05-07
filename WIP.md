@@ -7,9 +7,9 @@ VariableAssignment Flag support:
 
 CharsetStatement support
 
-- [ ] Add CharsetStatement struct
-- [ ] Add Encoding field
-- [ ] Add ParseCharsetStatement method to parser.
+- [x] Add CharsetStatement struct
+- [x] Add Encoding field
+- [x] Add ParseCharsetStatement method to parser.
 
 SymbolTable
 
