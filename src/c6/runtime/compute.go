@@ -195,7 +195,7 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 
 func IsConstantValue(val ast.Value) bool {
 	switch val.(type) {
-	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor:
+	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor:
 		return true
 	}
 	return false
@@ -231,7 +231,7 @@ func EvaluateBinaryExpressionInBooleanContext(expr *ast.BinaryExpression, symTab
 		lval = EvaluateBinaryExpressionInBooleanContext(expr, symTable)
 
 	// operands
-	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor:
+	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor:
 		if bval, ok := lval.(ast.BooleanValue); ok {
 			lval = ast.NewBoolean(bval.Boolean())
 		} else {
@@ -247,7 +247,7 @@ func EvaluateBinaryExpressionInBooleanContext(expr *ast.BinaryExpression, symTab
 		rval = EvaluateBinaryExpressionInBooleanContext(expr, symTable)
 
 	// operands
-	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor:
+	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor:
 		if bval, ok := rval.(ast.BooleanValue); ok {
 			rval = ast.NewBoolean(bval.Boolean())
 		} else {
@@ -302,7 +302,13 @@ func EvaluateExpression(expr ast.Expression, symTable *SymTable) ast.Value {
 	case *ast.UnaryExpression:
 		return EvaluateUnaryExpression(t, symTable)
 
-	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor:
+	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor:
+		return ast.Value(expr)
+
+	}
+
+	// shouldn't call here.
+	if IsConstantValue(expr) {
 		return ast.Value(expr)
 	}
 
@@ -325,7 +331,7 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) as
 	case *ast.UnaryExpression:
 		lval = EvaluateUnaryExpression(expr, symTable)
 
-	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor:
+	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor:
 		lval = ast.Value(expr)
 
 	}
@@ -338,7 +344,7 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) as
 	case *ast.BinaryExpression:
 		rval = EvaluateBinaryExpression(expr, symTable)
 
-	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor:
+	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor:
 		rval = ast.Value(expr)
 
 	}
