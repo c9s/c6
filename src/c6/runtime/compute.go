@@ -100,20 +100,88 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 		case *ast.Number:
 			switch tb := b.(type) {
 			case *ast.Number:
-				/*
-					if IsComparable(ta, tb) {
-
-					}
-				*/
-				return ast.NewBoolean(ta.Value == tb.Value)
+				if IsComparable(ta, tb) {
+					return ast.NewBoolean(ta.Value == tb.Value)
+				} else {
+					panic("Can't compare number (unit different)")
+				}
 			}
 		}
 
 	case ast.T_UNEQUAL:
+
+		switch ta := a.(type) {
+		case *ast.Boolean:
+			switch tb := b.(type) {
+			case *ast.Boolean:
+				return ast.NewBoolean(ta.Value != tb.Value)
+			}
+		case *ast.Number:
+			switch tb := b.(type) {
+			case *ast.Number:
+				if IsComparable(ta, tb) {
+					return ast.NewBoolean(ta.Value != tb.Value)
+				} else {
+					panic("Can't compare number (unit different)")
+				}
+			}
+		}
+
 	case ast.T_GT:
+
+		switch ta := a.(type) {
+		case *ast.Number:
+			switch tb := b.(type) {
+			case *ast.Number:
+				if IsComparable(ta, tb) {
+					return ast.NewBoolean(ta.Value > tb.Value)
+				} else {
+					panic("Can't compare number (unit different)")
+				}
+			}
+		}
+
 	case ast.T_GE:
+
+		switch ta := a.(type) {
+		case *ast.Number:
+			switch tb := b.(type) {
+			case *ast.Number:
+				if IsComparable(ta, tb) {
+					return ast.NewBoolean(ta.Value >= tb.Value)
+				} else {
+					panic("Can't compare number (unit different)")
+				}
+			}
+		}
+
 	case ast.T_LT:
+
+		switch ta := a.(type) {
+		case *ast.Number:
+			switch tb := b.(type) {
+			case *ast.Number:
+				if IsComparable(ta, tb) {
+					return ast.NewBoolean(ta.Value < tb.Value)
+				} else {
+					panic("Can't compare number (unit different)")
+				}
+			}
+		}
+
 	case ast.T_LE:
+
+		switch ta := a.(type) {
+		case *ast.Number:
+			switch tb := b.(type) {
+			case *ast.Number:
+				if IsComparable(ta, tb) {
+					return ast.NewBoolean(ta.Value <= tb.Value)
+				} else {
+					panic("Can't compare number (unit different)")
+				}
+			}
+		}
 
 	case ast.T_LOGICAL_AND:
 

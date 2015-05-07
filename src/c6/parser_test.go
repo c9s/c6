@@ -85,6 +85,16 @@ func TestParserIfTrueAndTrueOrFalseElseStatement2(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserIfComparisonGreaterThan(t *testing.T) {
+	var stmts = RunParserTest(`@if (3+3) > 2 {  } @else {  }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserIfComparisonEqual(t *testing.T) {
+	var stmts = RunParserTest(`@if (3+3) == 6 {  } @else {  }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserCSS3Gradient(t *testing.T) {
 	// some test cases from htmldog
 	// @see http://www.htmldog.com/guides/css/advanced/gradients/
