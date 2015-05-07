@@ -26,7 +26,7 @@ Optimizer
 
 CSS Slash and Divide
 
-- [ ] Review Declaration String() interface.
+- [x] Review Declaration String() interface.
 - [ ] Test simple ruleset output.
 - [ ] Add test utility function that accept: {input scss} and {output css}.
 - [ ] Add expr stringer test case for `font: 12px/20px`.
