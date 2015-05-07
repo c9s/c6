@@ -89,18 +89,7 @@ func TestLexerAtRuleImport(t *testing.T) {
 }
 
 func TestLexerAtRuleImportWithUrl(t *testing.T) {
-	l := NewLexerWithString(`@import url("test.css");`)
-	assert.NotNil(t, l)
-	l.run()
-	tokens := AssertTokenSequence(t, l, []ast.TokenType{ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_START, ast.T_QQ_STRING, ast.T_PAREN_END, ast.T_SEMICOLON})
-
-	for _, tok := range tokens {
-		if tok.Type == ast.T_QQ_STRING {
-			assert.Equal(t, `test.css`, tok.Str)
-		}
-	}
-
-	l.close()
+	AssertLexerTokenSequence(t, `@import url("test.css");`, []ast.TokenType{ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_START, ast.T_QQ_STRING, ast.T_PAREN_END, ast.T_SEMICOLON})
 }
 
 func TestLexerAtRuleImportWithUrlAndMediaList(t *testing.T) {
