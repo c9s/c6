@@ -84,7 +84,7 @@ To run specific test
   - [ ] Parse PropertyName with interpolation
   - [x] Parse PropertyValue
   - [x] Parse PropertyValue with interpolation
-  - [ ] Parse conditions
+  - [x] Parse conditions
   - [ ] Parse Nested RuleSet
   - [ ] Parse options: `!default`, `!global`, `!optional`
   - [ ] Parse CSS Hack for different browser (support more syntax sugar for this)
@@ -117,7 +117,7 @@ To run specific test
   - [x] Number operation: add, sub, mul, div
   - [x] Length operation: number operation for px, pt, em, rem, cm ...etc
   - [x] Expression evaluation
-  - [ ] Boolean expression evaluation
+  - [x] Boolean expression evaluation
   - [ ] Media Query conditions
 - [ ] CodeGen
   - [ ] NestedStyleCompiler
