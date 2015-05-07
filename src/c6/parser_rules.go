@@ -755,25 +755,24 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 
 	var stm = ast.NewVariableAssignment(variable, expr)
 
-	/*
-		var tok = parser.peek()
-		for tok.IsFlagKeyword() {
-			parser.next()
-			fmt.Println(tok)
+	var tok = parser.peek()
+	for tok.IsFlagKeyword() {
+		parser.next()
+		fmt.Println(tok)
 
-			switch tok.Type {
-			case ast.T_DEFAULT:
-				stm.Default = true
-			case ast.T_OPTIONAL:
-				stm.Optional = true
-			case ast.T_IMPORTANT:
-				stm.Important = true
-			case ast.T_GLOBAL:
-				stm.Global = true
-			}
-			tok = parser.peek()
+		switch tok.Type {
+		case ast.T_DEFAULT:
+			stm.Default = true
+		case ast.T_OPTIONAL:
+			stm.Optional = true
+		case ast.T_IMPORTANT:
+			stm.Important = true
+		case ast.T_GLOBAL:
+			stm.Global = true
 		}
-	*/
+		tok = parser.peek()
+	}
+
 	parser.accept(ast.T_SEMICOLON)
 
 	// Reduce list or map here
