@@ -110,8 +110,9 @@ func lexProperty(l *Lexer) stateFn {
 		l.rollback()
 	}
 
+	// the '{' is used for the start token of nested properties
 	r = l.peek()
-	for r != ';' && r != '}' && r != EOF {
+	for r != ';' && r != '}' && r != '{' && r != EOF {
 		lexExpression(l)
 		r = l.peek()
 	}
