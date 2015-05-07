@@ -104,16 +104,6 @@ func TestLexerAtRuleImportWithUnquoteUrl(t *testing.T) {
 	})
 }
 
-/*
-func TestLexerAtRuleImportWithQuoteUrl(t *testing.T) {
-	l := NewLexerWithString(`@import url("test.css");`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_IMPORT, ast.T_QQ_STRING, ast.T_SEMICOLON})
-	l.close()
-}
-*/
-
 func TestLexerRuleWithOneProperty(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test { color: #fff; }`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
