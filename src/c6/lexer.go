@@ -344,9 +344,7 @@ func (l *Lexer) match(str string) bool {
 	return true
 }
 
-type KeywordTokenMap map[string]ast.TokenType
-
-func (l *Lexer) matchKeywordMap(keywords KeywordTokenMap) ast.TokenType {
+func (l *Lexer) matchKeywordMap(keywords ast.KeywordTokenMap) ast.TokenType {
 	for str, tokType := range keywords {
 		l.remember()
 		if l.match(str) {

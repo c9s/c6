@@ -13,67 +13,6 @@ type stateFn func(*Lexer) stateFn
 const LETTERS = "zxcvbnmasdfghjklqwertyuiop"
 const DIGITS = "1234567890"
 
-var flagTokenMap = KeywordTokenMap{
-	"!global":    ast.T_GLOBAL,
-	"!default":   ast.T_DEFAULT,
-	"!important": ast.T_IMPORTANT,
-	"!optional":  ast.T_OPTIONAL,
-}
-
-var atRuleTokenMap = KeywordTokenMap{
-	/* CSS */
-	"@import":    ast.T_IMPORT,
-	"@media":     ast.T_MEDIA,
-	"@if":        ast.T_IF,
-	"@else":      ast.T_ELSE,
-	"@else if":   ast.T_ELSE_IF,
-	"@include":   ast.T_INCLUDE,
-	"@function":  ast.T_FUNCTION,
-	"@mixin":     ast.T_MIXIN,
-	"@font-face": ast.T_FONT_FACE,
-}
-
-var exprTokenMap = KeywordTokenMap{
-	"true":  ast.T_TRUE,
-	"false": ast.T_FALSE,
-	"null":  ast.T_NULL,
-	"and":   ast.T_LOGICAL_AND,
-	"not":   ast.T_LOGICAL_NOT,
-	"or":    ast.T_LOGICAL_OR,
-	"xor":   ast.T_LOGICAL_XOR,
-}
-
-var unitTokenMap = KeywordTokenMap{
-	"px":  ast.T_UNIT_PX,
-	"pt":  ast.T_UNIT_PT,
-	"pc":  ast.T_UNIT_PC,
-	"em":  ast.T_UNIT_EM,
-	"cm":  ast.T_UNIT_CM,
-	"ex":  ast.T_UNIT_EX,
-	"ch":  ast.T_UNIT_CH,
-	"in":  ast.T_UNIT_IN,
-	"mm":  ast.T_UNIT_MM,
-	"rem": ast.T_UNIT_REM,
-	"vh":  ast.T_UNIT_VH,
-	"vw":  ast.T_UNIT_VW,
-
-	"Hz":  ast.T_UNIT_HZ,
-	"kHz": ast.T_UNIT_KHZ,
-
-	"vmin": ast.T_UNIT_VMIN,
-	"vmax": ast.T_UNIT_VMAX,
-	"deg":  ast.T_UNIT_DEG,
-	"grad": ast.T_UNIT_GRAD,
-	"rad":  ast.T_UNIT_RAD,
-	"turn": ast.T_UNIT_TURN,
-	"dpi":  ast.T_UNIT_DPI,
-	"dpcm": ast.T_UNIT_DPCM,
-	"dppx": ast.T_UNIT_DPPX,
-	"s":    ast.T_UNIT_SECOND,
-	"ms":   ast.T_UNIT_MILLISECOND,
-	"%":    ast.T_UNIT_PERCENT,
-}
-
 func (l *Lexer) error(msg string, r rune) {
 	var err = errors.New(fmt.Sprintf(msg, string(r)))
 	panic(err)
@@ -250,7 +189,7 @@ Currently the @import rule only supports '@import url(...) media;
 @see https://developer.mozilla.org/en-US/docs/Web/CSS/@import for more @import syntax support
 */
 func lexAtRule(l *Lexer) stateFn {
-	var tokType = l.matchKeywordMap(atRuleTokenMap)
+	var tokType = l.matchKeywordMap(ast.AtRuleTokenMap)
 	if tokType > 0 {
 		switch tokType {
 		case ast.T_IMPORT:
@@ -443,7 +382,7 @@ CSS time unit
 @see https://developer.mozilla.org/zh-TW/docs/Web/CSS/time
 */
 func lexNumberUnit(l *Lexer) stateFn {
-	l.matchKeywordMap(unitTokenMap)
+	l.matchKeywordMap(ast.UnitTokenMap)
 	if l.peek() == ';' {
 		return lexStatement
 	}

@@ -8,6 +8,69 @@ type TokenType int
 const LF = '\r'
 const CR = '\n'
 
+type KeywordTokenMap map[string]TokenType
+
+var FlagTokenMap = KeywordTokenMap{
+	"!global":    T_GLOBAL,
+	"!default":   T_DEFAULT,
+	"!important": T_IMPORTANT,
+	"!optional":  T_OPTIONAL,
+}
+
+var AtRuleTokenMap = KeywordTokenMap{
+	/* CSS */
+	"@import":    T_IMPORT,
+	"@media":     T_MEDIA,
+	"@if":        T_IF,
+	"@else":      T_ELSE,
+	"@else if":   T_ELSE_IF,
+	"@include":   T_INCLUDE,
+	"@function":  T_FUNCTION,
+	"@mixin":     T_MIXIN,
+	"@font-face": T_FONT_FACE,
+}
+
+var ExprTokenMap = KeywordTokenMap{
+	"true":  T_TRUE,
+	"false": T_FALSE,
+	"null":  T_NULL,
+	"and":   T_LOGICAL_AND,
+	"not":   T_LOGICAL_NOT,
+	"or":    T_LOGICAL_OR,
+	"xor":   T_LOGICAL_XOR,
+}
+
+var UnitTokenMap = KeywordTokenMap{
+	"px":  T_UNIT_PX,
+	"pt":  T_UNIT_PT,
+	"pc":  T_UNIT_PC,
+	"em":  T_UNIT_EM,
+	"cm":  T_UNIT_CM,
+	"ex":  T_UNIT_EX,
+	"ch":  T_UNIT_CH,
+	"in":  T_UNIT_IN,
+	"mm":  T_UNIT_MM,
+	"rem": T_UNIT_REM,
+	"vh":  T_UNIT_VH,
+	"vw":  T_UNIT_VW,
+
+	"Hz":  T_UNIT_HZ,
+	"kHz": T_UNIT_KHZ,
+
+	"vmin": T_UNIT_VMIN,
+	"vmax": T_UNIT_VMAX,
+	"deg":  T_UNIT_DEG,
+	"grad": T_UNIT_GRAD,
+	"rad":  T_UNIT_RAD,
+	"turn": T_UNIT_TURN,
+	"dpi":  T_UNIT_DPI,
+	"dpcm": T_UNIT_DPCM,
+	"dppx": T_UNIT_DPPX,
+	"s":    T_UNIT_SECOND,
+	"ms":   T_UNIT_MILLISECOND,
+	"%":    T_UNIT_PERCENT,
+}
+
 type Token struct {
 	Type                  TokenType
 	Str                   string

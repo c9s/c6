@@ -1,17 +1,12 @@
 package ast
 
-// import "testing"
+import "testing"
+
 // import "github.com/stretchr/testify/assert"
 
-/*
 func TestBinaryExprString(t *testing.T) {
-	var num1 = NewNumber(2, nil, nil)
-	var num2 = NewNumber(3, nil, nil)
-	var expr = NewBinaryExpression(N, num1, num2, false)
+	var num1 = NewNumber(2, NewUnit(T_UNIT_PX, nil), nil)
+	var num2 = NewNumber(3, NewUnit(T_UNIT_PX, nil), nil)
+	var expr = NewBinaryExpression(NewOp(T_DIV, nil), num1, num2, false)
 	t.Logf("%s", expr.String())
-
-	var num3 = NewNumber(4, nil)
-	var expr2 = NewBinaryExpression(OpSub, expr, num3, false)
-	t.Logf("%s", expr2.String())
 }
-*/
