@@ -83,6 +83,8 @@ func lexExpression(l *Lexer) stateFn {
 
 	if l.matchKeywordMap(exprTokenMap) != 0 {
 
+	} else if l.matchKeywordMap(flagTokenMap) != 0 {
+
 	} else if r == 'U' && r2 == '+' {
 
 		lexUnicodeRange(l)

@@ -159,6 +159,11 @@ func TestParserVariableAssignmentWithMorePlus(t *testing.T) {
 	fmt.Printf("%+v\n", block)
 }
 
+func TestParserVariableAssignmentWithExpressionAndFlag(t *testing.T) {
+	var block = RunParserTest(`$foo: 12px + 20px + 20px;`)
+	fmt.Printf("%+v\n", block)
+}
+
 func TestParserVariableAssignmentWithComplexExpression(t *testing.T) {
 	var stmts = RunParserTest(`$foo: 12px * (20px + 20px) + 4px / 2;`)
 	fmt.Printf("%+v\n", stmts[0])

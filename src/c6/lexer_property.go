@@ -121,12 +121,6 @@ func lexProperty(l *Lexer) stateFn {
 	lexComment(l, false)
 	l.ignoreSpaces()
 
-	l.matchKeywordMap(flagTokenMap)
-
-	l.ignoreSpaces()
-	lexComment(l, false)
-	l.ignoreSpaces()
-
 	// the semicolon in the last declaration is optional.
 	l.ignoreSpaces()
 	if l.accept(";") {

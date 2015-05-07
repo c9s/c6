@@ -17,7 +17,7 @@ const TOKEN_CHANNEL_BUFFER = 1024
 
 const EOF = -1
 
-const DEBUG_EMIT = false
+const DEBUG_EMIT = true
 
 type Lexer struct {
 	// lex input

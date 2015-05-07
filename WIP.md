@@ -2,8 +2,8 @@
 
 VariableAssignment Flag support:
 
-- [ ] Add Flag struct to VariableAssignment struct
-- [ ] Parse Flag keywords and push to VariableAssignment struct
+- [x] Add Flag struct to VariableAssignment struct
+- [x] Parse Flag keywords and push to VariableAssignment struct
 
 CharsetStatement support
 

@@ -364,12 +364,6 @@ func lexVariableAssignment(l *Lexer) stateFn {
 	lexComment(l, false)
 	l.ignoreSpaces()
 
-	l.matchKeywordMap(flagTokenMap)
-
-	l.ignoreSpaces()
-	lexComment(l, false)
-	l.ignoreSpaces()
-
 	if l.accept(";") {
 		l.emit(ast.T_SEMICOLON)
 	} else if l.accept("}") {

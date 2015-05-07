@@ -7,6 +7,10 @@ type CharsetStatement struct {
 
 func (self CharsetStatement) CanBeStatement() {}
 
-func NewCharsetStatement(token *Token) *CharsetStatement {
+func (self CharsetStatement) String() string {
+	return "@charset " + self.Charset + ";"
+}
+
+func NewCharsetStatementWithToken(token *Token) *CharsetStatement {
 	return &CharsetStatement{token.Str, token}
 }

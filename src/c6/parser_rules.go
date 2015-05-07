@@ -42,6 +42,10 @@ func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
 
 		return parser.ParseImportStatement()
 
+	} else if token.Type == ast.T_CHARSET {
+
+		return parser.ParseCharsetStatement()
+
 	} else if token.Type == ast.T_VARIABLE {
 
 		return parser.ParseVariableAssignment()
@@ -751,23 +755,26 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 
 	var stm = ast.NewVariableAssignment(variable, expr)
 
-	var tok = parser.peek()
-	for tok.IsFlagKeyword() {
-		parser.next()
+	/*
+		var tok = parser.peek()
+		for tok.IsFlagKeyword() {
+			parser.next()
+			fmt.Println(tok)
 
-		switch tok.Type {
-		case ast.T_DEFAULT:
-			stm.Default = true
-		case ast.T_OPTIONAL:
-			stm.Optional = true
-		case ast.T_IMPORTANT:
-			stm.Important = true
-		case ast.T_GLOBAL:
-			stm.Global = true
+			switch tok.Type {
+			case ast.T_DEFAULT:
+				stm.Default = true
+			case ast.T_OPTIONAL:
+				stm.Optional = true
+			case ast.T_IMPORTANT:
+				stm.Important = true
+			case ast.T_GLOBAL:
+				stm.Global = true
+			}
+			tok = parser.peek()
 		}
-	}
-
-	parser.expect(ast.T_SEMICOLON)
+	*/
+	parser.accept(ast.T_SEMICOLON)
 
 	// Reduce list or map here
 	return stm
@@ -875,6 +882,14 @@ func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.Dec
 	}
 
 	return &declBlock
+}
+
+func (parser *Parser) ParseCharsetStatement() ast.Statement {
+	parser.accept(ast.T_CHARSET)
+	var tok = parser.next()
+	var stm = ast.NewCharsetStatementWithToken(tok)
+	parser.expect(ast.T_SEMICOLON)
+	return stm
 }
 
 func (parser *Parser) ParseImportStatement() ast.Statement {
