@@ -310,7 +310,7 @@ func EvaluateBinaryExpressionInBooleanContext(expr *ast.BinaryExpression, symTab
 	}
 
 	if lval != nil && rval != nil {
-		return ComputeBoolean(expr.Op, lval, rval)
+		return Compute(expr.Op, lval, rval)
 	}
 	return nil
 }
