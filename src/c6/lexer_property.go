@@ -147,5 +147,7 @@ func lexColon(l *Lexer) stateFn {
 		l.error("Expecting ':' token, Got '%s'", r)
 	}
 	l.emit(ast.T_COLON)
+
+	// We don't ignore space after the colon because we need spaces to detect literal concat.
 	return nil
 }
