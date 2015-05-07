@@ -120,6 +120,54 @@ To run specific test
     - [ ] `grayscale($color)`
     - [ ] `complement($color)`
     - [ ] `invert($color)`
+  - [ ] Opacity Functions
+    - [ ] `alpha($color) / opacity($color)`
+    - [ ] `rgba($color, $alpha)`
+    - [ ] `opacify($color, $amount) / fade-in($color, $amount)`
+    - [ ] `transparentize($color, $amount) / fade-out($color, $amount)`
+  - [ ] Other Color Functions
+    - [ ] `adjust-color($color, [$red], [$green], [$blue], [$hue], [$saturation], [$lightness], [$alpha])`
+    - [ ] `scale-color($color, [$red], [$green], [$blue], [$saturation], [$lightness], [$alpha])`
+    - [ ] `change-color($color, [$red], [$green], [$blue], [$hue], [$saturation], [$lightness], [$alpha])`
+    - [ ] `ie-hex-str($color)`
+  - [ ] String Functions
+    - [ ] `unquote($string)`
+    - [ ] `quote($string)`
+    - [ ] `str-length($string)`
+    - [ ] `str-insert($string, $insert, $index)`
+    - [ ] `str-index($string, $substring)`
+    - [ ] `str-slice($string, $start-at, [$end-at])`
+    - [ ] `to-upper-case($string)`
+    - [ ] `to-lower-case($string)`
+  - [ ] Number Functions
+    - [ ] `percentage($number)`
+    - [ ] `round($number)`
+    - [ ] `ceil($number)`
+    - [ ] `floor($number)`
+    - [ ] `abs($number)`
+    - [ ] `min($numbers…)`
+    - [ ] `max($numbers…)`
+    - [ ] `random([$limit])`
+  - [ ] List Functions
+    - [ ] `length($list)`
+    - [ ] `nth($list, $n)`
+    - [ ] `set-nth($list, $n, $value)`
+    - [ ] `join($list1, $list2, [$separator])`
+    - [ ] `append($list1, $val, [$separator])`
+    - [ ] `zip($lists…)`
+    - [ ] `index($list, $value)`
+    - [ ] `list-separator(#list)`
+  - [ ] Map Functions
+    - [ ] `map-get($map, $key)`
+    - [ ] `map-merge($map1, $map2)`
+    - [ ] `map-remove($map, $keys…)`
+    - [ ] `map-keys($map)`
+    - [ ] `map-values($map)`
+    - [ ] `map-has-key($map, $key)`
+    - [ ] `keywords($args)`
+  - [ ] Selector Functions
+    - .... to be expanded ...
+
 - [ ] Building AST
   - [x] RuleSet
   - [x] DeclarationBlock
