@@ -57,32 +57,6 @@ var computeFunctionMatrix [5][5]ComputeFunction = [5][5]ComputeFunction{
 	[5]ComputeFunction{nil, nil, nil, nil, nil},
 }
 
-func ComputeBoolean(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
-	if op == nil {
-		panic("op can't be nil")
-	}
-	switch op.Type {
-	case ast.T_LOGICAL_AND:
-		switch ta := a.(type) {
-		case *ast.Boolean:
-			switch tb := b.(type) {
-			case *ast.Boolean:
-				return ast.NewBoolean(ta.Value && tb.Value)
-			}
-		}
-
-	case ast.T_LOGICAL_OR:
-		switch ta := a.(type) {
-		case *ast.Boolean:
-			switch tb := b.(type) {
-			case *ast.Boolean:
-				return ast.NewBoolean(ta.Value || tb.Value)
-			}
-		}
-	}
-	return nil
-}
-
 func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 	if op == nil {
 		panic("op can't be nil")
