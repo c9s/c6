@@ -233,6 +233,7 @@ const (
 	/*
 		expression operators
 	*/
+	T_NOP
 	T_PLUS  // for '+'
 	T_DIV   // for '-'
 	T_MUL   // for '*'

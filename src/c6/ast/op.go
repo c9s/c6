@@ -27,6 +27,8 @@ func OpTokenName(tokType TokenType) string {
 		return "("
 	case T_PAREN_END:
 		return ")"
+	case T_NOP:
+		return ""
 	}
 	panic("Unsupported token type")
 	return ""

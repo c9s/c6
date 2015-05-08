@@ -299,6 +299,20 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 	return nil
 }
 
+func IsConstantExpression(expr ast.Expression) bool {
+	switch e := expr.(type) {
+	case *ast.BinaryExpression:
+		if IsConstantValue(e.Left) && IsConstantValue(e.Right) {
+			return true
+		}
+	case *ast.UnaryExpression:
+		if IsConstantValue(e.Expr) {
+			return true
+		}
+	}
+	return false
+}
+
 func IsConstantValue(val ast.Value) bool {
 	switch val.(type) {
 	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor, *ast.Boolean:
@@ -450,6 +464,42 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) as
 	return nil
 }
 
+/**
+
+*/
+func ReduceExpression(expr ast.Expression) ast.Value {
+	switch e := expr.(type) {
+	case *ast.BinaryExpression:
+
+		if exprLeft := ReduceExpression(e.Left); exprLeft != nil {
+			e.Left = exprLeft
+		}
+		if exprRight := ReduceExpression(e.Right); exprRight != nil {
+			e.Right = exprRight
+		}
+
+	case *ast.UnaryExpression:
+
+		if retExpr := ReduceExpression(e.Expr); retExpr != nil {
+			e.Expr = retExpr
+		}
+
+	default:
+		// it's already an constant value
+		return nil
+	}
+
+	if IsConstantExpression(expr) {
+		switch e := expr.(type) {
+		case *ast.BinaryExpression:
+			return EvaluateBinaryExpression(e, nil)
+		case *ast.UnaryExpression:
+			return EvaluateUnaryExpression(e, nil)
+		}
+	}
+	return nil
+}
+
 func EvaluateUnaryExpression(expr *ast.UnaryExpression, symTable *SymTable) ast.Value {
 	var val ast.Value = nil
 
@@ -463,6 +513,12 @@ func EvaluateUnaryExpression(expr *ast.UnaryExpression, symTable *SymTable) ast.
 	}
 
 	switch expr.Op.Type {
+	case ast.T_NOP:
+		// do nothing
+	case ast.T_LOGICAL_NOT:
+		if bVal, ok := val.(ast.BooleanValue); ok {
+			val = ast.NewBoolean(bVal.Boolean())
+		}
 	case ast.T_MINUS:
 		switch n := val.(type) {
 		case *ast.Number:
