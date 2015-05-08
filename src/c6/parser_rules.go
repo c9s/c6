@@ -657,7 +657,7 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 				return reducedExpr
 			}
 		} else {
-			return runtime.EvaluateExpression(expr)
+			return runtime.EvaluateExpression(expr, nil)
 		}
 
 		// if we can't evaluate the value, just return the expression tree
