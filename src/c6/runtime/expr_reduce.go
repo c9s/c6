@@ -2,10 +2,20 @@ package runtime
 
 import "c6/ast"
 
+func CanReduceExpression(expr ast.Expression) bool {
+	switch e := expr.(type) {
+	case *ast.BinaryExpression:
+		return !e.IsCssSlash()
+	}
+	return IsConstantExpression(expr)
+}
+
 /*
 Reduce constant expression to constant.
 
 @return (Value, ok)
+
+ok = true means the expression is reduced to simple constant.
 */
 func ReduceExpression(expr ast.Expression) (ast.Value, bool) {
 	switch e := expr.(type) {
@@ -29,7 +39,7 @@ func ReduceExpression(expr ast.Expression) (ast.Value, bool) {
 		return e, true
 	}
 
-	if IsConstantExpression(expr) {
+	if CanReduceExpression(expr) {
 		switch e := expr.(type) {
 		case *ast.BinaryExpression:
 			return EvaluateBinaryExpression(e, nil), true

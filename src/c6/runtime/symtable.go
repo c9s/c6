@@ -2,6 +2,9 @@ package runtime
 
 // import "c6/ast"
 
+/*
+SymTableItem can be anything
+*/
 type SymTableItem interface{}
 
 type SymTable map[string]SymTableItem

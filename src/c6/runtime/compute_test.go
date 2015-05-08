@@ -15,7 +15,14 @@ func TestReduceExpression(t *testing.T) {
 	num, ok := val.(*ast.Number)
 	assert.True(t, ok)
 	assert.NotNil(t, num)
-	assert.Equal(t, 16, num.Value)
+	assert.Equal(t, 16.0, num.Value)
+}
+
+func TestReduceCSSSlashExpression(t *testing.T) {
+	expr := ast.NewBinaryExpression(ast.NewOp(ast.T_DIV, nil), ast.NewNumber(10, ast.NewUnit(ast.T_UNIT_PX, nil), nil), ast.NewNumber(3, ast.NewUnit(ast.T_UNIT_PX, nil), nil), false)
+	val, ok := ReduceExpression(expr)
+	assert.False(t, ok)
+	assert.Nil(t, val)
 }
 
 func TestComputeNumberAddNumber(t *testing.T) {

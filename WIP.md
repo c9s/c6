@@ -38,3 +38,8 @@ Nested properties
 - [ ] Allow declaration block after the property value.
 - [ ] `lexPropertyValue` should check if there is another '{' token, then we should go to `lexStatement` state.
 
+`@my` statement
+
+- [ ] Declare variable in the specific scope.
+
+
