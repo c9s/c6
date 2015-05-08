@@ -650,11 +650,14 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 			tok = parser.peek()
 		}
 
-		if bexpr, ok := expr.(*ast.BinaryExpression); ok {
-			// try to evaluate
-			if value := runtime.EvaluateBinaryExpression(bexpr, nil); value != nil {
-				return value
+		// Check if the expression is reduce-able
+		// For now, division looks like CSS slash at the first level, should be string.
+		if runtime.CanReduceExpression(expr) {
+			if reducedExpr, ok := runtime.ReduceExpression(expr); ok {
+				return reducedExpr
 			}
+		} else {
+			return runtime.EvaluateExpression(expr)
 		}
 
 		// if we can't evaluate the value, just return the expression tree

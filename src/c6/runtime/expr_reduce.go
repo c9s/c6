@@ -7,7 +7,7 @@ func CanReduceExpression(expr ast.Expression) bool {
 	case *ast.BinaryExpression:
 		return !e.IsCssSlash()
 	}
-	return IsConstantExpression(expr)
+	return true
 }
 
 /*
@@ -20,7 +20,6 @@ ok = true means the expression is reduced to simple constant.
 func ReduceExpression(expr ast.Expression) (ast.Value, bool) {
 	switch e := expr.(type) {
 	case *ast.BinaryExpression:
-
 		if exprLeft, ok := ReduceExpression(e.Left); ok {
 			e.Left = exprLeft
 		}
@@ -39,7 +38,7 @@ func ReduceExpression(expr ast.Expression) (ast.Value, bool) {
 		return e, true
 	}
 
-	if CanReduceExpression(expr) {
+	if IsConstantExpression(expr) {
 		switch e := expr.(type) {
 		case *ast.BinaryExpression:
 			return EvaluateBinaryExpression(e, nil), true

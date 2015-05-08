@@ -404,6 +404,7 @@ func EvaluateExpression(expr ast.Expression, symTable *SymTable) ast.Value {
 	switch t := expr.(type) {
 
 	case *ast.BinaryExpression:
+		// For binary expression that is a CSS slash, we evaluate the expression as a literal string (unquoted)
 		if t.IsCssSlash() {
 			// return string object without quote
 			return ast.NewString(0, t.Left.(*ast.Number).String()+"/"+t.Right.(*ast.Number).String(), nil)
@@ -423,7 +424,7 @@ func EvaluateExpression(expr ast.Expression, symTable *SymTable) ast.Value {
 		return ast.Value(expr)
 	}
 
-	panic("Unsupported expression type")
+	panic("EvaluateExpression: Unsupported expression type")
 	return nil
 }
 
