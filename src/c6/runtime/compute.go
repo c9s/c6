@@ -464,42 +464,6 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *SymTable) as
 	return nil
 }
 
-/**
-
-*/
-func ReduceExpression(expr ast.Expression) ast.Value {
-	switch e := expr.(type) {
-	case *ast.BinaryExpression:
-
-		if exprLeft := ReduceExpression(e.Left); exprLeft != nil {
-			e.Left = exprLeft
-		}
-		if exprRight := ReduceExpression(e.Right); exprRight != nil {
-			e.Right = exprRight
-		}
-
-	case *ast.UnaryExpression:
-
-		if retExpr := ReduceExpression(e.Expr); retExpr != nil {
-			e.Expr = retExpr
-		}
-
-	default:
-		// it's already an constant value
-		return nil
-	}
-
-	if IsConstantExpression(expr) {
-		switch e := expr.(type) {
-		case *ast.BinaryExpression:
-			return EvaluateBinaryExpression(e, nil)
-		case *ast.UnaryExpression:
-			return EvaluateUnaryExpression(e, nil)
-		}
-	}
-	return nil
-}
-
 func EvaluateUnaryExpression(expr *ast.UnaryExpression, symTable *SymTable) ast.Value {
 	var val ast.Value = nil
 
@@ -526,4 +490,43 @@ func EvaluateUnaryExpression(expr *ast.UnaryExpression, symTable *SymTable) ast.
 		}
 	}
 	return val
+}
+
+/*
+Reduce constant expression to constant.
+
+@return (Value, ok)
+*/
+func ReduceExpression(expr ast.Expression) (ast.Value, bool) {
+	switch e := expr.(type) {
+	case *ast.BinaryExpression:
+
+		if exprLeft, ok := ReduceExpression(e.Left); ok {
+			e.Left = exprLeft
+		}
+		if exprRight, ok := ReduceExpression(e.Right); ok {
+			e.Right = exprRight
+		}
+
+	case *ast.UnaryExpression:
+
+		if retExpr, ok := ReduceExpression(e.Expr); ok {
+			e.Expr = retExpr
+		}
+
+	default:
+		// it's already an constant value
+		return e, true
+	}
+
+	if IsConstantExpression(expr) {
+		switch e := expr.(type) {
+		case *ast.BinaryExpression:
+			return EvaluateBinaryExpression(e, nil), true
+		case *ast.UnaryExpression:
+			return EvaluateUnaryExpression(e, nil), true
+		}
+	}
+	// not a constant expression
+	return nil, false
 }

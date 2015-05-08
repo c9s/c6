@@ -8,10 +8,13 @@ func TestReduceExpression(t *testing.T) {
 	expr := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS, nil), ast.NewNumber(10, nil, nil), ast.NewNumber(3, nil, nil), false)
 	expr2 := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS, nil), expr, ast.NewNumber(3, nil, nil), false)
 	expr3 := ast.NewUnaryExpression(ast.NewOp(ast.T_NOP, nil), expr2)
-	ReduceExpression(expr3)
-	val := EvaluateUnaryExpression(expr3, nil)
+	val, ok := ReduceExpression(expr3)
+	assert.True(t, ok)
+	assert.NotNil(t, val)
+
 	num, ok := val.(*ast.Number)
 	assert.True(t, ok)
+	assert.NotNil(t, num)
 	assert.Equal(t, 16, num.Value)
 }
 
