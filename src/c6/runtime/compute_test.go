@@ -20,9 +20,8 @@ func TestReduceExpression(t *testing.T) {
 
 func TestReduceCSSSlashExpression(t *testing.T) {
 	expr := ast.NewBinaryExpression(ast.NewOp(ast.T_DIV, nil), ast.NewNumber(10, ast.NewUnit(ast.T_UNIT_PX, nil), nil), ast.NewNumber(3, ast.NewUnit(ast.T_UNIT_PX, nil), nil), false)
-	val, ok := ReduceExpression(expr)
+	ok := CanReduceExpression(expr)
 	assert.False(t, ok)
-	assert.Nil(t, val)
 }
 
 func TestComputeNumberAddNumber(t *testing.T) {
