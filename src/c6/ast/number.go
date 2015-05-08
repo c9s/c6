@@ -3,13 +3,28 @@ package ast
 import "strconv"
 
 type Number struct {
-	Value float64
-	Unit  *Unit
-	Token *Token
+	Value  float64
+	double bool
+	Unit   *Unit
+	Token  *Token
 }
 
 func NewNumber(num float64, unit *Unit, token *Token) *Number {
-	return &Number{num, unit, token}
+	return &Number{num, false, unit, token}
+}
+
+/*
+Mark the number as an double (value with precision)
+*/
+func (num *Number) SetDouble() {
+	num.double = true
+}
+
+/*
+Check if the number is a floating value.
+*/
+func (num *Number) IsDouble() bool {
+	return num.double
 }
 
 func (self Number) GetValueType() ValueType {
@@ -22,6 +37,14 @@ func (self Number) String() (out string) {
 		out += self.Unit.String()
 	}
 	return out
+}
+
+func (num Number) Double() float64 {
+	return num.Value
+}
+
+func (num Number) Integer() int {
+	return int(num.Value)
 }
 
 func (num Number) Boolean() bool {
