@@ -8,12 +8,12 @@ import "strings"
 
 UniversalSelector
 TypeSelector
-DescendantSelector
+DescendantCombinator
 PseudoSelector
-ChildSelector
+ChildCombinator
 ClassSelector
 IdSelector
-AdjacentSelector
+AdjacentCombinator
 AttributeSelector
 
 */
@@ -40,22 +40,22 @@ func NewUniversalSelector(token *Token) *UniversalSelector {
 	return &UniversalSelector{token}
 }
 
-type DescendantSelector struct{}
+type DescendantCombinator struct{}
 
-func (self DescendantSelector) IsSelector()    {}
-func (self DescendantSelector) String() string { return " " }
+func (self DescendantCombinator) IsSelector()    {}
+func (self DescendantCombinator) String() string { return " " }
 
-func NewDescendantSelector() *DescendantSelector {
-	return &DescendantSelector{}
+func NewDescendantCombinator() *DescendantCombinator {
+	return &DescendantCombinator{}
 }
 
-type ChildSelector struct{}
+type ChildCombinator struct{}
 
-func (self ChildSelector) IsSelector()    {}
-func (self ChildSelector) String() string { return " > " }
+func (self ChildCombinator) IsSelector()    {}
+func (self ChildCombinator) String() string { return " > " }
 
-func NewChildSelector() *ChildSelector {
-	return &ChildSelector{}
+func NewChildCombinator() *ChildCombinator {
+	return &ChildCombinator{}
 }
 
 /*
@@ -77,10 +77,10 @@ func (self PseudoSelector) String() (out string) {
 /*
 Selectors present: E '+' F
 */
-type AdjacentSelector struct{}
+type AdjacentCombinator struct{}
 
-func (self AdjacentSelector) IsSelector()    {}
-func (self AdjacentSelector) String() string { return " + " }
+func (self AdjacentCombinator) IsSelector()    {}
+func (self AdjacentCombinator) String() string { return " + " }
 
 /**
 TypeSelector

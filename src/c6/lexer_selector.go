@@ -38,7 +38,7 @@ func isSelectorStopToken(r rune) bool {
 		r == ','
 }
 
-func isDescendantSelectorSeparator(r rune) bool {
+func isDescendantCombinatorSeparator(r rune) bool {
 	return r == ' '
 }
 
@@ -284,7 +284,7 @@ func lexSelectors(l *Lexer) stateFn {
 				if isInterpolationStartToken(r, l.peek()) {
 					l.backup()
 					lexInterpolation(l, false)
-				} else if !unicode.IsLetter(r) && !unicode.IsDigit(r) && r != '-' && r != '_' || isSelectorStopToken(r) || isDescendantSelectorSeparator(r) {
+				} else if !unicode.IsLetter(r) && !unicode.IsDigit(r) && r != '-' && r != '_' || isSelectorStopToken(r) || isDescendantCombinatorSeparator(r) {
 					break
 				}
 				r = l.next()

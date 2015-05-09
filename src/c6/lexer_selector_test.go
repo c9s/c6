@@ -229,7 +229,7 @@ func TestLexerRuleUniversalPlusClassSelector(t *testing.T) {
 	l.close()
 }
 
-func TestLexerRuleAdjacentSelector(t *testing.T) {
+func TestLexerRuleAdjacentCombinator(t *testing.T) {
 	l := NewLexerWithString(`.cover + .content {  }`)
 	assert.NotNil(t, l)
 	l.run()
@@ -241,7 +241,7 @@ func TestLexerRuleAdjacentSelector(t *testing.T) {
 	l.close()
 }
 
-func TestLexerRuleChildSelector(t *testing.T) {
+func TestLexerRuleChildCombinator(t *testing.T) {
 	l := NewLexerWithString(`div.posts > a.foo {  }`)
 	assert.NotNil(t, l)
 	l.run()
