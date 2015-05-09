@@ -58,25 +58,35 @@ func TestParserImportRuleWithString(t *testing.T) {
 func TestParserImportRuleWithMedia(t *testing.T) {
 	var stmts = RunParserTest(`@import url("foo.css") screen;`)
 	assert.Equal(t, 1, len(stmts))
+	fmt.Printf("Statements: %+v\n", stmts)
 }
 
 func TestParserImportRuleWithMultipleMediaTypes(t *testing.T) {
 	var stmts = RunParserTest(`@import url("bluish.css") projection, tv;`)
 	assert.Equal(t, 1, len(stmts))
+	fmt.Printf("Statements: %+v\n", stmts)
 }
 
 func TestParserImportRuleWithMediaTypeAndColorFeature(t *testing.T) {
 	var stmts = RunParserTest(`@import url(color.css) screen and (color);`)
 	assert.Equal(t, 1, len(stmts))
+	fmt.Printf("Statements: %+v\n", stmts)
 }
 
 func TestParserImportRuleWithMediaTypeAndMaxWidthFeature(t *testing.T) {
 	var stmts = RunParserTest(`@import url(color.css) screen and (max-width: 300px);`)
 	assert.Equal(t, 1, len(stmts))
+	fmt.Printf("Statements: %+v\n", stmts)
 }
 
 func TestParserImportRuleWithMedia2(t *testing.T) {
 	var stmts = RunParserTest(`@import url("foo.css") screen and (orientation:landscape);`)
+	assert.Equal(t, 1, len(stmts))
+	fmt.Printf("Statements: %+v\n", stmts)
+}
+
+func TestParserMediaQuerySimple(t *testing.T) {
+	var stmts = RunParserTest(`@media screen { .red { color: red; } }`)
 	assert.Equal(t, 1, len(stmts))
 }
 

@@ -92,9 +92,15 @@ func TestLexerAtRuleImportWithUrl(t *testing.T) {
 	AssertLexerTokenSequence(t, `@import url("test.css");`, []ast.TokenType{ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_START, ast.T_QQ_STRING, ast.T_PAREN_END, ast.T_SEMICOLON})
 }
 
-func TestLexerAtRuleImportWithUrlAndMediaList(t *testing.T) {
+func TestLexerAtRuleImportWithUrlAndOneMediaType(t *testing.T) {
 	AssertLexerTokenSequence(t, `@import url("test.css") screen;`, []ast.TokenType{
 		ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_START, ast.T_QQ_STRING, ast.T_PAREN_END, ast.T_IDENT, ast.T_SEMICOLON,
+	})
+}
+
+func TestLexerAtRuleImportWithUrlAndTwoMediaType(t *testing.T) {
+	AssertLexerTokenSequence(t, `@import url("test.css") tv, projection;`, []ast.TokenType{
+		ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_START, ast.T_QQ_STRING, ast.T_PAREN_END, ast.T_IDENT, ast.T_COMMA, ast.T_IDENT, ast.T_SEMICOLON,
 	})
 }
 
