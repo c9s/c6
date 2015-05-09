@@ -60,6 +60,21 @@ func TestParserImportRuleWithMedia(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserImportRuleWithMultipleMediaTypes(t *testing.T) {
+	var stmts = RunParserTest(`@import url("bluish.css") projection, tv;`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserImportRuleWithMediaTypeAndColorFeature(t *testing.T) {
+	var stmts = RunParserTest(`@import url(color.css) screen and (color);`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserImportRuleWithMediaTypeAndMaxWidthFeature(t *testing.T) {
+	var stmts = RunParserTest(`@import url(color.css) screen and (max-width: 300px);`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserImportRuleWithMedia2(t *testing.T) {
 	var stmts = RunParserTest(`@import url("foo.css") screen and (orientation:landscape);`)
 	assert.Equal(t, 1, len(stmts))

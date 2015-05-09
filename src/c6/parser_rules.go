@@ -887,6 +887,10 @@ func (parser *Parser) ParseCharsetStatement() ast.Statement {
 	return stm
 }
 
+/*
+	Media Query Syntax:
+	https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Media_queries
+*/
 func (parser *Parser) ParseMediaStatement() ast.Statement {
 	// expect the '@media' token
 	parser.expect(ast.T_MEDIA)
@@ -1028,26 +1032,6 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 		stm.Url = ast.RelativeUrl(tok.Str)
 	}
 
-	/*
-		TODO: parse media query for something like:
-
-		@import ... screen and (max-width: 300px)
-		@import url(color.css) screen and (color);
-		@import url('landscape.css') screen and (orientation:landscape);
-		@import url("bluish.css") projection, tv;
-
-		- [ ] Change MediaList to MediaQueryList
-		- [ ] The MediaQueryCondition needs to be inflate as string
-
-
-		CSS Syntax:
-
-		@media not|only mediatype and (media feature) {
-			CSS-Code;
-		}
-
-		https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Media_queries
-	*/
 	parser.ParseMediaQueryList()
 
 	// must be ast.T_SEMICOLON
