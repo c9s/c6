@@ -8,11 +8,12 @@ The Context contains all runtime variables and ruleset stack
 */
 type Context struct {
 	RuleSetStack   []*ast.RuleSet
+	GlobalBlock    *ast.Block
 	GlobalSymTable *symtable.SymTable
 }
 
 func NewContext() *Context {
-	return &Context{[]*ast.RuleSet{}, &symtable.SymTable{}}
+	return &Context{[]*ast.RuleSet{}, nil, &symtable.SymTable{}}
 }
 
 func (context *Context) PushRuleSet(ruleSet *ast.RuleSet) {

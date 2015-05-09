@@ -742,6 +742,10 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 		panic("Expecting value after variable assignment.")
 	}
 
+	if ruleset := parser.Context.TopRuleSet(); ruleset != nil {
+		ruleset.Block.SymTable.Set(variable.Name, expr)
+	}
+
 	var stm = ast.NewVariableAssignment(variable, expr)
 
 	parser.ParseFlags(stm)
