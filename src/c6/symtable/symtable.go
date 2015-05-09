@@ -1,4 +1,4 @@
-package runtime
+package symtable
 
 // import "c6/ast"
 

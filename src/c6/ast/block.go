@@ -1,6 +1,9 @@
 package ast
 
+import "c6/symtable"
+
 type Block struct {
+	SymTable   *symtable.SymTable
 	Statements []Statement
 }
 

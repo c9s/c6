@@ -1,19 +1,18 @@
 package c6
 
+import "c6/symtable"
 import "c6/ast"
 
 /**
 The Context contains all runtime variables and ruleset stack
 */
 type Context struct {
-	RuleSetStack []*ast.RuleSet
-
-	// SymTableStack  []*ast.SymTable
-	GlobalSymTable ast.SymTable
+	RuleSetStack   []*ast.RuleSet
+	GlobalSymTable *symtable.SymTable
 }
 
 func NewContext() *Context {
-	var context = &Context{[]*ast.RuleSet{}, ast.SymTable{}}
+	var context = &Context{[]*ast.RuleSet{}, &symtable.SymTable{}}
 	return context
 }
 

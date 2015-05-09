@@ -761,8 +761,6 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 	parser.ParseFlags(stm)
 
 	parser.accept(ast.T_SEMICOLON)
-
-	// Reduce list or map here
 	return stm
 }
 

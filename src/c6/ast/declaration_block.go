@@ -1,5 +1,7 @@
 package ast
 
+import "c6/symtable"
+
 /*
 DeclarationBlock.
 
@@ -8,6 +10,8 @@ DeclarationBlock.
 }
 */
 type DeclarationBlock struct {
+	SymTable *symtable.SymTable
+
 	Declarations []Declaration
 
 	// Nested rulesets
