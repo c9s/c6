@@ -24,6 +24,7 @@ var AtRuleTokenMap = KeywordTokenMap{
 	"@if":        T_IF,
 	"@else":      T_ELSE,
 	"@else if":   T_ELSE_IF,
+	"@return":    T_RETURN,
 	"@include":   T_INCLUDE,
 	"@function":  T_FUNCTION,
 	"@mixin":     T_MIXIN,
@@ -216,6 +217,7 @@ const (
 	T_INCLUDE
 	T_MIXIN
 	T_FUNCTION
+	T_RETURN
 
 	// Flag token types
 	T_GLOBAL
