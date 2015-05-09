@@ -761,7 +761,6 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 	var tok = parser.peek()
 	for tok.IsFlagKeyword() {
 		parser.next()
-		fmt.Println(tok)
 
 		switch tok.Type {
 		case ast.T_DEFAULT:
