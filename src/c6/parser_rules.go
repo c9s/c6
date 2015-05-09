@@ -194,6 +194,8 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 	var ruleset = ast.NewRuleSet()
 	var tok = parser.next()
 
+	parser.Context.PushRuleSet(ruleset)
+
 	for tok.IsSelector() {
 
 		switch tok.Type {
@@ -248,6 +250,9 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 
 	// parse declaration block
 	ruleset.Block = parser.ParseDeclarationBlock(ruleset)
+
+	// pop the ruleset from stack
+	parser.Context.PopRuleSet()
 	return ruleset
 }
 
