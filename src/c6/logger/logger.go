@@ -1,12 +1,12 @@
 package logger
 
-// import "fmt"
-import "log"
+import "fmt"
+import "os"
 
 func Warn(msg string, args ...interface{}) {
-	log.Fatalf(msg, args...)
+	fmt.Fprintf(os.Stderr, msg+"\n", args...)
 }
 
 func Info(msg string, args ...interface{}) {
-	log.Printf(msg, args...)
+	fmt.Fprintf(os.Stderr, msg+msg, args...)
 }
