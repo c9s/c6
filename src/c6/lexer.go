@@ -155,7 +155,7 @@ func (l *Lexer) accept(valid string) bool {
 
 // Accept letter runes continuously
 // Return true if there are some letters.
-// Retunr false if there is no letter.
+// Return false if there is no letter.
 func (l *Lexer) acceptLetters() bool {
 	var r rune = l.next()
 	for unicode.IsLetter(r) {
@@ -167,7 +167,7 @@ func (l *Lexer) acceptLetters() bool {
 
 // Accept letter|digits runes continuously
 // Return true if there are some letters.
-// Retunr false if there is no letter.
+// Return false if there is no letter.
 func (l *Lexer) acceptLettersAndDigits() bool {
 	var r rune = l.next()
 	for unicode.IsLetter(r) || unicode.IsDigit(r) {
