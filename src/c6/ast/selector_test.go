@@ -5,9 +5,9 @@ import "testing"
 
 func TestCombinedSelector(t *testing.T) {
 	e := TypeSelector{"div"}
-	cls1 := ClassSelector{"foo"}
-	cls2 := ClassSelector{"bar"}
-	id := IdSelector{"myId"}
+	cls1 := ClassSelector{".foo"}
+	cls2 := ClassSelector{".bar"}
+	id := IdSelector{"#myId"}
 
 	assert.Equal(t, ".foo", cls1.String())
 	assert.Equal(t, ".bar", cls2.String())

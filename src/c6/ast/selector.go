@@ -26,9 +26,9 @@ type Selector interface {
 	String() string
 }
 
-type CodeGen interface{}
-
-type UniversalSelector struct{}
+type UniversalSelector struct {
+	Token *Token
+}
 
 func (self UniversalSelector) IsSelector() {}
 
@@ -36,15 +36,27 @@ func (self UniversalSelector) String() string {
 	return "*"
 }
 
+func NewUniversalSelector(token *Token) *UniversalSelector {
+	return &UniversalSelector{token}
+}
+
 type DescendantSelector struct{}
 
 func (self DescendantSelector) IsSelector()    {}
 func (self DescendantSelector) String() string { return " " }
 
+func NewDescendantSelector() *DescendantSelector {
+	return &DescendantSelector{}
+}
+
 type ChildSelector struct{}
 
 func (self ChildSelector) IsSelector()    {}
 func (self ChildSelector) String() string { return " > " }
+
+func NewChildSelector() *ChildSelector {
+	return &ChildSelector{}
+}
 
 /*
 Selectors presents: E:pseudo
@@ -88,7 +100,7 @@ type IdSelector struct {
 
 func (self IdSelector) IsSelector() {}
 func (self IdSelector) String() string {
-	return "#" + self.Id
+	return self.Id
 }
 
 type ClassSelector struct {
@@ -97,7 +109,7 @@ type ClassSelector struct {
 
 func (self ClassSelector) IsSelector() {}
 func (self ClassSelector) String() string {
-	return "." + self.ClassName
+	return self.ClassName
 }
 
 type AttributeSelector struct {

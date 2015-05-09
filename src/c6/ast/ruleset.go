@@ -1,7 +1,21 @@
 package ast
 
+type SelectorList []Selector
+
+func (self SelectorList) Append(sel Selector) {
+	newSlice := append(self, sel)
+	self = newSlice
+}
+
+func (self SelectorList) String() (out string) {
+	for _, sel := range self {
+		out += sel.String()
+	}
+	return out
+}
+
 type RuleSet struct {
-	Selectors []Selector
+	Selectors SelectorList
 	Block     *DeclarationBlock
 }
 
