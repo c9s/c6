@@ -901,9 +901,6 @@ func (parser *Parser) ParseMediaQueryStatement() ast.Statement {
 	parser.expect(ast.T_MEDIA)
 	if list := parser.ParseMediaQueryList(); list != nil {
 		stm.MediaQueryList = *list
-	} else {
-		// XXX: report detail here
-		panic("@media query syntax error")
 	}
 	parser.ParseBlock()
 	return stm
@@ -954,6 +951,9 @@ func (parser *Parser) ParseMediaQuery() *ast.MediaQuery {
 	// parse the media expression after the media type.
 	var mediaExpression = parser.ParseMediaQueryExpression()
 	if mediaExpression == nil {
+		if mediaType == nil {
+			return nil
+		}
 		return ast.NewMediaQuery(mediaType, mediaExpression)
 	}
 
@@ -1009,19 +1009,17 @@ func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
 	}
 
 	var featureExpr = parser.ParseExpression(false)
-	_ = featureExpr
+	var feature = ast.NewMediaFeature(featureExpr, nil)
 
 	// if the next token is a colon, then we expect a feature value
 	// after the colon.
 	var tok = parser.peek()
 	if tok.Type == ast.T_COLON {
 		parser.next()
-		var featureValue = parser.ParseExpression(false)
-		_ = featureValue
+		feature.Value = parser.ParseExpression(false)
 	}
-
 	parser.expect(ast.T_PAREN_END)
-	return nil
+	return feature
 }
 
 func (parser *Parser) ParseImportStatement() ast.Statement {

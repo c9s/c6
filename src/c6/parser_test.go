@@ -115,9 +115,20 @@ func TestParserMediaQueryNone(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserMediaQueryNotAndMonoChrome(t *testing.T) {
+	var stmts = RunParserTest(`@media not all and (monochrome) { }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserMediaQueryJustAll(t *testing.T) {
 	var stmts = RunParserTest(`@media all { .red { color: red; } }`)
 	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserMediaQueryWithVendorPrefixFeature(t *testing.T) {
+	var stmts = RunParserTest(`@media (-webkit-min-device-pixel-ratio: 2) {  }`)
+	assert.Equal(t, 1, len(stmts))
+	t.Logf("Stmts: %+v", stmts)
 }
 
 func TestParserIfTrueStatement(t *testing.T) {
