@@ -35,6 +35,7 @@ var ExprTokenMap = KeywordTokenMap{
 	"true":  T_TRUE,
 	"false": T_FALSE,
 	"null":  T_NULL,
+	"only":  T_ONLY, // used in media query
 	"and":   T_LOGICAL_AND,
 	"not":   T_LOGICAL_NOT,
 	"or":    T_LOGICAL_OR,
@@ -169,6 +170,7 @@ const (
 	T_TRUE
 	T_FALSE
 	T_NULL
+	T_ONLY
 
 	T_MS_PARAM_NAME
 	T_FUNCTION_NAME
