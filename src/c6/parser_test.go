@@ -105,8 +105,18 @@ func TestParserMediaQueryOrientationPortrait(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
-func TestParserMediaQueryWithComma(t *testing.T) {
+func TestParserMediaQueryMultipleWithComma(t *testing.T) {
 	var stmts = RunParserTest(`@media screen and (color), projection and (color) { .red { color: red; } }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserMediaQueryNone(t *testing.T) {
+	var stmts = RunParserTest(`@media { .red { color: red; } }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserMediaQueryJustAll(t *testing.T) {
+	var stmts = RunParserTest(`@media all { .red { color: red; } }`)
 	assert.Equal(t, 1, len(stmts))
 }
 
