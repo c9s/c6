@@ -919,6 +919,7 @@ func (parser *Parser) ParseMediaQuery() ast.Expression {
 	// the leading media type is optional
 	var mediaType = parser.ParseMediaType()
 	if mediaType != nil {
+		// Check if there is an expression after the media type.
 		var tok = parser.peek()
 		if tok.Type != ast.T_LOGICAL_AND {
 			return nil
@@ -992,10 +993,6 @@ func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
 	}
 
 	parser.expect(ast.T_PAREN_END)
-	return nil
-}
-
-func (parser *Parser) ParseMediaFeature() ast.Expression {
 	return nil
 }
 
