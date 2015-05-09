@@ -2,14 +2,14 @@ package ast
 
 type Ident struct {
 	Ident string
-	Token Token
+	Token *Token
 }
 
-func (self Ident) CanBeNode()       {}
+func (self Ident) CanBeNode() {}
 func (self Ident) String() string {
 	return self.Ident
 }
 
-func NewIdent(ident string, token Token) *Ident {
-	return &Ident{ident, token}
+func NewIdentWithToken(token *Token) *Ident {
+	return &Ident{token.Str, token}
 }

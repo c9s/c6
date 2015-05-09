@@ -23,7 +23,6 @@ func (context *Context) PushRuleSet(ruleSet *ast.RuleSet) {
 
 func (context *Context) PopRuleSet() (*ast.RuleSet, bool) {
 	if len(context.RuleSetStack) == 0 {
-		// XXX: throw error here?
 		return nil, false
 	} else if len(context.RuleSetStack) == 1 {
 		ruleset := context.RuleSetStack[0]

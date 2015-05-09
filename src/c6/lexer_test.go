@@ -94,7 +94,7 @@ func TestLexerAtRuleImportWithUrl(t *testing.T) {
 
 func TestLexerAtRuleImportWithUrlAndMediaList(t *testing.T) {
 	AssertLexerTokenSequence(t, `@import url("test.css") screen;`, []ast.TokenType{
-		ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_START, ast.T_QQ_STRING, ast.T_PAREN_END, ast.T_MEDIA, ast.T_SEMICOLON,
+		ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_START, ast.T_QQ_STRING, ast.T_PAREN_END, ast.T_IDENT, ast.T_SEMICOLON,
 	})
 }
 

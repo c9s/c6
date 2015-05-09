@@ -13,15 +13,15 @@ CharsetStatement support
 
 SymbolTable
 
-- [ ] Register parsed variable to the scope symbol table.
-  - [ ] RuleSet symbol table
-  - [ ] Global symbol table
+- [x] Register parsed variable to the scope symbol table.
+  - [x] RuleSet symbol table
+  - [x] Global symbol table
 - [ ] Add symbol table lookup method to the expression evaluator.
   - Add type switch case for ast.Variable struct
 
 Optimizer
 
-- [ ] Constant Value elimination optimizer for VariableAssignment.
+- [x] Constant Value elimination optimizer for VariableAssignment.
 - [ ] Call IfStatementOptimizer after the if statement is parsed.
 
 CSS Slash and Divide

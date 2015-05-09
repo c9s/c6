@@ -340,7 +340,7 @@ func (parser *Parser) ParseIdent() *ast.Ident {
 	if tok.Type != ast.T_IDENT {
 		panic("Invalid token for ident.")
 	}
-	return ast.NewIdent(tok.Str, *tok)
+	return ast.NewIdentWithToken(tok)
 }
 
 /**
@@ -865,12 +865,12 @@ func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 			declBlock.Append(property)
 			_ = property
 
-		} else if tok.IsSelector() {
-
-			parser.ParseRuleSet()
-
 		} else {
-			panic("unexpected token")
+
+			if stm := parser.ParseStatements(); stm == nil {
+				// TODO: throw syntax error report here
+				panic("Can't parse statements")
+			}
 		}
 
 		tok = parser.peek()
@@ -885,6 +885,90 @@ func (parser *Parser) ParseCharsetStatement() ast.Statement {
 	var stm = ast.NewCharsetStatementWithToken(tok)
 	parser.expect(ast.T_SEMICOLON)
 	return stm
+}
+
+func (parser *Parser) ParseMediaStatement() ast.Statement {
+	// expect the '@media' token
+	parser.expect(ast.T_MEDIA)
+
+	var query = parser.ParseMediaQuery()
+	_ = query
+
+	var tok = parser.peek()
+	for tok.Type == ast.T_COMMA {
+		queryA := parser.ParseMediaQuery()
+		_ = queryA
+		tok = parser.peek()
+	}
+
+	// TODO: Fill me
+	return nil
+}
+
+/*
+This method parses media type first, then expecting more that on media
+expressions.
+
+media_query: [[only | not]? <media_type> [ and <expression> ]*]
+  | <expression> [ and <expression> ]*
+expression: ( <media_feature> [: <value>]? )
+*/
+func (parser *Parser) ParseMediaQuery() ast.Expression {
+	var mediaType = parser.ParseMediaType()
+	_ = mediaType
+	var mediaExpression = parser.ParseMediaQueryExpression()
+	_ = mediaExpression
+	return nil
+}
+
+func (parser *Parser) ParseMediaType() ast.Expression {
+	var tok = parser.peek()
+	if tok.Type == ast.T_LOGICAL_NOT {
+		parser.next()
+
+		var mediaType = parser.expect(ast.T_IDENT)
+		return ast.NewUnaryExpression(ast.NewOpWithToken(tok), mediaType)
+
+	} else if tok.Type == ast.T_ONLY {
+		parser.next()
+		var mediaType = parser.expect(ast.T_IDENT)
+		return ast.NewUnaryExpression(ast.NewOpWithToken(tok), mediaType)
+	}
+
+	// expecting media type token (it will be T_IDENT)
+	tok = parser.peek()
+	if tok.Type == ast.T_IDENT {
+		return ast.NewIdentWithToken(tok)
+	}
+
+	// parse media type fail
+	return nil
+}
+
+/*
+An media query expression must start with a '(' and ends with ')'
+*/
+func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
+	parser.expect(ast.T_PAREN_START)
+
+	var featureExpr = parser.ParseExpression(false)
+	_ = featureExpr
+
+	// if the next token is a colon, then we expect a feature value
+	// after the colon.
+	var tok = parser.peek()
+	if tok.Type == ast.T_COLON {
+		parser.next()
+		var featureValue = parser.ParseExpression(false)
+		_ = featureValue
+	}
+
+	parser.expect(ast.T_PAREN_END)
+	return nil
+}
+
+func (parser *Parser) ParseMediaFeature() ast.Expression {
+	return nil
 }
 
 func (parser *Parser) ParseImportStatement() ast.Statement {
@@ -922,15 +1006,29 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 	/*
 		TODO: parse media query for something like:
 
+		@import ... screen and (max-width: 300px)
 		@import url(color.css) screen and (color);
 		@import url('landscape.css') screen and (orientation:landscape);
 		@import url("bluish.css") projection, tv;
+
+		- [ ] Change MediaList to MediaQueryList
+		- [ ] The MediaQueryCondition needs to be inflate as string
+
+
+		CSS Syntax:
+
+		@media not|only mediatype and (media feature) {
+			CSS-Code;
+		}
+
+		https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Media_queries
 	*/
-	tok = parser.peek()
-	if tok.Type == ast.T_MEDIA {
-		parser.advance()
-		stm.MediaList = append(stm.MediaList, tok.Str)
+	tok = parser.next()
+	for tok.Type != ast.T_SEMICOLON {
+		tok = parser.next()
+		// stm.MediaList = append(stm.MediaList, tok.Str)
 	}
+	parser.backup()
 
 	// must be ast.T_SEMICOLON
 	tok = parser.next()

@@ -55,10 +55,17 @@ func TestParserImportRuleWithString(t *testing.T) {
 	assert.Equal(t, "foo.css", string(url))
 }
 
-func TestParserImportRuleWithMediaList(t *testing.T) {
+func TestParserImportRuleWithMedia(t *testing.T) {
 	var stmts = RunParserTest(`@import url("foo.css") screen;`)
 	assert.Equal(t, 1, len(stmts))
 }
+
+/*
+func TestParserImportRuleWithMedia2(t *testing.T) {
+	var stmts = RunParserTest(`@import url("foo.css") screen and (orientation:landscape);`)
+	assert.Equal(t, 1, len(stmts))
+}
+*/
 
 func TestParserIfTrueStatement(t *testing.T) {
 	var stmts = RunParserTest(`@if true {  }`)

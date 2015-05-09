@@ -196,12 +196,7 @@ func lexAtRule(l *Lexer) stateFn {
 			l.ignoreSpaces()
 			lexUrl(l)
 			l.ignoreSpaces()
-			// looks like a media list
-			for unicode.IsLetter(l.peek()) {
-				l.next()
-			}
-			if l.precedeStartOffset() {
-				l.emit(ast.T_MEDIA)
+			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
 			return lexStatement
 
