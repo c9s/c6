@@ -1,7 +1,5 @@
 package symtable
 
-// import "c6/ast"
-
 /*
 SymTableItem can be anything
 */
