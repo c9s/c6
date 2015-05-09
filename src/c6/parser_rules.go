@@ -935,6 +935,8 @@ expressions.
 media_query: [[only | not]? <media_type> [ and <expression> ]*]
   | <expression> [ and <expression> ]*
 expression: ( <media_feature> [: <value>]? )
+
+Specification: http://dev.w3.org/csswg/mediaqueries-3
 */
 func (parser *Parser) ParseMediaQuery() *ast.MediaQuery {
 

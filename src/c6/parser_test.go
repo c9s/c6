@@ -90,6 +90,26 @@ func TestParserMediaQuerySimple(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserMediaQueryAllAndMinWidth(t *testing.T) {
+	var stmts = RunParserTest(`@media all and (min-width:500px) {  .red { color: red; } }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserMediaQueryMinWidth(t *testing.T) {
+	var stmts = RunParserTest(`@media (min-width:500px) {  .red { color: red; } }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserMediaQueryOrientationPortrait(t *testing.T) {
+	var stmts = RunParserTest(`@media (orientation: portrait) { .red { color: red; } }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserMediaQueryWithComma(t *testing.T) {
+	var stmts = RunParserTest(`@media screen and (color), projection and (color) { .red { color: red; } }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserIfTrueStatement(t *testing.T) {
 	var stmts = RunParserTest(`@if true {  }`)
 	assert.Equal(t, 1, len(stmts))
