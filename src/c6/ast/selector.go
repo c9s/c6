@@ -1,7 +1,5 @@
 package ast
 
-import "strings"
-
 /**
 @see http://www.w3.org/TR/CSS21/grammar.html
 
@@ -26,67 +24,12 @@ type Selector interface {
 	String() string
 }
 
-type UniversalSelector struct {
-	Token *Token
-}
-
-func (self UniversalSelector) IsSelector() {}
-
-func (self UniversalSelector) String() string {
-	return "*"
-}
-
-func NewUniversalSelector(token *Token) *UniversalSelector {
-	return &UniversalSelector{token}
-}
-
-type DescendantCombinator struct{}
-
-func (self DescendantCombinator) IsSelector()    {}
-func (self DescendantCombinator) String() string { return " " }
-
-func NewDescendantCombinator() *DescendantCombinator {
-	return &DescendantCombinator{}
-}
-
-type ChildCombinator struct{}
-
-func (self ChildCombinator) IsSelector()    {}
-func (self ChildCombinator) String() string { return " > " }
-
-func NewChildCombinator() *ChildCombinator {
-	return &ChildCombinator{}
-}
-
-/*
-Selectors presents: E:pseudo
-*/
-type PseudoSelector struct {
-	PseudoClass string
-	C           string // for dynamic language pseudo selector like :lang(C)
-}
-
-func (self PseudoSelector) IsSelector() {}
-func (self PseudoSelector) String() (out string) {
-	if self.C != "" {
-		return ":" + self.PseudoClass + "(" + self.C + ")"
-	}
-	return ":" + self.PseudoClass
-}
-
-/*
-Selectors present: E '+' F
-*/
-type AdjacentCombinator struct{}
-
-func (self AdjacentCombinator) IsSelector()    {}
-func (self AdjacentCombinator) String() string { return " + " }
-
 /**
 TypeSelector
 */
 type TypeSelector struct {
-	Type string
+	Type  string
+	Token *Token
 }
 
 func (self TypeSelector) IsSelector() {}
@@ -94,8 +37,17 @@ func (self TypeSelector) String() string {
 	return self.Type
 }
 
+func NewTypeSelectorWithToken(token *Token) *TypeSelector {
+	return &TypeSelector{token.Str, token}
+}
+
+func NewTypeSelector(typename string) *TypeSelector {
+	return &TypeSelector{typename, nil}
+}
+
 type IdSelector struct {
-	Id string
+	Id    string
+	Token *Token
 }
 
 func (self IdSelector) IsSelector() {}
@@ -103,13 +55,30 @@ func (self IdSelector) String() string {
 	return self.Id
 }
 
+func NewIdSelectorWithToken(token *Token) *IdSelector {
+	return &IdSelector{token.Str, token}
+}
+
+func NewIdSelector(id string) *IdSelector {
+	return &IdSelector{id, nil}
+}
+
 type ClassSelector struct {
 	ClassName string
+	Token     *Token
 }
 
 func (self ClassSelector) IsSelector() {}
 func (self ClassSelector) String() string {
 	return self.ClassName
+}
+
+func NewClassSelectorWithToken(token *Token) *ClassSelector {
+	return &ClassSelector{token.Str, token}
+}
+
+func NewClassSelector(className string) *ClassSelector {
+	return &ClassSelector{className, nil}
 }
 
 type AttributeSelector struct {
@@ -126,11 +95,95 @@ func (self AttributeSelector) String() (out string) {
 	return "[" + self.Name + "]"
 }
 
+type UniversalSelector struct {
+	Token *Token
+}
+
+func (self UniversalSelector) IsSelector() {}
+
+func (self UniversalSelector) String() string {
+	return "*"
+}
+
+func NewUniversalSelectorWithToken(token *Token) *UniversalSelector {
+	return &UniversalSelector{token}
+}
+
+func NewUniversalSelector() *UniversalSelector {
+	return &UniversalSelector{}
+}
+
+/*
+Selectors presents: E:pseudo
+*/
+type PseudoSelector struct {
+	PseudoClass string
+	C           string // for dynamic language pseudo selector like :lang(C)
+	Token       *Token
+}
+
+func (self PseudoSelector) IsSelector() {}
+func (self PseudoSelector) String() (out string) {
+	if self.C != "" {
+		return ":" + self.PseudoClass + "(" + self.C + ")"
+	}
+	return ":" + self.PseudoClass
+}
+
+func NewPseudoSelectorWithToken(token *Token) *PseudoSelector {
+	return &PseudoSelector{token.Str, "", token}
+}
+
+/*
+Selectors present: E '+' F
+*/
+type AdjacentCombinator struct {
+	Token *Token
+}
+
+func (self AdjacentCombinator) IsSelector()    {}
+func (self AdjacentCombinator) String() string { return " + " }
+
+func NewAdjacentCombinatorWithToken(token *Token) *AdjacentCombinator {
+	return &AdjacentCombinator{token}
+}
+
+type DescendantCombinator struct {
+	Token *Token
+}
+
+func (self DescendantCombinator) IsSelector()    {}
+func (self DescendantCombinator) String() string { return " " }
+
+func NewDescendantCombinatorWithToken(token *Token) *DescendantCombinator {
+	return &DescendantCombinator{token}
+}
+
+func NewDescendantCombinator() *DescendantCombinator {
+	return &DescendantCombinator{}
+}
+
+type ChildCombinator struct {
+	Token *Token
+}
+
+func (self ChildCombinator) IsSelector()    {}
+func (self ChildCombinator) String() string { return " > " }
+
+func NewChildCombinatorWithToken(token *Token) *ChildCombinator {
+	return &ChildCombinator{token}
+}
+
+func NewChildCombinator() *ChildCombinator {
+	return &ChildCombinator{}
+}
+
 /*
 This is a SCSS only selector
 */
 type ParentSelector struct {
 	ParentRuleSet *RuleSet
+	Token         *Token
 }
 
 func (self ParentSelector) IsSelector() {}
@@ -140,22 +193,6 @@ func (self ParentSelector) String() string {
 	return ""
 }
 
-/**
-An ast node that could combine all selector with the same operator.
-*/
-type CombinedSelector struct {
-	Op        string
-	Selectors []Selector
-}
-
-func (self *CombinedSelector) addSelector(sel Selector) {
-	self.Selectors = append(self.Selectors, sel)
-}
-
-func (self CombinedSelector) String() string {
-	var out []string = []string{}
-	for _, sel := range self.Selectors {
-		out = append(out, sel.String())
-	}
-	return strings.Join(out, self.Op)
+func NewParentSelectorWithToken(parentRuleSet *RuleSet, token *Token) *ParentSelector {
+	return &ParentSelector{parentRuleSet, token}
 }

@@ -186,29 +186,29 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 		switch tok.Type {
 
 		case ast.T_TYPE_SELECTOR:
-			sel := &ast.TypeSelector{tok.Str}
+			sel := ast.NewTypeSelectorWithToken(tok)
 			ruleset.AppendSelector(sel)
 
 		case ast.T_UNIVERSAL_SELECTOR:
-			sel := &ast.UniversalSelector{}
+			sel := ast.NewUniversalSelectorWithToken(tok)
 			ruleset.AppendSelector(sel)
 
 		case ast.T_ID_SELECTOR:
-			sel := &ast.IdSelector{tok.Str}
+			sel := ast.NewIdSelectorWithToken(tok)
 			ruleset.AppendSelector(sel)
 
 		case ast.T_CLASS_SELECTOR:
-			sel := &ast.ClassSelector{tok.Str}
+			sel := ast.NewClassSelectorWithToken(tok)
 			ruleset.AppendSelector(sel)
 
 		case ast.T_PARENT_SELECTOR:
 
-			sel := &ast.ParentSelector{parentRuleSet}
+			sel := ast.NewParentSelectorWithToken(parentRuleSet, tok)
 			ruleset.AppendSelector(sel)
 
 		case ast.T_PSEUDO_SELECTOR:
 
-			sel := &ast.PseudoSelector{tok.Str, ""}
+			sel := ast.NewPseudoSelectorWithToken(tok)
 			if nextTok := parser.peek(); nextTok.Type == ast.T_LANG_CODE {
 				sel.C = nextTok.Str
 			}
