@@ -5,6 +5,14 @@ type MediaType struct {
 	Token *Token
 }
 
+func NewMediaType(name string) *MediaType {
+	return &MediaType{name, nil}
+}
+
+func NewMediaTypeWithToken(token *Token) *MediaType {
+	return &MediaType{token.Str, token}
+}
+
 /*
   media_type: all | aural | braille | handheld | print |
   projection | screen | tty | tv | embossed
