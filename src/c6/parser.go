@@ -13,6 +13,7 @@ const (
 	UnknownFileType = iota
 	ScssFileType
 	SassFileType
+	EcssFileType
 )
 
 type ParserError struct {
@@ -38,6 +39,8 @@ func getFileTypeByExtension(extension string) uint {
 		return ScssFileType
 	case "sass":
 		return SassFileType
+	case "ecss":
+		return EcssFileType
 	}
 	return UnknownFileType
 }
