@@ -9,8 +9,8 @@ func NewOpWithToken(token *Token) *Op {
 	return &Op{token.Type, token}
 }
 
-func NewOp(opType TokenType, token *Token) *Op {
-	return &Op{opType, token}
+func NewOp(opType TokenType) *Op {
+	return &Op{opType, nil}
 }
 
 func OpTokenName(tokType TokenType) string {
