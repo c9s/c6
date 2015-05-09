@@ -247,7 +247,7 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 	parser.backup()
 
 	// parse declaration block
-	ruleset.DeclarationBlock = parser.ParseDeclarationBlock(ruleset)
+	ruleset.Block = parser.ParseDeclarationBlock(ruleset)
 	return ruleset
 }
 

@@ -18,11 +18,11 @@ func (self SymTable) Set(name string, v SymTableItem) {
 	self[name] = v
 }
 
-func (self SymTable) Get(name string) SymTableItem {
+func (self SymTable) Get(name string) (SymTableItem, bool) {
 	if val, ok := self[name]; ok {
-		return val
+		return val, true
 	}
-	return nil
+	return nil, false
 }
 
 func (self SymTable) Has(name string) bool {

@@ -12,8 +12,7 @@ type Context struct {
 }
 
 func NewContext() *Context {
-	var context = &Context{[]*ast.RuleSet{}, &symtable.SymTable{}}
-	return context
+	return &Context{[]*ast.RuleSet{}, &symtable.SymTable{}}
 }
 
 func (context *Context) PushRuleSet(ruleSet *ast.RuleSet) {
@@ -21,28 +20,26 @@ func (context *Context) PushRuleSet(ruleSet *ast.RuleSet) {
 	context.RuleSetStack = newStack
 }
 
-func (context *Context) PopRuleSet() *ast.RuleSet {
+func (context *Context) PopRuleSet() (*ast.RuleSet, bool) {
 	if len(context.RuleSetStack) == 0 {
 		// XXX: throw error here?
-		return nil
+		return nil, false
 	}
 	var idx = len(context.RuleSetStack) - 1
 	ruleSet := context.RuleSetStack[idx]
 	context.RuleSetStack = context.RuleSetStack[:idx-1]
-	return ruleSet
+	return ruleSet, true
 }
 
-func (context *Context) GetVariable(name string) *ast.Variable {
-	/*
-		var idx = len(context.SymTableStack) - 1
-		for ; idx > 0; idx-- {
-			stack := context.SymTableStack[idx]
-			if variable := stack.FindVariable(name); variable != nil {
-				return variable
-			}
+func (context *Context) GetVariable(name string) (symtable.SymTableItem, bool) {
+	var idx = len(context.RuleSetStack) - 1
+	for ; idx > 0; idx-- {
+		ruleset := context.RuleSetStack[idx]
+		if variable, ok := ruleset.Block.SymTable.Get(name); ok {
+			return variable, true
 		}
-	*/
-	return nil
+	}
+	return nil, false
 }
 
 func (context *Context) TopRuleSet() *ast.RuleSet {

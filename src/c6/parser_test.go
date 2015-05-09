@@ -242,7 +242,7 @@ func TestParserTypeSelectorRule(t *testing.T) {
 	assert.True(t, ok)
 
 	t.Logf("%+v\n", ruleset.Selectors)
-	t.Logf("%+v\n", ruleset.DeclarationBlock)
+	t.Logf("%+v\n", ruleset.Block)
 }
 
 /*
