@@ -126,7 +126,8 @@ func TestParserMediaQueryJustAll(t *testing.T) {
 }
 
 func TestParserMediaQueryWithVendorPrefixFeature(t *testing.T) {
-	var stmts = RunParserTest(`@media (-webkit-min-device-pixel-ratio: 2) {  }`)
+	// FIXME: 'min--moz-device-pixel-ratio' will become '-moz-device-pixel-ratio'
+	var stmts = RunParserTest(`@media (-webkit-min-device-pixel-ratio: 2), (min--moz-device-pixel-ratio: 2) {  }`)
 	assert.Equal(t, 1, len(stmts))
 	t.Logf("Stmts: %+v", stmts)
 }
