@@ -744,6 +744,8 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 
 	if ruleset := parser.Context.TopRuleSet(); ruleset != nil {
 		ruleset.Block.SymTable.Set(variable.Name, expr)
+	} else if parser.Context.GlobalBlock != nil {
+		parser.Context.GlobalBlock.SymTable.Set(variable.Name, expr)
 	}
 
 	var stm = ast.NewVariableAssignment(variable, expr)
