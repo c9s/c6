@@ -2,6 +2,9 @@ package symtable
 
 /*
 SymTableItem can be anything
+
+This package doesn't use ast.* types because we have to avoid package acyclic
+reference.
 */
 type SymTableItem interface{}
 
