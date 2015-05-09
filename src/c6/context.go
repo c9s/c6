@@ -37,6 +37,13 @@ func (context *Context) PopRuleSet() (*ast.RuleSet, bool) {
 	return ruleSet, true
 }
 
+func (context *Context) TopRuleSet() *ast.RuleSet {
+	if len(context.RuleSetStack) > 0 {
+		return context.RuleSetStack[len(context.RuleSetStack)-1]
+	}
+	return nil
+}
+
 func (context *Context) GetVariable(name string) (symtable.SymTableItem, bool) {
 	var idx = len(context.RuleSetStack) - 1
 	for ; idx > 0; idx-- {
@@ -46,11 +53,4 @@ func (context *Context) GetVariable(name string) (symtable.SymTableItem, bool) {
 		}
 	}
 	return nil, false
-}
-
-func (context *Context) TopRuleSet() *ast.RuleSet {
-	if len(context.RuleSetStack) > 0 {
-		return context.RuleSetStack[len(context.RuleSetStack)-1]
-	}
-	return nil
 }

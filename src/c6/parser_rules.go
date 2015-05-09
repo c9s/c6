@@ -13,16 +13,16 @@ func (parser *Parser) ParseBlock() *ast.Block {
 	debug("ParseBlock")
 	parser.expect(ast.T_BRACE_START)
 	var block = ast.NewBlock()
-	block.Statements = parser.ParseStatements(nil)
+	block.Statements = parser.ParseStatements()
 	parser.expect(ast.T_BRACE_END)
 	return block
 }
 
-func (parser *Parser) ParseStatements(parentRuleSet *ast.RuleSet) []ast.Statement {
+func (parser *Parser) ParseStatements() []ast.Statement {
 	var stmts []ast.Statement = []ast.Statement{}
 	// stop at t_brace end
 	for !parser.eof() {
-		if stmt := parser.ParseStatement(parentRuleSet); stmt != nil {
+		if stmt := parser.ParseStatement(); stmt != nil {
 			stmts = append(stmts, stmt)
 		} else {
 			break
@@ -31,7 +31,7 @@ func (parser *Parser) ParseStatements(parentRuleSet *ast.RuleSet) []ast.Statemen
 	return stmts
 }
 
-func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
+func (parser *Parser) ParseStatement() ast.Statement {
 	var token = parser.peek()
 
 	if token == nil {
@@ -56,7 +56,7 @@ func (parser *Parser) ParseStatement(parentRuleSet *ast.RuleSet) ast.Statement {
 
 	} else if token.IsSelector() {
 
-		return parser.ParseRuleSet(parentRuleSet)
+		return parser.ParseRuleSet()
 
 	} else {
 		// panic(fmt.Errorf("parse failed, unknown token", parser.peek()))
@@ -190,10 +190,11 @@ func (parser *Parser) ParseComparisonExpression() ast.Expression {
 	return expr
 }
 
-func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
-	var ruleset = ast.NewRuleSet()
+func (parser *Parser) ParseRuleSet() ast.Statement {
 	var tok = parser.next()
+	var parentRuleSet = parser.Context.TopRuleSet()
 
+	var ruleset = ast.NewRuleSet()
 	parser.Context.PushRuleSet(ruleset)
 
 	for tok.IsSelector() {
@@ -249,7 +250,7 @@ func (parser *Parser) ParseRuleSet(parentRuleSet *ast.RuleSet) ast.Statement {
 	parser.backup()
 
 	// parse declaration block
-	ruleset.Block = parser.ParseDeclarationBlock(ruleset)
+	ruleset.Block = parser.ParseDeclarationBlock()
 
 	// pop the ruleset from stack
 	parser.Context.PopRuleSet()
@@ -858,18 +859,17 @@ func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *a
 	return list
 }
 
-func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.DeclarationBlock {
+func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 	var declBlock = ast.DeclarationBlock{}
+	var parentRuleSet = parser.Context.TopRuleSet()
 
-	var tok = parser.next() // should be '{'
-	if tok.Type != ast.T_BRACE_START {
-		panic(ParserError{"{", tok.Str})
-	}
+	parser.expect(ast.T_BRACE_START)
 
-	tok = parser.next()
+	var tok = parser.peek()
 	for tok != nil && tok.Type != ast.T_BRACE_END {
-
 		if tok.Type == ast.T_PROPERTY_NAME_TOKEN {
+			// TODO support property interpolation here
+			parser.expect(ast.T_PROPERTY_NAME_TOKEN)
 			parser.expect(ast.T_COLON)
 
 			var property = ast.NewProperty(tok)
@@ -880,13 +880,14 @@ func (parser *Parser) ParseDeclarationBlock(parentRuleSet *ast.RuleSet) *ast.Dec
 			_ = property
 
 		} else if tok.IsSelector() {
-			// parse subrule
-			panic("subselector unimplemented")
+
+			parser.ParseRuleSet()
+
 		} else {
 			panic("unexpected token")
 		}
 
-		tok = parser.next()
+		tok = parser.peek()
 	}
 
 	return &declBlock

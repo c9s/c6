@@ -197,5 +197,5 @@ func (parser *Parser) ParseScss(code string) []ast.Statement {
 	l := NewLexerWithString(code)
 	l.run()
 	parser.Input = l.getOutput()
-	return parser.ParseStatements(nil)
+	return parser.ParseStatements()
 }
