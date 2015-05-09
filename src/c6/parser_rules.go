@@ -890,19 +890,20 @@ func (parser *Parser) ParseCharsetStatement() ast.Statement {
 func (parser *Parser) ParseMediaStatement() ast.Statement {
 	// expect the '@media' token
 	parser.expect(ast.T_MEDIA)
+	parser.ParseMediaQueryList()
+	return nil
+}
 
+func (parser *Parser) ParseMediaQueryList() {
 	var query = parser.ParseMediaQuery()
 	_ = query
 
 	var tok = parser.peek()
 	for tok.Type == ast.T_COMMA {
-		queryA := parser.ParseMediaQuery()
-		_ = queryA
+		parser.next()
+		parser.ParseMediaQuery()
 		tok = parser.peek()
 	}
-
-	// TODO: Fill me
-	return nil
 }
 
 /*
@@ -914,10 +915,31 @@ media_query: [[only | not]? <media_type> [ and <expression> ]*]
 expression: ( <media_feature> [: <value>]? )
 */
 func (parser *Parser) ParseMediaQuery() ast.Expression {
+
+	// the leading media type is optional
 	var mediaType = parser.ParseMediaType()
-	_ = mediaType
+	if mediaType != nil {
+		var tok = parser.peek()
+		if tok.Type != ast.T_LOGICAL_AND {
+			return nil
+		}
+		parser.next() // skip the and operator token
+	}
+
+	// parse the media expression after the media type.
 	var mediaExpression = parser.ParseMediaQueryExpression()
-	_ = mediaExpression
+	if mediaExpression == nil {
+		return nil
+	}
+
+	// @media query only allows AND operator here..
+	var tok = parser.peek()
+	for tok.Type == ast.T_LOGICAL_AND {
+		parser.next()
+		// parse another mediq query expression
+		parser.ParseMediaQueryExpression()
+		tok = parser.peek()
+	}
 	return nil
 }
 
@@ -931,6 +953,7 @@ func (parser *Parser) ParseMediaType() ast.Expression {
 
 	} else if tok.Type == ast.T_ONLY {
 		parser.next()
+
 		var mediaType = parser.expect(ast.T_IDENT)
 		return ast.NewUnaryExpression(ast.NewOpWithToken(tok), mediaType)
 	}
@@ -938,6 +961,7 @@ func (parser *Parser) ParseMediaType() ast.Expression {
 	// expecting media type token (it will be T_IDENT)
 	tok = parser.peek()
 	if tok.Type == ast.T_IDENT {
+		parser.next()
 		return ast.NewIdentWithToken(tok)
 	}
 
@@ -949,7 +973,11 @@ func (parser *Parser) ParseMediaType() ast.Expression {
 An media query expression must start with a '(' and ends with ')'
 */
 func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
-	parser.expect(ast.T_PAREN_START)
+
+	// it's not an media query expression
+	if parser.accept(ast.T_PAREN_START) == nil {
+		return nil
+	}
 
 	var featureExpr = parser.ParseExpression(false)
 	_ = featureExpr
@@ -1023,12 +1051,7 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 
 		https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Media_queries
 	*/
-	tok = parser.next()
-	for tok.Type != ast.T_SEMICOLON {
-		tok = parser.next()
-		// stm.MediaList = append(stm.MediaList, tok.Str)
-	}
-	parser.backup()
+	parser.ParseMediaQueryList()
 
 	// must be ast.T_SEMICOLON
 	tok = parser.next()
