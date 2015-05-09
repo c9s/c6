@@ -758,6 +758,15 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 
 	var stm = ast.NewVariableAssignment(variable, expr)
 
+	parser.ParseFlags(stm)
+
+	parser.accept(ast.T_SEMICOLON)
+
+	// Reduce list or map here
+	return stm
+}
+
+func (parser *Parser) ParseFlags(stm *ast.VariableAssignment) {
 	var tok = parser.peek()
 	for tok.IsFlagKeyword() {
 		parser.next()
@@ -774,11 +783,6 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 		}
 		tok = parser.peek()
 	}
-
-	parser.accept(ast.T_SEMICOLON)
-
-	// Reduce list or map here
-	return stm
 }
 
 func (parser *Parser) ParseSpaceSepList() ast.Expression {
