@@ -3,25 +3,25 @@ all:
 	go generate c6
 	go build c6/ast 
 	go build c6/runtime
-	go build c6
+	go build -tags debug c6
 
 install:
-	go install c6/...
+	go install -tags debug c6/...
 
 test: all
 	go test c6/ast
 	go test c6/runtime
-	go test c6
+	go test -tags debug c6
 
 benchupdate:
-	go test -run=NONE -bench=. c6 >| benchmarks/old.txt
+	go test -tags debug -run=NONE -bench=. c6 >| benchmarks/old.txt
 
 benchcmp: all
-	go test -run=NONE -bench=. c6 >| benchmarks/new.txt
+	go test -tags debug -run=NONE -bench=. c6 >| benchmarks/new.txt
 	vendor/bin/benchcmp benchmarks/old.txt benchmarks/new.txt
 
 cov:
-	go test -coverprofile=c6.cov c6
+	go test -tags debug -coverprofile=c6.cov c6
 	go test -coverprofile=c6_ast.cov c6/ast
 	go test -coverprofile=c6_runtime.cov c6/runtime
 

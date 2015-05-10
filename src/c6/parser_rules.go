@@ -185,7 +185,7 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 	var ruleset = ast.NewRuleSet()
 	parser.Context.PushRuleSet(ruleset)
 
-	for tok.IsSelector() {
+	for tok.IsSelector() || tok.Type == ast.T_COMMA {
 
 		switch tok.Type {
 
@@ -229,6 +229,9 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 		case ast.T_DESCENDANT_COMBINATOR:
 
 			ruleset.AppendSelector(&ast.DescendantCombinator{})
+
+		case ast.T_COMMA:
+			// XXX, selector group
 
 		default:
 			panic(fmt.Errorf("Unexpected selector token: %+v", tok))

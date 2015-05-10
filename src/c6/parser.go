@@ -21,8 +21,6 @@ type ParserError struct {
 	ActualToken    string
 }
 
-const debugParser = false
-
 func debug(format string, args ...interface{}) {
 	if debugParser {
 		fmt.Printf(format+"\n", args...)
