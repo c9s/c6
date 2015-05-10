@@ -1050,8 +1050,6 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 
 	parser.ParseBlock()
 
-	_ = fromExpr
-	_ = toExpr
 	_ = varTok
 	return nil
 }
