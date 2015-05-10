@@ -227,6 +227,10 @@ A feature check list from libsass:
 
 Grammar Ambiguity <https://www.facebook.com/cindylinz/posts/10202186527405801?hc_location=ufi>
 
+Standards:
+
+- CSS Syntax Module Level 3 <http://www.w3.org/TR/css-syntax-3>
+
 Frameworks, libraries:
 
 - Bourbon <http://bourbon.io/>
