@@ -58,6 +58,10 @@ func (parser *Parser) ParseStatement() ast.Statement {
 
 		return parser.ParseIfStatement()
 
+	} else if token.Type == ast.T_FOR {
+
+		return parser.ParseForStatement()
+
 	} else if token.IsSelector() {
 
 		return parser.ParseRuleSet()
@@ -1022,6 +1026,28 @@ func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
 	return feature
 }
 
+func (parser *Parser) ParseForStatement() ast.Statement {
+	parser.expect(ast.T_FOR)
+
+	// get the variable token
+	var varTok = parser.expect(ast.T_VARIABLE)
+
+	parser.expect(ast.T_FOR_FROM)
+
+	var fromExpr = parser.ParseExpression(true)
+
+	parser.expect(ast.T_FOR_THROUGH)
+
+	var toExpr = parser.ParseExpression(true)
+
+	parser.ParseBlock()
+
+	_ = fromExpr
+	_ = toExpr
+	_ = varTok
+	return nil
+}
+
 /*
 The @import syntax is described here:
 
@@ -1031,12 +1057,12 @@ The @import syntax is described here:
 */
 func (parser *Parser) ParseImportStatement() ast.Statement {
 	// skip the ast.T_IMPORT token
-	var tok = parser.next()
+	parser.expect(ast.T_IMPORT)
 
 	// Create the import statement node
 	var stm = ast.NewImportStatement()
 
-	tok = parser.peek()
+	var tok = parser.peek()
 	// expecting url(..)
 	if tok.Type == ast.T_IDENT {
 		parser.advance()
