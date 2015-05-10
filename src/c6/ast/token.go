@@ -20,6 +20,7 @@ var FlagTokenMap = KeywordTokenMap{
 var ForRangeKeywordTokenMap = KeywordTokenMap{
 	"from":    T_FOR_FROM,
 	"through": T_FOR_THROUGH,
+	"to":      T_FOR_TO,
 }
 
 var AtRuleTokenMap = KeywordTokenMap{
@@ -229,6 +230,7 @@ const (
 	T_FOR
 	T_FOR_FROM
 	T_FOR_THROUGH
+	T_FOR_TO
 	T_WHILE
 	T_RETURN
 
