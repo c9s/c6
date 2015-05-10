@@ -22,6 +22,10 @@ benchcmp: all
 
 cov:
 	go test -coverprofile=c6.cov c6
+	go test -coverprofile=c6_ast.cov c6/ast
+	go test -coverprofile=c6_runtime.cov c6/runtime
 
 cov-annotate: cov
 	vendor/bin/gocov convert c6.cov | vendor/bin/gocov annotate -
+	vendor/bin/gocov convert c6_ast.cov | vendor/bin/gocov annotate -
+	vendor/bin/gocov convert c6_runtime.cov | vendor/bin/gocov annotate -
