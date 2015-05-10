@@ -88,19 +88,44 @@ To run specific test
   - [x] Parse PropertyValue
   - [x] Parse PropertyValue with interpolation
   - [x] Parse conditions
+  - [x] Parse `@media` statement
   - [ ] Parse Nested RuleSet
   - [x] Parse options: `!default`, `!global`, `!optional`
   - [ ] Parse CSS Hack for different browser (support more syntax sugar for this)
   - [ ] Parse `@font-face` block
   - [x] Parse `@if` statement
+  - [x] Parse `@for` statement
+  - [ ] Parse `@while` statement
   - [ ] Parse `@mixin` statement
   - [ ] Parse `@include` statement
   - [ ] Parse `@function` statement
   - [ ] Parse keyword arguments for `@function`
-  - [ ] Parse `@media` statement
   - [ ] Parse `@switch` statement
   - [ ] Parse `@case` statement
   - [ ] Parse `@use` statement
+
+- [ ] Building AST
+  - [x] RuleSet
+  - [x] DeclarationBlock
+  - [x] PropertyName
+  - [x] PropertyValue
+  - [x] Comma-Separated List
+  - [x] Space-Separated List
+  - [x] Basic Expressions
+  - [x] FunctionCall
+  - [x] Expression with interpolation
+  - [x] Variable statements
+  - [x] If Condition
+  - [x] If Else If, Else Condition
+  - [x] Built-in color keyword table
+  - [x] Hex Color computation
+  - [x] Number operation: add, sub, mul, div
+  - [x] Length operation: number operation for px, pt, em, rem, cm ...etc
+  - [x] Expression evaluation
+  - [x] Boolean expression evaluation
+  - [x] Media Query conditions
+  - [ ] HSL Color computation
+
 - [ ] SASS Built-in Functions
   - [ ] RGB functions
     - [ ] `rgb($red, $green, $blue)`
@@ -171,27 +196,7 @@ To run specific test
   - [ ] Selector Functions
     - .... to be expanded ...
 
-- [ ] Building AST
-  - [x] RuleSet
-  - [x] DeclarationBlock
-  - [x] PropertyName
-  - [x] PropertyValue
-  - [x] Comma-Separated List
-  - [x] Space-Separated List
-  - [x] Basic Expressions
-  - [x] FunctionCall
-  - [x] Expression with interpolation
-  - [x] Variable statements
-  - [x] If Condition
-  - [x] If Else If, Else Condition
-  - [x] Built-in color keyword table
-  - [x] Hex Color computation
-  - [ ] HSL Color computation
-  - [x] Number operation: add, sub, mul, div
-  - [x] Length operation: number operation for px, pt, em, rem, cm ...etc
-  - [x] Expression evaluation
-  - [x] Boolean expression evaluation
-  - [ ] Media Query conditions
+
 - [ ] CodeGen
   - [ ] NestedStyleCompiler
     - [ ] .... list ast nodes here ....
