@@ -547,6 +547,23 @@ func TestLexerGradientFunction(t *testing.T) {
 	})
 }
 
+func TestLexerInterpolationPropertyNameSuffix(t *testing.T) {
+
+	AssertLexerTokenSequence(t, `.test {
+		padding-#{ 'left' }: 10px;
+	}`, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+		ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_LITERAL_CONCAT,
+		ast.T_INTERPOLATION_START,
+		ast.T_Q_STRING,
+		ast.T_INTERPOLATION_END,
+		ast.T_COLON,
+	})
+
+}
+
 func TestLexerInterpolationPropertyName(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test {
 		#{ "foo" }: #{ 1 + 2 }px;
