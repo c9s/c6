@@ -283,17 +283,6 @@ func lexUnquoteString(l *Lexer) stateFn {
 	return nil
 }
 
-func lexSemiColon(l *Lexer) stateFn {
-	l.ignoreSpaces()
-	var r rune = l.next()
-	if r == ';' {
-		l.emit(ast.T_SEMICOLON)
-		return lexStatement
-	}
-	l.backup()
-	return nil
-}
-
 func lexVariableAssignment(l *Lexer) stateFn {
 	lexVariableName(l)
 	lexColon(l)
@@ -556,12 +545,14 @@ func lexStatement(l *Lexer) stateFn {
 
 		return lexSelectors
 
-	} else if r == '"' || r == '\'' {
-		return lexString
 	} else if r == EOF {
+
 		return nil
+
 	} else {
-		l.error("Can't lex rune in lexStatement: '%s'", r)
+
+		l.error("Unexpected token", r)
+
 	}
 	return nil
 }

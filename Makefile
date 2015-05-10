@@ -23,5 +23,5 @@ benchcmp: all
 cov:
 	go test -coverprofile=c6.cov c6
 
-cov-annotate:
+cov-annotate: cov
 	vendor/bin/gocov convert c6.cov | vendor/bin/gocov annotate -
