@@ -1040,16 +1040,36 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 		fromExpr = reducedExpr
 	}
 
-	parser.expect(ast.T_FOR_THROUGH)
+	var stm = ast.NewForStatement(variable)
+	stm.From = fromExpr
 
-	var toExpr = parser.ParseExpression(true)
+	// "through" or "to"
+	var tok = parser.next()
 
-	if reducedExpr, ok := runtime.ReduceExpression(toExpr); ok {
-		toExpr = reducedExpr
+	if tok.Type != ast.T_FOR_THROUGH && tok.Type != ast.T_FOR_TO {
+		panic("Expecting 'through' or 'to' of range syntax.")
 	}
 
-	var block = parser.ParseBlock()
-	return ast.NewForStatement(variable, fromExpr, toExpr, block)
+	var endExpr = parser.ParseExpression(true)
+	if reducedExpr, ok := runtime.ReduceExpression(endExpr); ok {
+		endExpr = reducedExpr
+	}
+
+	if tok.Type == ast.T_FOR_THROUGH {
+
+		stm.Through = endExpr
+
+	} else if tok.Type == ast.T_FOR_TO {
+
+		stm.To = endExpr
+
+	}
+	if b := parser.ParseBlock(); b != nil {
+		stm.Block = b
+	} else {
+		panic("The @for statement expecting block after the range syntax")
+	}
+	return stm
 }
 
 /*
