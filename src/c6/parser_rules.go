@@ -1026,6 +1026,15 @@ func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
 	return feature
 }
 
+/*
+Parse the SASS @for statement.
+
+	@for $var from <start> to <end> {  }
+
+	@for $var from <start> through <end> {  }
+
+@see http://sass-lang.com/documentation/file.SASS_REFERENCE.html#_10
+*/
 func (parser *Parser) ParseForStatement() ast.Statement {
 	parser.expect(ast.T_FOR)
 
