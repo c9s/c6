@@ -85,6 +85,26 @@ func TestParserImportRuleWithMedia2(t *testing.T) {
 	fmt.Printf("Statements: %+v\n", stmts)
 }
 
+func TestParserPropertyNameBorderWidth(t *testing.T) {
+	var stmts = RunParserTest(`div { border-width: 3px 3px 3px 3px; }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserPropertyNameBorderWidthInterpolation(t *testing.T) {
+	var stmts = RunParserTest(`div { border-#{ $width }: 3px 3px 3px 3px; }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserPropertyNameBorderWidthInterpolation2(t *testing.T) {
+	var stmts = RunParserTest(`div { #{ $name }: 3px 3px 3px 3px; }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserPropertyNameBorderWidthInterpolation3(t *testing.T) {
+	var stmts = RunParserTest(`div { #{ $name }-left: 3px; }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserMediaQuerySimple(t *testing.T) {
 	var stmts = RunParserTest(`@media screen { .red { color: red; } }`)
 	assert.Equal(t, 1, len(stmts))

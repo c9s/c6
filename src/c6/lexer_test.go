@@ -612,6 +612,25 @@ func TestLexerInterpolationPropertyName2(t *testing.T) {
 	})
 }
 
+func TestLexerInterpolationPropertyName3(t *testing.T) {
+	AssertLexerTokenSequence(t, `.test {
+		padding-#{ $direction }: 10px;
+	}`, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+		ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_LITERAL_CONCAT,
+		ast.T_INTERPOLATION_START,
+		ast.T_VARIABLE,
+		ast.T_INTERPOLATION_END,
+		ast.T_COLON,
+		ast.T_INTEGER,
+		ast.T_UNIT_PX,
+		ast.T_SEMICOLON,
+		ast.T_BRACE_END,
+	})
+}
+
 func BenchmarkLexer(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		// Fib(10)

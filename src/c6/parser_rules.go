@@ -417,6 +417,10 @@ func (parser *Parser) ParseFactor() ast.Expression {
 		var fcall = parser.ParseFunctionCall()
 		return ast.Expression(fcall)
 
+	} else if tok.Type == ast.T_VARIABLE {
+
+		return parser.ParseVariable()
+
 	} else {
 
 		return nil
@@ -854,11 +858,41 @@ func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *a
 }
 
 func (parser *Parser) ParsePropertyName() ast.Expression {
+	var ident = parser.ParsePropertyNameToken()
+	if ident == nil {
+		return nil
+	}
+
 	var tok = parser.peek()
-	for tok.Type == ast.T_PROPERTY_NAME_TOKEN {
+	for tok.Type == ast.T_LITERAL_CONCAT {
+		parser.next()
+		_ = parser.ParsePropertyNameToken()
 		tok = parser.peek()
 	}
+	parser.expect(ast.T_COLON)
+	return ident // TODO: new literal concat ast
+}
+
+func (parser *Parser) ParsePropertyNameToken() ast.Expression {
+	var tok = parser.peek()
+	if tok.Type == ast.T_PROPERTY_NAME_TOKEN {
+		parser.next()
+		return ast.NewIdentWithToken(tok)
+	} else if tok.Type == ast.T_INTERPOLATION_START {
+		return parser.ParseInterpolation()
+	}
 	return nil
+}
+
+func (parser *Parser) ParseInterpolation() ast.Expression {
+	debug("ParseInterpolation")
+	var startToken *ast.Token
+	if startToken = parser.accept(ast.T_INTERPOLATION_START); startToken == nil {
+		return nil
+	}
+	var expr = parser.ParseExpression(true)
+	var endToken = parser.expect(ast.T_INTERPOLATION_END)
+	return ast.NewInterpolation(expr, startToken, endToken)
 }
 
 func (parser *Parser) ParseDeclaration() ast.Statement {
@@ -873,10 +907,9 @@ func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 
 	var tok = parser.peek()
 	for tok != nil && tok.Type != ast.T_BRACE_END {
-		if tok.Type == ast.T_PROPERTY_NAME_TOKEN {
-			// TODO support property interpolation here
-			parser.expect(ast.T_PROPERTY_NAME_TOKEN)
-			parser.expect(ast.T_COLON)
+		var propertyName = parser.ParsePropertyName()
+
+		if propertyName != nil {
 
 			var property = ast.NewProperty(tok)
 			var valueList = parser.ParsePropertyValue(parentRuleSet, property)
@@ -885,14 +918,12 @@ func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 			declBlock.Append(property)
 			_ = property
 
+		} else if stm := parser.ParseStatements(); stm == nil {
+			// TODO: throw syntax error report here
+			panic("Can't parse statements")
 		} else {
-
-			if stm := parser.ParseStatements(); stm == nil {
-				// TODO: throw syntax error report here
-				panic("Can't parse statements")
-			}
+			panic("Parse failed.")
 		}
-
 		tok = parser.peek()
 	}
 
