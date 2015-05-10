@@ -1028,11 +1028,8 @@ func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
 
 func (parser *Parser) ParseWhileStatement() ast.Statement {
 	parser.expect(ast.T_WHILE)
-
 	var condition = parser.ParseCondition()
 	var block = parser.ParseBlock()
-
-	// TODO: check error here
 	return ast.NewWhileStatement(condition, block)
 }
 
@@ -1050,39 +1047,56 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 
 	// get the variable token
 	var variable = parser.ParseVariable()
-
-	parser.expect(ast.T_FOR_FROM)
-
-	var fromExpr = parser.ParseExpression(true)
-
-	if reducedExpr, ok := runtime.ReduceExpression(fromExpr); ok {
-		fromExpr = reducedExpr
-	}
-
 	var stm = ast.NewForStatement(variable)
-	stm.From = fromExpr
 
-	// "through" or "to"
-	var tok = parser.next()
+	if parser.accept(ast.T_FOR_FROM) != nil {
 
-	if tok.Type != ast.T_FOR_THROUGH && tok.Type != ast.T_FOR_TO {
-		panic("Expecting 'through' or 'to' of range syntax.")
-	}
+		var fromExpr = parser.ParseExpression(true)
+		if reducedExpr, ok := runtime.ReduceExpression(fromExpr); ok {
+			fromExpr = reducedExpr
+		}
+		stm.From = fromExpr
 
-	var endExpr = parser.ParseExpression(true)
-	if reducedExpr, ok := runtime.ReduceExpression(endExpr); ok {
-		endExpr = reducedExpr
-	}
+		// "through" or "to"
+		var tok = parser.next()
 
-	if tok.Type == ast.T_FOR_THROUGH {
+		if tok.Type != ast.T_FOR_THROUGH && tok.Type != ast.T_FOR_TO {
+			panic("Expecting 'through' or 'to' of range syntax.")
+		}
 
-		stm.Through = endExpr
+		var endExpr = parser.ParseExpression(true)
+		if reducedExpr, ok := runtime.ReduceExpression(endExpr); ok {
+			endExpr = reducedExpr
+		}
 
-	} else if tok.Type == ast.T_FOR_TO {
+		if tok.Type == ast.T_FOR_THROUGH {
+
+			stm.Through = endExpr
+
+		} else if tok.Type == ast.T_FOR_TO {
+
+			stm.To = endExpr
+
+		}
+
+	} else if parser.accept(ast.T_FOR_IN) != nil {
+
+		var fromExpr = parser.ParseExpression(true)
+		if reducedExpr, ok := runtime.ReduceExpression(fromExpr); ok {
+			fromExpr = reducedExpr
+		}
+		stm.From = fromExpr
+
+		parser.expect(ast.T_RANGE)
+
+		var endExpr = parser.ParseExpression(true)
+		if reducedExpr, ok := runtime.ReduceExpression(endExpr); ok {
+			endExpr = reducedExpr
+		}
 
 		stm.To = endExpr
-
 	}
+
 	if b := parser.ParseBlock(); b != nil {
 		stm.Block = b
 	} else {

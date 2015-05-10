@@ -197,6 +197,16 @@ func TestParserForStatementExpressionReduce(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserForStatementRangeOperator(t *testing.T) {
+	var stmts = RunParserTest(`@for $var in 1 .. 10 { }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserForStatementRangeOperatorWithExpression(t *testing.T) {
+	var stmts = RunParserTest(`@for $var in 2 + 3 .. 10 * 10 { }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserWhileStatement(t *testing.T) {
 	code := `
 $i: 6;
