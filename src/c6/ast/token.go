@@ -235,6 +235,7 @@ const (
 	T_FOR_IN
 	T_WHILE
 	T_RETURN
+	T_RANGE // for '..'
 
 	// Flag token types
 	T_GLOBAL

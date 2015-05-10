@@ -95,6 +95,12 @@ func lexExpression(l *Lexer) stateFn {
 
 		lexIdentifier(l)
 
+	} else if r == '.' && l.peekBy(2) == '.' {
+
+		l.next()
+		l.next()
+		l.emit(ast.T_RANGE)
+
 	} else if r == '.' && unicode.IsDigit(r2) {
 
 		// lexNumber may return lexNumber unit
