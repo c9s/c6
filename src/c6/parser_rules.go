@@ -1022,6 +1022,13 @@ func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
 	return feature
 }
 
+/*
+The @import syntax is described here:
+
+@see CSS2.1 http://www.w3.org/TR/CSS2/cascade.html#at-import
+
+@see https://developer.mozilla.org/en-US/docs/Web/CSS/@import
+*/
 func (parser *Parser) ParseImportStatement() ast.Statement {
 	// skip the ast.T_IMPORT token
 	var tok = parser.next()
