@@ -195,7 +195,6 @@ func lexAtRule(l *Lexer) stateFn {
 		case ast.T_IMPORT:
 			l.ignoreSpaces()
 			lexUrl(l)
-			l.ignoreSpaces()
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
 			return lexStatement
@@ -307,7 +306,6 @@ func lexVariableAssignment(l *Lexer) stateFn {
 func lexForStatement(l *Lexer) stateFn {
 	l.ignoreSpaces()
 	lexVariableName(l)
-	l.ignoreSpaces()
 
 	fn := lexExpression(l)
 	if fn == nil {
