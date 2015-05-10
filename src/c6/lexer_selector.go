@@ -124,15 +124,6 @@ func lexClassSelector(l *Lexer) stateFn {
 	return lexSelectors
 }
 
-func lexParentSelector(l *Lexer) stateFn {
-	var r = l.next()
-	if r != '&' {
-		l.error("Unexpected token '%s' for universal selector.", r)
-	}
-	l.emit(ast.T_PARENT_SELECTOR)
-	return lexSelectors
-}
-
 func lexPseudoSelector(l *Lexer) stateFn {
 	var foundInterpolation = false
 
@@ -257,7 +248,7 @@ func lexSelectors(l *Lexer) stateFn {
 
 	} else if r == '&' {
 
-		l.next()
+		l.expect("&")
 		l.emit(ast.T_PARENT_SELECTOR)
 		return lexSelectors
 
