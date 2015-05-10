@@ -17,6 +17,11 @@ var FlagTokenMap = KeywordTokenMap{
 	"!optional":  T_OPTIONAL,
 }
 
+var ForRangeKeywordTokenMap = KeywordTokenMap{
+	"from":    T_FOR_FROM,
+	"through": T_FOR_THROUGH,
+}
+
 var AtRuleTokenMap = KeywordTokenMap{
 	/* CSS */
 	"@import":    T_IMPORT,
@@ -29,6 +34,8 @@ var AtRuleTokenMap = KeywordTokenMap{
 	"@function":  T_FUNCTION,
 	"@mixin":     T_MIXIN,
 	"@font-face": T_FONT_FACE,
+	"@for":       T_FOR,
+	"@while":     T_WHILE,
 }
 
 var ExprTokenMap = KeywordTokenMap{
@@ -219,6 +226,10 @@ const (
 	T_INCLUDE
 	T_MIXIN
 	T_FUNCTION
+	T_FOR
+	T_FOR_FROM
+	T_FOR_THROUGH
+	T_WHILE
 	T_RETURN
 
 	// Flag token types

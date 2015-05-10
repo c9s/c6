@@ -344,6 +344,21 @@ func (l *Lexer) match(str string) bool {
 	return true
 }
 
+func (l *Lexer) matchKeyword(str string, tokType ast.TokenType) bool {
+	l.remember()
+	if l.match(str) {
+		var r = l.peek()
+		if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' || r == '-' {
+			// try next one
+			l.rollback()
+			return false
+		}
+		l.emit(tokType)
+		return true
+	}
+	return false
+}
+
 func (l *Lexer) matchKeywordMap(keywords ast.KeywordTokenMap) ast.TokenType {
 	for str, tokType := range keywords {
 		l.remember()

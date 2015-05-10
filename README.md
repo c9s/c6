@@ -54,6 +54,8 @@ To run specific test
   - [x] Comma-separated list
   - [x] Space-separated list
   - [x] `@if` , `@else` , `@else if`
+  - [x] `@for`, `from`, `through` statement
+  - [x] `@while`
   - [x] Flags: `!default`, `!important`, `!optional`, `!global`
   - [x] Hex color
   - [x] Functions

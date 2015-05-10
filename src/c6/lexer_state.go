@@ -221,6 +221,9 @@ func lexAtRule(l *Lexer) stateFn {
 		case ast.T_ELSE:
 			return lexStatement
 
+		case ast.T_FOR:
+			return lexForStatement
+
 		case ast.T_MIXIN:
 			panic("@mixin is not supported yet.")
 
@@ -288,8 +291,7 @@ func lexVariableAssignment(l *Lexer) stateFn {
 	lexVariableName(l)
 	lexColon(l)
 	var r = l.peek()
-	for r != ';' && r != '}' && r != EOF {
-		lexExpression(l)
+	for r != ';' && r != '}' && r != EOF && lexExpression(l) != nil {
 		r = l.peek()
 	}
 	// l.backup()
@@ -302,6 +304,31 @@ func lexVariableAssignment(l *Lexer) stateFn {
 		l.emit(ast.T_SEMICOLON)
 	} else if l.accept("}") {
 		l.emit(ast.T_BRACE_END)
+	}
+	return lexStatement
+}
+
+func lexForStatement(l *Lexer) stateFn {
+	l.ignoreSpaces()
+	lexVariableName(l)
+	l.ignoreSpaces()
+
+	if l.matchKeyword("from", ast.T_FOR_FROM) {
+		if fn := lexExpression(l); fn == nil {
+			panic("Expecting expression after through keyword.")
+		}
+	} else {
+		panic("Unexpected token. expecting for range keyword: from")
+	}
+
+	l.ignoreSpaces()
+
+	if l.matchKeyword("through", ast.T_FOR_THROUGH) {
+		if fn := lexExpression(l); fn == nil {
+			panic("Expecting expression after through keyword.")
+		}
+	} else {
+		panic("Unexpected token. expecting for range keyword: through")
 	}
 	return lexStatement
 }

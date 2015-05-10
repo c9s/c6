@@ -699,6 +699,15 @@ func TestLexerIfStatementFunctionCallEqualToNumber(t *testing.T) {
 }
 
 /**********************************************************************
+
+***********************************************************************/
+func TestLexerForStatementSimpleFromThrough(t *testing.T) {
+	AssertLexerTokenSequence(t, `@for $var from 1 through 20 {  }`, []ast.TokenType{
+		ast.T_FOR, ast.T_VARIABLE, ast.T_FOR_FROM, ast.T_INTEGER, ast.T_FOR_THROUGH, ast.T_INTEGER, ast.T_BRACE_START, ast.T_BRACE_END,
+	})
+}
+
+/**********************************************************************
 Media Query Test Case
 ***********************************************************************/
 
