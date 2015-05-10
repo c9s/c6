@@ -1036,9 +1036,17 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 
 	var fromExpr = parser.ParseExpression(true)
 
+	if reducedExpr, ok := runtime.ReduceExpression(fromExpr); ok {
+		fromExpr = reducedExpr
+	}
+
 	parser.expect(ast.T_FOR_THROUGH)
 
 	var toExpr = parser.ParseExpression(true)
+
+	if reducedExpr, ok := runtime.ReduceExpression(toExpr); ok {
+		toExpr = reducedExpr
+	}
 
 	parser.ParseBlock()
 
