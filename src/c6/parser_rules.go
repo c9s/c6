@@ -1026,6 +1026,15 @@ func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
 	return feature
 }
 
+func (parser *Parser) ParseWhileStatement() ast.Statement {
+	parser.expect(ast.T_WHILE)
+
+	var condition = parser.ParseCondition()
+	_ = condition
+
+	return nil
+}
+
 /*
 Parse the SASS @for statement.
 

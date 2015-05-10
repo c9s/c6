@@ -224,6 +224,13 @@ func lexAtRule(l *Lexer) stateFn {
 		case ast.T_FOR:
 			return lexForStatement
 
+		case ast.T_WHILE:
+			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
+			}
+			// go back to block state for lexing
+			l.ignoreSpaces()
+			return lexStatement
+
 		case ast.T_MIXIN:
 			panic("@mixin is not supported yet.")
 
@@ -320,34 +327,6 @@ func lexForStatement(l *Lexer) stateFn {
 	for fn != nil {
 		fn = lexExpression(l)
 	}
-
-	/*
-		if l.matchKeyword("from", ast.T_FOR_FROM) {
-			fn := lexExpression(l)
-			if fn == nil {
-				panic("Expecting range expression after 'from'.")
-			}
-			for fn != nil {
-				fn = lexExpression(l)
-			}
-		} else {
-			panic("Unexpected token. expecting for range keyword: from")
-		}
-
-		l.ignoreSpaces()
-
-		if l.matchKeyword("through", ast.T_FOR_THROUGH) {
-			fn := lexExpression(l)
-			if fn == nil {
-				panic("Expecting range expression after 'from'.")
-			}
-			for fn != nil {
-				fn = lexExpression(l)
-			}
-		} else {
-			panic("Unexpected token. expecting for range keyword: through")
-		}
-	*/
 	return lexStatement
 }
 

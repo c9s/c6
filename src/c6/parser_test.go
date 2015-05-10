@@ -197,6 +197,15 @@ func TestParserForStatementExpressionReduce(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserWhileStatement(t *testing.T) {
+	code := `
+$i: 6;
+@while $i > 0 { $i: $i - 2; }
+`
+	var stmts = RunParserTest(code)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserCSS3Gradient(t *testing.T) {
 	// some test cases from htmldog
 	// @see http://www.htmldog.com/guides/css/advanced/gradients/
