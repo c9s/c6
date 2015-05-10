@@ -63,16 +63,9 @@ func lexInterpolation2(l *Lexer) stateFn {
 	l.emit(ast.T_INTERPOLATION_START)
 
 	// skip the space after #{
-	l.ignoreSpaces()
-
-	r = l.peek()
-	for r != '}' {
-		lexExpression(l)
-
-		// ignore space
-		l.ignoreSpaces()
-		r = l.peek()
+	for lexExpression(l) != nil {
 	}
+	l.ignoreSpaces()
 	l.expect("}")
 	l.emit(ast.T_INTERPOLATION_END)
 	return nil

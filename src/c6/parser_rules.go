@@ -853,6 +853,18 @@ func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *a
 	return list
 }
 
+func (parser *Parser) ParsePropertyName() ast.Expression {
+	var tok = parser.peek()
+	for tok.Type == ast.T_PROPERTY_NAME_TOKEN {
+		tok = parser.peek()
+	}
+	return nil
+}
+
+func (parser *Parser) ParseDeclaration() ast.Statement {
+	return nil
+}
+
 func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 	var declBlock = ast.DeclarationBlock{}
 	var parentRuleSet = parser.Context.TopRuleSet()

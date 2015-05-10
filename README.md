@@ -95,7 +95,7 @@ To run specific test
   - [ ] Parse `@font-face` block
   - [x] Parse `@if` statement
   - [x] Parse `@for` statement
-  - [ ] Parse `@while` statement
+  - [x] Parse `@while` statement
   - [ ] Parse `@mixin` statement
   - [ ] Parse `@include` statement
   - [ ] Parse `@function` statement

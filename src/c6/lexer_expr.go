@@ -37,13 +37,14 @@ func lexFunctionParams(l *Lexer) stateFn {
 func lexIdentifier(l *Lexer) stateFn {
 	var r = l.next()
 	if !unicode.IsLetter(r) && r != '-' {
-		panic("An identifier needs to start with a letter")
+		panic("An identifier needs to start with a letter or dash")
 	}
 	r = l.next()
 
 	for unicode.IsLetter(r) || unicode.IsDigit(r) || r == '-' {
 		if r == '-' {
-			if !unicode.IsLetter(l.peek()) {
+			var r2 = l.peek()
+			if !unicode.IsLetter(r2) && r2 != '-' {
 				l.backup()
 				return lexExpression
 			}
