@@ -21,6 +21,7 @@ var ForRangeKeywordTokenMap = KeywordTokenMap{
 	"from":    T_FOR_FROM,
 	"through": T_FOR_THROUGH,
 	"to":      T_FOR_TO,
+	"in":      T_FOR_IN,
 }
 
 var AtRuleTokenMap = KeywordTokenMap{
@@ -231,6 +232,7 @@ const (
 	T_FOR_FROM
 	T_FOR_THROUGH
 	T_FOR_TO
+	T_FOR_IN
 	T_WHILE
 	T_RETURN
 
