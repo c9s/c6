@@ -1030,9 +1030,10 @@ func (parser *Parser) ParseWhileStatement() ast.Statement {
 	parser.expect(ast.T_WHILE)
 
 	var condition = parser.ParseCondition()
-	_ = condition
+	var block = parser.ParseBlock()
 
-	return nil
+	// TODO: check error here
+	return ast.NewWhileStatement(condition, block)
 }
 
 /*
