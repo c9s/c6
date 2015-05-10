@@ -84,7 +84,7 @@ To run specific test
   - [x] Parse DeclarationBlock
   - [x] Parse Variable Assignment Statement
   - [x] Parse PropertyName
-  - [ ] Parse PropertyName with interpolation
+  - [x] Parse PropertyName with interpolation
   - [x] Parse PropertyValue
   - [x] Parse PropertyValue with interpolation
   - [x] Parse conditions

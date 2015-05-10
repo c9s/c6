@@ -13,6 +13,46 @@ func RunParserTest(code string) []ast.Statement {
 	return parser.ParseScss(code)
 }
 
+func TestParserEmptyRuleSetWithClassSelector(t *testing.T) {
+	var stmts = RunParserTest(`.first-name { }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserEmptyRuleSetWithIdSelector(t *testing.T) {
+	var stmts = RunParserTest(`#myId { }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserEmptyRuleSetWithTypeSelector(t *testing.T) {
+	var stmts = RunParserTest(`div { }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserEmptyRuleSetWithTypeSelectorGroup(t *testing.T) {
+	var stmts = RunParserTest(`div, span, html { }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserPropertyNameBorderWidth(t *testing.T) {
+	var stmts = RunParserTest(`div { border-width: 3px 3px 3px 3px; }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserPropertyNameBorderWidthInterpolation(t *testing.T) {
+	var stmts = RunParserTest(`div { border-#{ $width }: 3px 3px 3px 3px; }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserPropertyNameBorderWidthInterpolation2(t *testing.T) {
+	var stmts = RunParserTest(`div { #{ $name }: 3px 3px 3px 3px; }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserPropertyNameBorderWidthInterpolation3(t *testing.T) {
+	var stmts = RunParserTest(`div { #{ $name }-left: 3px; }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserImportRuleWithUrl(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`@import url("http://foo.com/bar.css");`)
@@ -83,26 +123,6 @@ func TestParserImportRuleWithMedia2(t *testing.T) {
 	var stmts = RunParserTest(`@import url("foo.css") screen and (orientation:landscape);`)
 	assert.Equal(t, 1, len(stmts))
 	fmt.Printf("Statements: %+v\n", stmts)
-}
-
-func TestParserPropertyNameBorderWidth(t *testing.T) {
-	var stmts = RunParserTest(`div { border-width: 3px 3px 3px 3px; }`)
-	assert.Equal(t, 1, len(stmts))
-}
-
-func TestParserPropertyNameBorderWidthInterpolation(t *testing.T) {
-	var stmts = RunParserTest(`div { border-#{ $width }: 3px 3px 3px 3px; }`)
-	assert.Equal(t, 1, len(stmts))
-}
-
-func TestParserPropertyNameBorderWidthInterpolation2(t *testing.T) {
-	var stmts = RunParserTest(`div { #{ $name }: 3px 3px 3px 3px; }`)
-	assert.Equal(t, 1, len(stmts))
-}
-
-func TestParserPropertyNameBorderWidthInterpolation3(t *testing.T) {
-	var stmts = RunParserTest(`div { #{ $name }-left: 3px; }`)
-	assert.Equal(t, 1, len(stmts))
 }
 
 func TestParserMediaQuerySimple(t *testing.T) {
@@ -377,71 +397,5 @@ func TestParserIfStatementTrueCondition(t *testing.T) {
 	}
 	`)
 	_ = block
-}
-*/
-
-/*
-func TestParserEmptyRuleWithClassSelector(t *testing.T) {
-	parser := NewParser()
-	parser.ParseScss(`.test {  }`)
-
-	var token *Token
-
-	token = parser.peek()
-	AssertTokenType(t, T_CLASS_SELECTOR, token)
-
-	// should be the same
-	token = parser.next()
-	AssertTokenType(t, T_CLASS_SELECTOR, token)
-
-	token = parser.next()
-	AssertTokenType(t, T_BRACE_START, token)
-
-	token = parser.peek()
-	AssertTokenType(t, T_BRACE_END, token)
-
-	token = parser.next()
-	AssertTokenType(t, T_BRACE_END, token)
-}
-
-func TestParserPeekBy(t *testing.T) {
-	parser := NewParser()
-	assert.NotNil(t, parser)
-	parser.ParseScss(`.test {  }`)
-
-	var token *Token
-
-	token = parser.peekBy(0)
-	AssertTokenType(t, T_CLASS_SELECTOR, token)
-
-	token = parser.peekBy(1)
-	AssertTokenType(t, T_BRACE_START, token)
-
-	token = parser.peekBy(2)
-	AssertTokenType(t, T_BRACE_END, token)
-
-	token = parser.next()
-	AssertTokenType(t, T_CLASS_SELECTOR, token)
-	token = parser.next()
-	AssertTokenType(t, T_BRACE_START, token)
-	token = parser.next()
-	AssertTokenType(t, T_BRACE_END, token)
-}
-
-func TestParseNestedRule(t *testing.T) {
-	code := `
-#main p {
-  color: #00ff00;
-  width: 97%;
-
-  .redbox {
-    background-color: #ff0000;
-    color: #000000;
-  }
-}
-`
-	p := NewParser()
-	assert.NotNil(t, p)
-	p.parseScss(code)
 }
 */
