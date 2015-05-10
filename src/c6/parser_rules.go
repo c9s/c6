@@ -727,7 +727,7 @@ func (parser *Parser) ParseVariable() *ast.Variable {
 		parser.restore(pos)
 		return nil
 	}
-	return ast.NewVariable(tok)
+	return ast.NewVariableWithToken(tok)
 }
 
 func (parser *Parser) ParseVariableAssignment() ast.Statement {
@@ -1030,7 +1030,7 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 	parser.expect(ast.T_FOR)
 
 	// get the variable token
-	var varTok = parser.expect(ast.T_VARIABLE)
+	var variable = parser.ParseVariable()
 
 	parser.expect(ast.T_FOR_FROM)
 
@@ -1048,10 +1048,8 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 		toExpr = reducedExpr
 	}
 
-	parser.ParseBlock()
-
-	_ = varTok
-	return nil
+	var block = parser.ParseBlock()
+	return ast.NewForStatement(variable, fromExpr, toExpr, block)
 }
 
 /*

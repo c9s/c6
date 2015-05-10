@@ -188,12 +188,16 @@ func TestParserIfComparisonUnequal(t *testing.T) {
 }
 
 func TestParserForStatementSimple(t *testing.T) {
-	var stmts = RunParserTest(`@for $var from 1 through 20 {
-
-	}`)
-	_ = stmts
-	// assert.Equal(t, 1, len(stmts))
+	var stmts = RunParserTest(`@for $var from 1 through 20 { }`)
+	assert.Equal(t, 1, len(stmts))
 }
+
+/*
+func TestParserForStatementExpressionReduce(t *testing.T) {
+	var stmts = RunParserTest(`@for $var from 2 * 3 through 20 * 5 + 10 { }`)
+	assert.Equal(t, 1, len(stmts))
+}
+*/
 
 func TestParserCSS3Gradient(t *testing.T) {
 	// some test cases from htmldog

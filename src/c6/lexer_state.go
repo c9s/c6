@@ -313,23 +313,41 @@ func lexForStatement(l *Lexer) stateFn {
 	lexVariableName(l)
 	l.ignoreSpaces()
 
-	if l.matchKeyword("from", ast.T_FOR_FROM) {
-		if fn := lexExpression(l); fn == nil {
-			panic("Expecting expression after through keyword.")
-		}
-	} else {
-		panic("Unexpected token. expecting for range keyword: from")
+	fn := lexExpression(l)
+	if fn == nil {
+		panic("Expecting range expression after 'from'.")
+	}
+	for fn != nil {
+		fn = lexExpression(l)
 	}
 
-	l.ignoreSpaces()
-
-	if l.matchKeyword("through", ast.T_FOR_THROUGH) {
-		if fn := lexExpression(l); fn == nil {
-			panic("Expecting expression after through keyword.")
+	/*
+		if l.matchKeyword("from", ast.T_FOR_FROM) {
+			fn := lexExpression(l)
+			if fn == nil {
+				panic("Expecting range expression after 'from'.")
+			}
+			for fn != nil {
+				fn = lexExpression(l)
+			}
+		} else {
+			panic("Unexpected token. expecting for range keyword: from")
 		}
-	} else {
-		panic("Unexpected token. expecting for range keyword: through")
-	}
+
+		l.ignoreSpaces()
+
+		if l.matchKeyword("through", ast.T_FOR_THROUGH) {
+			fn := lexExpression(l)
+			if fn == nil {
+				panic("Expecting range expression after 'from'.")
+			}
+			for fn != nil {
+				fn = lexExpression(l)
+			}
+		} else {
+			panic("Unexpected token. expecting for range keyword: through")
+		}
+	*/
 	return lexStatement
 }
 
