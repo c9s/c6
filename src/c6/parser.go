@@ -174,20 +174,6 @@ func (self *Parser) peek() *ast.Token {
 	return token
 }
 
-func (self *Parser) isSelector() bool {
-	var tok = self.peek()
-	if tok.Type == ast.T_ID_SELECTOR ||
-		tok.Type == ast.T_TYPE_SELECTOR ||
-		tok.Type == ast.T_CLASS_SELECTOR ||
-		tok.Type == ast.T_PSEUDO_SELECTOR ||
-		tok.Type == ast.T_PARENT_SELECTOR {
-		return true
-	} else if tok.Type == ast.T_BRACKET_LEFT {
-		return true
-	}
-	return false
-}
-
 func (self *Parser) eof() bool {
 	var tok = self.next()
 	self.backup()

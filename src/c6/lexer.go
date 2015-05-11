@@ -299,20 +299,6 @@ func (l *Lexer) emit(tokenType ast.TokenType, params ...bool) {
 	l.emitToken(token)
 }
 
-// lookahead a string til {string}
-func (l *Lexer) lookaheadTil(stop string) string {
-	l.remember()
-	for {
-		var r = l.next()
-		if strings.Contains(stop, string(r)) || r == EOF {
-			break
-		}
-	}
-	var str = l.take()
-	l.rollback()
-	return str
-}
-
 func (l *Lexer) til(str string) {
 	for {
 		var r = l.next()
