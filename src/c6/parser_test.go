@@ -13,6 +13,27 @@ func RunParserTest(code string) []ast.Statement {
 	return parser.ParseScss(code)
 }
 
+func BenchmarkParserBasic(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		var parser = NewParser(NewContext())
+		parser.ParseScss(`div#myId.first-name.last-name {
+			.foo-bar {
+				color: red;
+				background: #fff;
+				border-radius: 10px;
+			}
+
+			@for $i from 1 through 100 { }
+			@if $i == 1 {
+			} @else if $i == 2 {
+			} @else if $i == 3 {
+			} @else {
+			}
+		}`)
+	}
+
+}
+
 func TestParserEmptyRuleSetWithUniversalSelector(t *testing.T) {
 	var stmts = RunParserTest(`* { }`)
 	assert.Equal(t, 1, len(stmts))
