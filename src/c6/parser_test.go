@@ -12,7 +12,14 @@ func RunParserTest(code string) []ast.Statement {
 	return parser.ParseScss(code)
 }
 
-func BenchmarkParserBasic(b *testing.B) {
+func BenchmarkParserEmptyRuleSetWithComplexSelector(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		var parser = NewParser(NewContext())
+		parser.ParseScss(`div#myId.first-name.last-name, span, html, .first-name, .last-name { }`)
+	}
+}
+
+func BenchmarkParserOverAll(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		var parser = NewParser(NewContext())
 		parser.ParseScss(`div#myId.first-name.last-name {

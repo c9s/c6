@@ -1,4 +1,5 @@
 PASS
-BenchmarkLexer	  100000	     22620 ns/op
-BenchmarkParserBasic	   10000	    101098 ns/op
-ok  	c6	3.512s
+BenchmarkLexer	  100000	     22975 ns/op
+BenchmarkParserEmptyRuleSetWithComplexSelector	   50000	     32339 ns/op
+BenchmarkParserOverAll	   20000	     93858 ns/op
+ok  	c6	7.316s
