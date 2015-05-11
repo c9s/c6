@@ -128,19 +128,25 @@ func (self *Parser) acceptTypes(types []ast.TokenType) bool {
 func (self *Parser) next() *ast.Token {
 	var p = self.Pos
 	self.Pos++
+
+	// if we've appended the token
 	if p < len(self.Tokens) {
 		return self.Tokens[p]
-	} else {
-		if len(self.Tokens) > 1 {
-			// get the last token
-			var tok = self.Tokens[len(self.Tokens)-1]
-			if tok == nil {
-				return nil
-			}
+	}
+
+	var tok *ast.Token = nil
+	for len(self.Tokens) <= p {
+		if tok = <-self.Input; tok == nil {
+			return nil
 		}
-		token := <-self.Input
-		self.Tokens = append(self.Tokens, token)
-		return token
+		self.Tokens = append(self.Tokens, tok)
+	}
+	if tok != nil {
+		return tok
+	} else if len(self.Tokens) == 0 {
+		return nil
+	} else if tok := self.Tokens[len(self.Tokens)-1]; tok != nil {
+		return tok
 	}
 	return nil
 }
