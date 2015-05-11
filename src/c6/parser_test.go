@@ -33,8 +33,18 @@ func TestParserEmptyRuleSetWithTypeSelectorGroup(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserEmptyRuleSetWithComplexSelector(t *testing.T) {
+	var stmts = RunParserTest(`div#myId.first-name.last-name, span, html { }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserNestedRuleSetSimple(t *testing.T) {
 	var stmts = RunParserTest(`div, span, html { .foo { color: red; } }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserNestedRuleSetSimple2(t *testing.T) {
+	var stmts = RunParserTest(`div, span, html { .foo { color: red; background: blue; } }`)
 	assert.Equal(t, 1, len(stmts))
 }
 
