@@ -34,7 +34,7 @@ func TestParserEmptyRuleSetWithTypeSelectorGroup(t *testing.T) {
 }
 
 func TestParserEmptyRuleSetWithComplexSelector(t *testing.T) {
-	var stmts = RunParserTest(`div#myId.first-name.last-name, span, html { }`)
+	var stmts = RunParserTest(`div#myId.first-name.last-name, span, html, .first-name, .last-name { }`)
 	assert.Equal(t, 1, len(stmts))
 }
 
@@ -44,7 +44,7 @@ func TestParserNestedRuleSetSimple(t *testing.T) {
 }
 
 func TestParserNestedRuleSetSimple2(t *testing.T) {
-	var stmts = RunParserTest(`div, span, html { .foo { color: red; background: blue; } }`)
+	var stmts = RunParserTest(`div, span, html { .foo { color: red; background: blue; } text-align: text; float: left; }`)
 	assert.Equal(t, 1, len(stmts))
 }
 
