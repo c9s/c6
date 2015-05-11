@@ -8,7 +8,6 @@ import (
 )
 
 func RunParserTest(code string) []ast.Statement {
-	fmt.Printf("Test parsing: %s\n", code)
 	var parser = NewParser(NewContext())
 	return parser.ParseScss(code)
 }
