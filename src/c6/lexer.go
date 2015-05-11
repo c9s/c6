@@ -287,12 +287,13 @@ emit(ast.T_SEMICOLON)
 
 emit(ast.T_PSEUDO_SELECTOR, true) // contains interpolation
 */
-func (l *Lexer) emit(tokenType ast.TokenType, params ...bool) {
+func (l *Lexer) emit(tokenType ast.TokenType, params ...bool) *ast.Token {
 	token := l.createToken(tokenType)
 	if len(params) > 0 && params[0] {
 		token.ContainsInterpolation = true
 	}
 	l.emitToken(token)
+	return token
 }
 
 func (l *Lexer) til(str string) {
@@ -339,6 +340,23 @@ func (l *Lexer) matchKeyword(str string, tokType ast.TokenType) bool {
 		return true
 	}
 	return false
+}
+
+func (l *Lexer) matchKeywordList(keywords []ast.KeywordToken) ast.TokenType {
+	for _, keyword := range keywords {
+		l.remember()
+		if l.match(keyword.Keyword) {
+			var r = l.peek()
+			if unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' || r == '-' {
+				// try next one
+				l.rollback()
+				continue
+			}
+			l.emit(keyword.TokenType)
+			return keyword.TokenType
+		}
+	}
+	return 0
 }
 
 func (l *Lexer) matchKeywordMap(keywords ast.KeywordTokenMap) ast.TokenType {

@@ -188,7 +188,7 @@ Currently the @import rule only supports '@import url(...) media;
 @see https://developer.mozilla.org/en-US/docs/Web/CSS/@import for more @import syntax support
 */
 func lexAtRule(l *Lexer) stateFn {
-	var tokType = l.matchKeywordMap(ast.AtRuleTokenMap)
+	var tokType = l.matchKeywordList(ast.KeywordTokenList)
 	if tokType > 0 {
 		switch tokType {
 		case ast.T_IMPORT:

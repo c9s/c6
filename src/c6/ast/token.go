@@ -10,6 +10,11 @@ const CR = '\n'
 
 type KeywordTokenMap map[string]TokenType
 
+type KeywordToken struct {
+	Keyword   string
+	TokenType TokenType
+}
+
 var FlagTokenMap = KeywordTokenMap{
 	"!global":    T_GLOBAL,
 	"!default":   T_DEFAULT,
@@ -24,8 +29,22 @@ var ForRangeKeywordTokenMap = KeywordTokenMap{
 	"in":      T_FOR_IN,
 }
 
+var KeywordTokenList = []KeywordToken{
+	KeywordToken{"@else if", T_ELSE_IF},
+	KeywordToken{"@else", T_ELSE},
+	KeywordToken{"@if", T_IF},
+	KeywordToken{"@import", T_IMPORT},
+	KeywordToken{"@media", T_MEDIA},
+	KeywordToken{"@return", T_RETURN},
+	KeywordToken{"@include", T_INCLUDE},
+	KeywordToken{"@function", T_FUNCTION},
+	KeywordToken{"@mixin", T_MIXIN},
+	KeywordToken{"@font-face", T_FONT_FACE},
+	KeywordToken{"@for", T_FOR},
+	KeywordToken{"@while", T_WHILE},
+}
+
 var AtRuleTokenMap = KeywordTokenMap{
-	/* CSS */
 	"@else if":   T_ELSE_IF,
 	"@else":      T_ELSE,
 	"@if":        T_IF,
