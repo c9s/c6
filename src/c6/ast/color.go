@@ -1,7 +1,6 @@
 package ast
 
 import "strconv"
-import "fmt"
 
 type Hex string
 
@@ -53,7 +52,6 @@ func HexToRGBA(h string) (uint32, uint32, uint32, float32) {
 	}
 	if len(h) == 6 {
 		if rgb, err := strconv.ParseUint(string(h), 16, 32); err == nil {
-			fmt.Printf("%+v", rgb)
 			return uint32(rgb >> 16), uint32((rgb >> 8) & 0xFF), uint32(rgb & 0xFF), 0
 		}
 	}
