@@ -11,8 +11,6 @@ import "fmt"
 import "unicode"
 import "c6/ast"
 
-type tokenChannel chan *ast.Token
-
 const TOKEN_CHANNEL_BUFFER = 1024
 
 const EOF = -1
@@ -409,7 +407,7 @@ func (l *Lexer) dump() {
 
 func (l *Lexer) runFrom(fn stateFn) {
 	if l.Output == nil {
-		l.Output = make(tokenChannel, TOKEN_CHANNEL_BUFFER)
+		l.Output = make(ast.TokenChannel, TOKEN_CHANNEL_BUFFER)
 	}
 	l.dispatchFn(fn)
 	l.Output <- nil
@@ -417,7 +415,7 @@ func (l *Lexer) runFrom(fn stateFn) {
 
 func (l *Lexer) run() {
 	if l.Output == nil {
-		l.Output = make(tokenChannel, TOKEN_CHANNEL_BUFFER)
+		l.Output = make(ast.TokenChannel, TOKEN_CHANNEL_BUFFER)
 	}
 	l.dispatchFn(lexStart)
 	l.Output <- nil
