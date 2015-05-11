@@ -228,12 +228,12 @@ func lexAtRule(l *Lexer) stateFn {
 		case ast.T_WHILE:
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
-			// go back to block state for lexing
-			l.ignoreSpaces()
 			return lexStatement
 
 		case ast.T_MIXIN:
-			panic("@mixin is not supported yet.")
+			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
+			}
+			return lexStatement
 
 		case ast.T_INCLUDE:
 			panic("@include is not supported yet")

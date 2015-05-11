@@ -643,19 +643,6 @@ func TestLexerInterpolationPropertyName3(t *testing.T) {
 	})
 }
 
-func BenchmarkLexer(b *testing.B) {
-	for n := 0; n < b.N; n++ {
-		// Fib(10)
-		var l = NewLexerWithString(`.test, .foo, .bar { color: #fff; }`)
-		var o = l.getOutput()
-		l.run()
-		var token = <-o
-		for ; token != nil; token = <-o {
-		}
-		l.close()
-	}
-}
-
 func TestLexerRuleWithSubRule(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test {
 		-webkit-transition: none;
@@ -798,4 +785,30 @@ func TestLexerMediaQueryConditionSimpleMaxWidth(t *testing.T) {
 		ast.T_BRACE_END,
 		ast.T_BRACE_END,
 	})
+}
+
+func TestLexerMixinSimple(t *testing.T) {
+	code := `
+	@mixin large-text {
+	  font-size: 32px;
+	}
+	`
+	AssertLexerTokenSequence(t, code, []ast.TokenType{
+		ast.T_MIXIN, ast.T_IDENT, ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON,
+		ast.T_BRACE_END,
+	})
+}
+
+func BenchmarkLexerSimple(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		// Fib(10)
+		var l = NewLexerWithString(`.test, .foo, .bar { color: #fff; }`)
+		var o = l.getOutput()
+		l.run()
+		var token = <-o
+		for ; token != nil; token = <-o {
+		}
+		l.close()
+	}
 }
