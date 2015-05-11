@@ -1,5 +1,5 @@
-// +build release
+// +build !debug
 
 package c6
 
-const debugParser = true
+const debugParser = false
