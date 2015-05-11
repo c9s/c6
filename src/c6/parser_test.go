@@ -242,6 +242,11 @@ func TestParserIfComparisonUnequal(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserIfComparisonUnequalElseIf(t *testing.T) {
+	var stmts = RunParserTest(`@if (3+3) != 6 {  } @else if (3+3) == 6 {  } @else {  }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserForStatementSimple(t *testing.T) {
 	var stmts = RunParserTest(`@for $var from 1 through 20 { }`)
 	assert.Equal(t, 1, len(stmts))

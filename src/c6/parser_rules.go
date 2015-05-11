@@ -931,7 +931,6 @@ func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 		}
 		tok = parser.peek()
 	}
-
 	return &declBlock
 }
 
