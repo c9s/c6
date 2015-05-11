@@ -230,6 +230,7 @@ Grammar Ambiguity <https://www.facebook.com/cindylinz/posts/10202186527405801?hc
 Standards:
 
 - CSS Syntax Module Level 3 <http://www.w3.org/TR/css-syntax-3>
+- CSS Syntax Module Level 3 - Token Diagrams <http://www.w3.org/TR/css-syntax-3/#token-diagrams>
 
 Frameworks, libraries:
 
