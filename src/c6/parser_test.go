@@ -33,6 +33,11 @@ func TestParserEmptyRuleSetWithTypeSelectorGroup(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserNestedRuleSetSimple(t *testing.T) {
+	var stmts = RunParserTest(`div, span, html { .foo { color: red; } }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserPropertyNameBorderWidth(t *testing.T) {
 	var stmts = RunParserTest(`div { border-width: 3px 3px 3px 3px; }`)
 	assert.Equal(t, 1, len(stmts))
