@@ -213,7 +213,17 @@ To run specific test
 - [ ] `@sprite` syntax sugar
 -->
 
+## FAQ
 
+### Why do you want to implement another SASS compiler?
+
+The original SASS is written in Ruby and it's really slow, we take 11 seconds
+to compile the stylesheets of our application, libsass is fast but it does
+catch up the ruby sass implementation and you can't compile them with Compass.
+Since Go is simple, easy & fast, thus we implement SASS in Go to move faster.
+
+Further, we want to design a new language that is compatible with SASS 3.4 or
+even SASS 4.0 with more powerful features.
 
 ## Reference
 
