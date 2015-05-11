@@ -156,8 +156,20 @@ func TestLexerVariableAssignmentWithCommentBlock(t *testing.T) {
 	AssertLexerTokenSequence(t, `$favorite: /* comment */ #fff /* comment 2 */;`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON})
 }
 
-func TestLexerVariableAssignment(t *testing.T) {
+func TestLexerVariableAssignmentHexColor(t *testing.T) {
 	AssertLexerTokenSequence(t, `$favorite: #fff;`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON})
+}
+
+func TestLexerVariableAssignmentString(t *testing.T) {
+	AssertLexerTokenSequence(t, `$favorite: 'string';`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_Q_STRING, ast.T_SEMICOLON})
+}
+
+func TestLexerVariableAssignmentQQString(t *testing.T) {
+	AssertLexerTokenSequence(t, `$favorite: "string";`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_QQ_STRING, ast.T_SEMICOLON})
+}
+
+func TestLexerVariableAssignmentQQStringEscape(t *testing.T) {
+	AssertLexerTokenSequence(t, `$favorite: "str\ning";`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_QQ_STRING, ast.T_SEMICOLON})
 }
 
 func TestLexerVariableAssignmentWithDefaultFlag(t *testing.T) {

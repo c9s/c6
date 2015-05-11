@@ -120,7 +120,6 @@ func lexString(l *Lexer) stateFn {
 				return lexStart
 			} else if r == '\\' {
 				// skip the escape character
-				continue
 			} else if isInterpolationStartToken(r, l.peek()) {
 				l.backup()
 				lexInterpolation(l, false)
