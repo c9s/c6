@@ -13,6 +13,11 @@ func RunParserTest(code string) []ast.Statement {
 	return parser.ParseScss(code)
 }
 
+func TestParserEmptyRuleSetWithUniversalSelector(t *testing.T) {
+	var stmts = RunParserTest(`* { }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserEmptyRuleSetWithClassSelector(t *testing.T) {
 	var stmts = RunParserTest(`.first-name { }`)
 	assert.Equal(t, 1, len(stmts))
@@ -45,6 +50,11 @@ func TestParserNestedRuleSetSimple(t *testing.T) {
 
 func TestParserNestedRuleSetSimple2(t *testing.T) {
 	var stmts = RunParserTest(`div, span, html { .foo { color: red; background: blue; } text-align: text; float: left; }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserNestedRuleWithParentSelector(t *testing.T) {
+	var stmts = RunParserTest(`div, span, html { & { color: red; } }`)
 	assert.Equal(t, 1, len(stmts))
 }
 

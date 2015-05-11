@@ -26,11 +26,11 @@ var ForRangeKeywordTokenMap = KeywordTokenMap{
 
 var AtRuleTokenMap = KeywordTokenMap{
 	/* CSS */
+	"@else if":   T_ELSE_IF,
+	"@else":      T_ELSE,
+	"@if":        T_IF,
 	"@import":    T_IMPORT,
 	"@media":     T_MEDIA,
-	"@if":        T_IF,
-	"@else":      T_ELSE,
-	"@else if":   T_ELSE_IF,
 	"@return":    T_RETURN,
 	"@include":   T_INCLUDE,
 	"@function":  T_FUNCTION,
