@@ -190,18 +190,22 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 		switch tok.Type {
 
 		case ast.T_TYPE_SELECTOR:
+
 			sel := ast.NewTypeSelectorWithToken(tok)
 			ruleset.AppendSelector(sel)
 
 		case ast.T_UNIVERSAL_SELECTOR:
+
 			sel := ast.NewUniversalSelectorWithToken(tok)
 			ruleset.AppendSelector(sel)
 
 		case ast.T_ID_SELECTOR:
+
 			sel := ast.NewIdSelectorWithToken(tok)
 			ruleset.AppendSelector(sel)
 
 		case ast.T_CLASS_SELECTOR:
+
 			sel := ast.NewClassSelectorWithToken(tok)
 			ruleset.AppendSelector(sel)
 
@@ -913,7 +917,6 @@ func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 		var propertyName = parser.ParsePropertyName()
 
 		if propertyName != nil {
-
 			var property = ast.NewProperty(tok)
 			var valueList = parser.ParsePropertyValue(parentRuleSet, property)
 			_ = valueList
@@ -921,11 +924,10 @@ func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 			declBlock.Append(property)
 			_ = property
 
-		} else if stm := parser.ParseStatements(); stm == nil {
-			// TODO: throw syntax error report here
-			panic("Can't parse statements")
+		} else if stm := parser.ParseStatement(); stm != nil {
+
 		} else {
-			panic("Parse failed.")
+			panic(fmt.Errorf("Parse failed at token %s", tok))
 		}
 		tok = parser.peek()
 	}
