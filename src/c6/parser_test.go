@@ -145,6 +145,11 @@ func TestParserMediaQuerySimple(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserMediaQueryNotScreen(t *testing.T) {
+	var stmts = RunParserTest(`@media not screen { .red { color: red; } }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserMediaQueryAllAndMinWidth(t *testing.T) {
 	var stmts = RunParserTest(`@media all and (min-width:500px) {  .red { color: red; } }`)
 	assert.Equal(t, 1, len(stmts))
