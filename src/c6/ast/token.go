@@ -15,6 +15,8 @@ type KeywordToken struct {
 	TokenType TokenType
 }
 
+type KeywordTokenList []KeywordToken
+
 var FlagTokenMap = KeywordTokenMap{
 	"!global":    T_GLOBAL,
 	"!default":   T_DEFAULT,
@@ -29,7 +31,7 @@ var ForRangeKeywordTokenMap = KeywordTokenMap{
 	"in":      T_FOR_IN,
 }
 
-var KeywordTokenList = []KeywordToken{
+var KeywordList = []KeywordToken{
 	KeywordToken{"@else if", T_ELSE_IF},
 	KeywordToken{"@else", T_ELSE},
 	KeywordToken{"@if", T_IF},

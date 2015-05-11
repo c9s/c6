@@ -342,7 +342,7 @@ func (l *Lexer) matchKeyword(str string, tokType ast.TokenType) bool {
 	return false
 }
 
-func (l *Lexer) matchKeywordList(keywords []ast.KeywordToken) ast.TokenType {
+func (l *Lexer) matchKeywordList(keywords ast.KeywordTokenList) ast.TokenType {
 	for _, keyword := range keywords {
 		l.remember()
 		if l.match(keyword.Keyword) {
