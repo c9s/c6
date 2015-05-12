@@ -31,6 +31,7 @@ var ForRangeKeywordTokenMap = KeywordTokenMap{
 	"in":      T_FOR_IN,
 }
 
+// TODO: sort by frequency
 var KeywordList = []KeywordToken{
 	KeywordToken{"@else if", T_ELSE_IF},
 	KeywordToken{"@else", T_ELSE},
