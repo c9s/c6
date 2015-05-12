@@ -45,6 +45,7 @@ var KeywordList = []KeywordToken{
 	KeywordToken{"@font-face", T_FONT_FACE},
 	KeywordToken{"@for", T_FOR},
 	KeywordToken{"@while", T_WHILE},
+	KeywordToken{"@content", T_CONTENT},
 }
 
 var ExprTokenMap = KeywordTokenMap{
@@ -245,7 +246,8 @@ const (
 	T_FOR_IN
 	T_WHILE
 	T_RETURN
-	T_RANGE // for '..'
+	T_RANGE   // for '..'
+	T_CONTENT // for '@content'
 
 	// Flag token types
 	T_GLOBAL
