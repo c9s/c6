@@ -444,7 +444,8 @@ func lexStatement(l *Lexer) stateFn {
 	// strip the leading spaces of a statement
 	l.ignoreSpaces()
 
-	var r rune = l.peek()
+	var r = l.peek()
+	var r2 = l.peekBy(2)
 
 	if r == EOF {
 		return nil
@@ -503,30 +504,42 @@ func lexStatement(l *Lexer) stateFn {
 		// lex the slash prefix property name
 		return lexProperty
 
-	} else if r == '#' || unicode.IsLetter(r) { // it might be -vendor- property or a property name or a selector
+	} else if r == '#' && r2 != '{' {
+
+		return lexSelectors
+
+	} else if unicode.IsLetter(r) || (r == '#') { // it might be -vendor- property or a property name or a selector
 
 		// detect selector syntax
 		l.remember()
 
-		isSelector := false
+		isProperty := false
 
 		r = l.next()
-		for {
-			// ignore interpolation
-			if r == '#' && l.peek() == '{' {
-				// find the matching brace
-				r = l.next()
-				for r != '}' {
+		for r != EOF {
+			// skip interpolation
+			if r == '#' {
+				if l.peek() == '{' {
+					// find the matching brace
 					r = l.next()
+					for r != '}' {
+						r = l.next()
+					}
 				}
-			} else if r == '{' {
-				isSelector = true
-				break
+
+			} else if r == ':' { // pseudo selector -> letters following ':', if there is a space after the ':' then it's a property value.
+
+				if unicode.IsSpace(l.peek()) {
+					isProperty = true
+					break
+				}
+
 			} else if r == ';' {
-				isSelector = false
 				break
 			} else if r == '}' {
-				isSelector = false
+				isProperty = true
+				break
+			} else if r == '{' {
 				break
 			} else if r == EOF {
 				panic("unexpected EOF")
@@ -535,12 +548,12 @@ func lexStatement(l *Lexer) stateFn {
 			r = l.next()
 		}
 
-		// it's a selector, so we end with a brace '{'
 		l.rollback()
-		if isSelector {
-			return lexSelectors
-		} else {
+
+		if isProperty {
 			return lexProperty
+		} else {
+			return lexSelectors
 		}
 
 	} else if r == '[' || r == '*' || r == '>' || r == '&' || r == '#' || r == '.' || r == '+' || r == ':' {

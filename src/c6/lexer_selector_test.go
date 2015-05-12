@@ -337,7 +337,10 @@ func TestLexerRuleWithMultipleSelector(t *testing.T) {
 }
 
 func TestLexerRuleWithSubRuleWithParentSelector(t *testing.T) {
-	l := NewLexerWithString(`.test { -webkit-transition: none;   &.foo { color: #fff; } }`)
+	l := NewLexerWithString(`.test {
+		-webkit-transition: none;  
+		&.foo { color: #fff; }
+	}`)
 	assert.NotNil(t, l)
 	l.run()
 	AssertTokenSequence(t, l, []ast.TokenType{

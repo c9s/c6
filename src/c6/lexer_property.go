@@ -112,7 +112,19 @@ func lexProperty(l *Lexer) stateFn {
 
 	// the '{' is used for the start token of nested properties
 	r = l.peek()
-	for r != ';' && r != '}' && r != '{' && r != EOF && lexExpression(l) != nil {
+	for r != EOF {
+
+		// for nested property value
+		if r == '{' {
+
+			l.next()
+			l.emit(ast.T_BRACE_START)
+			return lexStatement
+
+		} else if lexExpression(l) == nil {
+			break
+		}
+
 		r = l.peek()
 	}
 

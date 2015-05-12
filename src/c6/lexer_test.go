@@ -787,6 +787,40 @@ func TestLexerMediaQueryConditionSimpleMaxWidth(t *testing.T) {
 	})
 }
 
+func TestLexerNestedProperty(t *testing.T) {
+	code := `
+	.foo {
+		border: {
+			color: #fff;
+			width: 100px;
+			style: dashed;
+		}
+	}
+	`
+	AssertLexerTokenSequence(t, code, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+		ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_COLON,
+		ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_COLON,
+		ast.T_HEX_COLOR,
+		ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_COLON,
+		ast.T_INTEGER,
+		ast.T_UNIT_PX,
+		ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_COLON,
+		ast.T_IDENT,
+		ast.T_SEMICOLON,
+		ast.T_BRACE_END,
+		ast.T_BRACE_END,
+	})
+}
+
 func TestLexerMixinSimple(t *testing.T) {
 	code := `
 	@mixin large-text {
@@ -799,6 +833,25 @@ func TestLexerMixinSimple(t *testing.T) {
 		ast.T_BRACE_END,
 	})
 }
+
+/*
+func TestLexerMixinArguments(t *testing.T) {
+	code := `
+@mixin sexy-border($color, $width) {
+  border: {
+    color: $color;
+    width: $width;
+    style: dashed;
+  }
+}
+`
+	AssertLexerTokenSequence(t, code, []ast.TokenType{
+		ast.T_MIXIN, ast.T_IDENT, ast.T_PAREN_START, ast.T_VARIABLE, ast.T_VARIABLE, ast.T_PAREN_END, ast.T_BRACE_START,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON,
+		ast.T_BRACE_END,
+	})
+}
+*/
 
 func BenchmarkLexerSimple(b *testing.B) {
 	for n := 0; n < b.N; n++ {
