@@ -51,11 +51,14 @@ To run specific test
   - [x] Interpolation
   - [x] Property name
   - [x] Property value list
+  - [x] Nested properties.
   - [x] Comma-separated list
   - [x] Space-separated list
   - [x] `@if` , `@else` , `@else if`
   - [x] `@for`, `from`, `through` statement
   - [x] `@while`
+  - [x] `@mixin`
+  - [x] `@mixin` with arguments
   - [x] Flags: `!default`, `!important`, `!optional`, `!global`
   - [x] Hex color
   - [x] Functions

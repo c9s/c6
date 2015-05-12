@@ -403,7 +403,22 @@ func (parser *Parser) ParseFactor() ast.Expression {
 		parser.next()
 		return ast.NewNullWithToken(tok)
 
+	} else if tok.Type == ast.T_FUNCTION_NAME {
+
+		var fcall = parser.ParseFunctionCall()
+		return ast.Expression(fcall)
+
+	} else if tok.Type == ast.T_VARIABLE {
+
+		return parser.ParseVariable()
+
 	} else if tok.Type == ast.T_IDENT {
+
+		var tok2 = parser.peekBy(2)
+		if tok2 != nil && tok2.Type == ast.T_PAREN_START {
+			var fcall = parser.ParseFunctionCall()
+			return ast.Expression(fcall)
+		}
 
 		parser.next()
 		return ast.Expression(ast.NewStringWithToken(tok))
@@ -418,15 +433,6 @@ func (parser *Parser) ParseFactor() ast.Expression {
 		// reduce number
 		var number = parser.ParseNumber()
 		return ast.Expression(number)
-
-	} else if tok.Type == ast.T_FUNCTION_NAME {
-
-		var fcall = parser.ParseFunctionCall()
-		return ast.Expression(fcall)
-
-	} else if tok.Type == ast.T_VARIABLE {
-
-		return parser.ParseVariable()
 
 	} else {
 
