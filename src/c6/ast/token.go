@@ -40,6 +40,7 @@ var KeywordList = []KeywordToken{
 	KeywordToken{"@media", T_MEDIA},
 	KeywordToken{"@return", T_RETURN},
 	KeywordToken{"@each", T_EACH},
+	KeywordToken{"@when", T_WHEN},
 	KeywordToken{"@include", T_INCLUDE},
 	KeywordToken{"@function", T_FUNCTION},
 	KeywordToken{"@mixin", T_MIXIN},
@@ -235,9 +236,10 @@ const (
 
 	T_IF
 	T_ELSE
-	T_ELSE_IF
-	T_INCLUDE
-	T_EACH
+	T_ELSE_IF // @else if
+	T_INCLUDE // for @include
+	T_EACH    // for @each
+	T_WHEN    // for @when
 	T_MIXIN
 	T_FUNCTION
 	T_FOR
