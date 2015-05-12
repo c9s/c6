@@ -103,6 +103,7 @@ To run specific test
   - [ ] Parse `@mixin` statement
   - [ ] Parse `@include` statement
   - [ ] Parse `@function` statement
+  - [ ] Parse `@return` statement
   - [ ] Parse keyword arguments for `@function`
   - [ ] Parse `@switch` statement
   - [ ] Parse `@case` statement
@@ -119,8 +120,6 @@ To run specific test
   - [x] FunctionCall
   - [x] Expression with interpolation
   - [x] Variable statements
-  - [x] If Condition
-  - [x] If Else If, Else Condition
   - [x] Built-in color keyword table
   - [x] Hex Color computation
   - [x] Number operation: add, sub, mul, div
@@ -128,8 +127,17 @@ To run specific test
   - [x] Expression evaluation
   - [x] Boolean expression evaluation
   - [x] Media Query conditions
+  - [x] `@if` If Condition
+  - [x] `@else if` If Else If
+  - [x] `@else` else condition
+  - [ ] `@while` statement node
+  - [ ] `@each` statement node
+  - [ ] `@function` statement node
+  - [ ] `@mixin` statement node
+  - [ ] `@include` statement node
+  - [ ] `@return` statement node
+- [ ] Runtime
   - [ ] HSL Color computation
-
 - [ ] SASS Built-in Functions
   - [ ] RGB functions
     - [ ] `rgb($red, $green, $blue)`
