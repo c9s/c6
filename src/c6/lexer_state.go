@@ -220,31 +220,42 @@ func lexAtRule(l *Lexer) stateFn {
 			return lexStatement
 
 		case ast.T_ELSE:
+
 			return lexStatement
 
 		case ast.T_FOR:
+
 			return lexForStatement
 
 		case ast.T_WHILE:
+
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
 			return lexStatement
 
 		case ast.T_RETURN:
+
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
 			return lexStatement
 
 		case ast.T_MIXIN:
+
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
 			return lexStatement
 
 		case ast.T_INCLUDE:
-			panic("@include is not supported yet")
+
+			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
+			}
+			return lexStatement
 
 		case ast.T_FUNCTION:
-			panic("@function is not supported yet")
+
+			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
+			}
+			return lexStatement
 
 		default:
 			var r = l.next()
