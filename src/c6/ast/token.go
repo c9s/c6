@@ -47,21 +47,6 @@ var KeywordList = []KeywordToken{
 	KeywordToken{"@while", T_WHILE},
 }
 
-var AtRuleTokenMap = KeywordTokenMap{
-	"@else if":   T_ELSE_IF,
-	"@else":      T_ELSE,
-	"@if":        T_IF,
-	"@import":    T_IMPORT,
-	"@media":     T_MEDIA,
-	"@return":    T_RETURN,
-	"@include":   T_INCLUDE,
-	"@function":  T_FUNCTION,
-	"@mixin":     T_MIXIN,
-	"@font-face": T_FONT_FACE,
-	"@for":       T_FOR,
-	"@while":     T_WHILE,
-}
-
 var ExprTokenMap = KeywordTokenMap{
 	"true":  T_TRUE,
 	"false": T_FALSE,
