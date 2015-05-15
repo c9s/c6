@@ -380,7 +380,7 @@ func lexVariableName(l *Lexer) stateFn {
 	}
 
 	r = l.next()
-	for {
+	for r != EOF {
 		if r == '-' {
 			var r2 = l.peek()
 			if unicode.IsLetter(r2) { // $a-b is a valid variable name.
@@ -401,13 +401,18 @@ func lexVariableName(l *Lexer) stateFn {
 			l.emit(ast.T_VARIABLE)
 			return lexStatement
 			break
-		} else if r == EOF || unicode.IsSpace(r) || r == ';' {
+		} else if unicode.IsSpace(r) || r == ';' {
 			break
 		}
 		r = l.next()
 	}
 	l.backup()
 	l.emit(ast.T_VARIABLE)
+
+	if l.match("...") {
+		l.emit(ast.T_VARIABLE_ARGUMENTS)
+	}
+
 	return lexStatement
 }
 

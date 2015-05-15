@@ -315,6 +315,7 @@ const (
 	T_SUBSTRING_MATCH // for '*='
 
 	T_VARIABLE
+	T_VARIABLE_ARGUMENTS // for '...'
 
 	T_IMPORT
 	T_AT_RULE
