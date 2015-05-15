@@ -118,7 +118,8 @@ func (tok Token) IsSelectorCombinator() bool {
 	return tok.Type == T_ADJACENT_SIBLING_COMBINATOR ||
 		tok.Type == T_CHILD_COMBINATOR ||
 		tok.Type == T_GENERAL_SIBLING_COMBINATOR ||
-		tok.Type == T_DESCENDANT_COMBINATOR
+		tok.Type == T_DESCENDANT_COMBINATOR ||
+		tok.Type == T_GROUP_COMBINATOR
 }
 
 func (tok Token) IsSelector() bool {
@@ -126,7 +127,8 @@ func (tok Token) IsSelector() bool {
 	case T_TYPE_SELECTOR, T_UNIVERSAL_SELECTOR, T_ID_SELECTOR,
 		T_CLASS_SELECTOR, T_PARENT_SELECTOR, T_PSEUDO_SELECTOR,
 		T_ADJACENT_SIBLING_COMBINATOR, T_GENERAL_SIBLING_COMBINATOR,
-		T_CHILD_COMBINATOR, T_DESCENDANT_COMBINATOR:
+		T_CHILD_COMBINATOR, T_DESCENDANT_COMBINATOR,
+		ast.T_BRACKET_LEFT: // '[' is the first token of attribute selector.
 		return true
 	}
 	return false
@@ -233,6 +235,7 @@ const (
 	T_CHILD_COMBINATOR            // E '>' F
 	T_ADJACENT_SIBLING_COMBINATOR // E '+' F
 	T_GENERAL_SIBLING_COMBINATOR  // E '~' F
+	T_GROUP_COMBINATOR            // E ',' F
 
 	T_UNICODE_RANGE
 
