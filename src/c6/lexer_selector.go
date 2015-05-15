@@ -223,8 +223,8 @@ func lexSelectors(l *Lexer) stateFn {
 	if tok := l.lastToken(); tok != nil && isSelector(tok.Type) {
 		var foundSpace = false
 		var r = l.next()
-		for r == ' ' || r == '/' {
-			if r == ' ' {
+		for unicode.IsSpace(r) || r == '/' {
+			if unicode.IsSpace(r) {
 				foundSpace = true
 			}
 			lexComment(l, false)
@@ -321,13 +321,15 @@ func lexSelectors(l *Lexer) stateFn {
 		return lexSelectors
 
 	} else if r == '+' {
+
 		l.next()
 		l.emit(ast.T_ADJACENT_SIBLING_COMBINATOR)
 		return lexSelectors
-	} else if r == ' ' {
+
+	} else if unicode.IsSpace(r) {
 
 		l.next()
-		for r == ' ' {
+		for unicode.IsSpace(r) {
 			r = l.next()
 		}
 		l.backup()

@@ -394,7 +394,7 @@ func (l *Lexer) ignoreSpaces() int {
 			space++
 			l.Line++
 			l.next()
-		} else if r == ' ' || r == '\t' || r == '\r' {
+		} else if unicode.IsSpace(r) {
 			space++
 			l.next()
 		} else {

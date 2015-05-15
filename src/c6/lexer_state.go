@@ -411,7 +411,7 @@ func lexVariableName(l *Lexer) stateFn {
 			l.emit(ast.T_VARIABLE)
 			return lexStatement
 			break
-		} else if r == EOF || r == ' ' || r == ';' {
+		} else if r == EOF || unicode.IsSpace(r) || r == ';' {
 			break
 		}
 		r = l.next()
