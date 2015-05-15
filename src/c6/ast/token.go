@@ -38,6 +38,7 @@ var KeywordList = []KeywordToken{
 	KeywordToken{"@if", T_IF},
 	KeywordToken{"@import", T_IMPORT},
 	KeywordToken{"@media", T_MEDIA},
+	KeywordToken{"@page", T_PAGE},
 	KeywordToken{"@return", T_RETURN},
 	KeywordToken{"@each", T_EACH},
 	KeywordToken{"@when", T_WHEN},
@@ -187,6 +188,7 @@ const (
 	T_IDENT
 	T_URL
 	T_MEDIA
+	T_PAGE
 
 	T_TRUE
 	T_FALSE
