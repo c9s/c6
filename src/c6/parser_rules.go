@@ -1268,7 +1268,7 @@ func (parser *Parser) ParseMixinStatement() ast.Statement {
 
 		stm.Ident = tok
 
-		parser.ParseArgumentList()
+		stm.ArgumentList = parser.ParseArgumentList()
 	}
 
 	var block = parser.ParseDeclarationBlock()
@@ -1292,12 +1292,18 @@ func (parser *Parser) ParseArgument() *ast.Argument {
 	return arg
 }
 
-func (parser *Parser) ParseArgumentList() {
+func (parser *Parser) ParseArgumentList() *ast.ArgumentList {
+	var args = ast.NewArgumentList()
+
 	parser.expect(ast.T_PAREN_OPEN)
 	var tok = parser.peek()
 	for tok.Type != ast.T_PAREN_CLOSE {
-		parser.ParseArgument()
-
+		if arg := parser.ParseArgument(); arg != nil {
+			args.Append(arg)
+		} else {
+			// if fail
+			break
+		}
 		if tok = parser.accept(ast.T_COMMA); tok != nil {
 			continue
 		} else {
@@ -1305,4 +1311,5 @@ func (parser *Parser) ParseArgumentList() {
 		}
 	}
 	parser.expect(ast.T_PAREN_CLOSE)
+	return args
 }

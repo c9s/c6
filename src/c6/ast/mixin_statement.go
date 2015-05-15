@@ -3,9 +3,10 @@ package ast
 // import ""
 
 type MixinStatement struct {
-	Token *Token
-	Ident *Token
-	Block *DeclarationBlock
+	Token        *Token
+	Ident        *Token
+	Block        *DeclarationBlock
+	ArgumentList *ArgumentList
 }
 
 func (stm MixinStatement) CanBeStatement() {}
