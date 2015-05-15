@@ -232,6 +232,12 @@ func lexAtRule(l *Lexer) stateFn {
 			return lexStatement
 
 		case ast.T_PAGE:
+			l.ignoreSpaces()
+
+			// lex pseudo selector ... if any
+			if l.peek() == ':' {
+				lexPseudoSelector(l)
+			}
 			return lexStatement
 
 		case ast.T_MEDIA:

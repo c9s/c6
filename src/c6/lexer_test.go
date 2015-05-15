@@ -742,6 +742,16 @@ func TestLexerForStatementSimpleFromThrough(t *testing.T) {
 	})
 }
 
+func TestLexerPagedMedia(t *testing.T) {
+	AssertLexerTokenSequence(t, `@page { margin: 2cm }`,
+		[]ast.TokenType{ast.T_PAGE, ast.T_BRACE_START, ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_CM, ast.T_BRACE_END})
+}
+
+func TestLexerPagedMediaWithPseudoSelector(t *testing.T) {
+	AssertLexerTokenSequence(t, `@page :left { margin: 2cm }`,
+		[]ast.TokenType{ast.T_PAGE, ast.T_PSEUDO_SELECTOR, ast.T_BRACE_START, ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_CM, ast.T_BRACE_END})
+}
+
 /**********************************************************************
 Media Query Test Case
 ***********************************************************************/
