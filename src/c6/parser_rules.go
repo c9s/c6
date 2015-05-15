@@ -224,18 +224,21 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 
 		case ast.T_ADJACENT_SIBLING_COMBINATOR:
 
-			ruleset.AppendSelector(&ast.AdjacentCombinator{})
+			ruleset.AppendSelector(ast.NewAdjacentCombinatorWithToken(tok))
 
 		case ast.T_CHILD_COMBINATOR:
 
-			ruleset.AppendSelector(&ast.ChildCombinator{})
+			ruleset.AppendSelector(ast.NewChildCombinatorWithToken(tok))
 
 		case ast.T_DESCENDANT_COMBINATOR:
 
-			ruleset.AppendSelector(&ast.DescendantCombinator{})
+			ruleset.AppendSelector(ast.NewDescendantCombinatorWithToken(tok))
 
 		case ast.T_COMMA:
-			// XXX, selector group
+			ruleset.AppendSelector(ast.NewGroupCombinatorWithToken(tok))
+
+		case ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME:
+			unimplemented("attribute selector")
 
 		default:
 			panic(fmt.Errorf("Unexpected selector token: %+v", tok))

@@ -163,6 +163,21 @@ func NewDescendantCombinator() *DescendantCombinator {
 	return &DescendantCombinator{}
 }
 
+type GroupCombinator struct {
+	Token *Token
+}
+
+func (self GroupCombinator) IsSelector()    {}
+func (self GroupCombinator) String() string { return ", " }
+
+func NewGroupCombinatorWithToken(token *Token) *GroupCombinator {
+	return &GroupCombinator{token}
+}
+
+func NewGroupCombinator() *GroupCombinator {
+	return &GroupCombinator{}
+}
+
 type ChildCombinator struct {
 	Token *Token
 }
