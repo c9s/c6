@@ -58,7 +58,7 @@ func (parser *Parser) ParseStatement() ast.Statement {
 	case ast.T_FOR:
 		return parser.ParseForStatement()
 	case ast.T_CONTENT:
-		return parser.ParseContentBlockDirective()
+		return parser.ParseContentStatement()
 	}
 
 	if token.IsSelector() {
@@ -1330,7 +1330,11 @@ func (parser *Parser) ParseArgumentList() *ast.ArgumentList {
 	return args
 }
 
-func (parser *Parser) ParseContentBlockDirective() ast.Statement {
-	parser.expect(ast.T_CONTENT)
-	return nil
+/*
+@content directive is only allowed in mixin block
+*/
+func (parser *Parser) ParseContentStatement() ast.Statement {
+	var tok = parser.expect(ast.T_CONTENT)
+	parser.expect(ast.T_SEMICOLON)
+	return ast.NewContentStatementWithToken(tok)
 }
