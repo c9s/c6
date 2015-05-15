@@ -237,8 +237,21 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 		case ast.T_COMMA:
 			ruleset.AppendSelector(ast.NewGroupCombinatorWithToken(tok))
 
-		case ast.T_BRACKET_OPEN, ast.T_ATTRIBUTE_NAME:
-			unimplemented("attribute selector")
+		case ast.T_BRACKET_OPEN:
+			var attrName = parser.expect(ast.T_ATTRIBUTE_NAME)
+			var tok2 = parser.next()
+			if tok2.IsAttributeMatchOperator() {
+				var tok3 = parser.next()
+				var sel = ast.NewAttributeSelector(attrName, tok2, tok3)
+				ruleset.AppendSelector(sel)
+				parser.expect(ast.T_BRACKET_CLOSE)
+
+			} else if tok2.Type == ast.T_BRACKET_CLOSE {
+				var sel = ast.NewAttributeSelectorNameOnly(attrName)
+				ruleset.AppendSelector(sel)
+			} else {
+				panic(fmt.Errorf("Unexpected token type: %s", tok2))
+			}
 
 		default:
 			panic(fmt.Errorf("Unexpected selector token: %+v", tok))

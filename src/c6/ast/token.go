@@ -134,6 +134,19 @@ func (tok Token) IsSelector() bool {
 	return false
 }
 
+func (tok Token) IsAttributeMatchOperator() bool {
+	switch tok.Type {
+	case T_ATTR_EQUAL,
+		T_INCLUDE_MATCH,   // for '~='
+		T_PREFIX_MATCH,    // for '^='
+		T_DASH_MATCH,      // for '|='
+		T_SUFFIX_MATCH,    // for '$='
+		T_SUBSTRING_MATCH: // for '*='
+		return true
+	}
+	return false
+}
+
 func (tok Token) IsFlagKeyword() bool {
 	switch tok.Type {
 	case T_DEFAULT, T_OPTIONAL, T_GLOBAL, T_IMPORTANT:

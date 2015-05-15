@@ -457,15 +457,12 @@ func BenchmarkParserClassSelector(b *testing.B) {
 	}
 }
 
-/*
-FIXME:
 func BenchmarkParserAttributeSelector(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		var parser = NewParser(NewContext())
 		parser.ParseScss(`input[type=text] {  }`)
 	}
 }
-*/
 
 func BenchmarkParserComplexSelector(b *testing.B) {
 	for i := 0; i < b.N; i++ {

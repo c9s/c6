@@ -82,17 +82,25 @@ func NewClassSelector(className string) *ClassSelector {
 }
 
 type AttributeSelector struct {
-	Name    string
-	Op      string
-	Pattern string
+	Name    *Token
+	Match   *Token
+	Pattern *Token
 }
 
 func (self AttributeSelector) IsSelector() {}
 func (self AttributeSelector) String() (out string) {
-	if self.Op != "" && self.Pattern != "" {
-		return "[" + self.Name + self.Op + self.Pattern + "]"
+	if self.Match != nil && self.Pattern != nil {
+		return "[" + self.Name.String() + self.Match.String() + self.Pattern.String() + "]"
 	}
-	return "[" + self.Name + "]"
+	return "[" + self.Name.String() + "]"
+}
+
+func NewAttributeSelector(name, match, pattern *Token) *AttributeSelector {
+	return &AttributeSelector{name, match, pattern}
+}
+
+func NewAttributeSelectorNameOnly(name *Token) *AttributeSelector {
+	return &AttributeSelector{name, nil, nil}
 }
 
 type UniversalSelector struct {
