@@ -231,6 +231,11 @@ func lexAtRule(l *Lexer) stateFn {
 			}
 			return lexStatement
 
+		case ast.T_PAGE:
+			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
+			}
+			return lexStatement
+
 		case ast.T_MEDIA:
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
