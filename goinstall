@@ -6,3 +6,4 @@ get golang.org/x/text/transform
 get github.com/stretchr/testify/assert
 get golang.org/x/tools/cmd/goimports
 get golang.org/x/tools/cmd/benchcmp
+get github.com/ajstarks/svgo/benchviz

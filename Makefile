@@ -13,12 +13,17 @@ test: all
 	go test c6/runtime
 	go test c6
 
-benchupdate:
+benchupdatebase:
 	go test -run=NONE -bench=. c6 >| benchmarks/old.txt
 
-benchcmp: all
+benchrecord:
 	go test -run=NONE -bench=. c6 >| benchmarks/new.txt
+
+benchcmp: all benchrecord
 	vendor/bin/benchcmp benchmarks/old.txt benchmarks/new.txt
+
+benchviz: all benchrecord
+	vendor/bin/benchcmp benchmarks/old.txt benchmarks/new.txt | benchviz > benchmarks/summary.svg
 
 cov:
 	go test -coverprofile=c6.cov c6
