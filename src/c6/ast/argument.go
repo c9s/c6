@@ -1,12 +1,13 @@
 package ast
 
 type Argument struct {
-	VariableName *Token
-	DefaultValue Expression
+	VariableName   *Token
+	DefaultValue   Expression
+	VariableLength bool
 }
 
 func NewArgumentWithToken(variableName *Token) *Argument {
-	return &Argument{variableName, nil}
+	return &Argument{variableName, nil, false}
 }
 
 type ArgumentList []*Argument

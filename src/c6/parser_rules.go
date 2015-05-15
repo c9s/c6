@@ -1308,7 +1308,8 @@ func (parser *Parser) ParseArgumentList() *ast.ArgumentList {
 	parser.expect(ast.T_PAREN_OPEN)
 	var tok = parser.peek()
 	for tok.Type != ast.T_PAREN_CLOSE {
-		if arg := parser.ParseArgument(); arg != nil {
+		var arg *ast.Argument = nil
+		if arg = parser.ParseArgument(); arg != nil {
 			args.Append(arg)
 		} else {
 			// if fail
@@ -1316,6 +1317,9 @@ func (parser *Parser) ParseArgumentList() *ast.ArgumentList {
 		}
 		if tok = parser.accept(ast.T_COMMA); tok != nil {
 			continue
+		} else if tok = parser.accept(ast.T_VARIABLE_LENGTH_ARGUMENTS); tok != nil {
+			arg.VariableLength = true
+			break
 		} else {
 			break
 		}
