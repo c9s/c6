@@ -161,8 +161,7 @@ func lexString(l *Lexer) stateFn {
 	return nil
 }
 
-func lexUrl(l *Lexer) {
-
+func lexImportUrl(l *Lexer) {
 	if l.match("url") {
 
 		l.emit(ast.T_IDENT)
@@ -205,7 +204,7 @@ func lexAtRule(l *Lexer) stateFn {
 		switch tokType {
 		case ast.T_IMPORT:
 			l.ignoreSpaces()
-			lexUrl(l)
+			lexImportUrl(l)
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
 			return lexStatement
