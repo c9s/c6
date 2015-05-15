@@ -499,13 +499,13 @@ func TestLexerForStatementSimpleFromThrough(t *testing.T) {
 
 func TestLexerNestedProperty(t *testing.T) {
 	code := `
-	.foo {
-		border: {
-			color: #fff;
-			width: 100px;
-			style: dashed;
-		}
-	}
+.foo {
+  border: {
+    color: #fff;
+    width: 100px;
+    style: dashed;
+  }
+}
 	`
 	AssertLexerTokenSequence(t, code, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
@@ -527,6 +527,40 @@ func TestLexerNestedProperty(t *testing.T) {
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
 		ast.T_BRACE_CLOSE,
+		ast.T_BRACE_CLOSE,
+	})
+}
+
+func TestLexerNestedProperty2(t *testing.T) {
+	code := `
+.funky {
+  font: 20px/24px fantasy {
+	weight: bold;
+  }
+}
+	`
+	AssertLexerTokenSequence(t, code, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+
+		ast.T_BRACE_OPEN,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_COLON,
+
+		ast.T_INTEGER,
+		ast.T_UNIT_PX,
+		ast.T_DIV,
+		ast.T_INTEGER,
+		ast.T_UNIT_PX,
+
+		ast.T_IDENT,
+
+		ast.T_BRACE_OPEN,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_COLON,
+		ast.T_IDENT,
+		ast.T_SEMICOLON,
+		ast.T_BRACE_CLOSE,
+
 		ast.T_BRACE_CLOSE,
 	})
 }
