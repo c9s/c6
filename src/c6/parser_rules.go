@@ -1276,18 +1276,20 @@ func (parser *Parser) ParseMixinStatement() ast.Statement {
 	return stm
 }
 
-func (parser *Parser) ParseArgument() bool {
+func (parser *Parser) ParseArgument() *ast.Argument {
 	debug("ParseArgumentList")
 
 	var varTok *ast.Token = nil
 	if varTok = parser.accept(ast.T_VARIABLE); varTok == nil {
-		return false
+		return nil
 	}
 
+	var arg = ast.NewArgumentWithToken(varTok)
+
 	if parser.accept(ast.T_COLON) != nil {
-		parser.ParseValueStrict()
+		arg.DefaultValue = parser.ParseValueStrict()
 	}
-	return true
+	return arg
 }
 
 func (parser *Parser) ParseArgumentList() {
