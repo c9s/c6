@@ -225,6 +225,11 @@ To run specific test
 - [ ] `@sprite` syntax sugar
 -->
 
+
+## Self Benchmarking
+
+[![BenchViz](https://raw.githubusercontent.com/c9s/c6/master/benchmarks/summary.svg)](https://raw.githubusercontent.com/c9s/c6/master/benchmarks/summary.svg)
+
 ## FAQ
 
 ### Why do you want to implement another SASS compiler?
@@ -259,6 +264,9 @@ Frameworks, libraries:
 - Bourbon <http://bourbon.io/>
 
 - Marx <https://github.com/mblode/marx>
+
+
+
 
 ## Community
 
