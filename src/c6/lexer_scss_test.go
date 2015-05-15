@@ -2,7 +2,6 @@ package c6
 
 import "c6/ast"
 import "testing"
-import "github.com/stretchr/testify/assert"
 
 /**
 Variable assignment test cases
@@ -532,6 +531,26 @@ func TestLexerNestedProperty(t *testing.T) {
 	})
 }
 
+/************************************************************
+Function test case
+*************************************************************/
+func TestLexerFunctionGridWidth(t *testing.T) {
+	code := `
+	@function grid-width($n) {
+		@return $n * $grid-width + ($n - 1) * $gutter-width;
+	}
+	`
+	AssertLexerTokenSequence(t, code, []ast.TokenType{
+		ast.T_FUNCTION, ast.T_FUNCTION_NAME, ast.T_PAREN_START, ast.T_VARIABLE, ast.T_PAREN_END, ast.T_BRACE_START,
+		ast.T_RETURN, ast.T_VARIABLE, ast.T_MUL, ast.T_VARIABLE, ast.T_PLUS, ast.T_PAREN_START, ast.T_VARIABLE, ast.T_MINUS, ast.T_INTEGER, ast.T_PAREN_END, ast.T_MUL, ast.T_VARIABLE,
+		ast.T_SEMICOLON,
+		ast.T_BRACE_END,
+	})
+}
+
+/************************************************************
+Mixin test cases
+*************************************************************/
 func TestLexerMixinSimple(t *testing.T) {
 	code := `
 	@mixin large-text {

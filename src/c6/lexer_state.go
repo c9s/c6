@@ -275,26 +275,7 @@ func lexAtRule(l *Lexer) stateFn {
 			}
 			return lexStatement
 
-		case ast.T_RETURN:
-
-			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
-			}
-			return lexStatement
-
-		case ast.T_MIXIN:
-
-			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
-			}
-			return lexStatement
-
-		case ast.T_INCLUDE:
-
-			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
-			}
-			return lexStatement
-
-		case ast.T_FUNCTION:
-
+		case ast.T_FUNCTION, ast.T_RETURN, ast.T_MIXIN, ast.T_INCLUDE:
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
 			return lexStatement
