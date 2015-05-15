@@ -161,6 +161,28 @@ func lexString(l *Lexer) stateFn {
 	return nil
 }
 
+func lexUrl(l *Lexer) {
+	if !l.match("url") {
+		panic("Expecting token url(")
+	}
+
+	l.emit(ast.T_IDENT)
+	l.match("(")
+	l.emit(ast.T_PAREN_START)
+	l.ignoreSpaces()
+
+	var q = l.peek()
+	if q == '"' || q == '\'' {
+		lexString(l)
+	} else {
+		lexUnquoteStringExclude(l, " ()")
+	}
+
+	l.ignoreSpaces()
+	l.match(")")
+	l.emit(ast.T_PAREN_END)
+}
+
 func lexImportUrl(l *Lexer) {
 	if l.match("url") {
 
