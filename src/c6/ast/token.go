@@ -288,9 +288,8 @@ const (
 	T_GE      // for '>='
 	T_LE      // for '<='
 
-	T_ASSIGN            // for '='
-	T_ATTR_EQUAL        // for '=' inside attribute selecctors
-	T_ATTR_HYPHEN_EQUAL // for '|='
+	T_ASSIGN     // for '='
+	T_ATTR_EQUAL // for '=' inside attribute selecctors
 
 	T_INCLUDE_MATCH   // for '~='
 	T_PREFIX_MATCH    // for '^='
