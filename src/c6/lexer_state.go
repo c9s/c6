@@ -25,7 +25,7 @@ func lexCommentLine(l *Lexer, emit bool) stateFn {
 
 	var r = l.next()
 	for r != '\n' && r != EOF {
-		l.next()
+		r = l.next()
 	}
 	l.backup()
 	if emit {
