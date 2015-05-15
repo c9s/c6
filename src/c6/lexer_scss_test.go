@@ -564,6 +564,15 @@ func TestLexerMixinSimple(t *testing.T) {
 	})
 }
 
+func TestLexerMixinInclude(t *testing.T) {
+	code := `
+	@include large-text;
+	`
+	AssertLexerTokenSequence(t, code, []ast.TokenType{
+		ast.T_INCLUDE, ast.T_IDENT, ast.T_SEMICOLON,
+	})
+}
+
 func TestLexerMixinArguments(t *testing.T) {
 	code := `
 @mixin sexy-border($color, $width) {
