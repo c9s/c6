@@ -49,6 +49,7 @@ var KeywordList = []KeywordToken{
 	KeywordToken{"@for", T_FOR},
 	KeywordToken{"@while", T_WHILE},
 	KeywordToken{"@content", T_CONTENT},
+	KeywordToken{"@extend", T_EXTEND},
 }
 
 var ExprTokenMap = KeywordTokenMap{
@@ -251,21 +252,22 @@ const (
 
 	T_UNICODE_RANGE
 
-	T_IF
-	T_ELSE
-	T_ELSE_IF // @else if
-	T_INCLUDE // for @include
-	T_EACH    // for @each
-	T_WHEN    // for @when
-	T_MIXIN
-	T_FUNCTION
+	T_IF       // @if
+	T_ELSE     // @else
+	T_ELSE_IF  // @else if
+	T_INCLUDE  // for @include
+	T_EACH     // for @each
+	T_WHEN     // for @when
+	T_MIXIN    // for @mixin
+	T_EXTEND   // for @extend
+	T_FUNCTION // for @function
 	T_FOR
 	T_FOR_FROM
 	T_FOR_THROUGH
 	T_FOR_TO
-	T_FOR_IN
-	T_WHILE
-	T_RETURN
+	T_FOR_IN  // for @for ... in
+	T_WHILE   // for @while
+	T_RETURN  // for @return
 	T_RANGE   // for '..'
 	T_CONTENT // for '@content'
 
