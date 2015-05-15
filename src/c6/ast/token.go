@@ -314,8 +314,8 @@ const (
 	T_SUFFIX_MATCH    // for '$='
 	T_SUBSTRING_MATCH // for '*='
 
-	T_VARIABLE
-	T_VARIABLE_ARGUMENTS // for '...'
+	T_VARIABLE                  // for $[a-z]*
+	T_VARIABLE_LENGTH_ARGUMENTS // for '...'
 
 	T_IMPORT
 	T_AT_RULE

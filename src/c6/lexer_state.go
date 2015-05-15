@@ -410,7 +410,7 @@ func lexVariableName(l *Lexer) stateFn {
 	l.emit(ast.T_VARIABLE)
 
 	if l.match("...") {
-		l.emit(ast.T_VARIABLE_ARGUMENTS)
+		l.emit(ast.T_VARIABLE_LENGTH_ARGUMENTS)
 	}
 
 	return lexStatement
