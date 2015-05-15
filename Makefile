@@ -23,7 +23,7 @@ benchcmp: all benchrecord
 	vendor/bin/benchcmp benchmarks/old.txt benchmarks/new.txt
 
 benchviz: all benchrecord
-	vendor/bin/benchcmp benchmarks/old.txt benchmarks/new.txt | benchviz > benchmarks/summary.svg
+	vendor/bin/benchcmp benchmarks/old.txt benchmarks/new.txt | benchviz -top=5 -left=5 > benchmarks/summary.svg
 
 cov:
 	go test -coverprofile=c6.cov c6
