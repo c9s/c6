@@ -2,7 +2,6 @@ package c6
 
 import (
 	"c6/ast"
-	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -137,31 +136,31 @@ func TestParserImportRuleWithString(t *testing.T) {
 func TestParserImportRuleWithMedia(t *testing.T) {
 	var stmts = RunParserTest(`@import url("foo.css") screen;`)
 	assert.Equal(t, 1, len(stmts))
-	fmt.Printf("Statements: %+v\n", stmts)
+	t.Logf("Statements: %+v\n", stmts)
 }
 
 func TestParserImportRuleWithMultipleMediaTypes(t *testing.T) {
 	var stmts = RunParserTest(`@import url("bluish.css") projection, tv;`)
 	assert.Equal(t, 1, len(stmts))
-	fmt.Printf("Statements: %+v\n", stmts)
+	t.Logf("Statements: %+v\n", stmts)
 }
 
 func TestParserImportRuleWithMediaTypeAndColorFeature(t *testing.T) {
 	var stmts = RunParserTest(`@import url(color.css) screen and (color);`)
 	assert.Equal(t, 1, len(stmts))
-	fmt.Printf("Statements: %+v\n", stmts)
+	t.Logf("Statements: %+v\n", stmts)
 }
 
 func TestParserImportRuleWithMediaTypeAndMaxWidthFeature(t *testing.T) {
 	var stmts = RunParserTest(`@import url(color.css) screen and (max-width: 300px);`)
 	assert.Equal(t, 1, len(stmts))
-	fmt.Printf("Statements: %+v\n", stmts)
+	t.Logf("Statements: %+v\n", stmts)
 }
 
 func TestParserImportRuleWithMedia2(t *testing.T) {
 	var stmts = RunParserTest(`@import url("foo.css") screen and (orientation:landscape);`)
 	assert.Equal(t, 1, len(stmts))
-	fmt.Printf("Statements: %+v\n", stmts)
+	t.Logf("Statements: %+v\n", stmts)
 }
 
 func TestParserMediaQuerySimple(t *testing.T) {
@@ -323,7 +322,7 @@ func TestParserCSS3Gradient(t *testing.T) {
 	}
 	for _, buffer := range buffers {
 		var block = RunParserTest(buffer)
-		fmt.Printf("%+v\n", block)
+		t.Logf("%+v\n", block)
 	}
 }
 
@@ -338,7 +337,7 @@ func TestParserPropertyListExpression(t *testing.T) {
 	}
 	for _, buffer := range buffers {
 		var block = RunParserTest(buffer)
-		fmt.Printf("%+v\n", block)
+		t.Logf("%+v\n", block)
 	}
 }
 
@@ -346,62 +345,82 @@ func TestParserFontCssSlash(t *testing.T) {
 	// should be plain CSS, no division
 	// TODO: verify this case
 	var block = RunParserTest(`.foo { font: 12px/24px; }`)
-	fmt.Printf("%+v\n", block)
+	t.Logf("%+v\n", block)
 }
 
 func TestParserVariableAssignmentWithMorePlus(t *testing.T) {
 	var block = RunParserTest(`$foo: 12px + 20px + 20px;`)
-	fmt.Printf("%+v\n", block)
+	t.Logf("%+v\n", block)
 }
 
 func TestParserVariableAssignmentWithExpressionDefaultFlag(t *testing.T) {
 	var block = RunParserTest(`$foo: 12px + 20px + 20px !default;`)
-	fmt.Printf("%+v\n", block)
+	t.Logf("%+v\n", block)
 }
 
 func TestParserVariableAssignmentWithExpressionOptionalFlag(t *testing.T) {
 	var block = RunParserTest(`$foo: 12px + 20px + 20px !optional;`)
-	fmt.Printf("%+v\n", block)
+	t.Logf("%+v\n", block)
 }
 
 func TestParserVariableAssignmentWithComplexExpression(t *testing.T) {
 	var stmts = RunParserTest(`$foo: 12px * (20px + 20px) + 4px / 2;`)
-	fmt.Printf("%+v\n", stmts[0])
+	t.Logf("%+v\n", stmts[0])
 }
 
 func TestParserVariableAssignmentWithInterpolation(t *testing.T) {
 	var stmts = RunParserTest(`$foo: #{ 10 + 20 }px;`)
-	fmt.Printf("%+v\n", stmts[0])
+	t.Logf("%+v\n", stmts[0])
 }
 
 func TestParserVariableAssignmentLengthPlusLength(t *testing.T) {
 	var stmts = RunParserTest(`$foo: 10px + 20px;`)
-	fmt.Printf("%+v\n", stmts)
+	t.Logf("%+v\n", stmts)
 }
 
 func TestParserVariableAssignmentNumberPlusNumberMulLength(t *testing.T) {
 	var stmts = RunParserTest(`$foo: (10 + 20) * 3px;`)
-	fmt.Printf("%+v\n", stmts)
+	t.Logf("%+v\n", stmts)
 }
 
 func TestParserVariableAssignmentWithHexColorAddOperation(t *testing.T) {
 	var stmts = RunParserTest(`$foo: #000 + 10;`)
-	fmt.Printf("%+v\n", stmts)
+	t.Logf("%+v\n", stmts)
 }
 
 func TestParserVariableAssignmentWithHexColorMulOperation(t *testing.T) {
 	var stmts = RunParserTest(`$foo: #010101 * 20;`)
-	fmt.Printf("%+v\n", stmts)
+	t.Logf("%+v\n", stmts)
 }
 
 func TestParserVariableAssignmentWithHexColorDivOperation(t *testing.T) {
 	var stmts = RunParserTest(`$foo: #121212 / 2;`)
-	fmt.Printf("%+v\n", stmts)
+	t.Logf("%+v\n", stmts)
 }
 
 func TestParserVariableAssignmentWithPxValue(t *testing.T) {
 	var stmts = RunParserTest(`$foo: 10px;`)
-	fmt.Printf("%+v\n", stmts)
+	t.Logf("%+v\n", stmts)
+}
+
+func TestParserVariableAssignmentWithFunctionCall(t *testing.T) {
+	var stmts = RunParserTest(`$foo: go();`)
+	t.Logf("%+v\n", stmts)
+}
+
+func TestParserVariableAssignmentWithFunctionCallIntegerArgument(t *testing.T) {
+	var stmts = RunParserTest(`$foo: go(1,2,3);`)
+	t.Logf("%+v\n", stmts)
+}
+
+func TestParserVariableAssignmentWithFunctionCallFunctionCallArgument(t *testing.T) {
+	var stmts = RunParserTest(`$foo: go(bar());`)
+	t.Logf("%+v\n", stmts)
+}
+
+func TestParserVariableAssignmentWithFunctionCallVariableArgument(t *testing.T) {
+	var stmts = RunParserTest(`$foo: go($a,$b,$c);`)
+	t.Logf("%+v\n", stmts)
 }
 
 func TestParserMixinSimple(t *testing.T) {
@@ -425,6 +444,47 @@ func TestParserMixinArguments(t *testing.T) {
 	`)
 }
 
+func TestParserFunctionSimple(t *testing.T) {
+	RunParserTest(`
+@function grid-width($n) {
+  @return $n * $grid-width + ($n - 1) * $gutter-width;
+}
+	`)
+}
+
+func TestParserFunctionSimple2(t *testing.T) {
+	RunParserTest(`
+@function exists($name) {
+  @return variable-exists($name);
+}
+	`)
+}
+
+func TestParserFunctionSimple3(t *testing.T) {
+	RunParserTest(`
+@function f() { }
+	`)
+}
+
+func TestParserFunctionSimple4(t *testing.T) {
+	RunParserTest(`
+@function f() {
+  $foo: hi;
+  @return g();
+}
+	`)
+}
+
+/*
+func TestParserFunctionSimple4(t *testing.T) {
+	RunParserTest(`
+@function g() {
+  @return variable-exists(foo);
+}
+	`)
+}
+*/
+
 func TestParserMassiveRules(t *testing.T) {
 	var buffers []string = []string{
 		`div { width: auto; }`,
@@ -443,10 +503,10 @@ func TestParserMassiveRules(t *testing.T) {
 		// `div { color: #ccddee; }`,
 	}
 	for _, buffer := range buffers {
-		fmt.Printf("Input %s\n", buffer)
+		t.Logf("Input %s\n", buffer)
 		var parser = NewParser(NewContext())
 		var stmts = parser.ParseScss(buffer)
-		fmt.Printf("%+v\n", stmts)
+		t.Logf("%+v\n", stmts)
 	}
 }
 

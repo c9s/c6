@@ -534,7 +534,7 @@ func TestLexerNestedProperty(t *testing.T) {
 /************************************************************
 Function test case
 *************************************************************/
-func TestLexerFunctionGridWidth(t *testing.T) {
+func TestLexerFunctionSimple(t *testing.T) {
 	code := `
 	@function grid-width($n) {
 		@return $n * $grid-width + ($n - 1) * $gutter-width;
@@ -544,6 +544,19 @@ func TestLexerFunctionGridWidth(t *testing.T) {
 		ast.T_FUNCTION, ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_VARIABLE, ast.T_PAREN_CLOSE, ast.T_BRACE_OPEN,
 		ast.T_RETURN, ast.T_VARIABLE, ast.T_MUL, ast.T_VARIABLE, ast.T_PLUS, ast.T_PAREN_OPEN, ast.T_VARIABLE, ast.T_MINUS, ast.T_INTEGER, ast.T_PAREN_CLOSE, ast.T_MUL, ast.T_VARIABLE,
 		ast.T_SEMICOLON,
+		ast.T_BRACE_CLOSE,
+	})
+}
+
+func TestLexerFunctionSimple2(t *testing.T) {
+	code := `
+	@function e() {
+		@return g();
+	}
+	`
+	AssertLexerTokenSequence(t, code, []ast.TokenType{
+		ast.T_FUNCTION, ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_PAREN_CLOSE, ast.T_BRACE_OPEN,
+		ast.T_RETURN, ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_PAREN_CLOSE, ast.T_SEMICOLON,
 		ast.T_BRACE_CLOSE,
 	})
 }

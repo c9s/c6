@@ -51,6 +51,8 @@ func (parser *Parser) ParseStatement() ast.Statement {
 		return parser.ParseFunction()
 	case ast.T_VARIABLE:
 		return parser.ParseVariableAssignment()
+	case ast.T_RETURN:
+		return parser.ParseReturnStatement()
 	case ast.T_IF:
 		return parser.ParseIfStatement()
 	case ast.T_FOR:
@@ -342,21 +344,21 @@ func (parser *Parser) ParseFunctionCall() *ast.FunctionCall {
 
 	parser.expect(ast.T_PAREN_OPEN)
 
-	var argTok = parser.peek()
-	for argTok.Type != ast.T_PAREN_CLOSE {
-		var arg = parser.ParseFactor()
-		fcall.AppendArgument(arg)
-		debug("ParseFunctionCall => arg: %+v", arg)
-
-		argTok = parser.peek()
-		if argTok.Type == ast.T_COMMA {
-			parser.next() // skip comma
-			argTok = parser.peek()
-		} else if argTok.Type == ast.T_PAREN_CLOSE {
-			parser.next() // consume ')'
+	var tok = parser.peek()
+	for tok.Type != ast.T_PAREN_CLOSE {
+		if arg := parser.ParseFactor(); arg != nil {
+			fcall.AppendArgument(arg)
+			debug("ParseFunctionCall => arg: %+v", arg)
+		} else {
 			break
 		}
+
+		if parser.accept(ast.T_COMMA) != nil {
+			tok = parser.peek()
+			continue
+		}
 	}
+	parser.expect(ast.T_PAREN_CLOSE)
 	return fcall
 }
 
@@ -1242,6 +1244,13 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 		panic(ParserError{";", tok.Str})
 	}
 	return stm
+}
+
+func (parser *Parser) ParseReturnStatement() ast.Statement {
+	var returnTok = parser.expect(ast.T_RETURN)
+	var valueExpr = parser.ParseExpression(true)
+	parser.expect(ast.T_SEMICOLON)
+	return ast.NewReturnStatementWithToken(returnTok, valueExpr)
 }
 
 func (parser *Parser) ParseFunction() ast.Statement {
