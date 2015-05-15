@@ -32,6 +32,21 @@ func TestParserEmptyRuleSetWithTypeSelector(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserEmptyRuleSetWithAttributeSelectorAttributeNameOnly(t *testing.T) {
+	var stmts = RunParserTest(`[href] { }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserEmptyRuleSetWithAttributeSelectorPrefixMatch(t *testing.T) {
+	var stmts = RunParserTest(`[href^=http] { }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
+func TestParserEmptyRuleSetWithAttributeSelectorSuffixMatch(t *testing.T) {
+	var stmts = RunParserTest(`[href$=pdf] { }`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserEmptyRuleSetWithTypeSelectorGroup(t *testing.T) {
 	var stmts = RunParserTest(`div, span, html { }`)
 	assert.Equal(t, 1, len(stmts))
