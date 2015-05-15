@@ -444,6 +444,16 @@ func TestParserMixinArguments(t *testing.T) {
 	`)
 }
 
+func TestParserMixinContentDirective(t *testing.T) {
+	RunParserTest(`
+@mixin apply-to-ie6-only {
+  * html {
+    @content;
+  }
+}
+	`)
+}
+
 func TestParserFunctionSimple(t *testing.T) {
 	RunParserTest(`
 @function grid-width($n) {
