@@ -78,10 +78,16 @@ func lexAttributeSelector(l *Lexer) stateFn {
 			l.emit(ast.T_ATTR_EQUAL)
 			attrOp = true
 		} else if l.match("~=") {
-			l.emit(ast.T_ATTR_TILDE_EQUAL)
+			l.emit(ast.T_INCLUDE_MATCH)
 			attrOp = true
 		} else if l.match("|=") {
-			l.emit(ast.T_ATTR_HYPHEN_EQUAL)
+			l.emit(ast.T_DASH_MATCH)
+			attrOp = true
+		} else if l.match("$=") {
+			l.emit(ast.T_SUFFIX_MATCH)
+			attrOp = true
+		} else if l.match("*=") {
+			l.emit(ast.T_SUBSTRING_MATCH)
 			attrOp = true
 		}
 
