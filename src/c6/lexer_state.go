@@ -1,11 +1,10 @@
 package c6
 
 import (
-	"unicode"
-	// import "strings"
 	"c6/ast"
 	"errors"
 	"fmt"
+	"unicode"
 )
 
 type stateFn func(*Lexer) stateFn
@@ -157,7 +156,9 @@ func lexString(l *Lexer) stateFn {
 }
 
 func lexUrl(l *Lexer) {
+
 	if l.match("url") {
+
 		l.emit(ast.T_IDENT)
 		l.match("(")
 		l.emit(ast.T_PAREN_START)
@@ -166,18 +167,22 @@ func lexUrl(l *Lexer) {
 		if q == '"' || q == '\'' {
 			lexString(l)
 		} else {
-			lexUnquoteStringStopAt(l, ')')
+			l.ignoreSpaces()
+			lexUnquoteStringExclude(l, " ()")
+			l.ignoreSpaces()
 		}
 		l.match(")")
 		l.emit(ast.T_PAREN_END)
 
 	} else {
+
 		var r = l.peek()
 		if r == '"' || r == '\'' {
 			lexString(l)
 		} else {
 			l.error("Unexpected token for @import rule. Got %s", r)
 		}
+
 	}
 }
 
@@ -278,6 +283,15 @@ func lexSpaces(l *Lexer) stateFn {
 		}
 	}
 	return lexStart
+}
+
+/*
+lex unquote string but stops at the exclude rune.
+*/
+func lexUnquoteStringExclude(l *Lexer, exclude string) stateFn {
+	l.til(exclude)
+	l.emit(ast.T_UNQUOTE_STRING)
+	return nil
 }
 
 func lexUnquoteStringStopAt(l *Lexer, stop rune) stateFn {

@@ -297,11 +297,12 @@ func (l *Lexer) emit(tokenType ast.TokenType, params ...bool) *ast.Token {
 }
 
 func (l *Lexer) til(str string) {
-	for {
-		var r = l.next()
-		if strings.Contains(str, string(r)) || r == EOF {
+	var r = l.next()
+	for r != EOF {
+		if strings.IndexRune(str, r) >= 0 {
 			break
 		}
+		r = l.next()
 	}
 	l.backup()
 }
