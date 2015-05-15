@@ -45,7 +45,7 @@ func isDescendantCombinatorSeparator(r rune) bool {
 func lexAttributeSelector(l *Lexer) stateFn {
 	var r = l.next()
 	if r == '[' {
-		l.emit(ast.T_BRACKET_LEFT)
+		l.emit(ast.T_BRACKET_OPEN)
 
 		var foundInterpolation = false
 
@@ -112,7 +112,7 @@ func lexAttributeSelector(l *Lexer) stateFn {
 		r = l.peek()
 		if r == ']' {
 			l.next()
-			l.emit(ast.T_BRACKET_RIGHT)
+			l.emit(ast.T_BRACKET_CLOSE)
 			return lexStatement
 		}
 

@@ -8,7 +8,7 @@ func lexFunctionParams(l *Lexer) stateFn {
 	if r != '(' {
 		l.error("Expecting '('. Got '%s'.", r)
 	}
-	l.emit(ast.T_PAREN_START)
+	l.emit(ast.T_PAREN_OPEN)
 	l.ignoreSpaces()
 
 	r = l.peek()
@@ -17,7 +17,7 @@ func lexFunctionParams(l *Lexer) stateFn {
 		r = l.peek()
 		if r == ')' {
 			l.next()
-			l.emit(ast.T_PAREN_END)
+			l.emit(ast.T_PAREN_CLOSE)
 			break
 		}
 		if lexExpression(l) == nil {
@@ -171,12 +171,12 @@ func lexExpression(l *Lexer) stateFn {
 	} else if r == '(' {
 
 		l.next()
-		l.emit(ast.T_PAREN_START)
+		l.emit(ast.T_PAREN_OPEN)
 
 	} else if r == ')' {
 
 		l.next()
-		l.emit(ast.T_PAREN_END)
+		l.emit(ast.T_PAREN_CLOSE)
 
 	} else if r == '<' {
 

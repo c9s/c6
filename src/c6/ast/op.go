@@ -23,9 +23,9 @@ func OpTokenName(tokType TokenType) string {
 		return "-"
 	case T_PLUS:
 		return "+"
-	case T_PAREN_START:
+	case T_PAREN_OPEN:
 		return "("
-	case T_PAREN_END:
+	case T_PAREN_CLOSE:
 		return ")"
 	case T_NOP:
 		return ""

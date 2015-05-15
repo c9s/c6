@@ -126,28 +126,28 @@ Map Value test cases
 
 func TestLexerMap(t *testing.T) {
 	AssertLexerTokenSequence(t, `$var: (foo: 1, bar: 2);`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON,
-		ast.T_PAREN_START,
+		ast.T_PAREN_OPEN,
 		ast.T_IDENT, ast.T_COLON, ast.T_INTEGER, ast.T_COMMA,
 		ast.T_IDENT, ast.T_COLON, ast.T_INTEGER,
-		ast.T_PAREN_END,
+		ast.T_PAREN_CLOSE,
 	})
 }
 
 func TestLexerMapWithExtraComma(t *testing.T) {
 	AssertLexerTokenSequence(t, `$var: (foo: 1, bar: 2, );`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON,
-		ast.T_PAREN_START,
+		ast.T_PAREN_OPEN,
 		ast.T_IDENT, ast.T_COLON, ast.T_INTEGER, ast.T_COMMA,
 		ast.T_IDENT, ast.T_COLON, ast.T_INTEGER, ast.T_COMMA,
-		ast.T_PAREN_END,
+		ast.T_PAREN_CLOSE,
 	})
 }
 
 func TestLexerMapWithExpression(t *testing.T) {
 	AssertLexerTokenSequence(t, `$var: (foo: 2px + 3px, bar: $var2);`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON,
-		ast.T_PAREN_START,
+		ast.T_PAREN_OPEN,
 		ast.T_IDENT, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_PLUS, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_COMMA,
 		ast.T_IDENT, ast.T_COLON, ast.T_VARIABLE,
-		ast.T_PAREN_END,
+		ast.T_PAREN_CLOSE,
 	})
 }
 
@@ -155,7 +155,7 @@ func TestLexerMapValue(t *testing.T) {
 	AssertLexerTokenSequence(t, `$foo: (foo: 1, bar: 2);`, []ast.TokenType{
 		ast.T_VARIABLE,
 		ast.T_COLON,
-		ast.T_PAREN_START,
+		ast.T_PAREN_OPEN,
 		ast.T_IDENT,
 		ast.T_COLON,
 		ast.T_INTEGER,
@@ -164,7 +164,7 @@ func TestLexerMapValue(t *testing.T) {
 		ast.T_IDENT,
 		ast.T_COLON,
 		ast.T_INTEGER,
-		ast.T_PAREN_END,
+		ast.T_PAREN_CLOSE,
 
 		ast.T_SEMICOLON,
 	})
@@ -179,7 +179,7 @@ func TestLexerInterpolationPropertyValue(t *testing.T) {
 		-webkit-transition: #{ 1 + 2 }px
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
 		ast.T_INTERPOLATION_START,
 		ast.T_INTEGER,
@@ -188,7 +188,7 @@ func TestLexerInterpolationPropertyValue(t *testing.T) {
 		ast.T_INTERPOLATION_END,
 		ast.T_LITERAL_CONCAT,
 		ast.T_IDENT,
-		ast.T_BRACE_END})
+		ast.T_BRACE_CLOSE})
 }
 
 func TestLexerInterpolationPropertyValueList(t *testing.T) {
@@ -196,7 +196,7 @@ func TestLexerInterpolationPropertyValueList(t *testing.T) {
 		padding: #{ 1 + 2 }px 10px;
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
 		ast.T_INTERPOLATION_START,
 		ast.T_INTEGER, // 1
@@ -208,7 +208,7 @@ func TestLexerInterpolationPropertyValueList(t *testing.T) {
 		ast.T_INTEGER,
 		ast.T_UNIT_PX,
 		ast.T_SEMICOLON,
-		ast.T_BRACE_END})
+		ast.T_BRACE_CLOSE})
 }
 
 func TestLexerInterpolationComplex1(t *testing.T) {
@@ -216,13 +216,13 @@ func TestLexerInterpolationComplex1(t *testing.T) {
 		padding: (10+10)#{ 2 * 2 }px;
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
-		ast.T_PAREN_START,
+		ast.T_PAREN_OPEN,
 		ast.T_INTEGER,
 		ast.T_PLUS,
 		ast.T_INTEGER,
-		ast.T_PAREN_END,
+		ast.T_PAREN_CLOSE,
 		ast.T_LITERAL_CONCAT,
 		ast.T_INTERPOLATION_START,
 		ast.T_INTEGER,
@@ -239,13 +239,13 @@ func TestLexerInterpolationComplex2(t *testing.T) {
 		padding: (10+10) #{ 2 * 2 } 10px;
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
-		ast.T_PAREN_START,
+		ast.T_PAREN_OPEN,
 		ast.T_INTEGER,
 		ast.T_PLUS,
 		ast.T_INTEGER,
-		ast.T_PAREN_END,
+		ast.T_PAREN_CLOSE,
 
 		ast.T_INTERPOLATION_START,
 		ast.T_INTEGER,
@@ -263,7 +263,7 @@ func TestLexerInterpolationLeadingAndTrailing(t *testing.T) {
 		padding: 10#{ 1 + 1 }#{ 2 + 2 }px;
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
 
 		ast.T_INTEGER,
@@ -283,7 +283,7 @@ func TestLexerInterpolationLeadingAndTrailing(t *testing.T) {
 
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -292,7 +292,7 @@ func TestLexerInterpolationConcatInterpolation(t *testing.T) {
 		padding: #{ 1 + 2 }#{ 3 + 4 }px;
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
 
 		ast.T_INTERPOLATION_START,
@@ -309,7 +309,7 @@ func TestLexerInterpolationConcatInterpolation(t *testing.T) {
 
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -318,7 +318,7 @@ func TestLexerInterpolationPropertyValueListWithoutSemiColon(t *testing.T) {
 		padding: #{ 1 + 2 }px 10px
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
 		ast.T_INTERPOLATION_START,
 		ast.T_INTEGER,
@@ -329,7 +329,7 @@ func TestLexerInterpolationPropertyValueListWithoutSemiColon(t *testing.T) {
 		ast.T_IDENT,
 		ast.T_INTEGER,
 		ast.T_UNIT_PX,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -339,7 +339,7 @@ func TestLexerInterpolationPropertyNameSuffix(t *testing.T) {
 		padding-#{ 'left' }: 10px;
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_LITERAL_CONCAT,
 		ast.T_INTERPOLATION_START,
@@ -355,7 +355,7 @@ func TestLexerInterpolationPropertyName(t *testing.T) {
 		#{ "foo" }: #{ 1 + 2 }px;
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_INTERPOLATION_START,
 		ast.T_QQ_STRING,
 		ast.T_INTERPOLATION_END,
@@ -368,7 +368,7 @@ func TestLexerInterpolationPropertyName(t *testing.T) {
 		ast.T_LITERAL_CONCAT,
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -377,7 +377,7 @@ func TestLexerInterpolationPropertyName2(t *testing.T) {
 		-#{ "moz" }-border-radius: #{ 1 + 2 }px;
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_LITERAL_CONCAT,
 		ast.T_INTERPOLATION_START,
@@ -394,7 +394,7 @@ func TestLexerInterpolationPropertyName2(t *testing.T) {
 		ast.T_LITERAL_CONCAT,
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -403,7 +403,7 @@ func TestLexerInterpolationPropertyName3(t *testing.T) {
 		padding-#{ $direction }: 10px;
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_LITERAL_CONCAT,
 		ast.T_INTERPOLATION_START,
@@ -413,7 +413,7 @@ func TestLexerInterpolationPropertyName3(t *testing.T) {
 		ast.T_INTEGER,
 		ast.T_UNIT_PX,
 		ast.T_SEMICOLON,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -423,13 +423,13 @@ func TestLexerRuleWithSubRule(t *testing.T) {
 		.foo { color: #fff; }
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
-		ast.T_BRACE_END,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -441,12 +441,12 @@ func TestLexerIfStatementTrueCondition(t *testing.T) {
 	@if true {
 		color: red;
 	}
-	`, []ast.TokenType{ast.T_IF, ast.T_TRUE, ast.T_BRACE_START,
+	`, []ast.TokenType{ast.T_IF, ast.T_TRUE, ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -455,12 +455,12 @@ func TestLexerIfStatementFalseCondition(t *testing.T) {
 	@if false {
 		color: red;
 	}
-	`, []ast.TokenType{ast.T_IF, ast.T_FALSE, ast.T_BRACE_START,
+	`, []ast.TokenType{ast.T_IF, ast.T_FALSE, ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -470,12 +470,12 @@ func TestLexerIfStatementTrueOrFalseCondition(t *testing.T) {
 		color: red;
 	}
 	`, []ast.TokenType{
-		ast.T_IF, ast.T_TRUE, ast.T_LOGICAL_OR, ast.T_FALSE, ast.T_BRACE_START,
+		ast.T_IF, ast.T_TRUE, ast.T_LOGICAL_OR, ast.T_FALSE, ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -484,7 +484,7 @@ func TestLexerIfStatementFunctionCallEqualToNumber(t *testing.T) {
 	@if type-of(nth($x, 3)) == 10 {
 	}
 	`, []ast.TokenType{
-		ast.T_IF, ast.T_FUNCTION_NAME, ast.T_PAREN_START, ast.T_FUNCTION_NAME, ast.T_PAREN_START, ast.T_VARIABLE, ast.T_COMMA, ast.T_INTEGER, ast.T_PAREN_END, ast.T_PAREN_END, ast.T_EQUAL, ast.T_INTEGER, ast.T_BRACE_START,
+		ast.T_IF, ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_VARIABLE, ast.T_COMMA, ast.T_INTEGER, ast.T_PAREN_CLOSE, ast.T_PAREN_CLOSE, ast.T_EQUAL, ast.T_INTEGER, ast.T_BRACE_OPEN,
 	})
 }
 
@@ -493,7 +493,7 @@ For statement
 ***********************************************************************/
 func TestLexerForStatementSimpleFromThrough(t *testing.T) {
 	AssertLexerTokenSequence(t, `@for $var from 1 through 20 {  }`, []ast.TokenType{
-		ast.T_FOR, ast.T_VARIABLE, ast.T_FOR_FROM, ast.T_INTEGER, ast.T_FOR_THROUGH, ast.T_INTEGER, ast.T_BRACE_START, ast.T_BRACE_END,
+		ast.T_FOR, ast.T_VARIABLE, ast.T_FOR_FROM, ast.T_INTEGER, ast.T_FOR_THROUGH, ast.T_INTEGER, ast.T_BRACE_OPEN, ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -509,10 +509,10 @@ func TestLexerNestedProperty(t *testing.T) {
 	`
 	AssertLexerTokenSequence(t, code, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
 		ast.T_HEX_COLOR,
@@ -526,8 +526,8 @@ func TestLexerNestedProperty(t *testing.T) {
 		ast.T_COLON,
 		ast.T_IDENT,
 		ast.T_SEMICOLON,
-		ast.T_BRACE_END,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -541,10 +541,10 @@ func TestLexerFunctionGridWidth(t *testing.T) {
 	}
 	`
 	AssertLexerTokenSequence(t, code, []ast.TokenType{
-		ast.T_FUNCTION, ast.T_FUNCTION_NAME, ast.T_PAREN_START, ast.T_VARIABLE, ast.T_PAREN_END, ast.T_BRACE_START,
-		ast.T_RETURN, ast.T_VARIABLE, ast.T_MUL, ast.T_VARIABLE, ast.T_PLUS, ast.T_PAREN_START, ast.T_VARIABLE, ast.T_MINUS, ast.T_INTEGER, ast.T_PAREN_END, ast.T_MUL, ast.T_VARIABLE,
+		ast.T_FUNCTION, ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_VARIABLE, ast.T_PAREN_CLOSE, ast.T_BRACE_OPEN,
+		ast.T_RETURN, ast.T_VARIABLE, ast.T_MUL, ast.T_VARIABLE, ast.T_PLUS, ast.T_PAREN_OPEN, ast.T_VARIABLE, ast.T_MINUS, ast.T_INTEGER, ast.T_PAREN_CLOSE, ast.T_MUL, ast.T_VARIABLE,
 		ast.T_SEMICOLON,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -558,9 +558,9 @@ func TestLexerMixinSimple(t *testing.T) {
 	}
 	`
 	AssertLexerTokenSequence(t, code, []ast.TokenType{
-		ast.T_MIXIN, ast.T_IDENT, ast.T_BRACE_START,
+		ast.T_MIXIN, ast.T_IDENT, ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -584,12 +584,12 @@ func TestLexerMixinArguments(t *testing.T) {
 }
 `
 	AssertLexerTokenSequence(t, code, []ast.TokenType{
-		ast.T_MIXIN, ast.T_FUNCTION_NAME, ast.T_PAREN_START, ast.T_VARIABLE, ast.T_COMMA, ast.T_VARIABLE, ast.T_PAREN_END, ast.T_BRACE_START,
-		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_BRACE_START,
+		ast.T_MIXIN, ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_VARIABLE, ast.T_COMMA, ast.T_VARIABLE, ast.T_PAREN_CLOSE, ast.T_BRACE_OPEN,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_VARIABLE, ast.T_SEMICOLON,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_VARIABLE, ast.T_SEMICOLON,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
-		ast.T_BRACE_END,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
+		ast.T_BRACE_CLOSE,
 	})
 }

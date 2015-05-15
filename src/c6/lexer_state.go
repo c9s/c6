@@ -168,7 +168,7 @@ func lexUrl(l *Lexer) {
 
 	l.emit(ast.T_IDENT)
 	l.match("(")
-	l.emit(ast.T_PAREN_START)
+	l.emit(ast.T_PAREN_OPEN)
 	l.ignoreSpaces()
 
 	var q = l.peek()
@@ -180,7 +180,7 @@ func lexUrl(l *Lexer) {
 
 	l.ignoreSpaces()
 	l.match(")")
-	l.emit(ast.T_PAREN_END)
+	l.emit(ast.T_PAREN_CLOSE)
 }
 
 func lexImportUrl(l *Lexer) {
@@ -188,7 +188,7 @@ func lexImportUrl(l *Lexer) {
 
 		l.emit(ast.T_IDENT)
 		l.match("(")
-		l.emit(ast.T_PAREN_START)
+		l.emit(ast.T_PAREN_OPEN)
 		l.ignoreSpaces()
 
 		var q = l.peek()
@@ -200,7 +200,7 @@ func lexImportUrl(l *Lexer) {
 
 		l.ignoreSpaces()
 		l.match(")")
-		l.emit(ast.T_PAREN_END)
+		l.emit(ast.T_PAREN_CLOSE)
 
 	} else {
 
@@ -348,7 +348,7 @@ func lexVariableAssignment(l *Lexer) stateFn {
 	if l.accept(";") {
 		l.emit(ast.T_SEMICOLON)
 	} else if l.accept("}") {
-		l.emit(ast.T_BRACE_END)
+		l.emit(ast.T_BRACE_CLOSE)
 	}
 	return lexStatement
 }
@@ -505,24 +505,24 @@ func lexStatement(l *Lexer) stateFn {
 
 	} else if r == '(' {
 		l.next()
-		l.emit(ast.T_PAREN_START)
+		l.emit(ast.T_PAREN_OPEN)
 		return lexStart
 	} else if r == ')' {
 
 		l.next()
-		l.emit(ast.T_PAREN_END)
+		l.emit(ast.T_PAREN_CLOSE)
 		return lexStart
 
 	} else if r == '{' {
 
 		l.next()
-		l.emit(ast.T_BRACE_START)
+		l.emit(ast.T_BRACE_OPEN)
 		return lexStatement
 
 	} else if r == '}' {
 
 		l.next()
-		l.emit(ast.T_BRACE_END)
+		l.emit(ast.T_BRACE_CLOSE)
 		return lexStatement
 
 	} else if l.match("<!--") {

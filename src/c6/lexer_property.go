@@ -29,7 +29,7 @@ func lexMicrosoftProgIdFunction(l *Lexer) stateFn {
 	if r != '(' {
 		l.error("Expecting '(' after the MS function name. Got %s", r)
 	}
-	l.emit(ast.T_PAREN_START)
+	l.emit(ast.T_PAREN_OPEN)
 
 	l.ignoreSpaces()
 
@@ -57,7 +57,7 @@ func lexMicrosoftProgIdFunction(l *Lexer) stateFn {
 			l.ignoreSpaces()
 		} else if r == ')' {
 			l.next()
-			l.emit(ast.T_PAREN_END)
+			l.emit(ast.T_PAREN_CLOSE)
 			break
 		}
 	}
@@ -118,7 +118,7 @@ func lexProperty(l *Lexer) stateFn {
 		if r == '{' {
 
 			l.next()
-			l.emit(ast.T_BRACE_START)
+			l.emit(ast.T_BRACE_OPEN)
 			return lexStatement
 
 		} else if lexExpression(l) == nil {
@@ -140,7 +140,7 @@ func lexProperty(l *Lexer) stateFn {
 
 	l.ignoreSpaces()
 	if l.accept("}") {
-		l.emit(ast.T_BRACE_END)
+		l.emit(ast.T_BRACE_CLOSE)
 	}
 	return lexStatement
 }

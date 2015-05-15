@@ -11,10 +11,10 @@ import "c6/runtime"
 
 func (parser *Parser) ParseBlock() *ast.Block {
 	debug("ParseBlock")
-	parser.expect(ast.T_BRACE_START)
+	parser.expect(ast.T_BRACE_OPEN)
 	var block = ast.NewBlock()
 	block.Statements = parser.ParseStatements()
-	parser.expect(ast.T_BRACE_END)
+	parser.expect(ast.T_BRACE_CLOSE)
 	return block
 }
 
@@ -159,10 +159,10 @@ func (parser *Parser) ParseComparisonExpression() ast.Expression {
 
 	var expr ast.Expression
 	var tok = parser.peek()
-	if tok.Type == ast.T_PAREN_START {
-		parser.accept(ast.T_PAREN_START)
+	if tok.Type == ast.T_PAREN_OPEN {
+		parser.accept(ast.T_PAREN_OPEN)
 		expr = parser.ParseLogicExpression()
-		parser.expect(ast.T_PAREN_END)
+		parser.expect(ast.T_PAREN_CLOSE)
 	} else {
 		expr = parser.ParseExpression(false)
 	}
@@ -185,7 +185,7 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 	var ruleset = ast.NewRuleSet()
 	parser.Context.PushRuleSet(ruleset)
 
-	for tok.IsSelector() || tok.Type == ast.T_COMMA {
+	for tok.IsSelector() || tok.IsSelectorCombinator() {
 
 		switch tok.Type {
 
@@ -237,7 +237,7 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 		case ast.T_COMMA:
 			ruleset.AppendSelector(ast.NewGroupCombinatorWithToken(tok))
 
-		case ast.T_BRACKET_LEFT, ast.T_ATTRIBUTE_NAME:
+		case ast.T_BRACKET_OPEN, ast.T_ATTRIBUTE_NAME:
 			unimplemented("attribute selector")
 
 		default:
@@ -332,10 +332,10 @@ func (parser *Parser) ParseFunctionCall() *ast.FunctionCall {
 
 	var fcall = ast.NewFunctionCall(identTok)
 
-	parser.expect(ast.T_PAREN_START)
+	parser.expect(ast.T_PAREN_OPEN)
 
 	var argTok = parser.peek()
-	for argTok.Type != ast.T_PAREN_END {
+	for argTok.Type != ast.T_PAREN_CLOSE {
 		var arg = parser.ParseFactor()
 		fcall.AppendArgument(arg)
 		debug("ParseFunctionCall => arg: %+v", arg)
@@ -344,7 +344,7 @@ func (parser *Parser) ParseFunctionCall() *ast.FunctionCall {
 		if argTok.Type == ast.T_COMMA {
 			parser.next() // skip comma
 			argTok = parser.peek()
-		} else if argTok.Type == ast.T_PAREN_END {
+		} else if argTok.Type == ast.T_PAREN_CLOSE {
 			parser.next() // consume ')'
 			break
 		}
@@ -369,10 +369,10 @@ func (parser *Parser) ParseFactor() ast.Expression {
 	var tok = parser.peek()
 	debug("ParseFactor => peek: %s", tok)
 
-	if tok.Type == ast.T_PAREN_START {
-		parser.expect(ast.T_PAREN_START)
+	if tok.Type == ast.T_PAREN_OPEN {
+		parser.expect(ast.T_PAREN_OPEN)
 		var expr = parser.ParseExpression(true)
-		parser.expect(ast.T_PAREN_END)
+		parser.expect(ast.T_PAREN_CLOSE)
 		return expr
 
 	} else if tok.Type == ast.T_INTERPOLATION_START {
@@ -418,7 +418,7 @@ func (parser *Parser) ParseFactor() ast.Expression {
 	} else if tok.Type == ast.T_IDENT {
 
 		var tok2 = parser.peekBy(2)
-		if tok2 != nil && tok2.Type == ast.T_PAREN_START {
+		if tok2 != nil && tok2.Type == ast.T_PAREN_OPEN {
 			var fcall = parser.ParseFunctionCall()
 			return ast.Expression(fcall)
 		}
@@ -541,13 +541,13 @@ func (parser *Parser) ParseMap() ast.Expression {
 	var pos = parser.Pos
 	var tok = parser.next()
 	// since it's not started with '(', it's not map
-	if tok.Type != ast.T_PAREN_START {
+	if tok.Type != ast.T_PAREN_OPEN {
 		parser.restore(pos)
 		return nil
 	}
 
 	tok = parser.peek()
-	for tok.Type != ast.T_PAREN_END {
+	for tok.Type != ast.T_PAREN_CLOSE {
 		var keyExpr = parser.ParseExpression(false)
 		if keyExpr == nil {
 			parser.restore(pos)
@@ -697,10 +697,10 @@ func (parser *Parser) ParseCommaSepList() ast.Expression {
 	var list = ast.NewCommaSepList()
 
 	var tok = parser.peek()
-	for tok.Type != ast.T_COMMA && tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
+	for tok.Type != ast.T_COMMA && tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_CLOSE {
 
 		// when the syntax start with a '(', it could be a list or map.
-		if tok.Type == ast.T_PAREN_START {
+		if tok.Type == ast.T_PAREN_OPEN {
 
 			parser.next()
 			if sublist := parser.ParseCommaSepList(); sublist != nil {
@@ -708,7 +708,7 @@ func (parser *Parser) ParseCommaSepList() ast.Expression {
 				list.Append(sublist)
 			}
 			// allow empty list here
-			parser.expect(ast.T_PAREN_END)
+			parser.expect(ast.T_PAREN_CLOSE)
 
 		} else {
 			var sublist = parser.ParseSpaceSepList()
@@ -811,16 +811,16 @@ func (parser *Parser) ParseSpaceSepList() ast.Expression {
 
 	var tok = parser.peek()
 
-	if tok.Type == ast.T_PAREN_START {
+	if tok.Type == ast.T_PAREN_OPEN {
 		parser.next()
 		if sublist := parser.ParseCommaSepList(); sublist != nil {
 			list.Append(sublist)
 		}
-		parser.expect(ast.T_PAREN_END)
+		parser.expect(ast.T_PAREN_CLOSE)
 	}
 
 	tok = parser.peek()
-	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
+	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_CLOSE {
 		var subexpr = parser.ParseExpression(true)
 		if subexpr != nil {
 			debug("Parsed Expression: %+v", subexpr)
@@ -853,7 +853,7 @@ func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *a
 	var list = ast.NewSpaceSepList()
 
 	var tok = parser.peek()
-	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_END {
+	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_CLOSE {
 		var sublist = parser.ParseList()
 		if sublist != nil {
 			list.Append(sublist)
@@ -865,7 +865,7 @@ func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *a
 	}
 
 	tok = parser.peek()
-	if tok.Type == ast.T_SEMICOLON || tok.Type == ast.T_BRACE_END {
+	if tok.Type == ast.T_SEMICOLON || tok.Type == ast.T_BRACE_CLOSE {
 		parser.next()
 	} else {
 		panic(fmt.Errorf("Unexpected end of property value. Got %s", tok))
@@ -919,10 +919,10 @@ func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 	var declBlock = ast.DeclarationBlock{}
 	var parentRuleSet = parser.Context.TopRuleSet()
 
-	parser.expect(ast.T_BRACE_START)
+	parser.expect(ast.T_BRACE_OPEN)
 
 	var tok = parser.peek()
-	for tok != nil && tok.Type != ast.T_BRACE_END {
+	for tok != nil && tok.Type != ast.T_BRACE_CLOSE {
 		var propertyName = parser.ParsePropertyName()
 
 		if propertyName != nil {
@@ -1064,7 +1064,7 @@ An media query expression must start with a '(' and ends with ')'
 func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
 
 	// it's not an media query expression
-	if parser.accept(ast.T_PAREN_START) == nil {
+	if parser.accept(ast.T_PAREN_OPEN) == nil {
 		return nil
 	}
 
@@ -1078,7 +1078,7 @@ func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
 		parser.next()
 		feature.Value = parser.ParseExpression(false)
 	}
-	parser.expect(ast.T_PAREN_END)
+	parser.expect(ast.T_PAREN_CLOSE)
 	return feature
 }
 
@@ -1184,14 +1184,14 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 			panic("invalid function for @import statement.")
 		}
 
-		if tok = parser.next(); tok.Type != ast.T_PAREN_START {
+		if tok = parser.next(); tok.Type != ast.T_PAREN_OPEN {
 			panic("expecting parenthesis after url")
 		}
 
 		tok = parser.next()
 		stm.Url = ast.Url(tok.Str)
 
-		if tok = parser.next(); tok.Type != ast.T_PAREN_END {
+		if tok = parser.next(); tok.Type != ast.T_PAREN_CLOSE {
 			panic("expecting parenthesis after url")
 		}
 

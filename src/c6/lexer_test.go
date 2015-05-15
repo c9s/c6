@@ -83,67 +83,67 @@ func TestLexerAtRuleImport(t *testing.T) {
 }
 
 func TestLexerAtRuleImportWithUrl(t *testing.T) {
-	AssertLexerTokenSequence(t, `@import url("test.css");`, []ast.TokenType{ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_START, ast.T_QQ_STRING, ast.T_PAREN_END, ast.T_SEMICOLON})
+	AssertLexerTokenSequence(t, `@import url("test.css");`, []ast.TokenType{ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_OPEN, ast.T_QQ_STRING, ast.T_PAREN_CLOSE, ast.T_SEMICOLON})
 }
 
 func TestLexerAtRuleImportWithUrlAndOneMediaType(t *testing.T) {
 	AssertLexerTokenSequence(t, `@import url("test.css") screen;`, []ast.TokenType{
-		ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_START, ast.T_QQ_STRING, ast.T_PAREN_END, ast.T_IDENT, ast.T_SEMICOLON,
+		ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_OPEN, ast.T_QQ_STRING, ast.T_PAREN_CLOSE, ast.T_IDENT, ast.T_SEMICOLON,
 	})
 }
 
 func TestLexerAtRuleImportWithUrlAndTwoMediaType(t *testing.T) {
 	AssertLexerTokenSequence(t, `@import url("test.css") tv, projection;`, []ast.TokenType{
-		ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_START, ast.T_QQ_STRING, ast.T_PAREN_END, ast.T_IDENT, ast.T_COMMA, ast.T_IDENT, ast.T_SEMICOLON,
+		ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_OPEN, ast.T_QQ_STRING, ast.T_PAREN_CLOSE, ast.T_IDENT, ast.T_COMMA, ast.T_IDENT, ast.T_SEMICOLON,
 	})
 }
 
 func TestLexerAtRuleImportWithUnquoteUrl(t *testing.T) {
 	AssertLexerTokenSequence(t, `@import url(http://foo.com/bar/test.css);`, []ast.TokenType{
-		ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_START, ast.T_UNQUOTE_STRING, ast.T_PAREN_END, ast.T_SEMICOLON,
+		ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_OPEN, ast.T_UNQUOTE_STRING, ast.T_PAREN_CLOSE, ast.T_SEMICOLON,
 	})
 }
 
 func TestLexerRuleWithOneProperty(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test { color: #fff; }`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
-		ast.T_BRACE_END})
+		ast.T_BRACE_CLOSE})
 }
 
 func TestLexerRuleWithTwoProperty(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test { color: #fff; background: #fff; }`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
-		ast.T_BRACE_END})
+		ast.T_BRACE_CLOSE})
 }
 
 func TestLexerRuleWithPropertyValueComma(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test { font-family: Arial, sans-serif }`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_IDENT, ast.T_COMMA, ast.T_IDENT,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
 func TestLexerRuleWithVendorPrefixPropertyName(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test { -webkit-transition: none; }`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
-		ast.T_BRACE_END})
+		ast.T_BRACE_CLOSE})
 }
 
 func TestLexerRuleWithVariableAsPropertyValue(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test { color: $favorite; }`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_VARIABLE, ast.T_SEMICOLON,
-		ast.T_BRACE_END})
+		ast.T_BRACE_CLOSE})
 }
 
 func TestLexerCommentBlockBeforeRuleSet(t *testing.T) {
@@ -154,8 +154,8 @@ func TestLexerCommentBlockBeforeRuleSet(t *testing.T) {
 		ast.T_CLASS_SELECTOR,
 		ast.T_DESCENDANT_COMBINATOR,
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
-		ast.T_BRACE_END,
+		ast.T_BRACE_OPEN,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -164,16 +164,16 @@ func TestLexerCommentBlockBetweenSelectors(t *testing.T) {
 		ast.T_CLASS_SELECTOR,
 		ast.T_DESCENDANT_COMBINATOR,
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
-		ast.T_BRACE_END,
+		ast.T_BRACE_OPEN,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
 func TestLexerCommentBlockBetweenSelectorAndBlock(t *testing.T) {
 	AssertLexerTokenSequence(t, `.test /* comment between selector and block */ { }`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
-		ast.T_BRACE_END,
+		ast.T_BRACE_OPEN,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -182,9 +182,9 @@ func TestLexerCommentBlock(t *testing.T) {
 		/* comment here */
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_COMMENT_BLOCK,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -196,19 +196,19 @@ func TestLexerMSFilterGradient(t *testing.T) {
 		filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr='#81a8cb', endColorstr='#4477a1');
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
 
 		ast.T_MS_PROGID,
 		ast.T_FUNCTION_NAME,
-		ast.T_PAREN_START,
+		ast.T_PAREN_OPEN,
 		ast.T_MS_PARAM_NAME, ast.T_ATTR_EQUAL, ast.T_INTEGER, ast.T_COMMA,
 		ast.T_MS_PARAM_NAME, ast.T_ATTR_EQUAL, ast.T_Q_STRING, ast.T_COMMA,
 		ast.T_MS_PARAM_NAME, ast.T_ATTR_EQUAL, ast.T_Q_STRING,
-		ast.T_PAREN_END,
+		ast.T_PAREN_CLOSE,
 		ast.T_SEMICOLON,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -217,18 +217,18 @@ func TestLexerMSFilterBasicImage(t *testing.T) {
 		filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1);
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
 
 		ast.T_MS_PROGID,
 		ast.T_FUNCTION_NAME,
-		ast.T_PAREN_START,
+		ast.T_PAREN_OPEN,
 		ast.T_MS_PARAM_NAME, ast.T_ATTR_EQUAL, ast.T_INTEGER, ast.T_COMMA,
 		ast.T_MS_PARAM_NAME, ast.T_ATTR_EQUAL, ast.T_INTEGER,
-		ast.T_PAREN_END,
+		ast.T_PAREN_CLOSE,
 		ast.T_SEMICOLON,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
@@ -237,30 +237,30 @@ func TestLexerGradientFunction(t *testing.T) {
 		background-image: -moz-linear-gradient(top, #81a8cb, #4477a1);
 	}`, []ast.TokenType{
 		ast.T_CLASS_SELECTOR,
-		ast.T_BRACE_START,
+		ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN,
 		ast.T_COLON,
 		ast.T_FUNCTION_NAME,
-		ast.T_PAREN_START,
+		ast.T_PAREN_OPEN,
 		ast.T_IDENT,
 		ast.T_COMMA,
 		ast.T_HEX_COLOR,
 		ast.T_COMMA,
 		ast.T_HEX_COLOR,
-		ast.T_PAREN_END,
+		ast.T_PAREN_CLOSE,
 		ast.T_SEMICOLON,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
 	})
 }
 
 func TestLexerPagedMedia(t *testing.T) {
 	AssertLexerTokenSequence(t, `@page { margin: 2cm }`,
-		[]ast.TokenType{ast.T_PAGE, ast.T_BRACE_START, ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_CM, ast.T_BRACE_END})
+		[]ast.TokenType{ast.T_PAGE, ast.T_BRACE_OPEN, ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_CM, ast.T_BRACE_CLOSE})
 }
 
 func TestLexerPagedMediaWithPseudoSelector(t *testing.T) {
 	AssertLexerTokenSequence(t, `@page :left { margin: 2cm }`,
-		[]ast.TokenType{ast.T_PAGE, ast.T_PSEUDO_SELECTOR, ast.T_BRACE_START, ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_CM, ast.T_BRACE_END})
+		[]ast.TokenType{ast.T_PAGE, ast.T_PSEUDO_SELECTOR, ast.T_BRACE_OPEN, ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_CM, ast.T_BRACE_CLOSE})
 }
 
 /**********************************************************************
@@ -270,9 +270,9 @@ Media Query Test Case
 func TestLexerMediaQueryCondition(t *testing.T) {
 	AssertLexerTokenSequence(t, `@media screen and (orientation: landscape) { }`,
 		[]ast.TokenType{ast.T_MEDIA, ast.T_IDENT, ast.T_LOGICAL_AND,
-			ast.T_PAREN_START, ast.T_IDENT, ast.T_COLON, ast.T_IDENT, ast.T_PAREN_END,
-			ast.T_BRACE_START,
-			ast.T_BRACE_END,
+			ast.T_PAREN_OPEN, ast.T_IDENT, ast.T_COLON, ast.T_IDENT, ast.T_PAREN_CLOSE,
+			ast.T_BRACE_OPEN,
+			ast.T_BRACE_CLOSE,
 		})
 }
 
@@ -283,11 +283,11 @@ func TestLexerMediaQueryConditionWithExpressions(t *testing.T) {
   }
 }`,
 		[]ast.TokenType{ast.T_MEDIA, ast.T_INTERPOLATION_START, ast.T_VARIABLE, ast.T_INTERPOLATION_END, ast.T_LOGICAL_AND,
-			ast.T_PAREN_START, ast.T_VARIABLE, ast.T_COLON, ast.T_VARIABLE, ast.T_PAREN_END,
-			ast.T_BRACE_START,
+			ast.T_PAREN_OPEN, ast.T_VARIABLE, ast.T_COLON, ast.T_VARIABLE, ast.T_PAREN_CLOSE,
+			ast.T_BRACE_OPEN,
 			ast.T_CLASS_SELECTOR,
-			ast.T_BRACE_START, ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON, ast.T_BRACE_END,
-			ast.T_BRACE_END,
+			ast.T_BRACE_OPEN, ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON, ast.T_BRACE_CLOSE,
+			ast.T_BRACE_CLOSE,
 		})
 }
 
@@ -300,11 +300,11 @@ func TestLexerMediaQueryConditionSimpleMaxWidth(t *testing.T) {
 	}
 	`
 	AssertLexerTokenSequence(t, code, []ast.TokenType{
-		ast.T_MEDIA, ast.T_PAREN_START, ast.T_IDENT, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_PAREN_END, ast.T_BRACE_START,
-		ast.T_TYPE_SELECTOR, ast.T_COMMA, ast.T_TYPE_SELECTOR, ast.T_COMMA, ast.T_CLASS_SELECTOR, ast.T_COMMA, ast.T_CLASS_SELECTOR, ast.T_BRACE_START,
+		ast.T_MEDIA, ast.T_PAREN_OPEN, ast.T_IDENT, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_PAREN_CLOSE, ast.T_BRACE_OPEN,
+		ast.T_TYPE_SELECTOR, ast.T_COMMA, ast.T_TYPE_SELECTOR, ast.T_COMMA, ast.T_CLASS_SELECTOR, ast.T_COMMA, ast.T_CLASS_SELECTOR, ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON,
-		ast.T_BRACE_END,
-		ast.T_BRACE_END,
+		ast.T_BRACE_CLOSE,
+		ast.T_BRACE_CLOSE,
 	})
 }
 

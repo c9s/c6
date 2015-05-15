@@ -36,27 +36,27 @@ func TestLexerHexColor6Letter(t *testing.T) {
 }
 
 func TestLexerFunctionCall(t *testing.T) {
-	AssertLexerTokenSequenceFromState(t, `rgba(0,0,0,0)`, lexExpression, []ast.TokenType{ast.T_FUNCTION_NAME, ast.T_PAREN_START,
+	AssertLexerTokenSequenceFromState(t, `rgba(0,0,0,0)`, lexExpression, []ast.TokenType{ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER,
-		ast.T_PAREN_END})
+		ast.T_PAREN_CLOSE})
 }
 
 func TestLexerExpressionFunction(t *testing.T) {
 	AssertLexerTokenSequenceFromState(t, `rgba(0,0,0,0) - rgba(255,255,255,0)`, lexExpression, []ast.TokenType{
-		ast.T_FUNCTION_NAME, ast.T_PAREN_START,
+		ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_COMMA,
-		ast.T_INTEGER, ast.T_PAREN_END,
+		ast.T_INTEGER, ast.T_PAREN_CLOSE,
 		ast.T_MINUS,
-		ast.T_FUNCTION_NAME, ast.T_PAREN_START,
+		ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_COMMA,
 		ast.T_INTEGER, ast.T_COMMA,
-		ast.T_INTEGER, ast.T_PAREN_END,
+		ast.T_INTEGER, ast.T_PAREN_CLOSE,
 	})
 }
 

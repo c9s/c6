@@ -128,7 +128,7 @@ func (tok Token) IsSelector() bool {
 		T_CLASS_SELECTOR, T_PARENT_SELECTOR, T_PSEUDO_SELECTOR,
 		T_ADJACENT_SIBLING_COMBINATOR, T_GENERAL_SIBLING_COMBINATOR,
 		T_CHILD_COMBINATOR, T_DESCENDANT_COMBINATOR,
-		T_BRACKET_LEFT: // '[' is the first token of attribute selector.
+		T_BRACKET_OPEN: // '[' is the first token of attribute selector.
 		return true
 	}
 	return false
@@ -278,12 +278,12 @@ const (
 	T_MUL   // for '*'
 	T_MINUS // for '-'
 	T_MOD   // for '%'
-	T_BRACE_START
-	T_BRACE_END
+	T_BRACE_OPEN
+	T_BRACE_CLOSE
 	T_LANG_CODE // 'en', 'fr', 'fr-ca'
-	T_BRACKET_LEFT
+	T_BRACKET_OPEN
 	T_ATTRIBUTE_NAME
-	T_BRACKET_RIGHT
+	T_BRACKET_CLOSE
 
 	T_EQUAL   // for '=='
 	T_UNEQUAL // for '!='
@@ -310,8 +310,8 @@ const (
 	T_QQ_STRING
 	T_Q_STRING
 	T_UNQUOTE_STRING
-	T_PAREN_START
-	T_PAREN_END
+	T_PAREN_OPEN
+	T_PAREN_CLOSE
 	T_CONSTANT
 	T_INTEGER
 	T_FLOAT
