@@ -389,6 +389,17 @@ func TestParserVariableAssignmentWithPxValue(t *testing.T) {
 	fmt.Printf("%+v\n", stmts)
 }
 
+func TestParserMixinSimple(t *testing.T) {
+	RunParserTest(`
+@mixin silly-links {
+  a {
+    color: blue;
+    background-color: red;
+  }
+}
+	`)
+}
+
 func TestParserMassiveRules(t *testing.T) {
 	var buffers []string = []string{
 		`div { width: auto; }`,

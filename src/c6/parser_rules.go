@@ -1209,3 +1209,25 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 	}
 	return stm
 }
+
+func (parser *Parser) ParseMixinStatement() ast.Statement {
+	var mixinTok = parser.expect(ast.T_MIXIN)
+	var stm = ast.NewMixinStatementWithToken(mixinTok)
+
+	var tok = parser.next()
+
+	// Mixin without parameters
+	if tok.Type == ast.T_IDENT {
+
+		stm.Ident = tok
+
+	} else if tok.Type == ast.T_FUNCTION_NAME {
+
+		stm.Ident = tok
+
+	}
+
+	var block = parser.ParseBlock()
+	stm.Block = block
+	return stm
+}
