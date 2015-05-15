@@ -57,6 +57,8 @@ func (parser *Parser) ParseStatement() ast.Statement {
 		return parser.ParseIfStatement()
 	case ast.T_FOR:
 		return parser.ParseForStatement()
+	case ast.T_CONTENT:
+		return parser.ParseContentBlockDirective()
 	}
 
 	if token.IsSelector() {
@@ -1326,4 +1328,9 @@ func (parser *Parser) ParseArgumentList() *ast.ArgumentList {
 	}
 	parser.expect(ast.T_PAREN_CLOSE)
 	return args
+}
+
+func (parser *Parser) ParseContentBlockDirective() ast.Statement {
+	parser.expect(ast.T_CONTENT)
+	return nil
 }
