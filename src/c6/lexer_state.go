@@ -24,8 +24,14 @@ func lexCommentLine(l *Lexer, emit bool) stateFn {
 	l.ignore()
 
 	var r = l.next()
-	for r != '\n' && r != EOF {
+	for r != EOF {
+		if r == '\n' {
+			break
+		}
 		r = l.next()
+		if r == '\r' {
+			r = l.next()
+		}
 	}
 	l.backup()
 	if emit {
@@ -33,7 +39,7 @@ func lexCommentLine(l *Lexer, emit bool) stateFn {
 	} else {
 		l.ignore()
 	}
-	return nil
+	return lexStatement
 }
 
 /*
@@ -82,12 +88,12 @@ func lexCommentBlock(l *Lexer, emit bool) stateFn {
 			}
 			l.match("*/")
 			l.ignore()
-			return nil
+			return lexStatement
 		}
 		r = l.next()
 	}
 	l.error("Expecting comment end mark '*/'.", r)
-	return nil
+	return lexStatement
 }
 
 func lexComment(l *Lexer, emit bool) stateFn {
