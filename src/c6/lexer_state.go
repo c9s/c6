@@ -168,15 +168,16 @@ func lexUrl(l *Lexer) {
 		l.emit(ast.T_IDENT)
 		l.match("(")
 		l.emit(ast.T_PAREN_START)
+		l.ignoreSpaces()
 
 		var q = l.peek()
 		if q == '"' || q == '\'' {
 			lexString(l)
 		} else {
-			l.ignoreSpaces()
 			lexUnquoteStringExclude(l, " ()")
-			l.ignoreSpaces()
 		}
+
+		l.ignoreSpaces()
 		l.match(")")
 		l.emit(ast.T_PAREN_END)
 
