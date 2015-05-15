@@ -312,6 +312,9 @@ const (
 	T_INTEGER
 	T_FLOAT
 
+	T_CDO // for <!--
+	T_CDC // for -->
+
 	/*
 		unit tokens
 	*/
