@@ -6,7 +6,7 @@ type FunctionCall struct {
 	Token     *Token
 }
 
-func (self FunctionCall) CanBeNode()       {}
+func (self FunctionCall) CanBeNode() {}
 func (self FunctionCall) String() (out string) {
 	out = self.Function + "("
 	for _, arg := range self.Arguments {
@@ -19,24 +19,11 @@ func (self FunctionCall) String() (out string) {
 	return out
 }
 
-func NewFunctionCall(token *Token) *FunctionCall {
-	return &FunctionCall{token.Str, []Expression{}, token}
-}
-
 func (self *FunctionCall) AppendArgument(arg Expression) {
 	var args = append(self.Arguments, arg)
 	self.Arguments = args
 }
 
-/*
-TODO: Render function call
-
-func (self FunctionCall) String() (out string) {
-	out += self.Function
-	out += "("
-	for _, arg := range self.Arguments {
-
-	}
-	return self.Function + "(" + ")"
+func NewFunctionCallWithToken(token *Token) *FunctionCall {
+	return &FunctionCall{token.Str, []Expression{}, token}
 }
-*/

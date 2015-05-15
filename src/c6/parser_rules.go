@@ -38,35 +38,26 @@ func (parser *Parser) ParseStatement() ast.Statement {
 		return nil
 	}
 
-	if token.Type == ast.T_IMPORT {
-
+	switch token.Type {
+	case ast.T_IMPORT:
 		return parser.ParseImportStatement()
-
-	} else if token.Type == ast.T_CHARSET {
-
+	case ast.T_CHARSET:
 		return parser.ParseCharsetStatement()
-
-	} else if token.Type == ast.T_MEDIA {
-
+	case ast.T_MEDIA:
 		return parser.ParseMediaQueryStatement()
-
-	} else if token.Type == ast.T_MIXIN {
-
+	case ast.T_MIXIN:
 		return parser.ParseMixinStatement()
-
-	} else if token.Type == ast.T_VARIABLE {
-
+	case ast.T_FUNCTION:
+		return parser.ParseFunction()
+	case ast.T_VARIABLE:
 		return parser.ParseVariableAssignment()
-
-	} else if token.Type == ast.T_IF {
-
+	case ast.T_IF:
 		return parser.ParseIfStatement()
-
-	} else if token.Type == ast.T_FOR {
-
+	case ast.T_FOR:
 		return parser.ParseForStatement()
+	}
 
-	} else if token.IsSelector() {
+	if token.IsSelector() {
 
 		return parser.ParseRuleSet()
 
@@ -347,7 +338,7 @@ func (parser *Parser) ParseFunctionCall() *ast.FunctionCall {
 
 	debug("ParseFunctionCall => next: %s", identTok)
 
-	var fcall = ast.NewFunctionCall(identTok)
+	var fcall = ast.NewFunctionCallWithToken(identTok)
 
 	parser.expect(ast.T_PAREN_OPEN)
 
@@ -1251,6 +1242,16 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 		panic(ParserError{";", tok.Str})
 	}
 	return stm
+}
+
+func (parser *Parser) ParseFunction() ast.Statement {
+	parser.expect(ast.T_FUNCTION)
+	var identTok = parser.expect(ast.T_FUNCTION_NAME)
+	var args = parser.ParseArgumentList()
+	var fun = ast.NewFunctionWithToken(identTok)
+	fun.ArgumentList = args
+	fun.Block = parser.ParseBlock()
+	return fun
 }
 
 func (parser *Parser) ParseMixinStatement() ast.Statement {
