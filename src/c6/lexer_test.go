@@ -855,10 +855,75 @@ func TestLexerMixinArguments(t *testing.T) {
 	})
 }
 
-func BenchmarkLexerSimple(b *testing.B) {
+func BenchmarkLexerBasic(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		// Fib(10)
 		var l = NewLexerWithString(`.test, .foo, .bar { color: #fff; }`)
+		var o = l.getOutput()
+		l.run()
+		var token = <-o
+		for ; token != nil; token = <-o {
+		}
+		l.close()
+	}
+}
+
+func BenchmarkLexerTypeSelector(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		// Fib(10)
+		var l = NewLexerWithString(`div { }`)
+		var o = l.getOutput()
+		l.run()
+		var token = <-o
+		for ; token != nil; token = <-o {
+		}
+		l.close()
+	}
+}
+
+func BenchmarkLexerIdSelector(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		// Fib(10)
+		var l = NewLexerWithString(`#myId { }`)
+		var o = l.getOutput()
+		l.run()
+		var token = <-o
+		for ; token != nil; token = <-o {
+		}
+		l.close()
+	}
+}
+
+func BenchmarkLexerClassSelector(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		// Fib(10)
+		var l = NewLexerWithString(`.foo-bar-zoo { }`)
+		var o = l.getOutput()
+		l.run()
+		var token = <-o
+		for ; token != nil; token = <-o {
+		}
+		l.close()
+	}
+}
+
+func BenchmarkLexerAttributeSelector(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		// Fib(10)
+		var l = NewLexerWithString(`[href*=ftp] { }`)
+		var o = l.getOutput()
+		l.run()
+		var token = <-o
+		for ; token != nil; token = <-o {
+		}
+		l.close()
+	}
+}
+
+func BenchmarkLexerImportRule(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		// Fib(10)
+		var l = NewLexerWithString(`@import url(../test.scss);`)
 		var o = l.getOutput()
 		l.run()
 		var token = <-o
