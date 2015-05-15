@@ -50,6 +50,10 @@ func (parser *Parser) ParseStatement() ast.Statement {
 
 		return parser.ParseMediaQueryStatement()
 
+	} else if token.Type == ast.T_MIXIN {
+
+		return parser.ParseMixinStatement()
+
 	} else if token.Type == ast.T_VARIABLE {
 
 		return parser.ParseVariableAssignment()
@@ -630,16 +634,42 @@ func (parser *Parser) ParseInterp() ast.Expression {
 	return interp
 }
 
+func (parser *Parser) ParseValueStrict() ast.Expression {
+	var pos = parser.Pos
+
+	var tok = parser.peek()
+	if tok.Type == ast.T_PAREN_OPEN {
+		if mapValue := parser.ParseMap(); mapValue != nil {
+			return mapValue
+		}
+		parser.restore(pos)
+
+		if listValue := parser.ParseList(); listValue != nil {
+			return listValue
+		}
+		parser.restore(pos)
+	}
+	return parser.ParseExpression(true)
+}
+
 /**
+Parse Value loosely
+
+This parse method allows space/comma separated tokens of list.
+
+To parse mixin argument or function argument, we only allow comma-separated list inside the parenthesis.
+
+@param stopTokType ast.TokenType
+
 The stop token is used from variable assignment expression,
- we expect ';' semicolon at the end of expression to avoid the ambiguity of list, map and expression.
+We expect ';' semicolon at the end of expression to avoid the ambiguity of list, map and expression.
 */
 func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 	debug("ParseValue")
 	var pos = parser.Pos
 
 	// try parse map
-	debug("Trying Map")
+	debug("ParseMap")
 	if mapValue := parser.ParseMap(); mapValue != nil {
 		var tok = parser.peek()
 
@@ -1238,9 +1268,39 @@ func (parser *Parser) ParseMixinStatement() ast.Statement {
 
 		stm.Ident = tok
 
+		parser.ParseArgumentList()
 	}
 
-	var block = parser.ParseBlock()
+	var block = parser.ParseDeclarationBlock()
 	stm.Block = block
 	return stm
+}
+
+func (parser *Parser) ParseArgument() bool {
+	debug("ParseArgumentList")
+
+	var varTok *ast.Token = nil
+	if varTok = parser.accept(ast.T_VARIABLE); varTok == nil {
+		return false
+	}
+
+	if parser.accept(ast.T_COLON) != nil {
+		parser.ParseValueStrict()
+	}
+	return true
+}
+
+func (parser *Parser) ParseArgumentList() {
+	parser.expect(ast.T_PAREN_OPEN)
+	var tok = parser.peek()
+	for tok.Type != ast.T_PAREN_CLOSE {
+		parser.ParseArgument()
+
+		if tok = parser.accept(ast.T_COMMA); tok != nil {
+			continue
+		} else {
+			break
+		}
+	}
+	parser.expect(ast.T_PAREN_CLOSE)
 }

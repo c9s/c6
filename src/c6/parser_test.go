@@ -415,6 +415,16 @@ func TestParserMixinSimple(t *testing.T) {
 	`)
 }
 
+func TestParserMixinArguments(t *testing.T) {
+	RunParserTest(`
+@mixin colors($text, $background, $border) {
+  color: $text;
+  background-color: $background;
+  border-color: $border;
+}
+	`)
+}
+
 func TestParserMassiveRules(t *testing.T) {
 	var buffers []string = []string{
 		`div { width: auto; }`,

@@ -5,7 +5,7 @@ package ast
 type MixinStatement struct {
 	Token *Token
 	Ident *Token
-	Block *Block
+	Block *DeclarationBlock
 }
 
 func (stm MixinStatement) CanBeStatement() {}
