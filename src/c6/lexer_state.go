@@ -535,6 +535,16 @@ func lexStatement(l *Lexer) stateFn {
 		l.emit(ast.T_BRACE_END)
 		return lexStatement
 
+	} else if l.match("<!--") {
+
+		l.emit(ast.T_CDO)
+		return lexStatement
+
+	} else if l.match("-->") {
+
+		l.emit(ast.T_CDC)
+		return lexStatement
+
 	} else if r == '/' && (l.peek() == '*' || l.peek() == '/') {
 
 		lexComment(l, true)
