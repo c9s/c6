@@ -932,3 +932,16 @@ func BenchmarkLexerImportRule(b *testing.B) {
 		l.close()
 	}
 }
+
+func BenchmarkLexerVariableDeclaration(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		// Fib(10)
+		var l = NewLexerWithString(`$color: (3+1) * 4`)
+		var o = l.getOutput()
+		l.run()
+		var token = <-o
+		for ; token != nil; token = <-o {
+		}
+		l.close()
+	}
+}

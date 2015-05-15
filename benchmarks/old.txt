@@ -1,9 +1,11 @@
 PASS
-BenchmarkLexerBasic	  100000	     25016 ns/op
-BenchmarkLexerTypeSelector	  100000	     15768 ns/op
-BenchmarkLexerClassSelector	  100000	     16960 ns/op
-BenchmarkLexerAttributeSelector	  100000	     18098 ns/op
-BenchmarkLexerImportRule	  100000	     20061 ns/op
-BenchmarkParserComplexSelector	   50000	     32361 ns/op
-BenchmarkParserOverAll	   10000	    100376 ns/op
-ok  	c6	13.543s
+BenchmarkLexerBasic	  100000	     23264 ns/op
+BenchmarkLexerTypeSelector	  100000	     15624 ns/op
+BenchmarkLexerIdSelector	  100000	     17780 ns/op
+BenchmarkLexerClassSelector	  100000	     16982 ns/op
+BenchmarkLexerAttributeSelector	  100000	     17314 ns/op
+BenchmarkLexerImportRule	  100000	     18298 ns/op
+BenchmarkLexerVariableDeclaration	   50000	     32325 ns/op
+BenchmarkParserComplexSelector	   50000	     29867 ns/op
+BenchmarkParserOverAll	   20000	     92013 ns/op
+ok  	c6	18.598s
