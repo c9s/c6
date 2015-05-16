@@ -506,10 +506,9 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 
 	// plus or minus. This creates an unary expression that holds the later term.
 	// this is for:  +3 or -4
-	var tok = parser.peek()
 	var expr ast.Expression = nil
-	if tok.Type == ast.T_PLUS || tok.Type == ast.T_MINUS {
-		parser.next()
+
+	if tok := parser.acceptAnyOf2(ast.T_PLUS, ast.T_MINUS); tok != nil {
 		if term := parser.ParseTerm(); term != nil {
 			expr = ast.NewUnaryExpression(ast.NewOpWithToken(tok), term)
 
@@ -587,51 +586,42 @@ func (parser *Parser) ParseMap() ast.Expression {
 			return nil
 		}
 
+		parser.accept(ast.T_COMMA)
 		tok = parser.peek()
-		if tok.Type == ast.T_COMMA {
-			parser.next()
-			tok = parser.peek()
-		}
 	}
 	return nil
 }
 
 func (parser *Parser) ParseString() ast.Expression {
-	var tok = parser.peek()
-
-	if tok.Type == ast.T_QQ_STRING {
-
-		tok = parser.next()
+	if tok := parser.accept(ast.T_QQ_STRING); tok != nil {
 		var str = ast.NewStringWithQuote('"', tok)
 		return ast.Expression(str)
 
-	} else if tok.Type == ast.T_Q_STRING {
+	} else if tok := parser.accept(ast.T_Q_STRING); tok != nil {
 
-		tok = parser.next()
 		var str = ast.NewStringWithQuote('\'', tok)
 		return ast.Expression(str)
 
-	} else if tok.Type == ast.T_IDENT {
+	} else if tok := parser.accept(ast.T_IDENT); tok != nil {
 
 		tok = parser.next()
 		return ast.Expression(ast.NewStringWithToken(tok))
 
-	} else if tok.Type == ast.T_INTERPOLATION_START {
+	}
 
+	var tok = parser.peek()
+	if tok.Type == ast.T_INTERPOLATION_START {
 		return parser.ParseInterp()
-
 	}
 	return nil
 }
 
 func (parser *Parser) ParseInterp() ast.Expression {
-	var startTok = parser.peek()
-
-	if startTok.Type != ast.T_INTERPOLATION_START {
+	var startTok = parser.accept(ast.T_INTERPOLATION_START)
+	if startTok == nil {
+		panic("Expecting #{ for interpolation")
 		return nil
 	}
-
-	parser.accept(ast.T_INTERPOLATION_START)
 	var innerExpr = parser.ParseExpression(true)
 	var endTok = parser.expect(ast.T_INTERPOLATION_END)
 	return ast.NewInterpolation(innerExpr, startTok, endTok)
@@ -640,8 +630,7 @@ func (parser *Parser) ParseInterp() ast.Expression {
 func (parser *Parser) ParseValueStrict() ast.Expression {
 	var pos = parser.Pos
 
-	var tok = parser.peek()
-	if tok.Type == ast.T_PAREN_OPEN {
+	if tok := parser.accept(ast.T_PAREN_OPEN); tok != nil {
 		if mapValue := parser.ParseMap(); mapValue != nil {
 			return mapValue
 		}
@@ -856,17 +845,14 @@ func (parser *Parser) ParseSpaceSepList() ast.Expression {
 	var list = ast.NewSpaceSepList()
 	list.Separator = " "
 
-	var tok = parser.peek()
-
-	if tok.Type == ast.T_PAREN_OPEN {
-		parser.next()
+	if tok := parser.accept(ast.T_PAREN_OPEN); tok != nil {
 		if sublist := parser.ParseCommaSepList(); sublist != nil {
 			list.Append(sublist)
 		}
 		parser.expect(ast.T_PAREN_CLOSE)
 	}
 
-	tok = parser.peek()
+	var tok = parser.peek()
 	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_CLOSE {
 		var subexpr = parser.ParseExpression(true)
 		if subexpr != nil {
@@ -931,11 +917,12 @@ func (parser *Parser) ParsePropertyName() ast.Expression {
 }
 
 func (parser *Parser) ParsePropertyNameToken() ast.Expression {
-	var tok = parser.peek()
-	if tok.Type == ast.T_PROPERTY_NAME_TOKEN {
-		parser.next()
+	if tok := parser.accept(ast.T_PROPERTY_NAME_TOKEN); tok != nil {
 		return ast.NewIdentWithToken(tok)
-	} else if tok.Type == ast.T_INTERPOLATION_START {
+	}
+
+	var tok = parser.peek()
+	if tok.Type == ast.T_INTERPOLATION_START {
 		return parser.ParseInterpolation()
 	}
 	return nil
@@ -1002,7 +989,7 @@ func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 }
 
 func (parser *Parser) ParseCharsetStatement() ast.Statement {
-	parser.accept(ast.T_CHARSET)
+	parser.expect(ast.T_CHARSET)
 	var tok = parser.next()
 	var stm = ast.NewCharsetStatementWithToken(tok)
 	parser.expect(ast.T_SEMICOLON)
@@ -1091,24 +1078,21 @@ func (parser *Parser) ParseMediaQuery() *ast.MediaQuery {
 ParseMediaType returns Ident Node or UnaryExpression as ast.Expression
 */
 func (parser *Parser) ParseMediaType() ast.Expression {
-	var tok = parser.peek()
-	if tok.Type == ast.T_LOGICAL_NOT {
-		parser.next()
+
+	if tok := parser.accept(ast.T_LOGICAL_NOT); tok != nil {
 
 		var mediaType = parser.expect(ast.T_IDENT)
 		return ast.NewUnaryExpression(ast.NewOpWithToken(tok), mediaType)
 
-	} else if tok.Type == ast.T_ONLY {
-		parser.next()
+	} else if tok := parser.accept(ast.T_ONLY); tok != nil {
 
 		var mediaType = parser.expect(ast.T_IDENT)
 		return ast.NewUnaryExpression(ast.NewOpWithToken(tok), mediaType)
+
 	}
 
 	// expecting media type token (it will be T_IDENT)
-	tok = parser.peek()
-	if tok.Type == ast.T_IDENT {
-		parser.next()
+	if tok := parser.accept(ast.T_IDENT); tok != nil {
 		return ast.NewIdentWithToken(tok)
 	}
 
