@@ -1115,9 +1115,7 @@ func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
 
 	// if the next token is a colon, then we expect a feature value
 	// after the colon.
-	var tok = parser.peek()
-	if tok.Type == ast.T_COLON {
-		parser.next()
+	if tok := parser.accept(ast.T_COLON); tok != nil {
 		feature.Value = parser.ParseExpression(false)
 	}
 	parser.expect(ast.T_PAREN_CLOSE)
@@ -1218,9 +1216,10 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 	var stm = ast.NewImportStatement()
 
 	var tok = parser.peek()
+
 	// expecting url(..)
 	if tok.Type == ast.T_IDENT {
-		parser.advance()
+		parser.next()
 
 		if tok.Str != "url" {
 			panic("invalid function for @import statement.")
@@ -1238,8 +1237,11 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 		}
 
 	} else if tok.IsString() {
-		parser.advance()
+
+		parser.next()
+
 		stm.Url = ast.RelativeUrl(tok.Str)
+
 	}
 
 	parser.ParseMediaQueryList()
@@ -1285,6 +1287,11 @@ func (parser *Parser) ParseMixinStatement() ast.Statement {
 		stm.Ident = tok
 
 		stm.ArgumentList = parser.ParseFunctionPrototype()
+
+	} else {
+
+		panic("Syntax error")
+
 	}
 
 	stm.Block = parser.ParseDeclarationBlock()
@@ -1299,12 +1306,13 @@ func (parser *Parser) ParseFunctionPrototypeArgument() *ast.Argument {
 		return nil
 	}
 
-	var arg = ast.NewArgumentWithToken(varTok)
-
-	if parser.accept(ast.T_COLON) != nil {
-		arg.DefaultValue = parser.ParseValueStrict()
+	if arg := ast.NewArgumentWithToken(varTok); arg != nil {
+		if parser.accept(ast.T_COLON) != nil {
+			arg.DefaultValue = parser.ParseValueStrict()
+		}
+		return arg
 	}
-	return arg
+	return nil
 }
 
 func (parser *Parser) ParseFunctionPrototype() *ast.ArgumentList {
