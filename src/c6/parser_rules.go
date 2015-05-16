@@ -959,19 +959,25 @@ func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 	for tok != nil && tok.Type != ast.T_BRACE_CLOSE {
 		if propertyName := parser.ParsePropertyName(); propertyName != nil {
 			var property = ast.NewProperty(tok)
-			var valueList = parser.ParsePropertyValue(parentRuleSet, property)
-			_ = valueList
-			// property.Values = valueList
+
+			if valueList := parser.ParsePropertyValue(parentRuleSet, property); valueList != nil {
+				// property.Values = valueList
+			}
 			declBlock.Append(property)
-			_ = property
+
+			var tok2 = parser.peek()
+
+			// if nested property found
+			if tok2.Type == ast.T_BRACE_OPEN {
+				// TODO: merge them back to current block
+				parser.ParseDeclarationBlock()
+			}
 
 			if parser.accept(ast.T_SEMICOLON) == nil {
-				if tok2 := parser.peek(); tok2.Type == ast.T_BRACE_CLOSE {
+				if tok3 := parser.peek(); tok3.Type == ast.T_BRACE_CLOSE {
 					// normal break
 					break
 				} else {
-
-					// TODO: support nested property here...
 					panic("missing semicolon after the property value.")
 				}
 			}

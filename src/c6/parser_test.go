@@ -76,6 +76,16 @@ func TestParserPropertyNameBorderWidth(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserNestedProperty(t *testing.T) {
+	var stmts = RunParserTest(`div {
+		border: {
+			width: 3px;
+			color: #000;
+		}
+	}`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserPropertyNameBorderWidthInterpolation(t *testing.T) {
 	var stmts = RunParserTest(`div { border-#{ $width }: 3px 3px 3px 3px; }`)
 	assert.Equal(t, 1, len(stmts))
