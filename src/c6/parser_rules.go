@@ -184,38 +184,40 @@ func (parser *Parser) ParseSelectors() *ast.SelectorList {
 	var sels = ast.NewSelectorList()
 
 	var tok = parser.next()
-	for tok.IsSelector() || tok.IsSelectorCombinator() {
 
+	// TODO: Strict checking with selector combinator
+	for tok.IsSelector() || tok.IsSelectorCombinator() {
 		switch tok.Type {
 
 		case ast.T_TYPE_SELECTOR:
 
-			sel := ast.NewTypeSelectorWithToken(tok)
+			var sel = ast.NewTypeSelectorWithToken(tok)
 			sels.Append(sel)
 
 		case ast.T_UNIVERSAL_SELECTOR:
 
-			sel := ast.NewUniversalSelectorWithToken(tok)
+			var sel = ast.NewUniversalSelectorWithToken(tok)
 			sels.Append(sel)
 
 		case ast.T_ID_SELECTOR:
 
-			sel := ast.NewIdSelectorWithToken(tok)
+			var sel = ast.NewIdSelectorWithToken(tok)
 			sels.Append(sel)
 
 		case ast.T_CLASS_SELECTOR:
 
-			sel := ast.NewClassSelectorWithToken(tok)
+			var sel = ast.NewClassSelectorWithToken(tok)
 			sels.Append(sel)
 
 		case ast.T_PARENT_SELECTOR:
 
-			sel := ast.NewParentSelectorWithToken(parentRuleSet, tok)
+			var sel = ast.NewParentSelectorWithToken(parentRuleSet, tok)
 			sels.Append(sel)
 
 		case ast.T_PSEUDO_SELECTOR:
 
-			sel := ast.NewPseudoSelectorWithToken(tok)
+			// pseudo selector
+			var sel = ast.NewPseudoSelectorWithToken(tok)
 			if nextTok := parser.peek(); nextTok.Type == ast.T_LANG_CODE {
 				sel.C = nextTok.Str
 			}
@@ -237,6 +239,7 @@ func (parser *Parser) ParseSelectors() *ast.SelectorList {
 			sels.Append(sel)
 
 		case ast.T_COMMA:
+
 			var sel = ast.NewGroupCombinatorWithToken(tok)
 			sels.Append(sel)
 
