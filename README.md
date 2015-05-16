@@ -100,10 +100,10 @@ To run specific test
   - [x] Parse `@if` statement
   - [x] Parse `@for` statement
   - [x] Parse `@while` statement
-  - [ ] Parse `@mixin` statement
-  - [ ] Parse `@include` statement
-  - [ ] Parse `@function` statement
-  - [ ] Parse `@return` statement
+  - [x] Parse `@mixin` statement
+  - [x] Parse `@include` statement
+  - [x] Parse `@function` statement
+  - [x] Parse `@return` statement
   - [ ] Parse keyword arguments for `@function`
   - [ ] Parse `@switch` statement
   - [ ] Parse `@case` statement
@@ -130,12 +130,12 @@ To run specific test
   - [x] `@if` If Condition
   - [x] `@else if` If Else If
   - [x] `@else` else condition
-  - [ ] `@while` statement node
+  - [x] `@while` statement node
   - [ ] `@each` statement node
-  - [ ] `@function` statement node
-  - [ ] `@mixin` statement node
-  - [ ] `@include` statement node
-  - [ ] `@return` statement node
+  - [x] `@function` statement node
+  - [x] `@mixin` statement node
+  - [x] `@include` statement node
+  - [x] `@return` statement node
 - [ ] Runtime
   - [ ] HSL Color computation
 - [ ] SASS Built-in Functions
