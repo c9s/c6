@@ -1344,26 +1344,31 @@ func (parser *Parser) ParseArgumentList() *ast.ArgumentList {
 
 func (parser *Parser) ParseIncludeStatement() ast.Statement {
 	var tok = parser.expect(ast.T_INCLUDE)
-	_ = tok
+	var stm = ast.NewIncludeStatementWithToken(tok)
 
 	var tok2 = parser.next()
 
 	if tok2.Type == ast.T_IDENT {
 
+		stm.MixinIdent = tok2
+
 	} else if tok2.Type == ast.T_FUNCTION_NAME {
 
-		parser.ParseArgumentList()
+		stm.MixinIdent = tok2
+		stm.ArgumentList = parser.ParseArgumentList()
 
+	} else {
+		// TODO: report syntax error
+		panic("Unexpected token after @include.")
 	}
 
 	var tok3 = parser.peek()
 	if tok3.Type == ast.T_BRACE_OPEN {
-		parser.ParseDeclarationBlock()
+		stm.ContentBlock = parser.ParseDeclarationBlock()
 	}
 
 	parser.expect(ast.T_SEMICOLON)
-	// return ast.NewContentStatementWithToken(tok)
-	return nil
+	return stm
 }
 
 /*
