@@ -14,8 +14,12 @@ func (self SelectorList) String() (out string) {
 	return out
 }
 
+func NewSelectorList() *SelectorList {
+	return &SelectorList{}
+}
+
 type RuleSet struct {
-	Selectors SelectorList
+	Selectors *SelectorList
 	Block     *DeclarationBlock
 }
 
@@ -24,7 +28,7 @@ func NewRuleSet() *RuleSet {
 }
 
 func (self *RuleSet) AppendSelector(sel Selector) {
-	self.Selectors = append(self.Selectors, sel)
+	self.Selectors.Append(sel)
 }
 
 func (self *RuleSet) AppendSubRuleSet(ruleset *RuleSet) {

@@ -179,13 +179,11 @@ func (parser *Parser) ParseComparisonExpression() ast.Expression {
 	return expr
 }
 
-func (parser *Parser) ParseRuleSet() ast.Statement {
-	var tok = parser.next()
+func (parser *Parser) ParseSelectors() *ast.SelectorList {
 	var parentRuleSet = parser.Context.TopRuleSet()
+	var sels = ast.NewSelectorList()
 
-	var ruleset = ast.NewRuleSet()
-	parser.Context.PushRuleSet(ruleset)
-
+	var tok = parser.next()
 	for tok.IsSelector() || tok.IsSelectorCombinator() {
 
 		switch tok.Type {
@@ -193,27 +191,27 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 		case ast.T_TYPE_SELECTOR:
 
 			sel := ast.NewTypeSelectorWithToken(tok)
-			ruleset.AppendSelector(sel)
+			sels.Append(sel)
 
 		case ast.T_UNIVERSAL_SELECTOR:
 
 			sel := ast.NewUniversalSelectorWithToken(tok)
-			ruleset.AppendSelector(sel)
+			sels.Append(sel)
 
 		case ast.T_ID_SELECTOR:
 
 			sel := ast.NewIdSelectorWithToken(tok)
-			ruleset.AppendSelector(sel)
+			sels.Append(sel)
 
 		case ast.T_CLASS_SELECTOR:
 
 			sel := ast.NewClassSelectorWithToken(tok)
-			ruleset.AppendSelector(sel)
+			sels.Append(sel)
 
 		case ast.T_PARENT_SELECTOR:
 
 			sel := ast.NewParentSelectorWithToken(parentRuleSet, tok)
-			ruleset.AppendSelector(sel)
+			sels.Append(sel)
 
 		case ast.T_PSEUDO_SELECTOR:
 
@@ -221,22 +219,26 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 			if nextTok := parser.peek(); nextTok.Type == ast.T_LANG_CODE {
 				sel.C = nextTok.Str
 			}
-			ruleset.AppendSelector(sel)
+			sels.Append(sel)
 
 		case ast.T_ADJACENT_SIBLING_COMBINATOR:
 
-			ruleset.AppendSelector(ast.NewAdjacentCombinatorWithToken(tok))
+			var sel = ast.NewAdjacentCombinatorWithToken(tok)
+			sels.Append(sel)
 
 		case ast.T_CHILD_COMBINATOR:
 
-			ruleset.AppendSelector(ast.NewChildCombinatorWithToken(tok))
+			var sel = ast.NewChildCombinatorWithToken(tok)
+			sels.Append(sel)
 
 		case ast.T_DESCENDANT_COMBINATOR:
 
-			ruleset.AppendSelector(ast.NewDescendantCombinatorWithToken(tok))
+			var sel = ast.NewDescendantCombinatorWithToken(tok)
+			sels.Append(sel)
 
 		case ast.T_COMMA:
-			ruleset.AppendSelector(ast.NewGroupCombinatorWithToken(tok))
+			var sel = ast.NewGroupCombinatorWithToken(tok)
+			sels.Append(sel)
 
 		case ast.T_BRACKET_OPEN:
 			var attrName = parser.expect(ast.T_ATTRIBUTE_NAME)
@@ -244,12 +246,13 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 			if tok2.IsAttributeMatchOperator() {
 				var tok3 = parser.next()
 				var sel = ast.NewAttributeSelector(attrName, tok2, tok3)
-				ruleset.AppendSelector(sel)
+				sels.Append(sel)
 				parser.expect(ast.T_BRACKET_CLOSE)
 
 			} else if tok2.Type == ast.T_BRACKET_CLOSE {
 				var sel = ast.NewAttributeSelectorNameOnly(attrName)
-				ruleset.AppendSelector(sel)
+				sels.Append(sel)
+
 			} else {
 				panic(fmt.Errorf("Unexpected token type: %s", tok2))
 			}
@@ -260,11 +263,18 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 		tok = parser.next()
 	}
 	parser.backup()
+	return sels
+}
 
-	// parse declaration block
+func (parser *Parser) ParseRuleSet() ast.Statement {
+	var ruleset = ast.NewRuleSet()
+
+	ruleset.Selectors = parser.ParseSelectors()
+
+	parser.Context.PushRuleSet(ruleset)
+
 	ruleset.Block = parser.ParseDeclarationBlock()
 
-	// pop the ruleset from stack
 	parser.Context.PopRuleSet()
 	return ruleset
 }
