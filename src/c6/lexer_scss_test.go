@@ -621,6 +621,21 @@ func TestLexerMixinIncludeArguments(t *testing.T) {
 	AssertLexerTokenSequence(t, code, []ast.TokenType{ast.T_INCLUDE, ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_PAREN_CLOSE, ast.T_SEMICOLON})
 }
 
+func TestLexerMixinIncludeArgumentsWithContentBlock(t *testing.T) {
+	code := `@include large-text(62px) {
+		color: #000;
+		width: 100px;
+	};`
+	AssertLexerTokenSequence(t, code, []ast.TokenType{
+		ast.T_INCLUDE, ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_PAREN_CLOSE,
+		ast.T_BRACE_OPEN,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON,
+		ast.T_BRACE_CLOSE,
+		ast.T_SEMICOLON,
+	})
+}
+
 func TestLexerMixinArguments(t *testing.T) {
 	code := `
 @mixin sexy-border($color, $width) {
