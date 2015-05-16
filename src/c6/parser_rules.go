@@ -904,12 +904,6 @@ func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *a
 		tok = parser.peek()
 	}
 
-	tok = parser.peek()
-	if tok.Type == ast.T_SEMICOLON || tok.Type == ast.T_BRACE_CLOSE {
-		parser.next()
-	} else {
-		panic(fmt.Errorf("Unexpected end of property value. Got %s", tok))
-	}
 	return list
 }
 
@@ -963,9 +957,7 @@ func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 
 	var tok = parser.peek()
 	for tok != nil && tok.Type != ast.T_BRACE_CLOSE {
-		var propertyName = parser.ParsePropertyName()
-
-		if propertyName != nil {
+		if propertyName := parser.ParsePropertyName(); propertyName != nil {
 			var property = ast.NewProperty(tok)
 			var valueList = parser.ParsePropertyValue(parentRuleSet, property)
 			_ = valueList
@@ -973,13 +965,26 @@ func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 			declBlock.Append(property)
 			_ = property
 
+			if parser.accept(ast.T_SEMICOLON) == nil {
+				if tok2 := parser.peek(); tok2.Type == ast.T_BRACE_CLOSE {
+					// normal break
+					break
+				} else {
+
+					// TODO: support nested property here...
+					panic("missing semicolon after the property value.")
+				}
+			}
+
 		} else if stm := parser.ParseStatement(); stm != nil {
 
 		} else {
 			panic(fmt.Errorf("Parse failed at token %s", tok))
 		}
 		tok = parser.peek()
+
 	}
+	parser.expect(ast.T_BRACE_CLOSE)
 	return &declBlock
 }
 
@@ -1285,8 +1290,7 @@ func (parser *Parser) ParseMixinStatement() ast.Statement {
 		stm.ArgumentList = parser.ParseArgumentList()
 	}
 
-	var block = parser.ParseDeclarationBlock()
-	stm.Block = block
+	stm.Block = parser.ParseDeclarationBlock()
 	return stm
 }
 
@@ -1334,6 +1338,7 @@ func (parser *Parser) ParseArgumentList() *ast.ArgumentList {
 
 func (parser *Parser) ParseIncludeStatement() ast.Statement {
 	var tok = parser.expect(ast.T_INCLUDE)
+	_ = tok
 
 	var tok2 = parser.next()
 
@@ -1345,8 +1350,12 @@ func (parser *Parser) ParseIncludeStatement() ast.Statement {
 
 	}
 
+	var tok3 = parser.peek()
+	if tok3.Type == ast.T_BRACE_OPEN {
+		parser.ParseDeclarationBlock()
+	}
+
 	parser.expect(ast.T_SEMICOLON)
-	_ = tok
 	// return ast.NewContentStatementWithToken(tok)
 	return nil
 }

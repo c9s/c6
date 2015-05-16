@@ -2,11 +2,10 @@ package c6
 
 import "github.com/stretchr/testify/assert"
 import "testing"
-import "fmt"
 import "c6/ast"
 
 func AssertLexerTokenSequenceFromState(t *testing.T, scss string, fn stateFn, tokenList []ast.TokenType) {
-	fmt.Printf("Testing SCSS: %s\n", scss)
+	t.Logf("Testing SCSS: %s\n", scss)
 	var lexer = NewLexerWithString(scss)
 	assert.NotNil(t, lexer)
 	lexer.runFrom(fn)
@@ -16,7 +15,7 @@ func AssertLexerTokenSequenceFromState(t *testing.T, scss string, fn stateFn, to
 }
 
 func AssertLexerTokenSequence(t *testing.T, scss string, tokenList []ast.TokenType) {
-	fmt.Printf("Testing SCSS: %s\n", scss)
+	t.Logf("Testing SCSS: %s\n", scss)
 	var lexer = NewLexerWithString(scss)
 	assert.NotNil(t, lexer)
 	lexer.run()
@@ -24,16 +23,16 @@ func AssertLexerTokenSequence(t *testing.T, scss string, tokenList []ast.TokenTy
 	lexer.close()
 }
 
-func OutputGreen(msg string, args ...interface{}) {
-	fmt.Printf("\033[32m")
-	fmt.Printf(msg, args...)
-	fmt.Printf("\033[0m\n")
+func OutputGreen(t *testing.T, msg string, args ...interface{}) {
+	t.Logf("\033[32m")
+	t.Logf(msg, args...)
+	t.Logf("\033[0m\n")
 }
 
-func OutputRed(msg string, args ...interface{}) {
-	fmt.Printf("\033[31m")
-	fmt.Printf(msg, args...)
-	fmt.Printf("\033[0m\n")
+func OutputRed(t *testing.T, msg string, args ...interface{}) {
+	t.Logf("\033[31m")
+	t.Logf(msg, args...)
+	t.Logf("\033[0m\n")
 }
 
 func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []ast.TokenType) []ast.Token {
@@ -46,17 +45,17 @@ func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []ast.TokenType) []as
 
 		if token == nil {
 			failure = true
-			OutputRed("not ok ---- got nil expecting %s", expectingToken.String())
+			OutputRed(t, "not ok ---- got nil expecting %s", expectingToken.String())
 			break
 		}
 
 		tokens = append(tokens, *token)
 
 		if expectingToken == token.Type {
-			// OutputGreen("ok %s '%s'", token.Type.String(), token.Str)
+			OutputGreen(t, "ok %s '%s'", token.Type.String(), token.Str)
 		} else {
 			failure = true
-			OutputRed("not ok ---- %d token => got %s '%s' expecting %s", idx, token.Type.String(), token.Str, expectingToken.String())
+			OutputRed(t, "not ok ---- %d token => got %s '%s' expecting %s", idx, token.Type.String(), token.Str, expectingToken.String())
 		}
 		assert.Equal(t, expectingToken, token.Type)
 	}
@@ -64,7 +63,7 @@ func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []ast.TokenType) []as
 	if l.remaining() {
 		var token *ast.Token = nil
 		for token = <-l.Output; token != nil; token = <-l.Output {
-			OutputRed("not ok ---- Remaining expecting %s '%s'", token.Type.String(), token.Str)
+			OutputRed(t, "not ok ---- Remaining expecting %s '%s'", token.Type.String(), token.Str)
 		}
 	}
 	if failure {
@@ -77,9 +76,9 @@ func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []ast.TokenType) []as
 func AssertTokenType(t *testing.T, tokenType ast.TokenType, token *ast.Token) {
 	assert.NotNil(t, token)
 	if tokenType != token.Type {
-		OutputRed("not ok - expecting %s. Got %s '%s'", tokenType.String(), token.Type.String(), token.Str)
+		OutputRed(t, "not ok - expecting %s. Got %s '%s'", tokenType.String(), token.Type.String(), token.Str)
 	} else {
-		OutputGreen("ok - expecting %s. Got %s '%s'", tokenType.String(), token.Type.String(), token.Str)
+		OutputGreen(t, "ok - expecting %s. Got %s '%s'", tokenType.String(), token.Type.String(), token.Str)
 	}
 	assert.Equal(t, tokenType, token.Type)
 }

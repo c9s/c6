@@ -454,6 +454,20 @@ func TestParserMixinContentDirective(t *testing.T) {
 	`)
 }
 
+func TestParserInclude(t *testing.T) {
+	RunParserTest(`
+		@include apply-to-ie6-only;
+	`)
+}
+
+func TestParserIncludeWithContentBlock(t *testing.T) {
+	RunParserTest(`
+		@include apply-to-ie6-only {
+			color: white;
+		};
+	`)
+}
+
 func TestParserFunctionSimple(t *testing.T) {
 	RunParserTest(`
 @function grid-width($n) {
@@ -513,7 +527,7 @@ func TestParserMassiveRules(t *testing.T) {
 		// `div { color: #ccddee; }`,
 	}
 	for _, buffer := range buffers {
-		t.Logf("Input %s\n", buffer)
+		t.Logf("%s\n", buffer)
 		var parser = NewParser(NewContext())
 		var stmts = parser.ParseScss(buffer)
 		t.Logf("%+v\n", stmts)
