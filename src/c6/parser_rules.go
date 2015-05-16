@@ -1271,7 +1271,7 @@ func (parser *Parser) ParseReturnStatement() ast.Statement {
 func (parser *Parser) ParseFunction() ast.Statement {
 	parser.expect(ast.T_FUNCTION)
 	var identTok = parser.expect(ast.T_FUNCTION_NAME)
-	var args = parser.ParseArgumentList()
+	var args = parser.ParseFunctionPrototype()
 	var fun = ast.NewFunctionWithToken(identTok)
 	fun.ArgumentList = args
 	fun.Block = parser.ParseBlock()
@@ -1293,15 +1293,15 @@ func (parser *Parser) ParseMixinStatement() ast.Statement {
 
 		stm.Ident = tok
 
-		stm.ArgumentList = parser.ParseArgumentList()
+		stm.ArgumentList = parser.ParseFunctionPrototype()
 	}
 
 	stm.Block = parser.ParseDeclarationBlock()
 	return stm
 }
 
-func (parser *Parser) ParseArgument() *ast.Argument {
-	debug("ParseArgumentList")
+func (parser *Parser) ParseFunctionPrototypeArgument() *ast.Argument {
+	debug("ParseFunctionPrototypeArgument")
 
 	var varTok *ast.Token = nil
 	if varTok = parser.accept(ast.T_VARIABLE); varTok == nil {
@@ -1316,14 +1316,16 @@ func (parser *Parser) ParseArgument() *ast.Argument {
 	return arg
 }
 
-func (parser *Parser) ParseArgumentList() *ast.ArgumentList {
+func (parser *Parser) ParseFunctionPrototype() *ast.ArgumentList {
+	debug("ParseFunctionPrototype")
+
 	var args = ast.NewArgumentList()
 
 	parser.expect(ast.T_PAREN_OPEN)
 	var tok = parser.peek()
 	for tok.Type != ast.T_PAREN_CLOSE {
 		var arg *ast.Argument = nil
-		if arg = parser.ParseArgument(); arg != nil {
+		if arg = parser.ParseFunctionPrototypeArgument(); arg != nil {
 			args.Append(arg)
 		} else {
 			// if fail
@@ -1355,7 +1357,9 @@ func (parser *Parser) ParseIncludeStatement() ast.Statement {
 	} else if tok2.Type == ast.T_FUNCTION_NAME {
 
 		stm.MixinIdent = tok2
-		stm.ArgumentList = parser.ParseArgumentList()
+
+		// TODO: revisit here later
+		stm.ArgumentList = parser.ParseFunctionPrototype()
 
 	} else {
 		// TODO: report syntax error

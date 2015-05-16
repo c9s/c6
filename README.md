@@ -72,8 +72,6 @@ To run specific test
   - [x] Resolution unit support.
   - [x] Unicode Range support: <https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-range>
   - [x] Media Query
-- [ ] Syntax
-  - [ ] built-in `@import-once`
 - [ ] Built-in Functions
   - .... to be listed
 - [ ] Parser
@@ -93,7 +91,7 @@ To run specific test
   - [x] Parse PropertyValue with interpolation
   - [x] Parse conditions
   - [x] Parse `@media` statement
-  - [ ] Parse Nested RuleSet
+  - [x] Parse Nested RuleSet
   - [x] Parse Nested Properties
   - [x] Parse options: `!default`, `!global`, `!optional`
   - [ ] Parse CSS Hack for different browser (support more syntax sugar for this)
@@ -105,11 +103,11 @@ To run specific test
   - [x] Parse `@include` statement
   - [x] Parse `@function` statement
   - [x] Parse `@return` statement
+  - [ ] Parse `@extend` statement
   - [ ] Parse keyword arguments for `@function`
   - [ ] Parse `@switch` statement
   - [ ] Parse `@case` statement
   - [ ] Parse `@use` statement
-
 - [ ] Building AST
   - [x] RuleSet
   - [x] DeclarationBlock
@@ -132,11 +130,11 @@ To run specific test
   - [x] `@else if` If Else If
   - [x] `@else` else condition
   - [x] `@while` statement node
-  - [ ] `@each` statement node
   - [x] `@function` statement node
   - [x] `@mixin` statement node
   - [x] `@include` statement node
   - [x] `@return` statement node
+  - [ ] `@each` statement node
 - [ ] Runtime
   - [ ] HSL Color computation
 - [ ] SASS Built-in Functions
@@ -213,6 +211,9 @@ To run specific test
 - [ ] CodeGen
   - [ ] NestedStyleCompiler
     - [ ] .... list ast nodes here ....
+
+- [ ] Syntax
+  - [ ] built-in `@import-once`
 
 <!--
 ## Features
