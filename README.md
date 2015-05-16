@@ -94,6 +94,7 @@ To run specific test
   - [x] Parse conditions
   - [x] Parse `@media` statement
   - [ ] Parse Nested RuleSet
+  - [x] Parse Nested Properties
   - [x] Parse options: `!default`, `!global`, `!optional`
   - [ ] Parse CSS Hack for different browser (support more syntax sugar for this)
   - [ ] Parse `@font-face` block
