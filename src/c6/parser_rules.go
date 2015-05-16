@@ -381,7 +381,6 @@ func (parser *Parser) ParseFunctionCall() *ast.FunctionCall {
 
 func (parser *Parser) ParseIdent() *ast.Ident {
 	var tok = parser.next()
-	debug("ReduceIndent => next: %s", tok)
 	if tok.Type != ast.T_IDENT {
 		panic("Invalid token for ident.")
 	}
@@ -392,9 +391,7 @@ func (parser *Parser) ParseIdent() *ast.Ident {
 The ParseFactor must return an Expression interface compatible object
 */
 func (parser *Parser) ParseFactor() ast.Expression {
-	debug("ParseFactor at %d", parser.Pos)
 	var tok = parser.peek()
-	debug("ParseFactor => peek: %s", tok)
 
 	if tok.Type == ast.T_PAREN_OPEN {
 		parser.expect(ast.T_PAREN_OPEN)
@@ -472,7 +469,6 @@ func (parser *Parser) ParseFactor() ast.Expression {
 }
 
 func (parser *Parser) ParseTerm() ast.Expression {
-	debug("ParseTerm at %d", parser.Pos)
 	var pos = parser.Pos
 	var factor = parser.ParseFactor()
 	if factor == nil {
@@ -507,7 +503,6 @@ We here treat the property values as expressions:
 */
 func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 	var pos = parser.Pos
-	debug("ParseExpression")
 
 	// plus or minus. This creates an unary expression that holds the later term.
 	// this is for:  +3 or -4
@@ -630,7 +625,6 @@ func (parser *Parser) ParseString() ast.Expression {
 }
 
 func (parser *Parser) ParseInterp() ast.Expression {
-	debug("ParseInterp at %d", parser.Pos)
 	var startTok = parser.peek()
 
 	if startTok.Type != ast.T_INTERPOLATION_START {
@@ -640,8 +634,7 @@ func (parser *Parser) ParseInterp() ast.Expression {
 	parser.accept(ast.T_INTERPOLATION_START)
 	var innerExpr = parser.ParseExpression(true)
 	var endTok = parser.expect(ast.T_INTERPOLATION_END)
-	var interp = ast.NewInterpolation(innerExpr, startTok, endTok)
-	return interp
+	return ast.NewInterpolation(innerExpr, startTok, endTok)
 }
 
 func (parser *Parser) ParseValueStrict() ast.Expression {
@@ -659,7 +652,8 @@ func (parser *Parser) ParseValueStrict() ast.Expression {
 		}
 		parser.restore(pos)
 	}
-	return parser.ParseExpression(true)
+	// Reduce the expression
+	return parser.ParseExpression(false)
 }
 
 /**
@@ -675,7 +669,6 @@ The stop token is used from variable assignment expression,
 We expect ';' semicolon at the end of expression to avoid the ambiguity of list, map and expression.
 */
 func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
-	debug("ParseValue")
 	var pos = parser.Pos
 
 	// try parse map
@@ -724,6 +717,7 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 				return reducedExpr
 			}
 		} else {
+			// Return expression as css slash syntax string
 			return runtime.EvaluateExpression(expr, nil)
 		}
 

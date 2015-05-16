@@ -99,6 +99,35 @@ func (self *Parser) accept(tokenType ast.TokenType) *ast.Token {
 	return nil
 }
 
+func (self *Parser) acceptAny(tokenTypes ...ast.TokenType) *ast.Token {
+	var tok = self.next()
+	for _, tokType := range tokenTypes {
+		if tok.Type == tokType {
+			return tok
+		}
+	}
+	self.backup()
+	return nil
+}
+
+func (self *Parser) acceptAnyOf2(tokType1, tokType2 ast.TokenType) *ast.Token {
+	var tok = self.next()
+	if tok.Type == tokType1 || tok.Type == tokType2 {
+		return tok
+	}
+	self.backup()
+	return nil
+}
+
+func (self *Parser) acceptAnyOf3(tokType1, tokType2, tokType3 ast.TokenType) *ast.Token {
+	var tok = self.next()
+	if tok.Type == tokType1 || tok.Type == tokType2 || tok.Type == tokType3 {
+		return tok
+	}
+	self.backup()
+	return nil
+}
+
 func (self *Parser) expect(tokenType ast.TokenType) *ast.Token {
 	var tok = self.next()
 	if tok.Type != tokenType {
