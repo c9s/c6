@@ -1357,6 +1357,50 @@ func (parser *Parser) ParseFunctionPrototype() *ast.ArgumentList {
 	return args
 }
 
+func (parser *Parser) ParseFunctionCallArgument() *ast.Argument {
+	debug("ParseFunctionCallArgument")
+
+	var varTok *ast.Token = nil
+	if varTok = parser.accept(ast.T_VARIABLE); varTok == nil {
+		return nil
+	}
+
+	var arg = ast.NewArgumentWithToken(varTok)
+
+	if parser.accept(ast.T_COLON) != nil {
+		arg.DefaultValue = parser.ParseValueStrict()
+	}
+	return arg
+}
+
+func (parser *Parser) ParseFunctionCallArguments() *ast.ArgumentList {
+	debug("ParseFunctionCallArguments")
+
+	var args = ast.NewArgumentList()
+
+	parser.expect(ast.T_PAREN_OPEN)
+	var tok = parser.peek()
+	for tok.Type != ast.T_PAREN_CLOSE {
+		var arg *ast.Argument = nil
+		if arg = parser.ParseFunctionCallArgument(); arg != nil {
+			args.Append(arg)
+		} else {
+			// if fail
+			break
+		}
+		if tok = parser.accept(ast.T_COMMA); tok != nil {
+			continue
+		} else if tok = parser.accept(ast.T_VARIABLE_LENGTH_ARGUMENTS); tok != nil {
+			arg.VariableLength = true
+			break
+		} else {
+			break
+		}
+	}
+	parser.expect(ast.T_PAREN_CLOSE)
+	return args
+}
+
 func (parser *Parser) ParseIncludeStatement() ast.Statement {
 	var tok = parser.expect(ast.T_INCLUDE)
 	var stm = ast.NewIncludeStatementWithToken(tok)
