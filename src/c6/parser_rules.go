@@ -49,6 +49,8 @@ func (parser *Parser) ParseStatement() ast.Statement {
 		return parser.ParseMixinStatement()
 	case ast.T_FUNCTION:
 		return parser.ParseFunction()
+	case ast.T_INCLUDE:
+		return parser.ParseIncludeStatement()
 	case ast.T_VARIABLE:
 		return parser.ParseVariableAssignment()
 	case ast.T_RETURN:
@@ -1328,6 +1330,25 @@ func (parser *Parser) ParseArgumentList() *ast.ArgumentList {
 	}
 	parser.expect(ast.T_PAREN_CLOSE)
 	return args
+}
+
+func (parser *Parser) ParseIncludeStatement() ast.Statement {
+	var tok = parser.expect(ast.T_INCLUDE)
+
+	var tok2 = parser.next()
+
+	if tok2.Type == ast.T_IDENT {
+
+	} else if tok2.Type == ast.T_FUNCTION_NAME {
+
+		parser.ParseArgumentList()
+
+	}
+
+	parser.expect(ast.T_SEMICOLON)
+	_ = tok
+	// return ast.NewContentStatementWithToken(tok)
+	return nil
 }
 
 /*
