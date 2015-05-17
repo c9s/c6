@@ -61,37 +61,39 @@ var ExprTokenMap = KeywordTokenMap{
 	"not":   T_LOGICAL_NOT,
 	"or":    T_LOGICAL_OR,
 	"xor":   T_LOGICAL_XOR,
+	"odd":   T_ODD,
+	"even":  T_EVEN,
 }
 
-var UnitTokenMap = KeywordTokenMap{
-	"px":  T_UNIT_PX,
-	"pt":  T_UNIT_PT,
-	"pc":  T_UNIT_PC,
-	"em":  T_UNIT_EM,
-	"cm":  T_UNIT_CM,
-	"ex":  T_UNIT_EX,
-	"ch":  T_UNIT_CH,
-	"in":  T_UNIT_IN,
-	"mm":  T_UNIT_MM,
-	"rem": T_UNIT_REM,
-	"vh":  T_UNIT_VH,
-	"vw":  T_UNIT_VW,
+var UnitTokenMap = []KeywordToken{
+	KeywordToken{"px", T_UNIT_PX},
+	KeywordToken{"pt", T_UNIT_PT},
+	KeywordToken{"pc", T_UNIT_PC},
+	KeywordToken{"em", T_UNIT_EM},
+	KeywordToken{"cm", T_UNIT_CM},
+	KeywordToken{"ex", T_UNIT_EX},
+	KeywordToken{"ch", T_UNIT_CH},
+	KeywordToken{"in", T_UNIT_IN},
+	KeywordToken{"mm", T_UNIT_MM},
+	KeywordToken{"rem", T_UNIT_REM},
+	KeywordToken{"vh", T_UNIT_VH},
+	KeywordToken{"vw", T_UNIT_VW},
 
-	"Hz":  T_UNIT_HZ,
-	"kHz": T_UNIT_KHZ,
+	KeywordToken{"Hz", T_UNIT_HZ},
+	KeywordToken{"kHz", T_UNIT_KHZ},
 
-	"vmin": T_UNIT_VMIN,
-	"vmax": T_UNIT_VMAX,
-	"deg":  T_UNIT_DEG,
-	"grad": T_UNIT_GRAD,
-	"rad":  T_UNIT_RAD,
-	"turn": T_UNIT_TURN,
-	"dpi":  T_UNIT_DPI,
-	"dpcm": T_UNIT_DPCM,
-	"dppx": T_UNIT_DPPX,
-	"s":    T_UNIT_SECOND,
-	"ms":   T_UNIT_MILLISECOND,
-	"%":    T_UNIT_PERCENT,
+	KeywordToken{"vmin", T_UNIT_VMIN},
+	KeywordToken{"vmax", T_UNIT_VMAX},
+	KeywordToken{"deg", T_UNIT_DEG},
+	KeywordToken{"grad", T_UNIT_GRAD},
+	KeywordToken{"rad", T_UNIT_RAD},
+	KeywordToken{"turn", T_UNIT_TURN},
+	KeywordToken{"dpi", T_UNIT_DPI},
+	KeywordToken{"dpcm", T_UNIT_DPCM},
+	KeywordToken{"dppx", T_UNIT_DPPX},
+	KeywordToken{"s", T_UNIT_SECOND},
+	KeywordToken{"ms", T_UNIT_MILLISECOND},
+	KeywordToken{"%", T_UNIT_PERCENT},
 }
 
 type Token struct {
@@ -158,23 +160,13 @@ func (tok Token) IsFlagKeyword() bool {
 	return false
 }
 
-func (tok Token) IsLengthUnit() bool {
-	switch tok.Type {
-	case T_UNIT_EM, T_UNIT_EX, T_UNIT_CH, T_UNIT_REM, T_UNIT_CM, T_UNIT_IN,
-		T_UNIT_MM, T_UNIT_PC, T_UNIT_PT, T_UNIT_PX, T_UNIT_VH, T_UNIT_VW,
-		T_UNIT_VMIN, T_UNIT_VMAX:
-		return true
-	}
-	return false
-}
-
 func (tok Token) IsUnit() bool {
 	switch tok.Type {
 	case T_UNIT_NONE, T_UNIT_PERCENT, T_UNIT_SECOND, T_UNIT_MILLISECOND,
 		T_UNIT_EM, T_UNIT_EX, T_UNIT_CH, T_UNIT_REM, T_UNIT_CM, T_UNIT_IN,
 		T_UNIT_MM, T_UNIT_PC, T_UNIT_PT, T_UNIT_PX, T_UNIT_VH, T_UNIT_VW,
 		T_UNIT_VMIN, T_UNIT_VMAX, T_UNIT_HZ, T_UNIT_KHZ, T_UNIT_DPI, T_UNIT_DPCM,
-		T_UNIT_DPPX, T_UNIT_DEG, T_UNIT_GRAD, T_UNIT_RAD, T_UNIT_TURN:
+		T_UNIT_DPPX, T_UNIT_DEG, T_UNIT_GRAD, T_UNIT_RAD, T_UNIT_TURN, T_UNIT_OTHERS:
 		return true
 	}
 	return false
@@ -212,6 +204,9 @@ const (
 	T_FALSE
 	T_NULL
 	T_ONLY
+	T_ODD  // for nth-child(odd)
+	T_EVEN // for nth-child(even)
+	T_N    // for nth-child(3n+3)
 
 	T_MS_PARAM_NAME
 	T_FUNCTION_NAME
@@ -341,6 +336,7 @@ const (
 		unit tokens
 	*/
 	T_UNIT_NONE
+	T_UNIT_OTHERS
 	T_UNIT_PERCENT
 
 	/*

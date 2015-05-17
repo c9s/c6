@@ -221,9 +221,9 @@ Currently the @import rule only supports '@import url(...) media;
 @see https://developer.mozilla.org/en-US/docs/Web/CSS/@import for more @import syntax support
 */
 func lexAtRule(l *Lexer) stateFn {
-	var tokType = l.matchKeywordList(ast.KeywordList)
-	if tokType > 0 {
-		switch tokType {
+	var tok = l.matchKeywordList(ast.KeywordList)
+	if tok != nil {
+		switch tok.Type {
 		case ast.T_IMPORT:
 			l.ignoreSpaces()
 			lexImportUrl(l)
@@ -289,7 +289,7 @@ func lexAtRule(l *Lexer) stateFn {
 				r = l.next()
 			}
 			l.backup()
-			panic(fmt.Errorf("Unsupported at-rule directive '%s' %s", l.current(), tokType))
+			panic(fmt.Errorf("Unsupported at-rule directive '%s' %s", l.current(), tok))
 		}
 	}
 	return nil
@@ -446,7 +446,23 @@ CSS time unit
 @see https://developer.mozilla.org/zh-TW/docs/Web/CSS/time
 */
 func lexNumberUnit(l *Lexer) stateFn {
-	l.matchKeywordMap(ast.UnitTokenMap)
+	if l.accept("n") {
+		l.emit(ast.T_N)
+	}
+
+	tok := l.matchKeywordList(ast.UnitTokenMap)
+
+	if tok == nil {
+		var r = l.next()
+		for unicode.IsLetter(r) {
+			r = l.next()
+		}
+		l.backup()
+		if l.length() > 0 {
+			l.emit(ast.T_UNIT_OTHERS)
+		}
+	}
+
 	if l.peek() == ';' {
 		return lexStatement
 	}

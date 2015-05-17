@@ -343,7 +343,7 @@ func (l *Lexer) matchKeyword(str string, tokType ast.TokenType) bool {
 	return false
 }
 
-func (l *Lexer) matchKeywordList(keywords ast.KeywordTokenList) ast.TokenType {
+func (l *Lexer) matchKeywordList(keywords ast.KeywordTokenList) *ast.Token {
 	for _, keyword := range keywords {
 		l.remember()
 		if l.match(keyword.Keyword) {
@@ -353,11 +353,10 @@ func (l *Lexer) matchKeywordList(keywords ast.KeywordTokenList) ast.TokenType {
 				l.rollback()
 				continue
 			}
-			l.emit(keyword.TokenType)
-			return keyword.TokenType
+			return l.emit(keyword.TokenType)
 		}
 	}
-	return 0
+	return nil
 }
 
 func (l *Lexer) matchKeywordMap(keywords ast.KeywordTokenMap) ast.TokenType {
