@@ -17,11 +17,12 @@ AttributeSelector
 */
 
 type Selector interface {
-	// type signature method
-	IsSelector()
-
 	// basic code gen
 	String() string
+}
+
+type SelectorGroup struct {
+	Selectors []Selector
 }
 
 /**
@@ -32,7 +33,6 @@ type TypeSelector struct {
 	Token *Token
 }
 
-func (self TypeSelector) IsSelector() {}
 func (self TypeSelector) String() string {
 	return self.Type
 }
@@ -50,7 +50,6 @@ type IdSelector struct {
 	Token *Token
 }
 
-func (self IdSelector) IsSelector() {}
 func (self IdSelector) String() string {
 	return self.Id
 }
@@ -68,7 +67,6 @@ type ClassSelector struct {
 	Token     *Token
 }
 
-func (self ClassSelector) IsSelector() {}
 func (self ClassSelector) String() string {
 	return self.ClassName
 }
@@ -87,7 +85,6 @@ type AttributeSelector struct {
 	Pattern *Token
 }
 
-func (self AttributeSelector) IsSelector() {}
 func (self AttributeSelector) String() (out string) {
 	if self.Match != nil && self.Pattern != nil {
 		return "[" + self.Name.String() + self.Match.String() + self.Pattern.String() + "]"
@@ -106,8 +103,6 @@ func NewAttributeSelectorNameOnly(name *Token) *AttributeSelector {
 type UniversalSelector struct {
 	Token *Token
 }
-
-func (self UniversalSelector) IsSelector() {}
 
 func (self UniversalSelector) String() string {
 	return "*"
@@ -130,7 +125,6 @@ type PseudoSelector struct {
 	Token       *Token
 }
 
-func (self PseudoSelector) IsSelector() {}
 func (self PseudoSelector) String() (out string) {
 	if self.C != "" {
 		return ":" + self.PseudoClass + "(" + self.C + ")"
@@ -149,7 +143,6 @@ type AdjacentCombinator struct {
 	Token *Token
 }
 
-func (self AdjacentCombinator) IsSelector()    {}
 func (self AdjacentCombinator) String() string { return " + " }
 
 func NewAdjacentCombinatorWithToken(token *Token) *AdjacentCombinator {
@@ -160,7 +153,6 @@ type DescendantCombinator struct {
 	Token *Token
 }
 
-func (self DescendantCombinator) IsSelector()    {}
 func (self DescendantCombinator) String() string { return " " }
 
 func NewDescendantCombinatorWithToken(token *Token) *DescendantCombinator {
@@ -175,7 +167,6 @@ type GroupCombinator struct {
 	Token *Token
 }
 
-func (self GroupCombinator) IsSelector()    {}
 func (self GroupCombinator) String() string { return ", " }
 
 func NewGroupCombinatorWithToken(token *Token) *GroupCombinator {
@@ -190,7 +181,6 @@ type ChildCombinator struct {
 	Token *Token
 }
 
-func (self ChildCombinator) IsSelector()    {}
 func (self ChildCombinator) String() string { return " > " }
 
 func NewChildCombinatorWithToken(token *Token) *ChildCombinator {
@@ -209,7 +199,6 @@ type ParentSelector struct {
 	Token         *Token
 }
 
-func (self ParentSelector) IsSelector() {}
 func (self ParentSelector) String() string {
 	// TODO: get parent rule set and render the selector...
 	panic("unimplemented")
