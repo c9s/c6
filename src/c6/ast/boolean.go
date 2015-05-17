@@ -34,10 +34,9 @@ func NewBoolean(val bool) *Boolean {
 	return &Boolean{val, nil}
 }
 
-func NewBooleanWithToken(token *Token) *Boolean {
-	val, err := strconv.ParseBool(token.Str)
-	if err != nil {
-		panic("Can't parse boolean value")
+func NewBooleanWithToken(tok *Token) *Boolean {
+	if tok.Type == T_TRUE {
+		return &Boolean{true, tok}
 	}
-	return &Boolean{val, token}
+	return &Boolean{false, tok}
 }

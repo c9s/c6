@@ -337,14 +337,8 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 }
 
 func (parser *Parser) ParseBoolean() ast.Expression {
-	var tok = parser.peek()
-
-	if tok.Type == ast.T_TRUE {
-		parser.next()
-		return ast.NewBooleanTrue(tok)
-	} else if tok.Type == ast.T_FALSE {
-		parser.next()
-		return ast.NewBooleanFalse(tok)
+	if tok := parser.acceptAnyOf2(ast.T_TRUE, ast.T_FALSE); tok != nil {
+		return ast.NewBooleanWithToken(tok)
 	}
 	return nil
 }
