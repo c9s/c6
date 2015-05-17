@@ -122,7 +122,6 @@ func lexExpression(l *Lexer) stateFn {
 
 	} else if r == '-' {
 
-		// XXX: Works for '-moz' or '-webkit-..' but we should move this to property lexing...
 		if r2 == 'n' && !unicode.IsLetter(l.peekBy(3)) {
 
 			l.next()
@@ -132,6 +131,9 @@ func lexExpression(l *Lexer) stateFn {
 			l.emit(ast.T_N)
 
 		} else if unicode.IsLetter(r2) {
+			// XXX: Works for '-moz' or '-webkit-..' but we should move this to property lexing...
+			//    like:
+			//         background-image: -moz-linear-gradient(top, #81a8cb, #4477a1);
 
 			l.next()
 			lexIdentifier(l)
