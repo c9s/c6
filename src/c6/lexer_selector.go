@@ -153,13 +153,11 @@ func lexPseudoSelector(l *Lexer) stateFn {
 	if !unicode.IsLetter(r) && !(r == '#' && l.peek() == '{') {
 		l.error("charater '%s' is not allowed in pseudo selector", r)
 	}
-	for {
+	for r != EOF && (unicode.IsLetter(r) || r == '-' || r == '#') {
 		if isInterpolationStartToken(r, l.peek()) {
 			l.backup()
 			lexInterpolation(l, false)
 			foundInterpolation = true
-		} else if !unicode.IsLetter(r) && r != '-' {
-			break
 		}
 		r = l.next()
 	}
@@ -168,31 +166,35 @@ func lexPseudoSelector(l *Lexer) stateFn {
 	if foundInterpolation {
 		l.emit(ast.T_INTERPOLATION_SELECTOR)
 	} else {
-		l.emit(ast.T_PSEUDO_SELECTOR)
-	}
 
-	if r == '(' {
-		l.next()
-		l.ignore()
-		// l.emit(ast.T_FUNCTIONAL_PSEUDO)
-		lexLang(l)
-		r = l.next()
-		if r != ')' {
-			l.error("Unexpected token '%s' for pseudo lang selector", r)
+		r = l.peek()
+		if r == '(' {
+			l.emit(ast.T_FUNCTIONAL_PSEUDO)
+			l.next()
+			l.emit(ast.T_PAREN_OPEN)
+
+			lexLang(l)
+
+			l.expect(")")
+			l.emit(ast.T_PAREN_CLOSE)
+
+		} else {
+			l.emit(ast.T_PSEUDO_SELECTOR)
 		}
-		l.ignore()
 	}
 	return lexSelectors
 }
 
 func lexUniversalSelector(l *Lexer) stateFn {
-	var r = l.next()
-	if r != '*' {
-		l.error("Unexpected token '%s' for universal selector.", r)
-	}
+	l.expect("*")
 	l.emit(ast.T_UNIVERSAL_SELECTOR)
+	return lexSimpleSelector
+}
 
-	r = l.peek()
+func lexSimpleSelector(l *Lexer) stateFn {
+
+	var r = l.peek()
+
 	if r == '.' {
 
 		return lexClassSelector
@@ -205,11 +207,26 @@ func lexUniversalSelector(l *Lexer) stateFn {
 
 		return lexPseudoSelector
 
-	} else if r == '#' {
+	} else if r == '#' && l.peekBy(2) != '{' {
 
 		return lexIdSelector
 
+	} else if r == '&' {
+
+		l.next()
+		l.emit(ast.T_PARENT_SELECTOR)
+		return lexSelectors
+
+	} else if r == '*' {
+
+		return lexUniversalSelector
+
+	} else if unicode.IsLetter(r) {
+
+		return lexTypeSelector
+
 	}
+
 	return lexSelectors
 }
 
@@ -248,7 +265,9 @@ func lexSelectors(l *Lexer) stateFn {
 
 	// lex the first selector
 	if unicode.IsLetter(r) {
+
 		return lexTypeSelector
+
 	} else if r == '[' {
 
 		return lexAttributeSelector
@@ -268,7 +287,9 @@ func lexSelectors(l *Lexer) stateFn {
 		return lexSelectors
 
 	} else if r == '*' {
+
 		return lexUniversalSelector
+
 	} else if r == '#' {
 		// for selector syntax like:
 		//    '#{  }  {  }'
@@ -373,24 +394,7 @@ func lexTypeSelector(l *Lexer) stateFn {
 		l.emit(ast.T_TYPE_SELECTOR)
 	}
 
-	r = l.peek()
-
-	// predicate and inject the and selector for class name, identifier after the tagName
-	switch r {
-	case ':':
-		return lexPseudoSelector
-	case '[':
-		return lexAttributeSelector
-	case '#':
-		if l.peekBy(2) != '{' {
-			return lexIdSelector
-		}
-	case '.':
-		return lexClassSelector
-	case '{':
-		return lexStatement
-	}
-	return lexSelectors
+	return lexSimpleSelector
 }
 
 func lexLang(l *Lexer) stateFn {
