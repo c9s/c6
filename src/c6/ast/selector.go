@@ -15,14 +15,75 @@ AdjacentCombinator
 AttributeSelector
 
 */
-
 type Selector interface {
-	// basic code gen
 	String() string
 }
 
-type SelectorGroup struct {
-	Selectors []Selector
+type Combinator interface{}
+
+// one or more simple selector
+type CompoundSelector []Selector
+
+func (self *CompoundSelector) Append(sel Selector) {
+	var slice = append(*self, sel)
+	*self = slice
+}
+
+func (self CompoundSelector) Length() int {
+	return len(self)
+}
+
+func (self CompoundSelector) String() string {
+	return "CompoundSelector.String()"
+}
+
+func NewCompoundSelector() *CompoundSelector {
+	return &CompoundSelector{}
+}
+
+type ComplexSelectorItem struct {
+	Combinator       Combinator
+	CompoundSelector Selector
+}
+
+type ComplexSelector struct {
+	CompoundSelector     Selector
+	ComplexSelectorItems []*ComplexSelectorItem
+}
+
+func (self *ComplexSelector) AppendCompoundSelector(comb Combinator, sel Selector) {
+	self.ComplexSelectorItems = append(self.ComplexSelectorItems, &ComplexSelectorItem{comb, sel})
+}
+
+func NewComplexSelector(sel Selector) *ComplexSelector {
+	return &ComplexSelector{
+		CompoundSelector: sel,
+	}
+}
+
+/*
+SelectorList struct
+*/
+type SelectorList []Selector
+
+func (self *SelectorList) Append(sel Selector) {
+	var slice = append(*self, sel)
+	*self = slice
+}
+
+func (self SelectorList) Length() int {
+	return len(self)
+}
+
+func (self SelectorList) String() (out string) {
+	for _, sel := range self {
+		out += sel.String()
+	}
+	return out
+}
+
+func NewSelectorList() *SelectorList {
+	return &SelectorList{}
 }
 
 /**
@@ -163,19 +224,17 @@ func NewDescendantCombinator() *DescendantCombinator {
 	return &DescendantCombinator{}
 }
 
-type GroupCombinator struct {
-	Token *Token
+type GeneralSiblingCombinator struct{ Token *Token }
+
+func NewGeneralSiblingCombinator() *GeneralSiblingCombinator {
+	return &GeneralSiblingCombinator{}
 }
 
-func (self GroupCombinator) String() string { return ", " }
-
-func NewGroupCombinatorWithToken(token *Token) *GroupCombinator {
-	return &GroupCombinator{token}
+func NewGeneralSiblingCombinatorWithToken(token *Token) *GeneralSiblingCombinator {
+	return &GeneralSiblingCombinator{token}
 }
 
-func NewGroupCombinator() *GroupCombinator {
-	return &GroupCombinator{}
-}
+func (self GeneralSiblingCombinator) String() string { return " ~ " }
 
 type ChildCombinator struct {
 	Token *Token

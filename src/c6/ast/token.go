@@ -241,7 +241,6 @@ const (
 	T_MS_PROGID
 
 	// Selector relationship
-	T_AND_SELECTOR                // {parent-selector}{child-selector} { }
 	T_DESCENDANT_COMBINATOR       // E ' ' F
 	T_CHILD_COMBINATOR            // E '>' F
 	T_ADJACENT_SIBLING_COMBINATOR // E '+' F
