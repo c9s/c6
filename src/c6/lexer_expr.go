@@ -122,15 +122,23 @@ func lexExpression(l *Lexer) stateFn {
 
 	} else if r == '-' {
 
-		l.next()
+		// XXX: Works for '-moz' or '-webkit-..' but we should move this to property lexing...
+		if r2 == 'n' && !unicode.IsLetter(l.peekBy(3)) {
 
-		// works for '-moz' or '-webkit-..'
-		if unicode.IsLetter(r2) {
+			l.next()
+			l.emit(ast.T_MINUS)
 
+			l.accept("n")
+			l.emit(ast.T_N)
+
+		} else if unicode.IsLetter(r2) {
+
+			l.next()
 			lexIdentifier(l)
 
 		} else {
 
+			l.next()
 			l.emit(ast.T_MINUS)
 
 		}
