@@ -280,7 +280,20 @@ func TestLexerRuleLangPseudoSelector(t *testing.T) {
 	l := NewLexerWithString(`html:lang(fr-ca) {  }`)
 	assert.NotNil(t, l)
 	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_FUNCTIONAL_PSEUDO, ast.T_PAREN_OPEN, ast.T_LANG_CODE, ast.T_PAREN_CLOSE, ast.T_BRACE_OPEN, ast.T_BRACE_CLOSE})
+	AssertTokenSequence(t, l, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_FUNCTIONAL_PSEUDO, ast.T_PAREN_OPEN, ast.T_IDENT, ast.T_PAREN_CLOSE, ast.T_BRACE_OPEN, ast.T_BRACE_CLOSE})
+	l.close()
+}
+
+func TestLexerRuleLangPseudoSelectorAndFunctionalPseudoSelector(t *testing.T) {
+	// html:lang(fr-ca) { quotes: '« ' ' »' }
+	l := NewLexerWithString(`html:lang(fr-ca):first-child {  }`)
+	assert.NotNil(t, l)
+	l.run()
+	AssertTokenSequence(t, l, []ast.TokenType{
+		ast.T_TYPE_SELECTOR, ast.T_FUNCTIONAL_PSEUDO, ast.T_PAREN_OPEN, ast.T_IDENT, ast.T_PAREN_CLOSE,
+		ast.T_PSEUDO_SELECTOR,
+		ast.T_BRACE_OPEN, ast.T_BRACE_CLOSE,
+	})
 	l.close()
 }
 

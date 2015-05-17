@@ -174,7 +174,7 @@ func lexPseudoSelector(l *Lexer) stateFn {
 			l.next()
 			l.emit(ast.T_PAREN_OPEN)
 
-			lexLang(l)
+			lexIdentifier(l)
 
 			l.expect(")")
 			l.emit(ast.T_PAREN_CLOSE)
