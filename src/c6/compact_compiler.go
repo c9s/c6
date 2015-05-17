@@ -42,11 +42,23 @@ func (compiler *CompactCompiler) CompileComplexSelectorList(selectorList *ast.Co
 	return out
 }
 
+func (compiler *CompactCompiler) CompileDeclarationBlock(block *ast.DeclarationBlock) (out string) {
+	return out
+}
+
+func (compiler *CompactCompiler) CompileRuleSet(ruleset *ast.RuleSet) (out string) {
+	out = compiler.CompileComplexSelectorList(ruleset.Selectors)
+	out += compiler.CompileDeclarationBlock(ruleset.Block)
+	return out
+}
+
 func (compiler *CompactCompiler) CompileStatement(anyStm ast.Statement) string {
 
 	switch stm := anyStm.(type) {
 	case *ast.RuleSet:
-		compiler.CompileComplexSelectorList(stm.Selectors)
+		return compiler.CompileRuleSet(stm)
+	case *ast.ImportStatement:
+	case *ast.VariableAssignment:
 	}
 
 	return "stms"
