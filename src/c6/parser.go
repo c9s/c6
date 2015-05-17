@@ -137,23 +137,6 @@ func (self *Parser) expect(tokenType ast.TokenType) *ast.Token {
 	return tok
 }
 
-func (self *Parser) acceptTypes(types []ast.TokenType) bool {
-	var p = self.Pos
-	var match = true
-	for _, tokType := range types {
-		var tok = self.next()
-		if tok.Type != tokType {
-			match = false
-			break
-		}
-	}
-	// restore the position if it doesn't match
-	if !match {
-		self.Pos = p
-	}
-	return match
-}
-
 func (self *Parser) next() *ast.Token {
 	var p = self.Pos
 	self.Pos++
@@ -183,10 +166,13 @@ func (self *Parser) next() *ast.Token {
 func (self *Parser) peekBy(offset int) *ast.Token {
 	var i = 0
 	var tok *ast.Token = nil
-	for offset > 0 && tok != nil {
+	for offset > 0 {
 		tok = self.next()
 		offset--
 		i++
+		if tok == nil {
+			break
+		}
 	}
 	self.Pos -= i
 	return tok
