@@ -446,20 +446,27 @@ CSS time unit
 @see https://developer.mozilla.org/zh-TW/docs/Web/CSS/time
 */
 func lexNumberUnit(l *Lexer) stateFn {
-	if l.accept("n") {
-		l.emit(ast.T_N)
-	}
-
 	tok := l.matchKeywordList(ast.UnitTokenMap)
 
 	if tok == nil {
 		var r = l.next()
-		for unicode.IsLetter(r) {
-			r = l.next()
-		}
-		l.backup()
-		if l.length() > 0 {
-			l.emit(ast.T_UNIT_OTHERS)
+
+		// for an+b syntax
+		if r == 'n' && !unicode.IsLetter(l.peek()) {
+
+			l.emit(ast.T_N)
+
+		} else {
+
+			// for other unit tokens
+			for unicode.IsLetter(r) {
+				r = l.next()
+			}
+			l.backup()
+			if l.length() > 0 {
+				l.emit(ast.T_UNIT_OTHERS)
+			}
+
 		}
 	}
 

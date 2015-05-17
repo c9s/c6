@@ -80,6 +80,10 @@ func TestLexerExpressionNumberWithScientificNotation2(t *testing.T) {
 	AssertLexerTokenSequenceFromState(t, `3.4e-2`, lexExpression, []ast.TokenType{ast.T_FLOAT})
 }
 
+func TestLexerExpressionNumberWithNthChildSyntax(t *testing.T) {
+	AssertLexerTokenSequenceFromState(t, `3n+1`, lexExpression, []ast.TokenType{ast.T_INTEGER, ast.T_N, ast.T_PLUS, ast.T_INTEGER})
+}
+
 func TestLexerExpressionNumberWithScientificNotation3(t *testing.T) {
 	AssertLexerTokenSequenceFromState(t, `3.1415e-5`, lexExpression, []ast.TokenType{ast.T_FLOAT})
 }
