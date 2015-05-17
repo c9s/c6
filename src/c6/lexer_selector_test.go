@@ -297,6 +297,17 @@ func TestLexerRuleLangPseudoSelectorAndFunctionalPseudoSelector(t *testing.T) {
 	l.close()
 }
 
+/*
+func TestLexerRulePseudoSelectorWithNthChild(t *testing.T) {
+	// html:lang(fr-ca) { quotes: '« ' ' »' }
+	AssertLexerTokenSequence(t, `ui li:nth-child(3n+4) {  }`, []ast.TokenType{
+		ast.T_TYPE_SELECTOR, ast.T_FUNCTIONAL_PSEUDO, ast.T_PAREN_OPEN, ast.T_IDENT, ast.T_PAREN_CLOSE,
+		ast.T_PSEUDO_SELECTOR,
+		ast.T_BRACE_OPEN, ast.T_BRACE_CLOSE,
+	})
+}
+*/
+
 func TestLexerRuleWithIdSelector(t *testing.T) {
 	l := NewLexerWithString(`#myPost {  }`)
 	assert.NotNil(t, l)

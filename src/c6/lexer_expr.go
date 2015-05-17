@@ -111,30 +111,34 @@ func lexExpression(l *Lexer) stateFn {
 
 	} else if unicode.IsDigit(r) {
 
-		// lexNumber may return lexNumber unit
 		if fn := lexNumber(l); fn != nil {
 			fn(l)
 		}
 
-	} else if r == '-' {
-		var r2 = l.peekBy(2)
+	} else if r == '+' {
 
+		l.next()
+		l.emit(ast.T_PLUS)
+
+	} else if r == '-' {
+
+		l.next()
+
+		// works for '-moz' or '-webkit-..'
 		if unicode.IsLetter(r2) {
+
 			lexIdentifier(l)
+
 		} else {
-			l.next()
+
 			l.emit(ast.T_MINUS)
+
 		}
 
 	} else if r == '*' {
 
 		l.next()
 		l.emit(ast.T_MUL)
-
-	} else if r == '+' {
-
-		l.next()
-		l.emit(ast.T_PLUS)
 
 	} else if r == '&' {
 

@@ -174,7 +174,13 @@ func lexPseudoSelector(l *Lexer) stateFn {
 			l.next()
 			l.emit(ast.T_PAREN_OPEN)
 
-			lexIdentifier(l)
+			r = l.peek()
+			for r != ')' && r != EOF {
+				if fn := lexExpression(l); fn == nil {
+					break
+				}
+				r = l.peek()
+			}
 
 			l.expect(")")
 			l.emit(ast.T_PAREN_CLOSE)
