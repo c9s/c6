@@ -4,28 +4,29 @@ import "unicode"
 import _ "fmt"
 import "c6/ast"
 
-func isInterpolationStartToken(r rune, r2 rune) bool {
+func IsInterpolationStartToken(r rune, r2 rune) bool {
 	return r == '#' && r2 == '{'
 }
 
 // does not test ' '
-func isSelectorOperatorToken(r rune) bool {
+func IsCombinatorToken(r rune) bool {
 	return r == '>' || r == '+' || r == ','
 }
 
-func isSelector(t ast.TokenType) bool {
+func IsSelector(t ast.TokenType) bool {
 	return t == ast.T_CLASS_SELECTOR ||
 		t == ast.T_ID_SELECTOR ||
 		t == ast.T_TYPE_SELECTOR ||
 		t == ast.T_UNIVERSAL_SELECTOR ||
 		t == ast.T_PARENT_SELECTOR || // SASS parent selector
-		t == ast.T_PSEUDO_SELECTOR // :hover, :visited , ...
+		t == ast.T_PSEUDO_SELECTOR || // :hover, :visited , ...
+		t == ast.T_FUNCTIONAL_PSEUDO
 }
 
 /**
 Pass peek() rune to check if it's a selector stop token
 */
-func isSelectorStopToken(r rune) bool {
+func IsSelectorStopToken(r rune) bool {
 	// pseudo, class, attribute, id, child, universal, adjacent
 	return r == ':' ||
 		r == '.' ||
@@ -50,11 +51,11 @@ func lexAttributeSelector(l *Lexer) stateFn {
 		var foundInterpolation = false
 
 		r = l.next()
-		if !unicode.IsLetter(r) && !isInterpolationStartToken(r, l.peek()) {
+		if !unicode.IsLetter(r) && !IsInterpolationStartToken(r, l.peek()) {
 			l.error("Unexpected token for attribute name. Got '%s'", r)
 		}
 		for {
-			if isInterpolationStartToken(r, l.peek()) {
+			if IsInterpolationStartToken(r, l.peek()) {
 				l.backup()
 				lexInterpolation(l, false)
 				foundInterpolation = true
@@ -154,7 +155,7 @@ func lexPseudoSelector(l *Lexer) stateFn {
 		l.error("charater '%s' is not allowed in pseudo selector", r)
 	}
 	for r != EOF && (unicode.IsLetter(r) || r == '-' || r == '#') {
-		if isInterpolationStartToken(r, l.peek()) {
+		if IsInterpolationStartToken(r, l.peek()) {
 			l.backup()
 			lexInterpolation(l, false)
 			foundInterpolation = true
@@ -237,7 +238,7 @@ func lexSelectors(l *Lexer) stateFn {
 	lexComment(l, false)
 
 	// space between selector means descendant selector
-	if tok := l.lastToken(); tok != nil && isSelector(tok.Type) {
+	if tok := l.lastToken(); tok != nil && IsSelector(tok.Type) {
 		var foundSpace = false
 		var r = l.next()
 		for unicode.IsSpace(r) || r == '/' {
@@ -251,7 +252,7 @@ func lexSelectors(l *Lexer) stateFn {
 		if r == EOF {
 			return nil
 		}
-		if foundSpace && r != ',' && r != '{' && !isSelectorOperatorToken(r) {
+		if foundSpace && r != ',' && r != '{' && !IsCombinatorToken(r) {
 			l.emit(ast.T_DESCENDANT_COMBINATOR)
 		} else {
 			l.ignore()
@@ -297,8 +298,8 @@ func lexSelectors(l *Lexer) stateFn {
 		//    '#{  }.something {  }'
 		//    '#{  } .something {  }'
 		//    '#{  }#myId {  }'
-		if isInterpolationStartToken(r, l.peekBy(2)) {
-			if tok := l.lastToken(); tok != nil && isSelector(tok.Type) {
+		if IsInterpolationStartToken(r, l.peekBy(2)) {
+			if tok := l.lastToken(); tok != nil && IsSelector(tok.Type) {
 				l.emit(ast.T_LITERAL_CONCAT)
 			}
 
@@ -308,10 +309,10 @@ func lexSelectors(l *Lexer) stateFn {
 			// find stop point of a selector.
 			r = l.next()
 			for {
-				if isInterpolationStartToken(r, l.peek()) {
+				if IsInterpolationStartToken(r, l.peek()) {
 					l.backup()
 					lexInterpolation(l, false)
-				} else if !unicode.IsLetter(r) && !unicode.IsDigit(r) && r != '-' && r != '_' || isSelectorStopToken(r) || isDescendantCombinatorSeparator(r) {
+				} else if !unicode.IsLetter(r) && !unicode.IsDigit(r) && r != '-' && r != '_' || IsSelectorStopToken(r) || isDescendantCombinatorSeparator(r) {
 					break
 				}
 				r = l.next()
@@ -370,14 +371,14 @@ func lexSelectors(l *Lexer) stateFn {
 
 func lexTypeSelector(l *Lexer) stateFn {
 	var r = l.next()
-	if !unicode.IsLetter(r) && !isInterpolationStartToken(r, l.peekBy(2)) {
+	if !unicode.IsLetter(r) && !IsInterpolationStartToken(r, l.peekBy(2)) {
 		l.error("Expecting letter token for tag name selector. got %s", r)
 	}
 
 	var foundInterpolation = false
 	r = l.next()
 	for {
-		if isInterpolationStartToken(r, l.peek()) {
+		if IsInterpolationStartToken(r, l.peek()) {
 			l.backup()
 			lexInterpolation(l, false)
 			foundInterpolation = true
@@ -440,7 +441,7 @@ func lexIdSelector(l *Lexer) stateFn {
 		l.error("An identifier should start with at least a letter, Got '%s'", r)
 	}
 	for {
-		if isInterpolationStartToken(r, l.peek()) {
+		if IsInterpolationStartToken(r, l.peek()) {
 			l.backup()
 			lexInterpolation(l, false)
 			foundInterpolation = true

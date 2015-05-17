@@ -126,9 +126,11 @@ func (tok Token) IsSelectorCombinator() bool {
 func (tok Token) IsSelector() bool {
 	switch tok.Type {
 	case T_TYPE_SELECTOR, T_UNIVERSAL_SELECTOR, T_ID_SELECTOR,
-		T_CLASS_SELECTOR, T_PARENT_SELECTOR, T_PSEUDO_SELECTOR,
+		T_CLASS_SELECTOR, T_PARENT_SELECTOR,
 		T_ADJACENT_SIBLING_COMBINATOR, T_GENERAL_SIBLING_COMBINATOR,
 		T_CHILD_COMBINATOR, T_DESCENDANT_COMBINATOR,
+		T_PSEUDO_SELECTOR,
+		T_FUNCTIONAL_PSEUDO,
 		T_BRACKET_OPEN: // '[' is the first token of attribute selector.
 		return true
 	}
