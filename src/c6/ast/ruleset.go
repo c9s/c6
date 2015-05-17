@@ -1,16 +1,12 @@
 package ast
 
 type RuleSet struct {
-	Selectors *SelectorList
+	Selectors *ComplexSelectorList
 	Block     *DeclarationBlock
 }
 
 func NewRuleSet() *RuleSet {
 	return &RuleSet{}
-}
-
-func (self *RuleSet) AppendSelector(sel Selector) {
-	self.Selectors.Append(sel)
 }
 
 func (self *RuleSet) AppendSubRuleSet(ruleset *RuleSet) {

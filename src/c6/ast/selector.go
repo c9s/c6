@@ -19,7 +19,20 @@ type Selector interface {
 	String() string
 }
 
-type Combinator interface{}
+type Combinator interface {
+	String() string
+}
+
+type ComplexSelectorList []*ComplexSelector
+
+func (self *ComplexSelectorList) Append(sel *ComplexSelector) {
+	var slice = append(*self, sel)
+	*self = slice
+}
+
+func (self ComplexSelectorList) String() string {
+	return "CompoundSelector.String()"
+}
 
 // one or more simple selector
 type CompoundSelector []Selector
@@ -43,19 +56,23 @@ func NewCompoundSelector() *CompoundSelector {
 
 type ComplexSelectorItem struct {
 	Combinator       Combinator
-	CompoundSelector Selector
+	CompoundSelector *CompoundSelector
 }
 
 type ComplexSelector struct {
-	CompoundSelector     Selector
+	CompoundSelector     *CompoundSelector
 	ComplexSelectorItems []*ComplexSelectorItem
 }
 
-func (self *ComplexSelector) AppendCompoundSelector(comb Combinator, sel Selector) {
+func (self *ComplexSelector) AppendCompoundSelector(comb Combinator, sel *CompoundSelector) {
 	self.ComplexSelectorItems = append(self.ComplexSelectorItems, &ComplexSelectorItem{comb, sel})
 }
 
-func NewComplexSelector(sel Selector) *ComplexSelector {
+func (self *ComplexSelector) String() string {
+	return "ComplexSelector.String()"
+}
+
+func NewComplexSelector(sel *CompoundSelector) *ComplexSelector {
 	return &ComplexSelector{
 		CompoundSelector: sel,
 	}

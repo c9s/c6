@@ -9,6 +9,13 @@ import "strconv"
 import "c6/ast"
 import "c6/runtime"
 
+func (parser *Parser) ParseScss(code string) []ast.Statement {
+	l := NewLexerWithString(code)
+	l.run()
+	parser.Input = l.getOutput()
+	return parser.ParseStatements()
+}
+
 func (parser *Parser) ParseBlock() *ast.Block {
 	debug("ParseBlock")
 	parser.expect(ast.T_BRACE_OPEN)
@@ -312,27 +319,39 @@ func (parser *Parser) ParseComplexSelector(parentRuleSet *ast.RuleSet) *ast.Comp
 	return complexSel
 }
 
-func (parser *Parser) ParseSelectorList() {
+func (parser *Parser) ParseSelectorList() *ast.ComplexSelectorList {
 	debug("ParseSelectorList")
 
 	var parentRuleSet = parser.Context.TopRuleSet()
-	parser.ParseComplexSelector(parentRuleSet)
+
+	var complexSelectorList = &ast.ComplexSelectorList{}
+
+	if complexSelector := parser.ParseComplexSelector(parentRuleSet); complexSelector != nil {
+		complexSelectorList.Append(complexSelector)
+	} else {
+		return nil
+	}
 
 	// if there is more comma
 	for parser.accept(ast.T_COMMA) != nil {
-		parser.ParseComplexSelector(parentRuleSet)
+		if complexSelector := parser.ParseComplexSelector(parentRuleSet); complexSelector != nil {
+			complexSelectorList.Append(complexSelector)
+		} else {
+			break
+		}
 	}
+	return complexSelectorList
 }
 
 func (parser *Parser) ParseRuleSet() ast.Statement {
-	parser.ParseSelectorList()
 
 	var ruleset = ast.NewRuleSet()
+	ruleset.Selectors = parser.ParseSelectorList()
+
 	parser.Context.PushRuleSet(ruleset)
-
 	ruleset.Block = parser.ParseDeclarationBlock()
-
 	parser.Context.PopRuleSet()
+
 	return ruleset
 }
 
