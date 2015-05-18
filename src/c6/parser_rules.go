@@ -553,17 +553,14 @@ func (parser *Parser) ParseTerm() ast.Expression {
 	}
 
 	// see if the next token is '*' or '/'
-	var tok = parser.peek()
-	if tok.Type == ast.T_MUL || tok.Type == ast.T_DIV {
-		parser.next()
+	if tok := parser.acceptAnyOf2(ast.T_MUL, ast.T_DIV); tok != nil {
 		if term := parser.ParseTerm(); term != nil {
-			if tok.Type == ast.T_MUL {
-				return ast.NewBinaryExpression(ast.NewOpWithToken(tok), factor, term, false)
-			} else if tok.Type == ast.T_DIV {
-				return ast.NewBinaryExpression(ast.NewOpWithToken(tok), factor, term, false)
-			}
+			return ast.NewBinaryExpression(ast.NewOpWithToken(tok), factor, term, false)
 		} else {
-			panic("Unexpected token after * and /")
+			panic(SyntaxError{
+				Expecting:   "term after '*' or '/'",
+				ActualToken: parser.peek(),
+			})
 		}
 	}
 	return factor
@@ -612,7 +609,7 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 	var rightTok = parser.peek()
 	for rightTok.Type == ast.T_PLUS || rightTok.Type == ast.T_MINUS || rightTok.Type == ast.T_LITERAL_CONCAT {
 		// accept plus or minus
-		parser.next()
+		parser.advance()
 
 		if rightTerm := parser.ParseTerm(); rightTerm != nil {
 			// XXX: check parenthesis
@@ -670,18 +667,20 @@ func (parser *Parser) ParseMap() ast.Expression {
 
 func (parser *Parser) ParseString() ast.Expression {
 	if tok := parser.accept(ast.T_QQ_STRING); tok != nil {
-		var str = ast.NewStringWithQuote('"', tok)
-		return ast.Expression(str)
+
+		return ast.NewStringWithQuote('"', tok)
 
 	} else if tok := parser.accept(ast.T_Q_STRING); tok != nil {
 
-		var str = ast.NewStringWithQuote('\'', tok)
-		return ast.Expression(str)
+		return ast.NewStringWithQuote('\'', tok)
+
+	} else if tok := parser.accept(ast.T_UNQUOTE_STRING); tok != nil {
+
+		return ast.NewStringWithQuote(0, tok)
 
 	} else if tok := parser.accept(ast.T_IDENT); tok != nil {
 
-		tok = parser.next()
-		return ast.Expression(ast.NewStringWithToken(tok))
+		return ast.NewStringWithToken(tok)
 
 	}
 
