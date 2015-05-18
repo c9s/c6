@@ -101,6 +101,11 @@ func TestParserPropertyNameBorderWidthInterpolation3(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserImportRuleWithUnquoteUrl(t *testing.T) {
+	var stmts = RunParserTest(`@import url(../foo.css);`)
+	assert.Equal(t, 1, len(stmts))
+}
+
 func TestParserImportRuleWithUrl(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`@import url("http://foo.com/bar.css");`)
