@@ -46,6 +46,8 @@ type Lexer struct {
 	// current line number of the input
 	Line int
 
+	LineOffset int
+
 	// the token output channel
 	Output chan *ast.Token
 
@@ -64,10 +66,11 @@ Create a lexer object with bytes
 */
 func NewLexerWithBytes(data []byte) *Lexer {
 	l := &Lexer{
-		File:   "{anonymous}",
-		Offset: 0,
-		Line:   0,
-		Input:  string(data),
+		File:       "{anonymous}",
+		Offset:     0,
+		Line:       0,
+		LineOffset: 0,
+		Input:      string(data),
 	}
 	return l
 }
@@ -77,10 +80,11 @@ Create a lexer object with string
 */
 func NewLexerWithString(body string) *Lexer {
 	return &Lexer{
-		File:   "{anonymous}",
-		Offset: 0,
-		Line:   0,
-		Input:  body,
+		File:       "{anonymous}",
+		Offset:     0,
+		Line:       0,
+		LineOffset: 0,
+		Input:      body,
 	}
 }
 
@@ -95,10 +99,11 @@ func NewLexerWithFile(file string) (*Lexer, error) {
 		return nil, err
 	}
 	return &Lexer{
-		File:   file,
-		Offset: 0,
-		Line:   0,
-		Input:  string(data),
+		File:       file,
+		Offset:     0,
+		Line:       0,
+		LineOffset: 0,
+		Input:      string(data),
 	}, nil
 }
 
@@ -201,6 +206,7 @@ func (l *Lexer) next() (r rune) {
 	l.LastWidth = l.Width
 	r, l.Width = utf8.DecodeRuneInString(l.Input[l.Offset:])
 	l.Offset += l.Width
+	l.LineOffset += l.Width
 	return r
 }
 
@@ -208,12 +214,14 @@ func (l *Lexer) next() (r rune) {
 // Can be called only once per call of next.
 func (l *Lexer) backup() {
 	l.Offset -= l.Width
+	l.LineOffset -= l.Width
 }
 
 // backup steps back one rune.
 // Can be called only once per call of next.
 func (l *Lexer) backupByWidth(w int) {
 	l.Offset -= w
+	l.LineOffset -= w
 }
 
 // peek returns but does not consume
@@ -227,6 +235,7 @@ func (l *Lexer) peek() (r rune) {
 // advance offset by specific width
 func (l *Lexer) advance(w int) {
 	l.Offset += w
+	l.LineOffset += w
 }
 
 // peek more characters
@@ -238,6 +247,7 @@ func (l *Lexer) peekBy(p int) (r rune) {
 		w += l.Width
 	}
 	l.Offset -= w
+	l.LineOffset -= w
 	return r
 }
 
@@ -257,10 +267,11 @@ func (l *Lexer) emitToken(token *ast.Token) {
 
 func (l *Lexer) createTokenWith0Offset(tokenType ast.TokenType) *ast.Token {
 	var token = ast.Token{
-		Type: tokenType,
-		Str:  "",
-		Pos:  l.Start,
-		Line: l.Line,
+		Type:       tokenType,
+		Str:        "",
+		Pos:        l.Start,
+		Line:       l.Line,
+		LineOffset: l.LineOffset,
 	}
 	return &token
 }
@@ -272,10 +283,11 @@ func (l *Lexer) createToken(tokenType ast.TokenType) *ast.Token {
 		}
 	*/
 	var token = ast.Token{
-		Type: tokenType,
-		Str:  l.Input[l.Start:l.Offset],
-		Pos:  l.Start,
-		Line: l.Line,
+		Type:       tokenType,
+		Str:        l.Input[l.Start:l.Offset],
+		Pos:        l.Start,
+		Line:       l.Line,
+		LineOffset: l.LineOffset,
 	}
 	return &token
 }
@@ -322,6 +334,7 @@ func (l *Lexer) match(str string) bool {
 		if sc != r {
 			// rollback
 			l.Offset -= width
+			l.LineOffset -= width
 			return false
 		}
 	}
@@ -392,6 +405,7 @@ func (l *Lexer) ignoreSpaces() int {
 		if r == '\n' {
 			space++
 			l.Line++
+			l.LineOffset = 0 // reset
 			l.next()
 		} else if unicode.IsSpace(r) {
 			space++

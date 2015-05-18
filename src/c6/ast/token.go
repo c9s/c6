@@ -101,6 +101,7 @@ type Token struct {
 	Str                   string
 	Pos                   int
 	Line                  int
+	LineOffset            int
 	ContainsInterpolation bool
 }
 
