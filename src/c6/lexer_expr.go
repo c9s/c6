@@ -87,7 +87,7 @@ func lexExpression(l *Lexer) stateFn {
 		}
 	}
 
-	if l.matchKeywordMap(ast.ExprTokenMap) != 0 {
+	if l.matchKeywordList(ast.ExprTokenList) != 0 {
 
 	} else if l.matchKeywordMap(ast.FlagTokenMap) != 0 {
 

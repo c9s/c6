@@ -52,20 +52,20 @@ var KeywordList = []KeywordToken{
 	KeywordToken{"@extend", T_EXTEND},
 }
 
-var ExprTokenMap = KeywordTokenMap{
-	"true":  T_TRUE,
-	"false": T_FALSE,
-	"null":  T_NULL,
-	"only":  T_ONLY, // used in media query
-	"and":   T_LOGICAL_AND,
-	"not":   T_LOGICAL_NOT,
-	"or":    T_LOGICAL_OR,
-	"xor":   T_LOGICAL_XOR,
-	"odd":   T_ODD,
-	"even":  T_EVEN,
+var ExprTokenList = KeywordTokenList{
+	KeywordToken{"true", T_TRUE},
+	KeywordToken{"false", T_FALSE},
+	KeywordToken{"null", T_NULL},
+	KeywordToken{"only", T_ONLY}, // used in media query
+	KeywordToken{"and", T_LOGICAL_AND},
+	KeywordToken{"not", T_LOGICAL_NOT},
+	KeywordToken{"or", T_LOGICAL_OR},
+	KeywordToken{"xor", T_LOGICAL_XOR},
+	KeywordToken{"odd", T_ODD},
+	KeywordToken{"even", T_EVEN},
 }
 
-var UnitTokenMap = []KeywordToken{
+var UnitTokenList = KeywordTokenList{
 	KeywordToken{"px", T_UNIT_PX},
 	KeywordToken{"pt", T_UNIT_PT},
 	KeywordToken{"pc", T_UNIT_PC},
