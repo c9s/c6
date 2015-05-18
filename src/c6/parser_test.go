@@ -295,6 +295,21 @@ func TestParserIfComparisonUnequalElseIf(t *testing.T) {
 	assert.Equal(t, 1, len(stmts))
 }
 
+func TestParserIfDeclarationBlock(t *testing.T) {
+	RunParserTest(`
+@if $i == 1 {
+	color: #111;
+} @else if $i == 2 {
+	color: #222;
+} @else if $i == 3 {
+	color: #333;
+} @else {
+	color: red;
+	background: url(../background.png);
+}
+	`)
+}
+
 func TestParserForStatementSimple(t *testing.T) {
 	var stmts = RunParserTest(`@for $var from 1 through 20 { }`)
 	assert.Equal(t, 1, len(stmts))
@@ -614,9 +629,14 @@ func BenchmarkParserOverAll(b *testing.B) {
 
 			@for $i from 1 through 100 { }
 			@if $i == 1 {
+				color: #111;
 			} @else if $i == 2 {
+				color: #222;
 			} @else if $i == 3 {
+				color: #333;
 			} @else {
+				color: red;
+				background: url(../background.png);
 			}
 
 			div { width: auto; }

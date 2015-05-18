@@ -25,9 +25,9 @@ type SyntaxError struct {
 }
 
 func (err SyntaxError) Error() (out string) {
-	out = "Syntax error "
+	out = "Syntax error"
 	if err.ActualToken != nil {
-		out += fmt.Sprintf(" at line %d, offset %d. given %s\n", err.ActualToken.Line, err.ActualToken.Pos, err.ActualToken.Type.String())
+		out += fmt.Sprintf(" at line %d, offset %d. given %s\n", err.ActualToken.Line, err.ActualToken.LineOffset, err.ActualToken.Type.String())
 	}
 	if err.Expecting != "" {
 		out += "The parser expects " + err.Expecting + "\n"

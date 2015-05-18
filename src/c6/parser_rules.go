@@ -11,8 +11,10 @@ import "c6/runtime"
 
 func (parser *Parser) ParseScss(code string) []ast.Statement {
 	l := NewLexerWithString(code)
-	l.run()
 	parser.Input = l.getOutput()
+
+	// Run lexer concurrently
+	go l.run()
 
 	var tok *ast.Token = nil
 	for tok = <-parser.Input; tok != nil; tok = <-parser.Input {
@@ -93,7 +95,7 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 		panic("if statement syntax error")
 	}
 
-	var block = parser.ParseBlock()
+	var block = parser.ParseDeclarationBlock()
 	var stm = ast.NewIfStatement(condition, block)
 
 	// TODO: runtime.OptimizeIfStatement(...)
@@ -105,7 +107,7 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 
 		// XXX: handle error here
 		var condition = parser.ParseCondition()
-		var elseifblock = parser.ParseBlock()
+		var elseifblock = parser.ParseDeclarationBlock()
 		var elseIfStm = ast.NewIfStatement(condition, elseifblock)
 		stm.AppendElseIf(elseIfStm)
 		tok = parser.peek()
@@ -116,8 +118,14 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 		parser.advance()
 
 		// XXX: handle error here
-		var elseBlock = parser.ParseBlock()
-		stm.ElseBlock = elseBlock
+		if elseBlock := parser.ParseDeclarationBlock(); elseBlock != nil {
+			stm.ElseBlock = elseBlock
+		} else {
+			panic(SyntaxError{
+				Expecting:   "declaration block { ... }",
+				ActualToken: parser.peek(),
+			})
+		}
 	}
 
 	return stm
@@ -464,6 +472,7 @@ func (parser *Parser) ParseFactor() ast.Expression {
 	var tok = parser.peek()
 
 	if tok.Type == ast.T_PAREN_OPEN {
+
 		parser.expect(ast.T_PAREN_OPEN)
 		var expr = parser.ParseExpression(true)
 		parser.expect(ast.T_PAREN_CLOSE)
@@ -475,14 +484,20 @@ func (parser *Parser) ParseFactor() ast.Expression {
 
 	} else if tok.Type == ast.T_QQ_STRING {
 
-		tok = parser.next()
+		parser.advance()
 		var str = ast.NewStringWithQuote('"', tok)
 		return ast.Expression(str)
 
 	} else if tok.Type == ast.T_Q_STRING {
 
-		tok = parser.next()
+		parser.advance()
 		var str = ast.NewStringWithQuote('\'', tok)
+		return ast.Expression(str)
+
+	} else if tok.Type == ast.T_UNQUOTE_STRING {
+
+		parser.advance()
+		var str = ast.NewStringWithQuote(0, tok)
 		return ast.Expression(str)
 
 	} else if tok.Type == ast.T_TRUE {
@@ -1278,8 +1293,10 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 		parser.advance()
 
 		parser.expect(ast.T_PAREN_OPEN)
+
 		var urlTok = parser.next()
 		stm.Url = ast.Url(urlTok.Str)
+
 		parser.expect(ast.T_PAREN_CLOSE)
 
 	} else if tok.Type == ast.T_IDENT {

@@ -1,14 +1,14 @@
 PASS
-BenchmarkLexerBasic	   50000	     26384 ns/op
-BenchmarkLexerTypeSelector	  100000	     16229 ns/op
-BenchmarkLexerIdSelector	  100000	     17072 ns/op
-BenchmarkLexerClassSelector	  100000	     16528 ns/op
-BenchmarkLexerAttributeSelector	  100000	     18402 ns/op
-BenchmarkLexerImportRule	  100000	     20348 ns/op
-BenchmarkLexerVariableDeclaration	   50000	     32196 ns/op
-BenchmarkParserClassSelector	  100000	     18691 ns/op
-BenchmarkParserAttributeSelector	  100000	     21933 ns/op
-BenchmarkParserComplexSelector	   50000	     33853 ns/op
-BenchmarkParserMediaQueryAllAndMinWidth	   30000	     48061 ns/op
-BenchmarkParserOverAll	    5000	    327214 ns/op
-ok  	c6	23.357s
+BenchmarkLexerBasic	   50000	     25581 ns/op
+BenchmarkLexerTypeSelector	  100000	     17097 ns/op
+BenchmarkLexerIdSelector	  100000	     17816 ns/op
+BenchmarkLexerClassSelector	  100000	     16922 ns/op
+BenchmarkLexerAttributeSelector	  100000	     17483 ns/op
+BenchmarkLexerImportRule	  100000	     19206 ns/op
+BenchmarkLexerVariableDeclaration	   50000	     30988 ns/op
+BenchmarkParserClassSelector	  100000	     18669 ns/op
+BenchmarkParserAttributeSelector	  100000	     22994 ns/op
+BenchmarkParserComplexSelector	   50000	     32686 ns/op
+BenchmarkParserMediaQueryAllAndMinWidth	   30000	     49102 ns/op
+BenchmarkParserOverAll	exit status 2
+FAIL	c6	21.636s

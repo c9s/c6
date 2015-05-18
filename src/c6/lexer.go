@@ -46,6 +46,7 @@ type Lexer struct {
 	// current line number of the input
 	Line int
 
+	// character offset from the begining of line
 	LineOffset int
 
 	// the token output channel
@@ -107,7 +108,7 @@ func NewLexerWithFile(file string) (*Lexer, error) {
 	}, nil
 }
 
-func (l *Lexer) getOutput() chan *ast.Token {
+func (l *Lexer) getOutput() ast.TokenChannel {
 	if l.Output != nil {
 		return l.Output
 	}
@@ -206,7 +207,7 @@ func (l *Lexer) next() (r rune) {
 	l.LastWidth = l.Width
 	r, l.Width = utf8.DecodeRuneInString(l.Input[l.Offset:])
 	l.Offset += l.Width
-	l.LineOffset += l.Width
+	l.LineOffset++
 	return r
 }
 
@@ -214,14 +215,7 @@ func (l *Lexer) next() (r rune) {
 // Can be called only once per call of next.
 func (l *Lexer) backup() {
 	l.Offset -= l.Width
-	l.LineOffset -= l.Width
-}
-
-// backup steps back one rune.
-// Can be called only once per call of next.
-func (l *Lexer) backupByWidth(w int) {
-	l.Offset -= w
-	l.LineOffset -= w
+	l.LineOffset--
 }
 
 // peek returns but does not consume
@@ -235,7 +229,7 @@ func (l *Lexer) peek() (r rune) {
 // advance offset by specific width
 func (l *Lexer) advance(w int) {
 	l.Offset += w
-	l.LineOffset += w
+	l.LineOffset++
 }
 
 // peek more characters
@@ -247,7 +241,7 @@ func (l *Lexer) peekBy(p int) (r rune) {
 		w += l.Width
 	}
 	l.Offset -= w
-	l.LineOffset -= w
+	l.LineOffset -= p
 	return r
 }
 
@@ -328,13 +322,15 @@ func (l *Lexer) ignore() {
 func (l *Lexer) match(str string) bool {
 	var r rune
 	var width = 0
+	var cnt = 0
 	for _, sc := range str {
 		r = l.next()
+		cnt++
 		width += l.Width
 		if sc != r {
 			// rollback
 			l.Offset -= width
-			l.LineOffset -= width
+			l.LineOffset -= cnt
 			return false
 		}
 	}
