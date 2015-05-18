@@ -12,7 +12,8 @@ Examples:
 
 
 panic(SyntaxError{
-	Expecting: ...
+	Expecting: ...,
+	ActualToken: tok,
 })
 */
 type SyntaxError struct {
@@ -20,6 +21,8 @@ type SyntaxError struct {
 	ActualToken *ast.Token
 	Guide       string
 	GuideUrl    string
+
+	// TODO: provide correction later
 }
 
 func (err SyntaxError) Error() (out string) {
