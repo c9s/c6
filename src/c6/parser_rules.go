@@ -1086,13 +1086,10 @@ func (parser *Parser) ParseMediaQueryList() *[]*ast.MediaQuery {
 
 	var queries = []*ast.MediaQuery{query}
 
-	var tok = parser.peek()
-	for tok.Type == ast.T_COMMA {
-		parser.next()
+	for parser.accept(ast.T_COMMA) != nil {
 		if query := parser.ParseMediaQuery(); query != nil {
 			queries = append(queries, query)
 		}
-		tok = parser.peek()
 	}
 	return &queries
 }
@@ -1311,11 +1308,12 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 
 	}
 
-	parser.ParseMediaQueryList()
+	if mediaQueryList := parser.ParseMediaQueryList(); mediaQueryList != nil {
+		stm.MediaQueryList = *mediaQueryList
+	}
 
-	// must be ast.T_SEMICOLON
-	tok = parser.next()
-	if tok.Type != ast.T_SEMICOLON {
+	// must be ast.T_SEMICOLON at the end
+	if tok := parser.expect(ast.T_SEMICOLON); tok == nil {
 		panic(ParserError{";", tok.Str})
 	}
 	return stm
