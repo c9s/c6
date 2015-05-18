@@ -55,8 +55,13 @@ func lexIdentifier(l *Lexer) stateFn {
 	l.backup()
 
 	if l.peek() == '(' {
-		l.emit(ast.T_FUNCTION_NAME)
-		lexFunctionParams(l)
+		var curTok = l.emit(ast.T_FUNCTION_NAME)
+
+		if curTok.Str == "url" || curTok.Str == "local" {
+			lexUrl(l)
+		} else {
+			lexFunctionParams(l)
+		}
 	} else {
 		l.emit(ast.T_IDENT)
 	}

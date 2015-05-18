@@ -3,16 +3,16 @@ package ast
 /**
 @see http://www.w3.org/TR/CSS21/grammar.html
 
-
 UniversalSelector
 TypeSelector
-DescendantCombinator
 PseudoSelector
-ChildCombinator
 ClassSelector
 IdSelector
-AdjacentCombinator
 AttributeSelector
+
+DescendantCombinator
+ChildCombinator
+AdjacentCombinator
 
 */
 type Selector interface {

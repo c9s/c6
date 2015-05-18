@@ -83,24 +83,24 @@ func TestLexerAtRuleImport(t *testing.T) {
 }
 
 func TestLexerAtRuleImportWithUrl(t *testing.T) {
-	AssertLexerTokenSequence(t, `@import url("test.css");`, []ast.TokenType{ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_OPEN, ast.T_QQ_STRING, ast.T_PAREN_CLOSE, ast.T_SEMICOLON})
+	AssertLexerTokenSequence(t, `@import url("test.css");`, []ast.TokenType{ast.T_IMPORT, ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_QQ_STRING, ast.T_PAREN_CLOSE, ast.T_SEMICOLON})
 }
 
 func TestLexerAtRuleImportWithUrlAndOneMediaType(t *testing.T) {
 	AssertLexerTokenSequence(t, `@import url("test.css") screen;`, []ast.TokenType{
-		ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_OPEN, ast.T_QQ_STRING, ast.T_PAREN_CLOSE, ast.T_IDENT, ast.T_SEMICOLON,
+		ast.T_IMPORT, ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_QQ_STRING, ast.T_PAREN_CLOSE, ast.T_IDENT, ast.T_SEMICOLON,
 	})
 }
 
 func TestLexerAtRuleImportWithUrlAndTwoMediaType(t *testing.T) {
 	AssertLexerTokenSequence(t, `@import url("test.css") tv, projection;`, []ast.TokenType{
-		ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_OPEN, ast.T_QQ_STRING, ast.T_PAREN_CLOSE, ast.T_IDENT, ast.T_COMMA, ast.T_IDENT, ast.T_SEMICOLON,
+		ast.T_IMPORT, ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_QQ_STRING, ast.T_PAREN_CLOSE, ast.T_IDENT, ast.T_COMMA, ast.T_IDENT, ast.T_SEMICOLON,
 	})
 }
 
 func TestLexerAtRuleImportWithUnquoteUrl(t *testing.T) {
 	AssertLexerTokenSequence(t, `@import url(http://foo.com/bar/test.css);`, []ast.TokenType{
-		ast.T_IMPORT, ast.T_IDENT, ast.T_PAREN_OPEN, ast.T_UNQUOTE_STRING, ast.T_PAREN_CLOSE, ast.T_SEMICOLON,
+		ast.T_IMPORT, ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_UNQUOTE_STRING, ast.T_PAREN_CLOSE, ast.T_SEMICOLON,
 	})
 }
 
@@ -304,6 +304,33 @@ func TestLexerMediaQueryConditionSimpleMaxWidth(t *testing.T) {
 		ast.T_TYPE_SELECTOR, ast.T_COMMA, ast.T_TYPE_SELECTOR, ast.T_COMMA, ast.T_CLASS_SELECTOR, ast.T_COMMA, ast.T_CLASS_SELECTOR, ast.T_BRACE_OPEN,
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON,
 		ast.T_BRACE_CLOSE,
+		ast.T_BRACE_CLOSE,
+	})
+}
+
+func TestLexerFontFace(t *testing.T) {
+	var code = `
+@font-face {
+  font-family: MyGentium;
+  src: local(Gentium Bold),    /* full font name */
+       local(Gentium-Bold),    /* Postscript name */
+       url(GentiumBold.woff);  /* otherwise, download it */
+  font-weight: bold;
+}
+`
+	AssertLexerTokenSequence(t, code, []ast.TokenType{
+		ast.T_FONT_FACE, ast.T_BRACE_OPEN,
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
+
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON,
+		ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_UNQUOTE_STRING, ast.T_PAREN_CLOSE, ast.T_COMMA,
+		ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_UNQUOTE_STRING, ast.T_PAREN_CLOSE, ast.T_COMMA,
+		ast.T_FUNCTION_NAME, ast.T_PAREN_OPEN, ast.T_UNQUOTE_STRING, ast.T_PAREN_CLOSE, ast.T_SEMICOLON,
+
+		ast.T_COMMENT_BLOCK,
+
+		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
+
 		ast.T_BRACE_CLOSE,
 	})
 }

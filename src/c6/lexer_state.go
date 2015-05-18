@@ -162,11 +162,6 @@ func lexString(l *Lexer) stateFn {
 }
 
 func lexUrl(l *Lexer) {
-	if !l.match("url") {
-		panic("Expecting token url(")
-	}
-
-	l.emit(ast.T_IDENT)
 	l.match("(")
 	l.emit(ast.T_PAREN_OPEN)
 	l.ignoreSpaces()
@@ -175,11 +170,11 @@ func lexUrl(l *Lexer) {
 	if q == '"' || q == '\'' {
 		lexString(l)
 	} else {
-		lexUnquoteStringExclude(l, " ()")
+		lexUnquoteStringExclude(l, "()")
 	}
 
 	l.ignoreSpaces()
-	l.match(")")
+	l.expect(")")
 	l.emit(ast.T_PAREN_CLOSE)
 }
 
@@ -187,7 +182,7 @@ func lexImportUrl(l *Lexer) {
 	if l.match("url") {
 
 		l.emit(ast.T_IDENT)
-		l.match("(")
+		l.expect("(")
 		l.emit(ast.T_PAREN_OPEN)
 		l.ignoreSpaces()
 
@@ -199,7 +194,7 @@ func lexImportUrl(l *Lexer) {
 		}
 
 		l.ignoreSpaces()
-		l.match(")")
+		l.expect(")")
 		l.emit(ast.T_PAREN_CLOSE)
 
 	} else {
@@ -226,7 +221,6 @@ func lexAtRule(l *Lexer) stateFn {
 		switch tok.Type {
 		case ast.T_IMPORT:
 			l.ignoreSpaces()
-			lexImportUrl(l)
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
 			return lexStatement
@@ -281,6 +275,9 @@ func lexAtRule(l *Lexer) stateFn {
 		case ast.T_FUNCTION, ast.T_RETURN, ast.T_MIXIN, ast.T_INCLUDE:
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
+			return lexStatement
+
+		case ast.T_FONT_FACE:
 			return lexStatement
 
 		default:

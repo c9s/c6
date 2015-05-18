@@ -1267,23 +1267,26 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 	var tok = parser.peek()
 
 	// expecting url(..)
-	if tok.Type == ast.T_IDENT {
+	if tok.Type == ast.T_FUNCTION_NAME {
+
+		parser.advance()
+
+		parser.expect(ast.T_PAREN_OPEN)
+		var urlTok = parser.next()
+		stm.Url = ast.Url(urlTok.Str)
+		parser.expect(ast.T_PAREN_CLOSE)
+
+	} else if tok.Type == ast.T_IDENT {
 		parser.advance()
 
 		if tok.Str != "url" {
 			panic("invalid function for @import statement.")
 		}
 
-		if tok = parser.next(); tok.Type != ast.T_PAREN_OPEN {
-			panic("expecting parenthesis after url")
-		}
-
-		tok = parser.next()
-		stm.Url = ast.Url(tok.Str)
-
-		if tok = parser.next(); tok.Type != ast.T_PAREN_CLOSE {
-			panic("expecting parenthesis after url")
-		}
+		parser.expect(ast.T_PAREN_OPEN)
+		var urlTok = parser.next()
+		stm.Url = ast.Url(urlTok.Str)
+		parser.expect(ast.T_PAREN_CLOSE)
 
 	} else if tok.IsString() {
 
