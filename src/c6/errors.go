@@ -28,8 +28,12 @@ type SyntaxError struct {
 func (err SyntaxError) Error() (out string) {
 	out = "Syntax error"
 	if err.ActualToken != nil {
-		out += fmt.Sprintf(" at line %d, offset %d. given %s\n", err.ActualToken.Line, err.ActualToken.LineOffset, err.ActualToken.Type.String())
+		out += fmt.Sprintf(" at line %d, offset %d. got %s\n", err.ActualToken.Line, err.ActualToken.LineOffset, err.ActualToken.Type.String())
 	}
+	if err.File != "" {
+		out += fmt.Sprintf(" in file %s\n", err.File)
+	}
+
 	if err.Reason != "" {
 		out += err.Reason + "\n"
 	}
