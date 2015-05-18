@@ -390,7 +390,9 @@ func BenchmarkLexerClassSelector(b *testing.B) {
 func BenchmarkLexerAttributeSelector(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		// Fib(10)
-		var l = NewLexerWithString(`[href*=ftp] { }`)
+		var l = NewLexerWithString(`
+		[href*=ftp] { }
+		`)
 		var o = l.getOutput()
 		l.run()
 		var token = <-o

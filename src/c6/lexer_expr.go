@@ -58,7 +58,7 @@ func lexIdentifier(l *Lexer) stateFn {
 		var curTok = l.emit(ast.T_FUNCTION_NAME)
 
 		if curTok.Str == "url" || curTok.Str == "local" {
-			lexUrl(l)
+			lexUrlParam(l)
 		} else {
 			lexFunctionParams(l)
 		}

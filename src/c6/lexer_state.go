@@ -161,7 +161,7 @@ func lexString(l *Lexer) stateFn {
 	return nil
 }
 
-func lexUrl(l *Lexer) {
+func lexUrlParam(l *Lexer) {
 	l.match("(")
 	l.emit(ast.T_PAREN_OPEN)
 	l.ignoreSpaces()
@@ -178,39 +178,7 @@ func lexUrl(l *Lexer) {
 	l.emit(ast.T_PAREN_CLOSE)
 }
 
-func lexImportUrl(l *Lexer) {
-	if l.match("url") {
-
-		l.emit(ast.T_IDENT)
-		l.expect("(")
-		l.emit(ast.T_PAREN_OPEN)
-		l.ignoreSpaces()
-
-		var q = l.peek()
-		if q == '"' || q == '\'' {
-			lexString(l)
-		} else {
-			lexUnquoteStringExclude(l, " ()")
-		}
-
-		l.ignoreSpaces()
-		l.expect(")")
-		l.emit(ast.T_PAREN_CLOSE)
-
-	} else {
-
-		var r = l.peek()
-		if r == '"' || r == '\'' {
-			lexString(l)
-		} else {
-			l.error("Unexpected token for @import rule. Got %s", r)
-		}
-
-	}
-}
-
 /*
-
 Currently the @import rule only supports '@import url(...) media;
 
 @see https://developer.mozilla.org/en-US/docs/Web/CSS/@import for more @import syntax support
