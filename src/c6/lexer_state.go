@@ -530,7 +530,7 @@ func lexStatement(l *Lexer) stateFn {
 		l.emit(ast.T_CDC)
 		return lexStatement
 
-	} else if r == '/' && (l.peek() == '*' || l.peek() == '/') {
+	} else if r == '/' && (r2 == '*' || r2 == '/') {
 
 		lexComment(l, true)
 
