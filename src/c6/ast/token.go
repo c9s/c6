@@ -17,18 +17,18 @@ type KeywordToken struct {
 
 type KeywordTokenList []KeywordToken
 
-var FlagTokenMap = KeywordTokenMap{
-	"!global":    T_GLOBAL,
-	"!default":   T_DEFAULT,
-	"!important": T_IMPORTANT,
-	"!optional":  T_OPTIONAL,
+var FlagTokenList = KeywordTokenList{
+	KeywordToken{"!global", T_GLOBAL},
+	KeywordToken{"!default", T_DEFAULT},
+	KeywordToken{"!important", T_IMPORTANT},
+	KeywordToken{"!optional", T_OPTIONAL},
 }
 
-var ForRangeKeywordTokenMap = KeywordTokenMap{
-	"from":    T_FOR_FROM,
-	"through": T_FOR_THROUGH,
-	"to":      T_FOR_TO,
-	"in":      T_FOR_IN,
+var ForRangeKeywordTokenList = KeywordTokenList{
+	KeywordToken{"from", T_FOR_FROM},
+	KeywordToken{"through", T_FOR_THROUGH},
+	KeywordToken{"to", T_FOR_TO},
+	KeywordToken{"in", T_FOR_IN},
 }
 
 // TODO: sort by frequency
@@ -50,6 +50,7 @@ var KeywordList = []KeywordToken{
 	KeywordToken{"@while", T_WHILE},
 	KeywordToken{"@content", T_CONTENT},
 	KeywordToken{"@extend", T_EXTEND},
+	KeywordToken{"@namespace", T_NAMESPACE},
 }
 
 var ExprTokenList = KeywordTokenList{
@@ -275,6 +276,7 @@ const (
 	T_OPTIONAL
 
 	T_FONT_FACE
+	T_NAMESPACE
 
 	T_LOGICAL_NOT // 'not' used in conditions
 	T_LOGICAL_OR  // 'or' used in conditions query

@@ -87,11 +87,11 @@ func lexExpression(l *Lexer) stateFn {
 		}
 	}
 
-	if l.matchKeywordList(ast.ExprTokenList) != 0 {
+	if l.matchKeywordList(ast.ExprTokenList) != nil {
 
-	} else if l.matchKeywordMap(ast.FlagTokenMap) != 0 {
+	} else if l.matchKeywordList(ast.FlagTokenList) != nil {
 
-	} else if l.matchKeywordMap(ast.ForRangeKeywordTokenMap) != 0 {
+	} else if l.matchKeywordList(ast.ForRangeKeywordTokenList) != nil {
 
 	} else if r == 'U' && r2 == '+' {
 
