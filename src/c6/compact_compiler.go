@@ -4,6 +4,15 @@ import "c6/ast"
 
 // import "fmt"
 
+const (
+	CSS3Compliant = iota
+	CSS4Compliant
+	IE7Compliant
+	IE8Compliant
+	IE9Compliant
+	IE10Compliant
+)
+
 type CompactCompiler struct {
 	Context *Context
 }
