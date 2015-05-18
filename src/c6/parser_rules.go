@@ -848,23 +848,14 @@ func (parser *Parser) ParseCommaSepList() ast.Expression {
 }
 
 func (parser *Parser) ParseVariable() *ast.Variable {
-	var pos = parser.Pos
-	var tok = parser.next()
-	if tok.Type != ast.T_VARIABLE {
-		parser.restore(pos)
-		return nil
+	if tok := parser.accept(ast.T_VARIABLE); tok != nil {
+		return ast.NewVariableWithToken(tok)
 	}
-	return ast.NewVariableWithToken(tok)
+	return nil
 }
 
 func (parser *Parser) ParseVariableAssignment() ast.Statement {
-	var pos = parser.Pos
-
 	var variable = parser.ParseVariable()
-	if variable == nil {
-		parser.restore(pos)
-		return nil
-	}
 
 	// skip ":", T_COLON token
 	if parser.accept(ast.T_COLON) == nil {
@@ -884,9 +875,7 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 	}
 
 	var stm = ast.NewVariableAssignment(variable, expr)
-
 	parser.ParseFlags(stm)
-
 	parser.accept(ast.T_SEMICOLON)
 	return stm
 }
