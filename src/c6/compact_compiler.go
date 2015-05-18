@@ -5,20 +5,30 @@ import "c6/ast"
 // import "fmt"
 
 const (
-	CSS3Compliant = iota
+	_             = iota
+	CSS3Compliant = 1 << (2 * iota)
 	CSS4Compliant
 	IE7Compliant
 	IE8Compliant
 	IE9Compliant
 	IE10Compliant
+	WebKitCompliant
+	MozCompliant // optimize for -moz
 )
 
 type CompactCompiler struct {
-	Context *Context
+	Context   *Context
+	Compliant int
 }
 
 func NewCompactCompiler(context *Context) *CompactCompiler {
-	return &CompactCompiler{context}
+	return &CompactCompiler{
+		Context: context,
+	}
+}
+
+func (compiler *CompactCompiler) EnableCompliant(compliant int) {
+	compiler.Compliant |= compliant
 }
 
 func (compiler *CompactCompiler) CompileSimpleSelector(anySel ast.Selector) (out string) {
