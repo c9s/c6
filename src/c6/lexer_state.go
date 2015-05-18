@@ -488,8 +488,7 @@ func lexStatement(l *Lexer) stateFn {
 	// strip the leading spaces of a statement
 	l.ignoreSpaces()
 
-	var r = l.peek()
-	var r2 = l.peekBy(2)
+	var r, r2 = l.peek2()
 
 	if r == EOF {
 		return nil
