@@ -30,6 +30,9 @@ func NewMediaQuery(mediaType Expression, expr Expression) *MediaQuery {
 }
 
 func (stm MediaQuery) String() (out string) {
+	/*
+		{media type} and {media expression}
+	*/
 	if stm.MediaType != nil {
 		out += stm.MediaType.String()
 	}
