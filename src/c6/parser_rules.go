@@ -762,16 +762,12 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 	debug("ParseExpression trying", pos)
 
 	if expr := parser.ParseExpression(false); expr != nil {
-		var tok = parser.peek()
-		for tok.Type == ast.T_LITERAL_CONCAT {
-			parser.accept(ast.T_LITERAL_CONCAT)
-
+		for tok := parser.accept(ast.T_LITERAL_CONCAT); tok != nil; tok = parser.accept(ast.T_LITERAL_CONCAT) {
 			var rightExpr = parser.ParseExpression(false)
 			if rightExpr == nil {
 				panic("Expecting expression or ident after the literal concat operator.")
 			}
 			expr = ast.NewLiteralConcat(expr, rightExpr)
-			tok = parser.peek()
 		}
 
 		// Check if the expression is reduce-able
