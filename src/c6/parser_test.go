@@ -120,7 +120,7 @@ func TestParserImportRuleWithUrl(t *testing.T) {
 	// it's a url
 	url, ok2 := rule.Url.(ast.Url)
 	assert.True(t, ok2)
-	assert.Equal(t, "http://foo.com/bar.css", string(url))
+	assert.Equal(t, "http://foo.com/bar.css", url.(string))
 }
 
 func TestParserImportRuleWithString(t *testing.T) {
