@@ -14,13 +14,11 @@ func (parser *Parser) ParseScss(code string) []ast.Statement {
 	l.run()
 	parser.Input = l.getOutput()
 
-	/*
-		var tok *ast.Token = nil
-		for tok = <-parser.Input; tok != nil; tok = <-parser.Input {
-			parser.Tokens = append(parser.Tokens, tok)
-		}
-		l.close()
-	*/
+	var tok *ast.Token = nil
+	for tok = <-parser.Input; tok != nil; tok = <-parser.Input {
+		parser.Tokens = append(parser.Tokens, tok)
+	}
+	l.close()
 	return parser.ParseStatements()
 }
 

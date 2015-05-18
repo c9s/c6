@@ -7,63 +7,63 @@
 <g style="font-size:20px;font-family:sans-serif">
 <text x="5" y="5" style="font-size:150%"></text>
 <g style="font-style:italic;font-size:75%">
-<rect x="484" y="73" width="33" height="20" style="fill-opacity:0.3;fill:red"/>
-<text x="479" y="88" style="text-anchor:end">+11.27%</text>
+<rect x="517" y="73" width="10" height="20" style="fill-opacity:0.3;fill:green"/>
+<text x="532" y="88" style="text-anchor:start">-3.49%</text>
 </g>
 <text x="5" y="93" style="text-anchor:start">BenchmarkLexerBasic</text>
 <g style="font-style:italic;font-size:75%">
-<rect x="517" y="99" width="62" height="20" style="fill-opacity:0.3;fill:green"/>
-<text x="584" y="114" style="text-anchor:start">-20.80%</text>
+<rect x="488" y="99" width="29" height="20" style="fill-opacity:0.3;fill:red"/>
+<text x="483" y="114" style="text-anchor:end">+9.78%</text>
 </g>
 <text x="5" y="119" style="text-anchor:start">BenchmarkLexerTypeSelector</text>
 <g style="font-style:italic;font-size:75%">
-<rect x="517" y="125" width="22" height="20" style="fill-opacity:0.3;fill:green"/>
-<text x="544" y="140" style="text-anchor:start">-7.35%</text>
+<rect x="514" y="125" width="3" height="20" style="fill-opacity:0.3;fill:red"/>
+<text x="509" y="140" style="text-anchor:end">+1.31%</text>
 </g>
 <text x="5" y="145" style="text-anchor:start">BenchmarkLexerIdSelector</text>
 <g style="font-style:italic;font-size:75%">
-<rect x="514" y="151" width="3" height="20" style="fill-opacity:0.3;fill:red"/>
-<text x="509" y="166" style="text-anchor:end">+1.23%</text>
+<rect x="517" y="151" width="29" height="20" style="fill-opacity:0.3;fill:green"/>
+<text x="551" y="166" style="text-anchor:start">-9.88%</text>
 </g>
 <text x="5" y="171" style="text-anchor:start">BenchmarkLexerClassSelector</text>
 <g style="font-style:italic;font-size:75%">
-<rect x="517" y="177" width="8" height="20" style="fill-opacity:0.3;fill:green"/>
-<text x="530" y="192" style="text-anchor:start">-2.86%</text>
+<rect x="517" y="177" width="19" height="20" style="fill-opacity:0.3;fill:green"/>
+<text x="541" y="192" style="text-anchor:start">-6.40%</text>
 </g>
 <text x="5" y="197" style="text-anchor:start">BenchmarkLexerAttributeSelector</text>
 <g style="font-style:italic;font-size:75%">
-<rect x="509" y="203" width="8" height="20" style="fill-opacity:0.3;fill:red"/>
-<text x="504" y="218" style="text-anchor:end">+2.74%</text>
+<rect x="517" y="203" width="7" height="20" style="fill-opacity:0.3;fill:green"/>
+<text x="529" y="218" style="text-anchor:start">-2.61%</text>
 </g>
 <text x="5" y="223" style="text-anchor:start">BenchmarkLexerImportRule</text>
 <g style="font-style:italic;font-size:75%">
 <rect x="517" y="229" width="14" height="20" style="fill-opacity:0.3;fill:green"/>
-<text x="536" y="244" style="text-anchor:start">-4.75%</text>
+<text x="536" y="244" style="text-anchor:start">-4.71%</text>
 </g>
 <text x="5" y="249" style="text-anchor:start">BenchmarkLexerVariableDeclaration</text>
 <g style="font-style:italic;font-size:75%">
-<rect x="517" y="255" width="17" height="20" style="fill-opacity:0.3;fill:green"/>
-<text x="539" y="270" style="text-anchor:start">-5.92%</text>
+<rect x="516" y="255" width="1" height="20" style="fill-opacity:0.3;fill:red"/>
+<text x="511" y="270" style="text-anchor:end">+0.59%</text>
 </g>
 <text x="5" y="275" style="text-anchor:start">BenchmarkParserClassSelector</text>
 <g style="font-style:italic;font-size:75%">
-<rect x="517" y="281" width="15" height="20" style="fill-opacity:0.3;fill:green"/>
-<text x="537" y="296" style="text-anchor:start">-5.23%</text>
+<rect x="510" y="281" width="7" height="20" style="fill-opacity:0.3;fill:red"/>
+<text x="505" y="296" style="text-anchor:end">+2.52%</text>
 </g>
 <text x="5" y="301" style="text-anchor:start">BenchmarkParserAttributeSelector</text>
 <g style="font-style:italic;font-size:75%">
-<rect x="517" y="307" width="19" height="20" style="fill-opacity:0.3;fill:green"/>
-<text x="541" y="322" style="text-anchor:start">-6.66%</text>
+<rect x="517" y="307" width="12" height="20" style="fill-opacity:0.3;fill:green"/>
+<text x="534" y="322" style="text-anchor:start">-4.24%</text>
 </g>
 <text x="5" y="327" style="text-anchor:start">BenchmarkParserComplexSelector</text>
 <g style="font-style:italic;font-size:75%">
-<rect x="517" y="333" width="26" height="20" style="fill-opacity:0.3;fill:green"/>
-<text x="548" y="348" style="text-anchor:start">-8.69%</text>
+<rect x="440" y="333" width="77" height="20" style="fill-opacity:0.3;fill:red"/>
+<text x="435" y="348" style="text-anchor:end">+25.68%</text>
 </g>
 <text x="5" y="353" style="text-anchor:start">BenchmarkParserMediaQueryAllAndMinWidth</text>
 <g style="font-style:italic;font-size:75%">
-<rect x="517" y="359" width="51" height="20" style="fill-opacity:0.3;fill:green"/>
-<text x="573" y="374" style="text-anchor:start">-17.18%</text>
+<rect x="517" y="359" width="11" height="20" style="fill-opacity:0.3;fill:green"/>
+<text x="533" y="374" style="text-anchor:start">-3.87%</text>
 </g>
 <text x="5" y="379" style="text-anchor:start">BenchmarkParserOverAll</text>
 </g>

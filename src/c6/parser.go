@@ -140,21 +140,6 @@ func (self *Parser) next() *ast.Token {
 	if p < len(self.Tokens) {
 		return self.Tokens[p]
 	}
-
-	var tok *ast.Token = nil
-	for len(self.Tokens) <= p {
-		if tok = <-self.Input; tok == nil {
-			return nil
-		}
-		self.Tokens = append(self.Tokens, tok)
-	}
-	if tok != nil {
-		return tok
-	} else if len(self.Tokens) == 0 {
-		return nil
-	} else if tok := self.Tokens[len(self.Tokens)-1]; tok != nil {
-		return tok
-	}
 	return nil
 }
 
@@ -184,10 +169,6 @@ func (self *Parser) current() *ast.Token {
 func (self *Parser) peek() *ast.Token {
 	if self.Pos < len(self.Tokens) {
 		return self.Tokens[self.Pos]
-	}
-	if token, ok := <-self.Input; ok {
-		self.Tokens = append(self.Tokens, token)
-		return token
 	}
 	return nil
 }
