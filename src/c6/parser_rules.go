@@ -5,9 +5,33 @@ package c6
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import "fmt"
+import "io/ioutil"
 import "strconv"
 import "c6/ast"
 import "c6/runtime"
+
+func (parser *Parser) ParseScssFile(file string) ([]ast.Statement, error) {
+	data, err := ioutil.ReadFile(file)
+	if err != nil {
+		return nil, err
+	}
+
+	parser.File = file
+	parser.Content = string(data)
+
+	l := NewLexerWithString(parser.Content)
+	parser.Input = l.getOutput()
+
+	// Run lexer concurrently
+	go l.run()
+
+	var tok *ast.Token = nil
+	for tok = <-parser.Input; tok != nil; tok = <-parser.Input {
+		parser.Tokens = append(parser.Tokens, tok)
+	}
+	l.close()
+	return parser.ParseStatements(), nil
+}
 
 func (parser *Parser) ParseScss(code string) []ast.Statement {
 	l := NewLexerWithString(code)
@@ -83,6 +107,7 @@ func (parser *Parser) ParseStatement() ast.Statement {
 		return parser.ParseRuleSet()
 
 	} else {
+
 		// panic(fmt.Errorf("parse failed, unknown token", parser.peek()))
 	}
 	return nil
@@ -122,8 +147,9 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 			stm.ElseBlock = elseBlock
 		} else {
 			panic(SyntaxError{
-				Expecting:   "declaration block { ... }",
+				Reason:      "Expecting declaration block { ... }",
 				ActualToken: parser.peek(),
+				File:        parser.File,
 			})
 		}
 	}
@@ -558,8 +584,9 @@ func (parser *Parser) ParseTerm() ast.Expression {
 			return ast.NewBinaryExpression(ast.NewOpWithToken(tok), factor, term, false)
 		} else {
 			panic(SyntaxError{
-				Expecting:   "term after '*' or '/'",
+				Reason:      "Expecting term after '*' or '/'",
 				ActualToken: parser.peek(),
+				File:        parser.File,
 			})
 		}
 	}
@@ -624,7 +651,11 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 				expr = ast.Expression(bexpr)
 			}
 		} else {
-			panic("right term is not parseable.")
+			panic(SyntaxError{
+				Reason:      "Expecting term on the right side",
+				ActualToken: parser.peek(),
+				File:        parser.File,
+			})
 		}
 		rightTok = parser.peek()
 	}
@@ -692,11 +723,7 @@ func (parser *Parser) ParseString() ast.Expression {
 }
 
 func (parser *Parser) ParseInterp() ast.Expression {
-	var startTok = parser.accept(ast.T_INTERPOLATION_START)
-	if startTok == nil {
-		panic("Expecting #{ for interpolation")
-		return nil
-	}
+	var startTok = parser.expect(ast.T_INTERPOLATION_START)
 	var innerExpr = parser.ParseExpression(true)
 	var endTok = parser.expect(ast.T_INTERPOLATION_END)
 	return ast.NewInterpolation(innerExpr, startTok, endTok)
@@ -765,7 +792,11 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 		for tok := parser.accept(ast.T_LITERAL_CONCAT); tok != nil; tok = parser.accept(ast.T_LITERAL_CONCAT) {
 			var rightExpr = parser.ParseExpression(false)
 			if rightExpr == nil {
-				panic("Expecting expression or ident after the literal concat operator.")
+				panic(SyntaxError{
+					Reason:      "Expecting expression or ident after the literal concat operator.",
+					ActualToken: parser.peek(),
+					File:        parser.File,
+				})
 			}
 			expr = ast.NewLiteralConcat(expr, rightExpr)
 		}
@@ -858,14 +889,16 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 	var variable = parser.ParseVariable()
 
 	// skip ":", T_COLON token
-	if parser.accept(ast.T_COLON) == nil {
-		panic("Expecting colon after variable name")
-	}
+	parser.expect(ast.T_COLON)
 
 	// Expecting semicolon at the end of the statement
 	var expr = parser.ParseValue(ast.T_SEMICOLON)
 	if expr == nil {
-		panic("Expecting value after variable assignment.")
+		panic(SyntaxError{
+			Reason:      "Expecting value after variable assignment.",
+			ActualToken: parser.peek(),
+			File:        parser.File,
+		})
 	}
 
 	if ruleset := parser.Context.TopRuleSet(); ruleset != nil {
@@ -1202,7 +1235,11 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 		var tok = parser.next()
 
 		if tok.Type != ast.T_FOR_THROUGH && tok.Type != ast.T_FOR_TO {
-			panic("Expecting 'through' or 'to' of range syntax.")
+			panic(SyntaxError{
+				Reason:      "Expecting 'through' or 'to' of range syntax.",
+				ActualToken: tok,
+				File:        parser.File,
+			})
 		}
 
 		var endExpr = parser.ParseExpression(true)

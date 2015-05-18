@@ -36,6 +36,9 @@ func getFileTypeByExtension(extension string) uint {
 
 type Parser struct {
 	Context *Context
+
+	File    string
+	Content string
 	Input   chan *ast.Token
 
 	// integer for counting token
@@ -45,7 +48,12 @@ type Parser struct {
 }
 
 func NewParser(context *Context) *Parser {
-	return &Parser{context, nil, 0, 0, []*ast.Token{}}
+	return &Parser{
+		Context:     context,
+		Input:       nil,
+		Pos:         0,
+		RollbackPos: 0,
+	}
 }
 
 func (parser *Parser) ParseFile(path string) error {
@@ -56,125 +64,127 @@ func (parser *Parser) ParseFile(path string) error {
 		return err
 	}
 
-	var code string = string(data)
+	parser.Content = string(data)
+	parser.File = path
+
 	switch filetype {
 	case ScssFileType:
-		parser.ParseScss(code)
+		parser.ParseScss(parser.Content)
 		break
 	}
 	return nil
 }
 
-func (self *Parser) backup() {
-	self.Pos--
+func (parser *Parser) backup() {
+	parser.Pos--
 }
 
-func (self *Parser) restore(pos int) {
-	self.Pos = pos
+func (parser *Parser) restore(pos int) {
+	parser.Pos = pos
 }
 
-func (self *Parser) remember() {
-	self.RollbackPos = self.Pos
+func (parser *Parser) remember() {
+	parser.RollbackPos = parser.Pos
 }
 
-func (self *Parser) rollback() {
-	self.Pos = self.RollbackPos
+func (parser *Parser) rollback() {
+	parser.Pos = parser.RollbackPos
 }
 
-func (self *Parser) accept(tokenType ast.TokenType) *ast.Token {
-	var tok = self.next()
+func (parser *Parser) accept(tokenType ast.TokenType) *ast.Token {
+	var tok = parser.next()
 	if tok.Type == tokenType {
 		return tok
 	}
-	self.backup()
+	parser.backup()
 	return nil
 }
 
-func (self *Parser) acceptAny(tokenTypes ...ast.TokenType) *ast.Token {
-	var tok = self.next()
+func (parser *Parser) acceptAny(tokenTypes ...ast.TokenType) *ast.Token {
+	var tok = parser.next()
 	for _, tokType := range tokenTypes {
 		if tok.Type == tokType {
 			return tok
 		}
 	}
-	self.backup()
+	parser.backup()
 	return nil
 }
 
-func (self *Parser) acceptAnyOf2(tokType1, tokType2 ast.TokenType) *ast.Token {
-	var tok = self.next()
+func (parser *Parser) acceptAnyOf2(tokType1, tokType2 ast.TokenType) *ast.Token {
+	var tok = parser.next()
 	if tok.Type == tokType1 || tok.Type == tokType2 {
 		return tok
 	}
-	self.backup()
+	parser.backup()
 	return nil
 }
 
-func (self *Parser) acceptAnyOf3(tokType1, tokType2, tokType3 ast.TokenType) *ast.Token {
-	var tok = self.next()
+func (parser *Parser) acceptAnyOf3(tokType1, tokType2, tokType3 ast.TokenType) *ast.Token {
+	var tok = parser.next()
 	if tok.Type == tokType1 || tok.Type == tokType2 || tok.Type == tokType3 {
 		return tok
 	}
-	self.backup()
+	parser.backup()
 	return nil
 }
 
-func (self *Parser) expect(tokenType ast.TokenType) *ast.Token {
-	var tok = self.next()
+func (parser *Parser) expect(tokenType ast.TokenType) *ast.Token {
+	var tok = parser.next()
 	if tok.Type != tokenType {
-		self.backup()
+		parser.backup()
 		panic(SyntaxError{
-			Expecting:   tokenType.String(),
+			Reason:      tokenType.String(),
 			ActualToken: tok,
+			File:        parser.File,
 		})
-		panic(fmt.Errorf("Expecting %s, Got %s", tokenType, tok))
 	}
 	return tok
 }
 
-func (self *Parser) next() *ast.Token {
-	var p = self.Pos
-	self.Pos++
+func (parser *Parser) next() *ast.Token {
+	var p = parser.Pos
+	parser.Pos++
 
 	// if we've appended the token
-	if p < len(self.Tokens) {
-		return self.Tokens[p]
+	if p < len(parser.Tokens) {
+		return parser.Tokens[p]
 	}
 	return nil
 }
 
-func (self *Parser) peekBy(offset int) *ast.Token {
+func (parser *Parser) peekBy(offset int) *ast.Token {
 	var i = 0
 	var tok *ast.Token = nil
 	for offset > 0 {
-		tok = self.next()
+		tok = parser.next()
 		offset--
 		i++
 		if tok == nil {
 			break
 		}
 	}
-	self.Pos -= i
+	parser.Pos -= i
 	return tok
 }
 
-func (self *Parser) advance() {
-	self.Pos++
+func (parser *Parser) advance() {
+	parser.Pos++
 }
 
-func (self *Parser) current() *ast.Token {
-	return self.Tokens[self.Pos]
+func (parser *Parser) current() *ast.Token {
+	return parser.Tokens[parser.Pos]
 }
 
-func (self *Parser) peek() *ast.Token {
-	if self.Pos < len(self.Tokens) {
-		return self.Tokens[self.Pos]
+func (parser *Parser) peek() *ast.Token {
+	if parser.Pos < len(parser.Tokens) {
+		return parser.Tokens[parser.Pos]
 	}
 	return nil
 }
 
-func (self *Parser) eof() bool {
-	var tok = self.next()
-	self.backup()
+func (parser *Parser) eof() bool {
+	var tok = parser.next()
+	parser.backup()
 	return tok == nil
 }

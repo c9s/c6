@@ -12,15 +12,16 @@ Examples:
 
 
 panic(SyntaxError{
-	Expecting: ...,
+	Reason: ...,
 	ActualToken: tok,
 })
 */
 type SyntaxError struct {
-	Expecting   string
+	Reason      string
 	ActualToken *ast.Token
 	Guide       string
 	GuideUrl    string
+	File        string
 	// TODO: provide correction later
 }
 
@@ -29,8 +30,8 @@ func (err SyntaxError) Error() (out string) {
 	if err.ActualToken != nil {
 		out += fmt.Sprintf(" at line %d, offset %d. given %s\n", err.ActualToken.Line, err.ActualToken.LineOffset, err.ActualToken.Type.String())
 	}
-	if err.Expecting != "" {
-		out += "The parser expects " + err.Expecting + "\n"
+	if err.Reason != "" {
+		out += err.Reason + "\n"
 	}
 	if err.Guide != "" {
 		out += "We suggest you to " + err.Guide + "\n"
