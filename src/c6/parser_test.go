@@ -590,6 +590,13 @@ func BenchmarkParserComplexSelector(b *testing.B) {
 	}
 }
 
+func BenchmarkParserMediaQueryAllAndMinWidth(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		var parser = NewParser(NewContext())
+		parser.ParseScss(`@media all and (min-width:500px) {  .red { color: red; } }`)
+	}
+}
+
 func BenchmarkParserOverAll(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		var parser = NewParser(NewContext())
@@ -606,6 +613,20 @@ func BenchmarkParserOverAll(b *testing.B) {
 			} @else if $i == 3 {
 			} @else {
 			}
+
+			div { width: auto; }
+			div { width: 100px }
+			div { width: 100pt }
+			div { width: 100em }
+			div { width: 100rem }
+			div { padding: 10px 10px; }
+			div { padding: 10px 10px 20px 30px; }
+			div { padding: 10px + 10px; }
+			div { padding: 10px + 10px * 3; }
+			div { color: red; }
+			div { color: rgb(255,255,255); }
+			div { color: rgba(255,255,255,0); }
+			div { background-image: url("../images/foo.png"); }
 		}`)
 	}
 

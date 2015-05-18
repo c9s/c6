@@ -24,6 +24,7 @@ benchcmp: all benchrecord
 
 benchviz: all benchrecord
 	vendor/bin/benchcmp benchmarks/old.txt benchmarks/new.txt | benchviz -top=5 -left=5 > benchmarks/summary.svg
+	open benchmarks/summary.svg
 
 cov:
 	go test -cover -coverprofile c6.cov -coverpkg c6,c6/ast,c6/runtime c6

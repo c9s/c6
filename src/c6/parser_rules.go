@@ -95,7 +95,7 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 	// If these is more else if statement
 	var tok = parser.peek()
 	for tok != nil && tok.Type == ast.T_ELSE_IF {
-		parser.next()
+		parser.advance()
 
 		// XXX: handle error here
 		var condition = parser.ParseCondition()
@@ -107,7 +107,7 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 
 	tok = parser.peek()
 	if tok != nil && tok.Type == ast.T_ELSE {
-		parser.next()
+		parser.advance()
 
 		// XXX: handle error here
 		var elseBlock = parser.ParseBlock()
@@ -137,13 +137,10 @@ func (parser *Parser) ParseCondition() ast.Expression {
 func (parser *Parser) ParseLogicExpression() ast.Expression {
 	debug("ParseLogicExpression")
 	var expr = parser.ParseLogicANDExpression()
-	var tok = parser.peek()
-	for tok != nil && tok.Type == ast.T_LOGICAL_OR {
-		parser.next()
+	for tok := parser.accept(ast.T_LOGICAL_OR); tok != nil; tok = parser.accept(ast.T_LOGICAL_OR) {
 		if subexpr := parser.ParseLogicANDExpression(); subexpr != nil {
 			expr = ast.NewBinaryExpression(ast.NewOpWithToken(tok), expr, subexpr, false)
 		}
-		tok = parser.peek()
 	}
 	return expr
 }
@@ -1271,7 +1268,7 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 
 	// expecting url(..)
 	if tok.Type == ast.T_IDENT {
-		parser.next()
+		parser.advance()
 
 		if tok.Str != "url" {
 			panic("invalid function for @import statement.")
@@ -1290,7 +1287,7 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 
 	} else if tok.IsString() {
 
-		parser.next()
+		parser.advance()
 
 		stm.Url = ast.RelativeUrl(tok.Str)
 
