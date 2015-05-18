@@ -74,8 +74,7 @@ Lexing expression with interpolation support.
 func lexExpression(l *Lexer) stateFn {
 	var leadingSpaces = l.ignoreSpaces()
 
-	var r = l.peek()
-	var r2 = l.peekBy(2)
+	var r, r2 = l.peek2()
 	var lastToken = l.lastToken()
 
 	// avoid double literal concat
@@ -101,7 +100,7 @@ func lexExpression(l *Lexer) stateFn {
 
 		lexIdentifier(l)
 
-	} else if r == '.' && l.peekBy(2) == '.' {
+	} else if r == '.' && r2 == '.' {
 
 		l.next()
 		l.next()
@@ -271,7 +270,8 @@ func lexExpression(l *Lexer) stateFn {
 	}
 
 	// for interpolation after any token above
-	if l.peek() == '#' && l.peekBy(2) == '{' {
+	r, r2 = l.peek2()
+	if r == '#' && r2 == '{' {
 		l.emit(ast.T_LITERAL_CONCAT)
 		lexInterpolation2(l)
 	}

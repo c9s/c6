@@ -226,6 +226,18 @@ func (l *Lexer) peek() (r rune) {
 	return r
 }
 
+func (l *Lexer) peek2() (r1, r2 rune) {
+	var w = 0
+	r1 = l.next()
+	w += l.Width
+	r2 = l.next()
+	w += l.Width
+
+	l.Offset -= w
+	l.LineOffset -= 2
+	return r1, r2
+}
+
 // advance offset by specific width
 func (l *Lexer) advance(w int) {
 	l.Offset += w
