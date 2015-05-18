@@ -31,6 +31,14 @@ func (compiler *CompactCompiler) EnableCompliant(compliant int) {
 	compiler.Compliant |= compliant
 }
 
+func (compiler *CompactCompiler) DisableCompliant(compliant int) {
+	compiler.Compliant = (compiler.Compliant | compliant) ^ compliant
+}
+
+func (compiler *CompactCompiler) HasCompliant(compliant int) bool {
+	return (compiler.Compliant & compliant) > 0
+}
+
 func (compiler *CompactCompiler) CompileSimpleSelector(anySel ast.Selector) (out string) {
 	return out
 }
