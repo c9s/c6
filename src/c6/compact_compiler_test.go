@@ -30,6 +30,24 @@ func TestCompileUniversalSelector(t *testing.T) {
 		`* {}`)
 }
 
+func TestCompileClassSelector(t *testing.T) {
+	AssertCompile(t,
+		`.foo-bar { }`,
+		`.foo-bar {}`)
+}
+
+func TestCompileIdSelector(t *testing.T) {
+	AssertCompile(t,
+		`#myId { }`,
+		`#myId {}`)
+}
+
+func TestCompileSelectorGroup(t *testing.T) {
+	AssertCompile(t,
+		`html, span, div { }`,
+		`html, span, div {}`)
+}
+
 func TestCompileCompoundSelector1(t *testing.T) {
 	AssertCompile(t,
 		`*.foo.bar { }`,
