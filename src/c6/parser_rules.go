@@ -88,6 +88,8 @@ func (parser *Parser) ParseStatement() ast.Statement {
 		return parser.ParseMixinStatement()
 	case ast.T_FUNCTION:
 		return parser.ParseFunction()
+	case ast.T_FONT_FACE:
+		return parser.ParseFontFaceStatement()
 	case ast.T_INCLUDE:
 		return parser.ParseIncludeStatement()
 	case ast.T_VARIABLE:
@@ -1504,6 +1506,12 @@ func (parser *Parser) ParseIncludeStatement() ast.Statement {
 
 	parser.expect(ast.T_SEMICOLON)
 	return stm
+}
+
+func (parser *Parser) ParseFontFaceStatement() ast.Statement {
+	parser.expect(ast.T_FONT_FACE)
+	block := parser.ParseDeclarationBlock()
+	return &ast.FontFaceStatement{block}
 }
 
 /*
