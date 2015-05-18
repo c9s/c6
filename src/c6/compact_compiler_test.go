@@ -9,8 +9,7 @@ func AssertCompile(t *testing.T, code string, expected string) {
 	var stmts = parser.ParseScss(code)
 	var compiler = NewCompactCompiler(context)
 	var out = compiler.Compile(stmts)
-	_ = out
-	// assert.Equal(t, expected, out)
+	assert.Equal(t, expected, out)
 }
 
 func TestCompilerCompliant(t *testing.T) {
@@ -25,8 +24,26 @@ func TestCompilerCompliant(t *testing.T) {
 	assert.False(t, compiler.HasCompliant(IE8Compliant))
 }
 
-func TestCompileSimple(t *testing.T) {
+func TestCompileUniversalSelector(t *testing.T) {
 	AssertCompile(t,
 		`* { }`,
-		`* { }`)
+		`* {}`)
+}
+
+func TestCompileCompoundSelector1(t *testing.T) {
+	AssertCompile(t,
+		`*.foo.bar { }`,
+		`*.foo.bar {}`)
+}
+
+func TestCompileCompoundSelector2(t *testing.T) {
+	AssertCompile(t,
+		`div.foo.bar[href$=pdf] { }`,
+		`div.foo.bar[href$=pdf] {}`)
+}
+
+func TestCompileComplexSelector(t *testing.T) {
+	AssertCompile(t,
+		`*.foo.bar > .posts { }`,
+		`*.foo.bar > .posts {}`)
 }

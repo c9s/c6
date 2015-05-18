@@ -39,43 +39,26 @@ func (compiler *CompactCompiler) HasCompliant(compliant int) bool {
 	return (compiler.Compliant & compliant) > 0
 }
 
-func (compiler *CompactCompiler) CompileSimpleSelector(anySel ast.Selector) (out string) {
-	return out
-}
-
-func (compiler *CompactCompiler) CompileCompoundSelector(compoundSelector *ast.CompoundSelector) (out string) {
-	out = ""
-	for _, sel := range *compoundSelector {
-		out += compiler.CompileSimpleSelector(sel)
-	}
-	return out
-}
-
 func (compiler *CompactCompiler) CompileComplexSelector(sel *ast.ComplexSelector) (out string) {
-	out = compiler.CompileCompoundSelector(sel.CompoundSelector)
-
-	for _, item := range sel.ComplexSelectorItems {
-		out += item.Combinator.String()
-		out += compiler.CompileCompoundSelector(item.CompoundSelector)
-	}
-	return out
+	return sel.String()
 }
 
-func (compiler *CompactCompiler) CompileComplexSelectorList(selectorList *ast.ComplexSelectorList) (out string) {
-	out = ""
-	for _, sel := range *selectorList {
-		compiler.CompileComplexSelector(sel)
-	}
-	return out
+func (compiler *CompactCompiler) CompileComplexSelectorList(selectorList *ast.ComplexSelectorList) string {
+	return selectorList.String()
 }
 
 func (compiler *CompactCompiler) CompileDeclarationBlock(block *ast.DeclarationBlock) (out string) {
+	out += "{"
+	for _, stm := range block.Statements {
+		_ = stm
+	}
+	out += "}"
 	return out
 }
 
 func (compiler *CompactCompiler) CompileRuleSet(ruleset *ast.RuleSet) (out string) {
 	out = compiler.CompileComplexSelectorList(ruleset.Selectors)
-	out += compiler.CompileDeclarationBlock(ruleset.Block)
+	out += " " + compiler.CompileDeclarationBlock(ruleset.Block)
 	return out
 }
 

@@ -73,9 +73,9 @@ type AttributeSelector struct {
 
 func (self AttributeSelector) String() (out string) {
 	if self.Match != nil && self.Pattern != nil {
-		return "[" + self.Name.String() + self.Match.String() + self.Pattern.String() + "]"
+		return "[" + self.Name.Str + self.Match.Str + self.Pattern.Str + "]"
 	}
-	return "[" + self.Name.String() + "]"
+	return "[" + self.Name.Str + "]"
 }
 
 func (self AttributeSelector) CSSString() (out string) { return self.String() }
