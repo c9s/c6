@@ -16,6 +16,9 @@ benchupdatebase:
 benchrecord:
 	go test -run=NONE -bench=. c6 >| benchmarks/new.txt
 
+bench:
+	go test -run=NONE -bench=. -benchmem c6 
+
 benchcmp: all benchrecord
 	vendor/bin/benchcmp benchmarks/old.txt benchmarks/new.txt
 
