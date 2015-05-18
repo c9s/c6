@@ -185,9 +185,11 @@ func (self *Parser) peek() *ast.Token {
 	if self.Pos < len(self.Tokens) {
 		return self.Tokens[self.Pos]
 	}
-	token := <-self.Input
-	self.Tokens = append(self.Tokens, token)
-	return token
+	if token, ok := <-self.Input; ok {
+		self.Tokens = append(self.Tokens, token)
+		return token
+	}
+	return nil
 }
 
 func (self *Parser) eof() bool {

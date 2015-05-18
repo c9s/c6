@@ -21,14 +21,13 @@ type SyntaxError struct {
 	ActualToken *ast.Token
 	Guide       string
 	GuideUrl    string
-
 	// TODO: provide correction later
 }
 
 func (err SyntaxError) Error() (out string) {
 	out = "Syntax error "
 	if err.ActualToken != nil {
-		out += fmt.Sprintf(" on line %d, offset %d. given %s\n", err.ActualToken.Line, err.ActualToken.Pos, err.ActualToken.Type.String())
+		out += fmt.Sprintf(" at line %d, offset %d. given %s\n", err.ActualToken.Line, err.ActualToken.Pos, err.ActualToken.Type.String())
 	}
 	if err.Expecting != "" {
 		out += "The parser expects " + err.Expecting + "\n"

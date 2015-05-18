@@ -13,6 +13,14 @@ func (parser *Parser) ParseScss(code string) []ast.Statement {
 	l := NewLexerWithString(code)
 	l.run()
 	parser.Input = l.getOutput()
+
+	/*
+		var tok *ast.Token = nil
+		for tok = <-parser.Input; tok != nil; tok = <-parser.Input {
+			parser.Tokens = append(parser.Tokens, tok)
+		}
+		l.close()
+	*/
 	return parser.ParseStatements()
 }
 
