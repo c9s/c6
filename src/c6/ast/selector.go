@@ -46,8 +46,11 @@ func (self CompoundSelector) Length() int {
 	return len(self)
 }
 
-func (self CompoundSelector) String() string {
-	return "CompoundSelector.String()"
+func (self CompoundSelector) String() (css string) {
+	for _, sel := range self {
+		css += sel.String()
+	}
+	return css
 }
 
 func NewCompoundSelector() *CompoundSelector {
@@ -59,6 +62,11 @@ type ComplexSelectorItem struct {
 	CompoundSelector *CompoundSelector
 }
 
+func (item *ComplexSelectorItem) String() (css string) {
+	return item.Combinator.String() + item.CompoundSelector.String()
+}
+func (item *ComplexSelectorItem) CSSString() (css string) { return item.String() }
+
 type ComplexSelector struct {
 	CompoundSelector     *CompoundSelector
 	ComplexSelectorItems []*ComplexSelectorItem
@@ -68,9 +76,16 @@ func (self *ComplexSelector) AppendCompoundSelector(comb Combinator, sel *Compou
 	self.ComplexSelectorItems = append(self.ComplexSelectorItems, &ComplexSelectorItem{comb, sel})
 }
 
-func (self *ComplexSelector) String() string {
-	return "ComplexSelector.String()"
+func (self *ComplexSelector) String() (css string) {
+	css = self.CompoundSelector.String()
+	for _, item := range self.ComplexSelectorItems {
+		css += item.Combinator.String()
+		css += item.CompoundSelector.String()
+	}
+	return css
 }
+
+func (self *ComplexSelector) CSSString() string { return self.String() }
 
 func NewComplexSelector(sel *CompoundSelector) *ComplexSelector {
 	return &ComplexSelector{
@@ -111,9 +126,8 @@ type TypeSelector struct {
 	Token *Token
 }
 
-func (self TypeSelector) String() string {
-	return self.Type
-}
+func (self TypeSelector) String() string    { return self.Type }
+func (self TypeSelector) CSSString() string { return self.Type }
 
 func NewTypeSelectorWithToken(token *Token) *TypeSelector {
 	return &TypeSelector{token.Str, token}
@@ -128,9 +142,8 @@ type IdSelector struct {
 	Token *Token
 }
 
-func (self IdSelector) String() string {
-	return self.Id
-}
+func (self IdSelector) String() string    { return self.Id }
+func (self IdSelector) CSSString() string { return self.Id }
 
 func NewIdSelectorWithToken(token *Token) *IdSelector {
 	return &IdSelector{token.Str, token}
@@ -145,9 +158,8 @@ type ClassSelector struct {
 	Token     *Token
 }
 
-func (self ClassSelector) String() string {
-	return self.ClassName
-}
+func (self ClassSelector) String() string    { return self.ClassName }
+func (self ClassSelector) CSSString() string { return self.ClassName }
 
 func NewClassSelectorWithToken(token *Token) *ClassSelector {
 	return &ClassSelector{token.Str, token}
@@ -170,6 +182,8 @@ func (self AttributeSelector) String() (out string) {
 	return "[" + self.Name.String() + "]"
 }
 
+func (self AttributeSelector) CSSString() (out string) { return self.String() }
+
 func NewAttributeSelector(name, match, pattern *Token) *AttributeSelector {
 	return &AttributeSelector{name, match, pattern}
 }
@@ -182,9 +196,8 @@ type UniversalSelector struct {
 	Token *Token
 }
 
-func (self UniversalSelector) String() string {
-	return "*"
-}
+func (self UniversalSelector) String() string    { return "*" }
+func (self UniversalSelector) CSSString() string { return "*" }
 
 func NewUniversalSelectorWithToken(token *Token) *UniversalSelector {
 	return &UniversalSelector{token}
@@ -199,19 +212,36 @@ Selectors presents: E:pseudo
 */
 type PseudoSelector struct {
 	PseudoClass string
+	Token       *Token
+}
+
+func (self PseudoSelector) String() (out string)    { return ":" + self.PseudoClass }
+func (self PseudoSelector) CSSString() (out string) { return ":" + self.PseudoClass }
+
+func NewPseudoSelectorWithToken(token *Token) *PseudoSelector {
+	return &PseudoSelector{token.Str, token}
+}
+
+/*
+Selectors presents: E:pseudo
+*/
+type FunctionalPseudoSelector struct {
+	PseudoClass string
 	C           string // for dynamic language pseudo selector like :lang(C)
 	Token       *Token
 }
 
-func (self PseudoSelector) String() (out string) {
+func (self FunctionalPseudoSelector) String() (out string) {
 	if self.C != "" {
 		return ":" + self.PseudoClass + "(" + self.C + ")"
 	}
 	return ":" + self.PseudoClass
 }
 
-func NewPseudoSelectorWithToken(token *Token) *PseudoSelector {
-	return &PseudoSelector{token.Str, "", token}
+func (self FunctionalPseudoSelector) CSSString() string { return self.String() }
+
+func NewFunctionalPseudoSelectorWithToken(token *Token) *FunctionalPseudoSelector {
+	return &FunctionalPseudoSelector{token.Str, "", token}
 }
 
 /*
@@ -221,7 +251,8 @@ type AdjacentCombinator struct {
 	Token *Token
 }
 
-func (self AdjacentCombinator) String() string { return " + " }
+func (self AdjacentCombinator) String() string    { return " + " }
+func (self AdjacentCombinator) CSSString() string { return " + " }
 
 func NewAdjacentCombinatorWithToken(token *Token) *AdjacentCombinator {
 	return &AdjacentCombinator{token}
@@ -231,8 +262,6 @@ type DescendantCombinator struct {
 	Token *Token
 }
 
-func (self DescendantCombinator) String() string { return " " }
-
 func NewDescendantCombinatorWithToken(token *Token) *DescendantCombinator {
 	return &DescendantCombinator{token}
 }
@@ -240,6 +269,9 @@ func NewDescendantCombinatorWithToken(token *Token) *DescendantCombinator {
 func NewDescendantCombinator() *DescendantCombinator {
 	return &DescendantCombinator{}
 }
+
+func (self DescendantCombinator) String() string    { return " " }
+func (self DescendantCombinator) CSSString() string { return " " }
 
 type GeneralSiblingCombinator struct{ Token *Token }
 
@@ -251,13 +283,15 @@ func NewGeneralSiblingCombinatorWithToken(token *Token) *GeneralSiblingCombinato
 	return &GeneralSiblingCombinator{token}
 }
 
-func (self GeneralSiblingCombinator) String() string { return " ~ " }
+func (self GeneralSiblingCombinator) String() string    { return " ~ " }
+func (self GeneralSiblingCombinator) CSSString() string { return " ~ " }
 
 type ChildCombinator struct {
 	Token *Token
 }
 
-func (self ChildCombinator) String() string { return " > " }
+func (self ChildCombinator) String() string    { return " > " }
+func (self ChildCombinator) CSSString() string { return " > " }
 
 func NewChildCombinatorWithToken(token *Token) *ChildCombinator {
 	return &ChildCombinator{token}
@@ -277,8 +311,7 @@ type ParentSelector struct {
 
 func (self ParentSelector) String() string {
 	// TODO: get parent rule set and render the selector...
-	panic("unimplemented")
-	return ""
+	return "ParentSelector.String()"
 }
 
 func NewParentSelectorWithToken(parentRuleSet *RuleSet, token *Token) *ParentSelector {

@@ -1,5 +1,12 @@
 package ast
 
+/**
+The basic CSS compliant
+*/
+type CSSCompliant interface {
+	CSSString() string
+}
+
 type CSS3Compliant interface {
 	/*
 		Output CSS3 compliant syntax

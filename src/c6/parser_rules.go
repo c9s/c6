@@ -211,12 +211,12 @@ func (parser *Parser) ParseSimpleSelector(parentRuleSet *ast.RuleSet) ast.Select
 
 	case ast.T_FUNCTIONAL_PSEUDO:
 
-		var sel = ast.NewPseudoSelectorWithToken(tok)
+		var sel = ast.NewFunctionalPseudoSelectorWithToken(tok)
 		parser.expect(ast.T_PAREN_OPEN)
 
 		var tok2 = parser.next()
 		for tok2 != nil && tok2.Type != ast.T_PAREN_CLOSE {
-			// parse expression
+			// TODO: parse pseudo expression
 			tok2 = parser.next()
 		}
 		parser.backup()
