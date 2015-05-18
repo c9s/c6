@@ -1074,7 +1074,7 @@ func (parser *Parser) ParseMediaQueryStatement() ast.Statement {
 	if list := parser.ParseMediaQueryList(); list != nil {
 		stm.MediaQueryList = list
 	}
-	parser.ParseBlock()
+	stm.Block = parser.ParseBlock()
 	return stm
 }
 
