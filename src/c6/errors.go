@@ -1,6 +1,7 @@
 package c6
 
 import "fmt"
+import "c6/ast"
 
 /*
 User's fault, probably.
