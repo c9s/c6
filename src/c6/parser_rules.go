@@ -485,34 +485,31 @@ func (parser *Parser) ParseFactor() ast.Expression {
 	} else if tok.Type == ast.T_QQ_STRING {
 
 		parser.advance()
-		var str = ast.NewStringWithQuote('"', tok)
-		return ast.Expression(str)
+		return ast.NewStringWithQuote('"', tok)
 
 	} else if tok.Type == ast.T_Q_STRING {
 
 		parser.advance()
-		var str = ast.NewStringWithQuote('\'', tok)
-		return ast.Expression(str)
+		return ast.NewStringWithQuote('\'', tok)
 
 	} else if tok.Type == ast.T_UNQUOTE_STRING {
 
 		parser.advance()
-		var str = ast.NewStringWithQuote(0, tok)
-		return ast.Expression(str)
+		return ast.NewStringWithQuote(0, tok)
 
 	} else if tok.Type == ast.T_TRUE {
 
-		parser.next()
+		parser.advance()
 		return ast.NewBooleanTrue(tok)
 
 	} else if tok.Type == ast.T_FALSE {
 
-		parser.next()
+		parser.advance()
 		return ast.NewBooleanFalse(tok)
 
 	} else if tok.Type == ast.T_NULL {
 
-		parser.next()
+		parser.advance()
 		return ast.NewNullWithToken(tok)
 
 	} else if tok.Type == ast.T_FUNCTION_NAME {
@@ -528,27 +525,21 @@ func (parser *Parser) ParseFactor() ast.Expression {
 
 		var tok2 = parser.peekBy(2)
 		if tok2 != nil && tok2.Type == ast.T_PAREN_OPEN {
-			var fcall = parser.ParseFunctionCall()
-			return ast.Expression(fcall)
+			return parser.ParseFunctionCall()
 		}
 
-		parser.next()
-		return ast.Expression(ast.NewStringWithToken(tok))
+		parser.advance()
+		return ast.NewStringWithToken(tok)
 
 	} else if tok.Type == ast.T_HEX_COLOR {
 
-		parser.next()
-		return ast.Expression(ast.NewHexColorFromToken(tok))
+		parser.advance()
+		return ast.NewHexColorFromToken(tok)
 
 	} else if tok.Type == ast.T_INTEGER || tok.Type == ast.T_FLOAT {
 
-		// reduce number
-		var number = parser.ParseNumber()
-		return ast.Expression(number)
+		return parser.ParseNumber()
 
-	} else {
-
-		return nil
 	}
 	return nil
 }
