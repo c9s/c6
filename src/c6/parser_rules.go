@@ -1072,26 +1072,25 @@ func (parser *Parser) ParseMediaQueryStatement() ast.Statement {
 	var stm = ast.NewMediaQueryStatement()
 	parser.expect(ast.T_MEDIA)
 	if list := parser.ParseMediaQueryList(); list != nil {
-		stm.MediaQueryList = *list
+		stm.MediaQueryList = list
 	}
 	parser.ParseBlock()
 	return stm
 }
 
-func (parser *Parser) ParseMediaQueryList() *[]*ast.MediaQuery {
+func (parser *Parser) ParseMediaQueryList() *ast.MediaQueryList {
 	var query = parser.ParseMediaQuery()
 	if query == nil {
 		return nil
 	}
 
-	var queries = []*ast.MediaQuery{query}
-
+	var queries = &ast.MediaQueryList{query}
 	for parser.accept(ast.T_COMMA) != nil {
 		if query := parser.ParseMediaQuery(); query != nil {
-			queries = append(queries, query)
+			*queries = append(*queries, query)
 		}
 	}
-	return &queries
+	return queries
 }
 
 /*

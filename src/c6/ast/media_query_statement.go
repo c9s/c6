@@ -1,7 +1,13 @@
 package ast
 
 type MediaQueryStatement struct {
-	MediaQueryList []*MediaQuery
+	MediaQueryList *MediaQueryList
+}
+
+type MediaQueryList []*MediaQuery
+
+func NewMediaQueryList() *MediaQueryList {
+	return &MediaQueryList{}
 }
 
 func (stm MediaQueryStatement) CanBeStatement() {}
@@ -11,7 +17,7 @@ func NewMediaQueryStatement() *MediaQueryStatement {
 }
 
 func (stm MediaQueryStatement) String() (out string) {
-	for _, mediaQuery := range stm.MediaQueryList {
+	for _, mediaQuery := range *stm.MediaQueryList {
 		out += ", " + mediaQuery.String()
 	}
 	return out[2:]
@@ -27,6 +33,10 @@ type MediaQuery struct {
 
 func NewMediaQuery(mediaType Expression, expr Expression) *MediaQuery {
 	return &MediaQuery{mediaType, expr}
+}
+
+func (stm MediaQuery) CSS3String() string {
+	return stm.String()
 }
 
 func (stm MediaQuery) String() (out string) {
