@@ -1291,6 +1291,8 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 
 		stm.Url = ast.RelativeUrl(tok.Str)
 
+	} else {
+		panic(fmt.Errorf("Unexpected token: %s", tok))
 	}
 
 	if mediaQueryList := parser.ParseMediaQueryList(); mediaQueryList != nil {
@@ -1298,9 +1300,7 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 	}
 
 	// must be ast.T_SEMICOLON at the end
-	if tok := parser.expect(ast.T_SEMICOLON); tok == nil {
-		panic(ParserError{";", tok.Str})
-	}
+	parser.expect(ast.T_SEMICOLON)
 	return stm
 }
 
