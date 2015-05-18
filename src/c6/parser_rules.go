@@ -1126,13 +1126,10 @@ func (parser *Parser) ParseMediaQuery() *ast.MediaQuery {
 	}
 
 	// @media query only allows AND operator here..
-	var tok = parser.peek()
-	for tok.Type == ast.T_LOGICAL_AND {
-		parser.next()
+	for tok := parser.accept(ast.T_LOGICAL_AND); tok != nil; tok = parser.accept(ast.T_LOGICAL_AND) {
 		// parse another mediq query expression
 		var expr2 = parser.ParseMediaQueryExpression()
 		mediaExpression = ast.NewBinaryExpression(ast.NewOpWithToken(tok), mediaExpression, expr2, false)
-		tok = parser.peek()
 	}
 	return ast.NewMediaQuery(mediaType, mediaExpression)
 }
@@ -1141,17 +1138,9 @@ func (parser *Parser) ParseMediaQuery() *ast.MediaQuery {
 ParseMediaType returns Ident Node or UnaryExpression as ast.Expression
 */
 func (parser *Parser) ParseMediaType() ast.Expression {
-
-	if tok := parser.accept(ast.T_LOGICAL_NOT); tok != nil {
-
+	if tok := parser.acceptAnyOf2(ast.T_LOGICAL_NOT, ast.T_ONLY); tok != nil {
 		var mediaType = parser.expect(ast.T_IDENT)
 		return ast.NewUnaryExpression(ast.NewOpWithToken(tok), mediaType)
-
-	} else if tok := parser.accept(ast.T_ONLY); tok != nil {
-
-		var mediaType = parser.expect(ast.T_IDENT)
-		return ast.NewUnaryExpression(ast.NewOpWithToken(tok), mediaType)
-
 	}
 
 	// expecting media type token (it will be T_IDENT)
