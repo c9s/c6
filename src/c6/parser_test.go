@@ -572,7 +572,10 @@ func TestParserClassSelector(t *testing.T) {
 
 func TestParserDescendantCombinatorSelector(t *testing.T) {
 	parser := NewParser(NewContext())
-	stmts := parser.ParseScss(`.foo .bar    .zoo { width: auto; }`)
+	stmts := parser.ParseScss(`
+	.foo    
+	.bar
+	.zoo { width: auto; }`)
 	ruleset, ok := stmts[0].(*ast.RuleSet)
 	assert.True(t, ok)
 	assert.NotNil(t, ruleset)
@@ -589,6 +592,14 @@ func TestParserAdjacentCombinator(t *testing.T) {
 func TestParserGeneralSiblingCombinator(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`.foo ~ .bar { width: auto; }`)
+	ruleset, ok := stmts[0].(*ast.RuleSet)
+	assert.True(t, ok)
+	assert.NotNil(t, ruleset)
+}
+
+func TestParserChildCombinator(t *testing.T) {
+	parser := NewParser(NewContext())
+	stmts := parser.ParseScss(`.foo > .bar { width: auto; }`)
 	ruleset, ok := stmts[0].(*ast.RuleSet)
 	assert.True(t, ok)
 	assert.NotNil(t, ruleset)
