@@ -2,6 +2,7 @@ package c6
 
 import (
 	"c6/ast"
+	"io/ioutil"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,17 +13,37 @@ func RunParserTest(code string) *ast.StatementList {
 	return parser.ParseScss(code)
 }
 
-func TestGetFileType(t *testing.T) {
+func TestParserGetFileType(t *testing.T) {
 	matrix := map[uint]string{
-		ScssFileType: "scss",
-		SassFileType: "sass",
-		EcssFileType: "ecss",
+		UnknownFileType: "css",
+		ScssFileType:    "scss",
+		SassFileType:    "sass",
+		EcssFileType:    "ecss",
 	}
 
 	for k, v := range matrix {
 		assert.Equal(t, k, getFileTypeByExtension(v))
 	}
 
+}
+
+func TestParserParseFile(t *testing.T) {
+	testPath := "test/file.scss"
+	bs, _ := ioutil.ReadFile(testPath)
+
+	p := NewParser(&Context{})
+	err := p.ParseFile(testPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if e := string(bs); e != p.Content {
+		t.Fatalf("got: %s wanted: %s", p.Content, e)
+	}
+
+	if e := testPath; e != p.File {
+		t.Fatalf("got: %s wanted: %s", p.File, e)
+	}
 }
 
 func TestParserEmptyRuleSetWithUniversalSelector(t *testing.T) {
