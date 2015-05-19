@@ -1176,7 +1176,7 @@ func (parser *Parser) ParseMediaQuery() *ast.MediaQuery {
 		if tok.Type != ast.T_LOGICAL_AND {
 			return ast.NewMediaQuery(mediaType, nil)
 		}
-		parser.next() // skip the and operator token
+		parser.advance() // skip the and operator token
 	}
 
 	// parse the media expression after the media type.
@@ -1206,9 +1206,15 @@ func (parser *Parser) ParseMediaType() ast.Expression {
 		return ast.NewUnaryExpression(ast.NewOpWithToken(tok), mediaType)
 	}
 
-	// expecting media type token (it will be T_IDENT)
-	if tok := parser.accept(ast.T_IDENT); tok != nil {
-		return ast.NewIdentWithToken(tok)
+	var tok = parser.peek()
+	if tok.Type == ast.T_PAREN_OPEN {
+		// the begining of the media expression
+		return nil
+	}
+
+	var expr = parser.ParseExpression(false)
+	if expr != nil {
+		return expr
 	}
 
 	// parse media type fail
