@@ -25,11 +25,11 @@ func debug(format string, args ...interface{}) {
 
 func getFileTypeByExtension(extension string) uint {
 	switch extension {
-	case "scss":
+	case ".scss":
 		return ScssFileType
-	case "sass":
+	case ".sass":
 		return SassFileType
-	case "ecss":
+	case ".ecss":
 		return EcssFileType
 	}
 	return UnknownFileType

@@ -15,10 +15,10 @@ func RunParserTest(code string) *ast.StatementList {
 
 func TestParserGetFileType(t *testing.T) {
 	matrix := map[uint]string{
-		UnknownFileType: "css",
-		ScssFileType:    "scss",
-		SassFileType:    "sass",
-		EcssFileType:    "ecss",
+		UnknownFileType: ".css",
+		ScssFileType:    ".scss",
+		SassFileType:    ".sass",
+		EcssFileType:    ".ecss",
 	}
 
 	for k, v := range matrix {
