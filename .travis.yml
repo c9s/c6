@@ -6,7 +6,7 @@ before_install:
 script:
   - make
   - make test
-  - make cov
+  - make cover
 after_success:
   - make benchcmp
   - vendor/bin/goveralls -coverprofile=c6.cov -service=travis-ci

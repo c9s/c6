@@ -1,3 +1,4 @@
+#!/bin/bash
 source goenv
 get github.com/mattn/goveralls
 get golang.org/x/tools/cmd/stringer

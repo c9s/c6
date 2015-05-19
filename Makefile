@@ -2,13 +2,17 @@ all:
 	go generate c6/ast c6
 	go build c6/ast c6/runtime c6
 
+vendor:
+	source goinstall
+
+clean:
+	go clean c6/...
+
 install:
 	go install c6/...
 
 test: all
-	go test c6/ast
-	go test c6/runtime
-	go test c6
+	go test c6/ast c6/runtime c6
 
 benchupdatebase:
 	go test -run=NONE -bench=. c6 >| benchmarks/old.txt
@@ -24,10 +28,9 @@ benchcmp: all benchrecord
 
 benchviz: all benchrecord
 	vendor/bin/benchcmp benchmarks/old.txt benchmarks/new.txt | benchviz -top=5 -left=5 > benchmarks/summary.svg
-	open benchmarks/summary.svg
 
-cov:
+cover:
 	go test -cover -coverprofile c6.cov -coverpkg c6,c6/ast,c6/runtime c6
 
-cov-annotate: cov
+cover-annotate: cov
 	vendor/bin/gocov convert c6.cov | vendor/bin/gocov annotate -
