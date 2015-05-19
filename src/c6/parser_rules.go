@@ -33,7 +33,7 @@ func (parser *Parser) OpenFile(file string) error {
 	return nil
 }
 
-func (parser *Parser) ParseScssFile(file string) ([]ast.Statement, error) {
+func (parser *Parser) ParseScssFile(file string) (*ast.StatementList, error) {
 	err := parser.OpenFile(file)
 	if err != nil {
 		return nil, err
@@ -54,7 +54,7 @@ func (parser *Parser) ParseScssFile(file string) ([]ast.Statement, error) {
 	return parser.ParseStatements(), nil
 }
 
-func (parser *Parser) ParseScss(code string) []ast.Statement {
+func (parser *Parser) ParseScss(code string) *ast.StatementList {
 	l := NewLexerWithString(code)
 	parser.Input = l.getOutput()
 
@@ -78,8 +78,8 @@ func (parser *Parser) ParseBlock() *ast.Block {
 	return block
 }
 
-func (parser *Parser) ParseStatements() []ast.Statement {
-	var stmts []ast.Statement = []ast.Statement{}
+func (parser *Parser) ParseStatements() *ast.StatementList {
+	var stmts = ast.StatementList{}
 	// stop at t_brace end
 	for !parser.eof() {
 		if stmt := parser.ParseStatement(); stmt != nil {
@@ -88,7 +88,7 @@ func (parser *Parser) ParseStatements() []ast.Statement {
 			break
 		}
 	}
-	return stmts
+	return &stmts
 }
 
 func (parser *Parser) ParseStatement() ast.Statement {
@@ -1397,6 +1397,18 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 				panic(err)
 			}
 			stm.Url = ast.ScssImportUrl(importPath)
+
+			if _, ok := parser.Context.ImportedPath[importPath]; !ok {
+				// Set imported path to true
+				parser.Context.ImportedPath[importPath] = true
+
+				// parse the imported file using the same context
+				var subparser = NewParser(parser.Context)
+				var stms, err = subparser.ParseScssFile(importPath)
+				_ = stms
+				_ = err
+			}
+
 		}
 
 	} else {

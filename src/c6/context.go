@@ -10,10 +10,11 @@ type Context struct {
 	RuleSetStack   []*ast.RuleSet
 	GlobalBlock    *ast.Block
 	GlobalSymTable *symtable.SymTable
+	ImportedPath   map[string]bool
 }
 
 func NewContext() *Context {
-	return &Context{[]*ast.RuleSet{}, nil, &symtable.SymTable{}}
+	return &Context{}
 }
 
 func (context *Context) PushRuleSet(ruleSet *ast.RuleSet) {

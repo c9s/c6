@@ -76,8 +76,12 @@ func (compiler *CompactCompiler) CompileStatement(anyStm ast.Statement) string {
 
 func (compiler *CompactCompiler) Compile(any interface{}) (out string) {
 	switch v := any.(type) {
-	case []ast.Statement:
+	case ast.StatementList:
 		for _, stm := range v {
+			out += compiler.CompileStatement(stm)
+		}
+	case *ast.StatementList:
+		for _, stm := range *v {
 			out += compiler.CompileStatement(stm)
 		}
 	}

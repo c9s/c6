@@ -4,7 +4,7 @@ import "c6/symtable"
 
 type Block struct {
 	SymTable   *symtable.SymTable
-	Statements []Statement
+	Statements *StatementList
 }
 
 func NewBlock() *Block {
@@ -12,29 +12,18 @@ func NewBlock() *Block {
 }
 
 // Override the statements
-func (self *Block) SetStatements(stms []Statement) {
+func (self *Block) SetStatements(stms *StatementList) {
 	self.Statements = stms
 }
 
 func (self *Block) MergeBlock(block *Block) {
-	for _, stm := range block.Statements {
-		self.Statements = append(self.Statements, stm)
+	for _, stm := range *block.Statements {
+		self.Statements.Append(stm)
 	}
-}
-
-// Append a statement interface object on the slice
-// It needs to be a pointer
-func (self *Block) AppendStatement(stm Statement) {
-	self.Statements = append(self.Statements, stm)
 }
 
 func (self *Block) AppendStatements(stmts []Statement) {
 	for _, stm := range stmts {
-		self.Statements = append(self.Statements, stm)
+		self.Statements.Append(stm)
 	}
-}
-
-// Return the reference of the statement
-func (self *Block) Statement(idx uint) Statement {
-	return self.Statements[idx]
 }

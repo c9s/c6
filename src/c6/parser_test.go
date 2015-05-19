@@ -6,74 +6,81 @@ import (
 	"testing"
 )
 
-func RunParserTest(code string) []ast.Statement {
+func RunParserTest(code string) *ast.StatementList {
 	var parser = NewParser(NewContext())
 	return parser.ParseScss(code)
 }
 
 func TestParserEmptyRuleSetWithUniversalSelector(t *testing.T) {
 	var stmts = RunParserTest(`* { }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserEmptyRuleSetWithClassSelector(t *testing.T) {
 	var stmts = RunParserTest(`.first-name { }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserEmptyRuleSetWithIdSelector(t *testing.T) {
 	var stmts = RunParserTest(`#myId { }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserEmptyRuleSetWithTypeSelector(t *testing.T) {
 	var stmts = RunParserTest(`div { }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserEmptyRuleSetWithAttributeSelectorAttributeNameOnly(t *testing.T) {
 	var stmts = RunParserTest(`[href] { }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserEmptyRuleSetWithAttributeSelectorPrefixMatch(t *testing.T) {
 	var stmts = RunParserTest(`[href^=http] { }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserEmptyRuleSetWithAttributeSelectorSuffixMatch(t *testing.T) {
 	var stmts = RunParserTest(`[href$=pdf] { }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserEmptyRuleSetWithTypeSelectorGroup(t *testing.T) {
 	var stmts = RunParserTest(`div, span, html { }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserEmptyRuleSetWithComplexSelector(t *testing.T) {
 	var stmts = RunParserTest(`div#myId.first-name.last-name, span, html, .first-name, .last-name { }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserNestedRuleSetSimple(t *testing.T) {
 	var stmts = RunParserTest(`div, span, html { .foo { color: red; } }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserNestedRuleSetSimple2(t *testing.T) {
 	var stmts = RunParserTest(`div, span, html { .foo { color: red; background: blue; } text-align: text; float: left; }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserNestedRuleWithParentSelector(t *testing.T) {
 	var stmts = RunParserTest(`div, span, html { & { color: red; } }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserPropertyNameBorderWidth(t *testing.T) {
 	var stmts = RunParserTest(`div { border-width: 3px 3px 3px 3px; }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserNestedProperty(t *testing.T) {
@@ -83,38 +90,40 @@ func TestParserNestedProperty(t *testing.T) {
 			color: #000;
 		}
 	}`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserPropertyNameBorderWidthInterpolation(t *testing.T) {
 	var stmts = RunParserTest(`div { border-#{ $width }: 3px 3px 3px 3px; }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserPropertyNameBorderWidthInterpolation2(t *testing.T) {
 	var stmts = RunParserTest(`div { #{ $name }: 3px 3px 3px 3px; }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserPropertyNameBorderWidthInterpolation3(t *testing.T) {
 	var stmts = RunParserTest(`div { #{ $name }-left: 3px; }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserImportRuleWithUnquoteUrl(t *testing.T) {
 	var stmts = RunParserTest(`@import url(../foo.css);`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserImportRuleWithUrl(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`@import url("http://foo.com/bar.css");`)
+	assert.Equal(t, 1, len(*stmts))
 
-	if len(stmts) == 0 {
-		t.Fatal("Returned 0 statements")
-	}
-
-	rule, ok := stmts[0].(*ast.ImportStatement)
+	rule, ok := (*stmts)[0].(*ast.ImportStatement)
 	assert.True(t, ok, "Convert to ImportStatement OK")
 	assert.NotNil(t, rule)
 }
@@ -122,153 +131,148 @@ func TestParserImportRuleWithUrl(t *testing.T) {
 func TestParserImportRuleWithString(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`@import "foo.css";`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserImportRuleWithMedia(t *testing.T) {
 	var stmts = RunParserTest(`@import url("foo.css") screen;`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserImportRuleWithMultipleMediaTypes(t *testing.T) {
 	var stmts = RunParserTest(`@import url("bluish.css") projection, tv;`)
-	assert.Equal(t, 1, len(stmts))
-	t.Logf("Statements: %+v\n", stmts)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserImportRuleWithMediaTypeAndColorFeature(t *testing.T) {
 	var stmts = RunParserTest(`@import url(color.css) screen and (color);`)
-	assert.Equal(t, 1, len(stmts))
-	t.Logf("Statements: %+v\n", stmts)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserImportRuleWithMediaTypeAndMaxWidthFeature(t *testing.T) {
 	var stmts = RunParserTest(`@import url(color.css) screen and (max-width: 300px);`)
-	assert.Equal(t, 1, len(stmts))
-	t.Logf("Statements: %+v\n", stmts)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserImportRuleWithMedia2(t *testing.T) {
 	var stmts = RunParserTest(`@import url("foo.css") screen and (orientation:landscape);`)
-	assert.Equal(t, 1, len(stmts))
-	t.Logf("Statements: %+v\n", stmts)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserMediaQuerySimple(t *testing.T) {
 	var stmts = RunParserTest(`@media screen { .red { color: red; } }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserMediaQueryNotScreen(t *testing.T) {
 	var stmts = RunParserTest(`@media not screen { .red { color: red; } }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserMediaQueryOnlyScreen(t *testing.T) {
 	var stmts = RunParserTest(`@media only screen { .red { color: red; } }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserMediaQueryAllAndMinWidth(t *testing.T) {
 	var stmts = RunParserTest(`@media all and (min-width:500px) {  .red { color: red; } }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserMediaQueryMinWidth(t *testing.T) {
 	var stmts = RunParserTest(`@media (min-width:500px) {  .red { color: red; } }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserMediaQueryOrientationPortrait(t *testing.T) {
 	var stmts = RunParserTest(`@media (orientation: portrait) { .red { color: red; } }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserMediaQueryMultipleWithComma(t *testing.T) {
 	var stmts = RunParserTest(`@media screen and (color), projection and (color) { .red { color: red; } }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserMediaQueryNone(t *testing.T) {
 	var stmts = RunParserTest(`@media { .red { color: red; } }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserMediaQueryNotAndMonoChrome(t *testing.T) {
 	var stmts = RunParserTest(`@media not all and (monochrome) { }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserMediaQueryJustAll(t *testing.T) {
 	var stmts = RunParserTest(`@media all { .red { color: red; } }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserMediaQueryWithVendorPrefixFeature(t *testing.T) {
 	// FIXME: 'min--moz-device-pixel-ratio' will become '-moz-device-pixel-ratio'
 	var stmts = RunParserTest(`@media (-webkit-min-device-pixel-ratio: 2), (min--moz-device-pixel-ratio: 2) {  }`)
-	assert.Equal(t, 1, len(stmts))
-	t.Logf("Stmts: %+v", stmts)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserIfTrueStatement(t *testing.T) {
 	var stmts = RunParserTest(`@if true {  }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserIfFalseElseStatement(t *testing.T) {
 	var stmts = RunParserTest(`@if false {  } @else {  }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserIfFalseOrTrueElseStatement(t *testing.T) {
 	var stmts = RunParserTest(`@if false or true {  } @else {  }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserIfTrueAndTrueOrFalseElseStatement(t *testing.T) {
 	var stmts = RunParserTest(`@if true and true or true {  } @else {  }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserIfTrueAndTrueOrFalseElseStatement2(t *testing.T) {
 	var stmts = RunParserTest(`@if (true and true) or true {  } @else {  }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserIfComparisonGreaterThan(t *testing.T) {
 	var stmts = RunParserTest(`@if (3+3) > 2 {  } @else {  }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserIfComparisonGreaterEqual(t *testing.T) {
 	var stmts = RunParserTest(`@if (3+3) >= 2 {  } @else {  }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserIfComparisonLessThan(t *testing.T) {
 	var stmts = RunParserTest(`@if (3+3) < 2 {  } @else {  }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserIfComparisonLessEqual(t *testing.T) {
 	var stmts = RunParserTest(`@if (3+3) <= 2 {  } @else {  }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserIfComparisonEqual(t *testing.T) {
 	var stmts = RunParserTest(`@if (3+3) == 6 {  } @else {  }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserIfComparisonUnequal(t *testing.T) {
 	var stmts = RunParserTest(`@if (3+3) != 6 {  } @else {  }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserIfComparisonUnequalElseIf(t *testing.T) {
 	var stmts = RunParserTest(`@if (3+3) != 6 {  } @else if (3+3) == 6 {  } @else {  }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserIfDeclarationBlock(t *testing.T) {
@@ -288,22 +292,25 @@ func TestParserIfDeclarationBlock(t *testing.T) {
 
 func TestParserForStatementSimple(t *testing.T) {
 	var stmts = RunParserTest(`@for $var from 1 through 20 { }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserForStatementExpressionReduce(t *testing.T) {
 	var stmts = RunParserTest(`@for $var from 2 * 3 through 20 * 5 + 10 { }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserForStatementRangeOperator(t *testing.T) {
 	var stmts = RunParserTest(`@for $var in 1 .. 10 { }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserForStatementRangeOperatorWithExpression(t *testing.T) {
 	var stmts = RunParserTest(`@for $var in 2 + 3 .. 10 * 10 { }`)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserWhileStatement(t *testing.T) {
@@ -312,7 +319,8 @@ $i: 6;
 @while $i > 0 { $i: $i - 2; }
 `
 	var stmts = RunParserTest(code)
-	assert.Equal(t, 1, len(stmts))
+	assert.Equal(t, 1, len(*stmts))
+
 }
 
 func TestParserCSS3Gradient(t *testing.T) {
@@ -327,8 +335,8 @@ func TestParserCSS3Gradient(t *testing.T) {
 		`div { background: -webkit-radial-gradient(100px 200px, circle closest-side, black, white); }`,
 	}
 	for _, buffer := range buffers {
-		var block = RunParserTest(buffer)
-		t.Logf("%+v\n", block)
+		var stmts = RunParserTest(buffer)
+		assert.Equal(t, 1, len(*stmts))
 	}
 }
 
@@ -342,16 +350,17 @@ func TestParserPropertyListExpression(t *testing.T) {
 		// `div { width: 10px, 3px + 7px, 20px; }`,
 	}
 	for _, buffer := range buffers {
-		var block = RunParserTest(buffer)
-		t.Logf("%+v\n", block)
+		var stmts = RunParserTest(buffer)
+		assert.Equal(t, 1, len(*stmts))
 	}
 }
 
 func TestParserFontCssSlash(t *testing.T) {
 	// should be plain CSS, no division
 	// TODO: verify this case
-	var block = RunParserTest(`.foo { font: 12px/24px; }`)
-	t.Logf("%+v\n", block)
+	var stmts = RunParserTest(`.foo { font: 12px/24px; }`)
+	t.Logf("%+v\n", stmts)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserVariableAssignmentWithBooleanTrue(t *testing.T) {
@@ -386,16 +395,17 @@ func TestParserVariableAssignmentWithExpressionOptionalFlag(t *testing.T) {
 
 func TestParserVariableAssignmentWithComplexExpression(t *testing.T) {
 	var stmts = RunParserTest(`$foo: 12px * (20px + 20px) + 4px / 2;`)
-	t.Logf("%+v\n", stmts[0])
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserVariableAssignmentWithInterpolation(t *testing.T) {
 	var stmts = RunParserTest(`$foo: #{ 10 + 20 }px;`)
-	t.Logf("%+v\n", stmts[0])
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserVariableAssignmentLengthPlusLength(t *testing.T) {
 	var stmts = RunParserTest(`$foo: 10px + 20px;`)
+	assert.Equal(t, 1, len(*stmts))
 	t.Logf("%+v\n", stmts)
 }
 
@@ -572,7 +582,7 @@ func TestParserIfStatementTrueCondition(t *testing.T) {
 func TestParserTypeSelector(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`div { width: auto; }`)
-	ruleset, ok := stmts[0].(*ast.RuleSet)
+	ruleset, ok := (*stmts)[0].(*ast.RuleSet)
 	assert.True(t, ok)
 	assert.NotNil(t, ruleset)
 }
@@ -580,7 +590,7 @@ func TestParserTypeSelector(t *testing.T) {
 func TestParserClassSelector(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`.foo-bar { width: auto; }`)
-	ruleset, ok := stmts[0].(*ast.RuleSet)
+	ruleset, ok := (*stmts)[0].(*ast.RuleSet)
 	assert.True(t, ok)
 	assert.NotNil(t, ruleset)
 }
@@ -591,7 +601,7 @@ func TestParserDescendantCombinatorSelector(t *testing.T) {
 	.foo    
 	.bar
 	.zoo { width: auto; }`)
-	ruleset, ok := stmts[0].(*ast.RuleSet)
+	ruleset, ok := (*stmts)[0].(*ast.RuleSet)
 	assert.True(t, ok)
 	assert.NotNil(t, ruleset)
 }
@@ -599,7 +609,7 @@ func TestParserDescendantCombinatorSelector(t *testing.T) {
 func TestParserAdjacentCombinator(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`.foo + .bar { width: auto; }`)
-	ruleset, ok := stmts[0].(*ast.RuleSet)
+	ruleset, ok := (*stmts)[0].(*ast.RuleSet)
 	assert.True(t, ok)
 	assert.NotNil(t, ruleset)
 }
@@ -607,7 +617,7 @@ func TestParserAdjacentCombinator(t *testing.T) {
 func TestParserGeneralSiblingCombinator(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`.foo ~ .bar { width: auto; }`)
-	ruleset, ok := stmts[0].(*ast.RuleSet)
+	ruleset, ok := (*stmts)[0].(*ast.RuleSet)
 	assert.True(t, ok)
 	assert.NotNil(t, ruleset)
 }
@@ -615,7 +625,7 @@ func TestParserGeneralSiblingCombinator(t *testing.T) {
 func TestParserChildCombinator(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`.foo > .bar { width: auto; }`)
-	ruleset, ok := stmts[0].(*ast.RuleSet)
+	ruleset, ok := (*stmts)[0].(*ast.RuleSet)
 	assert.True(t, ok)
 	assert.NotNil(t, ruleset)
 }

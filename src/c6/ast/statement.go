@@ -5,6 +5,13 @@ type Statement interface {
 	String() string
 }
 
+type StatementList []Statement
+
+func (list StatementList) Append(stm Statement) {
+	newlist := append(list, stm)
+	list = newlist
+}
+
 /*
 The nested statement allows declaration block and statements
 */
