@@ -354,6 +354,21 @@ func TestParserFontCssSlash(t *testing.T) {
 	t.Logf("%+v\n", block)
 }
 
+func TestParserVariableAssignmentWithBooleanTrue(t *testing.T) {
+	var block = RunParserTest(`$foo: true;`)
+	t.Logf("%+v\n", block)
+}
+
+func TestParserVariableAssignmentWithBooleanFalse(t *testing.T) {
+	var block = RunParserTest(`$foo: false;`)
+	t.Logf("%+v\n", block)
+}
+
+func TestParserVariableAssignmentWithNull(t *testing.T) {
+	var block = RunParserTest(`$foo: null;`)
+	t.Logf("%+v\n", block)
+}
+
 func TestParserVariableAssignmentWithMorePlus(t *testing.T) {
 	var block = RunParserTest(`$foo: 12px + 20px + 20px;`)
 	t.Logf("%+v\n", block)
