@@ -32,7 +32,19 @@ vim:sw=2:ts=2:sts=2:
   <delete dir="${basedir}/build/coverage"/>
  </target>
 
+ <target name="cross-compile" description="Cross compile">
+  <exec executable="./goenv_run" failonerror="true">
+   <arg value="make"/>
+   <arg value="cross-compile"/>
+  </exec>
+ </target>
+
  <target name="vendor" depends="clean" description="Prepare for build">
+   <exec executable="./goenv_run" failonerror="true">
+      <arg value="go"/>
+      <arg value="get"/>
+      <arg value="github.com/mitchellh/gox"/>
+   </exec>
    <exec executable="./goenv_run" failonerror="true">
      <arg value="make"/>
      <arg value="vendor"/>
