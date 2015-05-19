@@ -10,7 +10,7 @@ func IsInterpolationStartToken(r rune, r2 rune) bool {
 
 // does not test ' '
 func IsCombinatorToken(r rune) bool {
-	return r == '>' || r == '+' || r == ','
+	return r == '>' || r == '+' || r == ',' || r == '~'
 }
 
 func IsSelector(t ast.TokenType) bool {
@@ -338,6 +338,12 @@ func lexSelectors(l *Lexer) stateFn {
 
 		l.next()
 		l.emit(ast.T_CHILD_COMBINATOR)
+		return lexSelectors
+
+	} else if r == '~' {
+
+		l.next()
+		l.emit(ast.T_GENERAL_SIBLING_COMBINATOR)
 		return lexSelectors
 
 	} else if r == ',' {
