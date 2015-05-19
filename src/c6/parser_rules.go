@@ -11,19 +11,34 @@ import "c6/ast"
 import "c6/runtime"
 import "regexp"
 import "strings"
+import "os"
 
 var HttpUrlPattern = regexp.MustCompile("^https?://")
 var AbsoluteUrlPattern = regexp.MustCompile("^[a-zA-Z]+?://")
 
-func (parser *Parser) ParseScssFile(file string) ([]ast.Statement, error) {
+func (parser *Parser) OpenFile(file string) error {
+	fi, err := os.Stat(file)
+	if err != nil {
+		return err
+	}
+	parser.FileInfo = fi
+
 	data, err := ioutil.ReadFile(file)
+	if err != nil {
+		return err
+	}
+	parser.File = file
+	parser.Content = string(data)
+	return nil
+}
+
+func (parser *Parser) ParseScssFile(file string) ([]ast.Statement, error) {
+	err := parser.OpenFile(file)
 	if err != nil {
 		return nil, err
 	}
 
-	parser.File = file
-	parser.Content = string(data)
-
+	// XXX: this seems to copy the whole string, we should avoid this.
 	l := NewLexerWithString(parser.Content)
 	parser.Input = l.getOutput()
 
@@ -1339,15 +1354,35 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 
 		// Relative url for CSS
 		if strings.HasSuffix(tok.Str, ".css") {
+
 			stm.Url = ast.StringUrl(tok.Str)
+
+		} else if AbsoluteUrlPattern.MatchString(tok.Str) {
+
+			stm.Url = ast.AbsoluteUrl(tok.Str)
+
 		} else if strings.HasSuffix(tok.Str, ".scss") {
+
 			stm.Url = ast.ScssImportUrl(tok.Str)
+
 		} else {
 			// check scss import url by file system
 			if parser.File == "" {
 				panic("Unknown scss file to detect import path.")
 			}
 
+			var path = tok.Str
+			var fi, err = os.Stat(path)
+			if err != nil {
+				panic(err)
+			}
+
+			// go find the _index.scss if it's a local directory
+			if fi.Mode().IsDir() {
+
+			} else {
+
+			}
 		}
 
 	} else {

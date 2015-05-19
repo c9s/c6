@@ -8,6 +8,7 @@ import "fmt"
 import "c6/ast"
 import "path/filepath"
 import "io/ioutil"
+import "os"
 
 const (
 	UnknownFileType = iota
@@ -37,9 +38,10 @@ func getFileTypeByExtension(extension string) uint {
 type Parser struct {
 	Context *Context
 
-	File    string
-	Content string
-	Input   chan *ast.Token
+	File     string
+	FileInfo os.FileInfo
+	Content  string
+	Input    chan *ast.Token
 
 	// integer for counting token
 	Pos         int
