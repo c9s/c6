@@ -1382,20 +1382,21 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 			if fi.Mode().IsDir() {
 
 				importPath = importPath + string(filepath.Separator) + "_index.scss"
-				if _, err := os.Stat(importPath); err != nil {
-					panic(err)
-				}
-				stm.Url = ast.ScssImportUrl(importPath)
 
 			} else {
 				var dirname = filepath.Dir(importPath)
 				var basename = filepath.Base(importPath)
-				importPath = dirname + string(filepath.Separator) + "_" + basename + ".scss"
-				if _, err := os.Stat(importPath); err != nil {
-					panic(err)
+				if dirname == "." {
+					importPath = "_" + basename + ".scss"
+				} else {
+					importPath = dirname + string(filepath.Separator) + "_" + basename + ".scss"
 				}
-				stm.Url = ast.ScssImportUrl(importPath)
 			}
+
+			if _, err := os.Stat(importPath); err != nil {
+				panic(err)
+			}
+			stm.Url = ast.ScssImportUrl(importPath)
 		}
 
 	} else {
