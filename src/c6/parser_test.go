@@ -215,6 +215,20 @@ func TestParserMediaQueryWithVendorPrefixFeature(t *testing.T) {
 	assert.Equal(t, 1, len(*stmts))
 }
 
+func TestParserMediaQueryNested(t *testing.T) {
+	var code = `
+@media screen {
+  .sidebar {
+    @media (orientation: landscape) {
+      width: 500px;
+    }
+  }
+}
+	`
+	var stmts = RunParserTest(code)
+	assert.Equal(t, 1, len(*stmts))
+}
+
 func TestParserIfTrueStatement(t *testing.T) {
 	var stmts = RunParserTest(`@if true {  }`)
 	assert.Equal(t, 1, len(*stmts))
