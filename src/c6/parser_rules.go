@@ -12,6 +12,7 @@ import "c6/runtime"
 import "regexp"
 import "strings"
 import "os"
+import "path/filepath"
 
 var HttpUrlPattern = regexp.MustCompile("^https?://")
 var AbsoluteUrlPattern = regexp.MustCompile("^[a-zA-Z]+?://")
@@ -1371,8 +1372,8 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 				panic("Unknown scss file to detect import path.")
 			}
 
-			var path = tok.Str
-			var fi, err = os.Stat(path)
+			var importPath = tok.Str
+			var fi, err = os.Stat(importPath)
 			if err != nil {
 				panic(err)
 			}
@@ -1380,8 +1381,20 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 			// go find the _index.scss if it's a local directory
 			if fi.Mode().IsDir() {
 
-			} else {
+				importPath = importPath + string(filepath.Separator) + "_index.scss"
+				if _, err := os.Stat(importPath); err != nil {
+					panic(err)
+				}
+				stm.Url = ast.ScssImportUrl(importPath)
 
+			} else {
+				var dirname = filepath.Dir(importPath)
+				var basename = filepath.Base(importPath)
+				importPath = dirname + string(filepath.Separator) + "_" + basename + ".scss"
+				if _, err := os.Stat(importPath); err != nil {
+					panic(err)
+				}
+				stm.Url = ast.ScssImportUrl(importPath)
 			}
 		}
 
