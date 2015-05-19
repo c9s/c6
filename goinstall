@@ -9,3 +9,4 @@ get golang.org/x/tools/cmd/goimports
 get golang.org/x/tools/cmd/benchcmp
 get github.com/ajstarks/svgo/benchviz
 get github.com/spf13/cobra
+get github.com/axw/gocov/gocov
