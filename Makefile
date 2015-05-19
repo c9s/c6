@@ -33,7 +33,7 @@ cross-toolchain:
 	gox -build-toolchain
 
 cross-compile:
-	gox c6/...
+	gox -output "build/{{.Dir}}.{{.OS}}_{{.Arch}}" c6/...
 
 cover:
 	go test -cover -coverprofile c6.cov -coverpkg c6,c6/ast,c6/runtime c6
