@@ -9,6 +9,11 @@ import "io/ioutil"
 import "strconv"
 import "c6/ast"
 import "c6/runtime"
+import "regexp"
+import "strings"
+
+var HttpUrlPattern, _ = regexp.Compile("^https?://")
+var AbsoluteUrlPattern, _ = regexp.Compile("^[a-zA-Z]+?://")
 
 func (parser *Parser) ParseScssFile(file string) ([]ast.Statement, error) {
 	data, err := ioutil.ReadFile(file)
@@ -286,7 +291,12 @@ func (parser *Parser) ParseSimpleSelector(parentRuleSet *ast.RuleSet) ast.Select
 			return ast.NewAttributeSelectorNameOnly(attrName)
 
 		} else {
-			panic(fmt.Errorf("Unexpected token type: %s", tok2))
+
+			panic(SyntaxError{
+				Reason:      "Unexpected token",
+				ActualToken: tok2,
+				File:        parser.File,
+			})
 		}
 	}
 	parser.backup()
@@ -352,7 +362,13 @@ func (parser *Parser) ParseComplexSelector(parentRuleSet *ast.RuleSet) *ast.Comp
 			complexSel.AppendCompoundSelector(comb, sel)
 
 		} else {
-			break
+
+			panic(SyntaxError{
+				Reason:      "Expecting a selector after the combinator.",
+				ActualToken: parser.peek(),
+				File:        parser.File,
+			})
+
 		}
 	}
 	return complexSel
@@ -1305,31 +1321,34 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 	if tok.Type == ast.T_FUNCTION_NAME {
 
 		parser.advance()
-
 		parser.expect(ast.T_PAREN_OPEN)
 
 		var urlTok = parser.next()
-		stm.Url = ast.Url(urlTok.Str)
 
-		parser.expect(ast.T_PAREN_CLOSE)
-
-	} else if tok.Type == ast.T_IDENT {
-		parser.advance()
-
-		if tok.Str != "url" {
-			panic("invalid function for @import statement.")
+		if HttpUrlPattern.MatchString(urlTok.Str) {
+			stm.Url = ast.AbsoluteUrl(urlTok.Str)
+		} else {
+			stm.Url = ast.RelativeUrl(urlTok.Str)
 		}
 
-		parser.expect(ast.T_PAREN_OPEN)
-		var urlTok = parser.next()
-		stm.Url = ast.Url(urlTok.Str)
 		parser.expect(ast.T_PAREN_CLOSE)
 
 	} else if tok.IsString() {
 
 		parser.advance()
 
-		stm.Url = ast.RelativeUrl(tok.Str)
+		// Relative url for CSS
+		if strings.HasSuffix(tok.Str, ".css") {
+			stm.Url = ast.StringUrl(tok.Str)
+		} else if strings.HasSuffix(tok.Str, ".scss") {
+			stm.Url = ast.ScssImportUrl(tok.Str)
+		} else {
+			// check scss import url by file system
+			if parser.File == "" {
+				panic("Unknown scss file to detect import path.")
+			}
+
+		}
 
 	} else {
 		panic(fmt.Errorf("Unexpected token: %s", tok))
