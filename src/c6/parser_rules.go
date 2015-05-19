@@ -69,6 +69,9 @@ func (parser *Parser) ParseScss(code string) *ast.StatementList {
 	return parser.ParseStatements()
 }
 
+/*
+ParseBlock method allows root level statements, which does not allow css properties.
+*/
 func (parser *Parser) ParseBlock() *ast.Block {
 	debug("ParseBlock")
 	parser.expect(ast.T_BRACE_OPEN)
@@ -1134,7 +1137,7 @@ func (parser *Parser) ParseMediaQueryStatement() ast.Statement {
 	if list := parser.ParseMediaQueryList(); list != nil {
 		stm.MediaQueryList = list
 	}
-	stm.Block = parser.ParseBlock()
+	stm.Block = parser.ParseDeclarationBlock()
 	return stm
 }
 
@@ -1404,8 +1407,10 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 
 				// parse the imported file using the same context
 				var subparser = NewParser(parser.Context)
-				var stms, err = subparser.ParseScssFile(importPath)
-				_ = stms
+				var stmts, err = subparser.ParseScssFile(importPath)
+
+				// If we're in a ruleset, we should expand the ruleset with parent selector
+				_ = stmts
 				_ = err
 			}
 
