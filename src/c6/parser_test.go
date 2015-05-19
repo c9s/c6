@@ -117,41 +117,17 @@ func TestParserImportRuleWithUrl(t *testing.T) {
 	rule, ok := stmts[0].(*ast.ImportStatement)
 	assert.True(t, ok, "Convert to ImportStatement OK")
 	assert.NotNil(t, rule)
-
-	// it's not a relative url
-	_, ok1 := rule.Url.(ast.RelativeUrl)
-	assert.False(t, ok1)
-
-	// it's a url
-	url, ok2 := rule.Url.(ast.Url)
-	assert.True(t, ok2)
-	assert.Equal(t, "http://foo.com/bar.css", url.(string))
 }
 
 func TestParserImportRuleWithString(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`@import "foo.css";`)
-
-	if len(stmts) == 0 {
-		t.Fatal("Returned 0 statements")
-	}
-
-	rule, ok := stmts[0].(*ast.ImportStatement)
-	assert.True(t, ok, "Convert to ImportStatement OK")
-	assert.NotNil(t, rule)
-
-	// it's not a relative url
-	url, ok := rule.Url.(ast.RelativeUrl)
-	assert.True(t, ok)
-
-	assert.True(t, ok)
-	assert.Equal(t, "foo.css", string(url))
+	assert.Equal(t, 1, len(stmts))
 }
 
 func TestParserImportRuleWithMedia(t *testing.T) {
 	var stmts = RunParserTest(`@import url("foo.css") screen;`)
 	assert.Equal(t, 1, len(stmts))
-	t.Logf("Statements: %+v\n", stmts)
 }
 
 func TestParserImportRuleWithMultipleMediaTypes(t *testing.T) {
@@ -564,17 +540,6 @@ func TestParserMassiveRules(t *testing.T) {
 	}
 }
 
-func TestParserTypeSelectorRule(t *testing.T) {
-	parser := NewParser(NewContext())
-	stmts := parser.ParseScss(`div { width: auto; }`)
-
-	ruleset, ok := stmts[0].(*ast.RuleSet)
-	assert.True(t, ok)
-
-	t.Logf("%+v\n", ruleset.Selectors)
-	t.Logf("%+v\n", ruleset.Block)
-}
-
 /*
 func TestParserIfStatementTrueCondition(t *testing.T) {
 	parser := NewParser(NewContext())
@@ -588,6 +553,46 @@ func TestParserIfStatementTrueCondition(t *testing.T) {
 	_ = block
 }
 */
+
+func TestParserTypeSelector(t *testing.T) {
+	parser := NewParser(NewContext())
+	stmts := parser.ParseScss(`div { width: auto; }`)
+	ruleset, ok := stmts[0].(*ast.RuleSet)
+	assert.True(t, ok)
+	assert.NotNil(t, ruleset)
+}
+
+func TestParserClassSelector(t *testing.T) {
+	parser := NewParser(NewContext())
+	stmts := parser.ParseScss(`.foo-bar { width: auto; }`)
+	ruleset, ok := stmts[0].(*ast.RuleSet)
+	assert.True(t, ok)
+	assert.NotNil(t, ruleset)
+}
+
+func TestParserDescendantCombinatorSelector(t *testing.T) {
+	parser := NewParser(NewContext())
+	stmts := parser.ParseScss(`.foo .bar    .zoo { width: auto; }`)
+	ruleset, ok := stmts[0].(*ast.RuleSet)
+	assert.True(t, ok)
+	assert.NotNil(t, ruleset)
+}
+
+func TestParserAdjacentCombinator(t *testing.T) {
+	parser := NewParser(NewContext())
+	stmts := parser.ParseScss(`.foo + .bar { width: auto; }`)
+	ruleset, ok := stmts[0].(*ast.RuleSet)
+	assert.True(t, ok)
+	assert.NotNil(t, ruleset)
+}
+
+func TestParserGeneralSiblingCombinator(t *testing.T) {
+	parser := NewParser(NewContext())
+	stmts := parser.ParseScss(`.foo ~ .bar { width: auto; }`)
+	ruleset, ok := stmts[0].(*ast.RuleSet)
+	assert.True(t, ok)
+	assert.NotNil(t, ruleset)
+}
 
 func BenchmarkParserClassSelector(b *testing.B) {
 	for i := 0; i < b.N; i++ {
