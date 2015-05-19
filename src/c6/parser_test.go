@@ -233,6 +233,25 @@ func TestParserMediaQueryWithExpression2(t *testing.T) {
 	assert.Equal(t, 1, len(*stmts))
 }
 
+/*
+func TestParserMediaQueryNestedInRuleSet(t *testing.T) {
+	var code = `
+h6, .h6 {
+  margin: 0 0 10px;
+  line-height: 20px;
+  font-size: 12px; }
+  @media screen and (min-width: 960px) {
+    h6, .h6 {
+      font-size: 13px;
+      margin: 0 0 15px;
+  }
+}
+	`
+	var stmts = RunParserTest(code)
+	assert.Equal(t, 1, len(*stmts))
+}
+*/
+
 func TestParserMediaQueryWithVendorPrefixFeature(t *testing.T) {
 	// FIXME: 'min--moz-device-pixel-ratio' will become '-moz-device-pixel-ratio'
 	var stmts = RunParserTest(`@media (-webkit-min-device-pixel-ratio: 2), (min--moz-device-pixel-ratio: 2) {  }`)

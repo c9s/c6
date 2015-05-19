@@ -309,27 +309,23 @@ func TestLexerRulePseudoSelectorWithNthChild(t *testing.T) {
 */
 
 func TestLexerRuleWithIdSelector(t *testing.T) {
-	l := NewLexerWithString(`#myPost {  }`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_ID_SELECTOR, ast.T_BRACE_OPEN, ast.T_BRACE_CLOSE})
-	l.close()
+	AssertLexerTokenSequence(t, `#myPost {  }`, []ast.TokenType{ast.T_ID_SELECTOR, ast.T_BRACE_OPEN, ast.T_BRACE_CLOSE})
 }
 
 func TestLexerRuleWithTypeSelectorAndIdSelector(t *testing.T) {
-	l := NewLexerWithString(`div#myPost {  }`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_ID_SELECTOR, ast.T_BRACE_OPEN, ast.T_BRACE_CLOSE})
-	l.close()
+	AssertLexerTokenSequence(t, `div#myPost {  }`, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_ID_SELECTOR, ast.T_BRACE_OPEN, ast.T_BRACE_CLOSE})
+}
+
+func TestLexerRuleWithTypeSelectorH1(t *testing.T) {
+	AssertLexerTokenSequence(t, `h1 {  }`, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_BRACE_OPEN, ast.T_BRACE_CLOSE})
+}
+
+func TestLexerRuleWithTypeSelectorH1AndH2(t *testing.T) {
+	AssertLexerTokenSequence(t, `h1, h2 {  }`, []ast.TokenType{ast.T_TYPE_SELECTOR, ast.T_COMMA, ast.T_TYPE_SELECTOR, ast.T_BRACE_OPEN, ast.T_BRACE_CLOSE})
 }
 
 func TestLexerRuleWithIdSelectorWithDigits(t *testing.T) {
-	l := NewLexerWithString(`#foo123 {  }`)
-	assert.NotNil(t, l)
-	l.run()
-	AssertTokenSequence(t, l, []ast.TokenType{ast.T_ID_SELECTOR, ast.T_BRACE_OPEN, ast.T_BRACE_CLOSE})
-	l.close()
+	AssertLexerTokenSequence(t, `#foo123 {  }`, []ast.TokenType{ast.T_ID_SELECTOR, ast.T_BRACE_OPEN, ast.T_BRACE_CLOSE})
 }
 
 func TestLexerPropertyEmValueMul(t *testing.T) {
