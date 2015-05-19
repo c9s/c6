@@ -11,7 +11,7 @@ import "io/ioutil"
 import "os"
 
 const (
-	UnknownFileType = iota
+	UnknownFileType uint = iota
 	ScssFileType
 	SassFileType
 	EcssFileType

@@ -2,13 +2,27 @@ package c6
 
 import (
 	"c6/ast"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func RunParserTest(code string) *ast.StatementList {
 	var parser = NewParser(NewContext())
 	return parser.ParseScss(code)
+}
+
+func TestGetFileType(t *testing.T) {
+	matrix := map[uint]string{
+		ScssFileType: "scss",
+		SassFileType: "sass",
+		EcssFileType: "ecss",
+	}
+
+	for k, v := range matrix {
+		assert.Equal(t, k, getFileTypeByExtension(v))
+	}
+
 }
 
 func TestParserEmptyRuleSetWithUniversalSelector(t *testing.T) {
@@ -655,7 +669,7 @@ func TestParserClassSelector(t *testing.T) {
 func TestParserDescendantCombinatorSelector(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`
-	.foo    
+	.foo
 	.bar
 	.zoo { width: auto; }`)
 	ruleset, ok := (*stmts)[0].(*ast.RuleSet)
