@@ -12,10 +12,8 @@ import "c6/runtime"
 import "regexp"
 import "strings"
 
-var (
-	HttpUrlPattern     = regexp.MustCompile("^https?://")
-	AbsoluteUrlPattern = regexp.MustCompile("^[a-zA-Z]+?://")
-)
+var HttpUrlPattern = regexp.MustCompile("^https?://")
+var AbsoluteUrlPattern = regexp.MustCompile("^[a-zA-Z]+?://")
 
 func (parser *Parser) ParseScssFile(file string) ([]ast.Statement, error) {
 	data, err := ioutil.ReadFile(file)
