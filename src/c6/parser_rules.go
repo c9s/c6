@@ -214,14 +214,12 @@ func (parser *Parser) ParseLogicExpression() ast.Expression {
 
 func (parser *Parser) ParseLogicANDExpression() ast.Expression {
 	debug("ParseLogicANDExpression")
+
 	var expr = parser.ParseComparisonExpression()
-	var tok = parser.peek()
-	for tok != nil && tok.Type == ast.T_LOGICAL_AND {
-		parser.next()
+	for tok := parser.accept(ast.T_LOGICAL_AND); tok != nil; tok = parser.accept(ast.T_LOGICAL_AND) {
 		if subexpr := parser.ParseComparisonExpression(); subexpr != nil {
 			expr = ast.NewBinaryExpression(ast.NewOpWithToken(tok), expr, subexpr, false)
 		}
-		tok = parser.peek()
 	}
 	return expr
 }
