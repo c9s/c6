@@ -792,6 +792,40 @@ func (parser *Parser) ParseValueStrict() ast.Expression {
 	return parser.ParseExpression(false)
 }
 
+/*
+Parse string literal expression (literal concat with interpolation)
+*/
+func (parser *Parser) ParseLiteralExpression() ast.Expression {
+	if expr := parser.ParseExpression(false); expr != nil {
+		for tok := parser.accept(ast.T_LITERAL_CONCAT); tok != nil; tok = parser.accept(ast.T_LITERAL_CONCAT) {
+			var rightExpr = parser.ParseExpression(false)
+			if rightExpr == nil {
+				panic(SyntaxError{
+					Reason:      "Expecting expression or ident after the literal concat operator.",
+					ActualToken: parser.peek(),
+					File:        parser.File,
+				})
+			}
+			expr = ast.NewLiteralConcat(expr, rightExpr)
+		}
+
+		// Check if the expression is reduce-able
+		// For now, division looks like CSS slash at the first level, should be string.
+		if runtime.CanReduceExpression(expr) {
+			if reducedExpr, ok := runtime.ReduceExpression(expr); ok {
+				return reducedExpr
+			}
+		} else {
+			// Return expression as css slash syntax string
+			return runtime.EvaluateExpression(expr, nil)
+		}
+
+		// if we can't evaluate the value, just return the expression tree
+		return expr
+	}
+	return nil
+}
+
 /**
 Parse Value loosely
 
@@ -830,36 +864,9 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 
 	debug("List parse failed, restoring to %d", pos)
 	parser.restore(pos)
-	debug("ParseExpression trying", pos)
 
-	if expr := parser.ParseExpression(false); expr != nil {
-		for tok := parser.accept(ast.T_LITERAL_CONCAT); tok != nil; tok = parser.accept(ast.T_LITERAL_CONCAT) {
-			var rightExpr = parser.ParseExpression(false)
-			if rightExpr == nil {
-				panic(SyntaxError{
-					Reason:      "Expecting expression or ident after the literal concat operator.",
-					ActualToken: parser.peek(),
-					File:        parser.File,
-				})
-			}
-			expr = ast.NewLiteralConcat(expr, rightExpr)
-		}
-
-		// Check if the expression is reduce-able
-		// For now, division looks like CSS slash at the first level, should be string.
-		if runtime.CanReduceExpression(expr) {
-			if reducedExpr, ok := runtime.ReduceExpression(expr); ok {
-				return reducedExpr
-			}
-		} else {
-			// Return expression as css slash syntax string
-			return runtime.EvaluateExpression(expr, nil)
-		}
-
-		// if we can't evaluate the value, just return the expression tree
-		return expr
-	}
-	return nil
+	debug("ParseLiteralExpression trying", pos)
+	return parser.ParseLiteralExpression()
 }
 
 func (parser *Parser) ParseList() ast.Expression {
