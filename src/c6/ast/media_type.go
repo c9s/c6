@@ -15,15 +15,10 @@ func (self MediaType) String() string {
 type MediaFeature struct {
 	Feature Expression
 	Value   Expression
-	Token   *Token
 }
 
 func NewMediaFeature(feature, value Expression) *MediaFeature {
-	return &MediaFeature{feature, value, nil}
-}
-
-func NewMediaFeatureWithToken(feature, value Expression, token *Token) *MediaFeature {
-	return &MediaFeature{feature, value, token}
+	return &MediaFeature{feature, value}
 }
 
 func (self MediaFeature) String() (out string) {
