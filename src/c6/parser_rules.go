@@ -1250,20 +1250,21 @@ An media query expression must start with a '(' and ends with ')'
 func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
 
 	// it's not an media query expression
-	if parser.accept(ast.T_PAREN_OPEN) == nil {
-		return nil
-	}
+	if openTok := parser.accept(ast.T_PAREN_OPEN); openTok != nil {
+		var featureExpr = parser.ParseExpression(false)
+		var feature = ast.NewMediaFeature(featureExpr, nil)
 
-	var featureExpr = parser.ParseExpression(false)
-	var feature = ast.NewMediaFeature(featureExpr, nil)
-
-	// if the next token is a colon, then we expect a feature value
-	// after the colon.
-	if tok := parser.accept(ast.T_COLON); tok != nil {
-		feature.Value = parser.ParseExpression(false)
+		// if the next token is a colon, then we expect a feature value
+		// after the colon.
+		if tok := parser.accept(ast.T_COLON); tok != nil {
+			feature.Value = parser.ParseExpression(false)
+		}
+		var closeTok = parser.expect(ast.T_PAREN_CLOSE)
+		feature.Open = openTok
+		feature.Close = closeTok
+		return feature
 	}
-	parser.expect(ast.T_PAREN_CLOSE)
-	return feature
+	return nil
 }
 
 func (parser *Parser) ParseWhileStatement() ast.Statement {
