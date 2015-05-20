@@ -1366,13 +1366,19 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 
 	var tok = parser.peek()
 
-	// expecting url(..)
+	// if it's url(..)
 	if tok.Type == ast.T_FUNCTION_NAME {
-
 		parser.advance()
 		parser.expect(ast.T_PAREN_OPEN)
 
-		var urlTok = parser.next()
+		var urlTok = parser.acceptAnyOf3(ast.T_QQ_STRING, ast.T_Q_STRING, ast.T_UNQUOTE_STRING)
+		if urlTok == nil {
+			panic(SyntaxError{
+				Reason:      "Expecting url string in the url() function expression",
+				ActualToken: parser.peek(),
+				File:        parser.File,
+			})
+		}
 
 		if HttpUrlPattern.MatchString(urlTok.Str) {
 			stm.Url = ast.AbsoluteUrl(urlTok.Str)

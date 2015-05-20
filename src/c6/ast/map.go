@@ -1,8 +1,8 @@
 package ast
 
 type MapItem struct {
-	Key Expression
-	Val Expression
+	Key   Expression
+	Value Expression
 }
 
 type Map struct {
