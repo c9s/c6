@@ -18,7 +18,11 @@ func (self *Map) Set(key Expression, val Expression) {
 	self.Map[key.String()] = val
 }
 
-func (self *Map) Get(key Expression) {
+func (self *Map) Get(key Expression) Expression {
+	if val, ok := self.Map[key.String()]; ok {
+		return val
+	}
+	return nil
 }
 
 func (self Map) GetValueType() ValueType {
