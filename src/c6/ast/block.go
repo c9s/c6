@@ -7,8 +7,15 @@ type Block struct {
 	Statements *StatementList
 }
 
+type BlockNode interface {
+	MergeStatements(stmts *StatementList)
+}
+
 func NewBlock() *Block {
-	return &Block{}
+	return &Block{
+		SymTable:   &symtable.SymTable{},
+		Statements: &StatementList{},
+	}
 }
 
 // Override the statements
@@ -18,12 +25,12 @@ func (self *Block) SetStatements(stms *StatementList) {
 
 func (self *Block) MergeBlock(block *Block) {
 	for _, stm := range *block.Statements {
-		self.Statements.Append(stm)
+		*self.Statements = append(*self.Statements, stm)
 	}
 }
 
-func (self *Block) AppendStatements(stmts []Statement) {
-	for _, stm := range stmts {
+func (self *Block) MergeStatements(stmts *StatementList) {
+	for _, stm := range *stmts {
 		self.Statements.Append(stm)
 	}
 }
