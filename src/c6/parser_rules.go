@@ -1246,7 +1246,7 @@ func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
 func (parser *Parser) ParseWhileStatement() ast.Statement {
 	parser.expect(ast.T_WHILE)
 	var condition = parser.ParseCondition()
-	var block = parser.ParseBlock()
+	var block = parser.ParseDeclarationBlock()
 	return ast.NewWhileStatement(condition, block)
 }
 
@@ -1318,7 +1318,7 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 		stm.To = endExpr
 	}
 
-	if b := parser.ParseBlock(); b != nil {
+	if b := parser.ParseDeclarationBlock(); b != nil {
 		stm.Block = b
 	} else {
 		panic("The @for statement expecting block after the range syntax")
@@ -1414,6 +1414,12 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 				// parse the imported file using the same context
 				var subparser = NewParser(parser.Context)
 				var stmts, err = subparser.ParseScssFile(importPath)
+
+				if parentRuleSet := parser.Context.TopRuleSet(); parentRuleSet != nil {
+
+				} else {
+					// merge to root block
+				}
 
 				// If we're in a ruleset, we should expand the ruleset with parent selector
 				_ = stmts

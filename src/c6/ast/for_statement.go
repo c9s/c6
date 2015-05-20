@@ -5,7 +5,7 @@ type ForStatement struct {
 	From     Expression
 	Through  Expression
 	To       Expression
-	Block    *Block
+	Block    *DeclarationBlock
 }
 
 func (stm ForStatement) CanBeStatement() {}

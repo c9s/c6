@@ -42,6 +42,18 @@ func TestCompileIdSelector(t *testing.T) {
 		`#myId {}`)
 }
 
+func TestCompileAttributeSelector(t *testing.T) {
+	AssertCompile(t,
+		`[type=text] { }`,
+		`[type=text] {}`)
+}
+
+func TestCompileAttributeSelectorWithTypeName(t *testing.T) {
+	AssertCompile(t,
+		`input[type=text] { }`,
+		`input[type=text] {}`)
+}
+
 func TestCompileSelectorGroup(t *testing.T) {
 	AssertCompile(t,
 		`html, span, div { }`,
