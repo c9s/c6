@@ -82,16 +82,16 @@ func (parser *Parser) ParseBlock() *ast.Block {
 }
 
 func (parser *Parser) ParseStatements() *ast.StatementList {
-	var stmts = ast.StatementList{}
+	var stmts = new(ast.StatementList)
 	// stop at t_brace end
 	for !parser.eof() {
-		if stmt := parser.ParseStatement(); stmt != nil {
-			stmts = append(stmts, stmt)
+		if stm := parser.ParseStatement(); stm != nil {
+			*stmts = append(*stmts, stm)
 		} else {
 			break
 		}
 	}
-	return &stmts
+	return stmts
 }
 
 func (parser *Parser) ParseStatement() ast.Statement {
@@ -1097,7 +1097,7 @@ func (parser *Parser) ParseDeclaration() ast.Statement {
 }
 
 func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
-	var declBlock = ast.DeclarationBlock{}
+	var declBlock = ast.NewDeclarationBlock()
 	var parentRuleSet = parser.Context.TopRuleSet()
 
 	parser.expect(ast.T_BRACE_OPEN)
@@ -1138,7 +1138,7 @@ func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 
 	}
 	parser.expect(ast.T_BRACE_CLOSE)
-	return &declBlock
+	return declBlock
 }
 
 func (parser *Parser) ParseCharsetStatement() ast.Statement {
@@ -1444,16 +1444,11 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 				// parse the imported file using the same context
 				var subparser = NewParser(parser.Context)
 				var stmts, err = subparser.ParseScssFile(importPath)
-
-				if parentRuleSet := parser.Context.TopRuleSet(); parentRuleSet != nil {
-
-				} else {
-					// merge to root block
+				if err != nil {
+					panic(err)
 				}
-
-				// If we're in a ruleset, we should expand the ruleset with parent selector
-				_ = stmts
-				_ = err
+				var currentBlock = parser.Context.CurrentBlock()
+				currentBlock.MergeStatements(stmts)
 			}
 
 		}

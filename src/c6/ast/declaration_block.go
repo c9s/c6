@@ -12,17 +12,24 @@ DeclarationBlock.
 type DeclarationBlock struct {
 	SymTable *symtable.SymTable
 
-	Statements []Statement
+	Statements *StatementList
 
 	// Nested rulesets
 	SubRuleSets []*RuleSet
+}
+
+func NewDeclarationBlock() *DeclarationBlock {
+	return &DeclarationBlock{
+		Statements: &StatementList{},
+		SymTable:   &symtable.SymTable{},
+	}
 }
 
 /**
 Append a Declaration
 */
 func (self *DeclarationBlock) Append(decl Statement) {
-	self.Statements = append(self.Statements, decl)
+	self.Statements.Append(decl)
 }
 
 func (self *DeclarationBlock) AppendSubRuleSet(ruleset *RuleSet) {
@@ -30,9 +37,15 @@ func (self *DeclarationBlock) AppendSubRuleSet(ruleset *RuleSet) {
 	self.SubRuleSets = newRuleSets
 }
 
+func (self *DeclarationBlock) MergeStatements(stmts *StatementList) {
+	for _, stm := range *stmts {
+		self.Statements.Append(stm)
+	}
+}
+
 func (self DeclarationBlock) String() (out string) {
 	out += "{\n"
-	for _, decl := range self.Statements {
+	for _, decl := range *self.Statements {
 		out += decl.String() + "\n"
 	}
 	out += "}"

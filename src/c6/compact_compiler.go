@@ -49,8 +49,10 @@ func (compiler *CompactCompiler) CompileComplexSelectorList(selectorList *ast.Co
 
 func (compiler *CompactCompiler) CompileDeclarationBlock(block *ast.DeclarationBlock) (out string) {
 	out += "{"
-	for _, stm := range block.Statements {
-		_ = stm
+	if block.Statements != nil {
+		for _, stm := range *block.Statements {
+			_ = stm
+		}
 	}
 	out += "}"
 	return out
