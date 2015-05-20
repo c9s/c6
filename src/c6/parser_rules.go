@@ -237,7 +237,7 @@ func (parser *Parser) ParseComparisonExpression() ast.Expression {
 
 	var tok = parser.peek()
 	for tok != nil && tok.IsComparisonOperator() {
-		parser.next()
+		parser.advance()
 		if subexpr := parser.ParseExpression(false); subexpr != nil {
 			expr = ast.NewBinaryExpression(ast.NewOpWithToken(tok), expr, subexpr, false)
 		}
