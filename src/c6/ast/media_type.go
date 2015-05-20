@@ -1,20 +1,15 @@
 package ast
 
 type MediaType struct {
-	Name  string
-	Token *Token
+	Expr Expression
 }
 
-func NewMediaType(name string) *MediaType {
-	return &MediaType{name, nil}
-}
-
-func NewMediaTypeWithToken(token *Token) *MediaType {
-	return &MediaType{token.Str, token}
+func NewMediaType(expr Expression) *MediaType {
+	return &MediaType{expr}
 }
 
 func (self MediaType) String() string {
-	return self.Name
+	return self.Expr.String()
 }
 
 type MediaFeature struct {

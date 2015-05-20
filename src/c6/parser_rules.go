@@ -1223,10 +1223,10 @@ func (parser *Parser) ParseMediaQuery() *ast.MediaQuery {
 /*
 ParseMediaType returns Ident Node or UnaryExpression as ast.Expression
 */
-func (parser *Parser) ParseMediaType() ast.Expression {
+func (parser *Parser) ParseMediaType() *ast.MediaType {
 	if tok := parser.acceptAnyOf2(ast.T_LOGICAL_NOT, ast.T_ONLY); tok != nil {
 		var mediaType = parser.expect(ast.T_IDENT)
-		return ast.NewUnaryExpression(ast.NewOpWithToken(tok), mediaType)
+		return ast.NewMediaType(ast.NewUnaryExpression(ast.NewOpWithToken(tok), mediaType))
 	}
 
 	var tok = parser.peek()
@@ -1237,7 +1237,7 @@ func (parser *Parser) ParseMediaType() ast.Expression {
 
 	var expr = parser.ParseExpression(false)
 	if expr != nil {
-		return expr
+		return ast.NewMediaType(expr)
 	}
 
 	// parse media type fail
