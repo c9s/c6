@@ -371,7 +371,7 @@ func lexSelectors(l *Lexer) stateFn {
 
 		return lexSelectors
 
-	} else if r == '{' {
+	} else if r == '{' || r == ';' {
 
 		return lexStatement
 

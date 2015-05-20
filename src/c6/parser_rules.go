@@ -122,6 +122,8 @@ func (parser *Parser) ParseStatement() ast.Statement {
 		return parser.ParseReturnStatement()
 	case ast.T_IF:
 		return parser.ParseIfStatement()
+	case ast.T_EXTEND:
+		return parser.ParseExtendStatement()
 	case ast.T_FOR:
 		return parser.ParseForStatement()
 	case ast.T_CONTENT:
@@ -417,8 +419,15 @@ func (parser *Parser) ParseSelectorList() *ast.ComplexSelectorList {
 	return complexSelectorList
 }
 
-func (parser *Parser) ParseRuleSet() ast.Statement {
+func (parser *Parser) ParseExtendStatement() ast.Statement {
+	parser.expect(ast.T_EXTEND)
+	var stm = ast.NewExtendStatement()
+	stm.Selectors = parser.ParseSelectorList()
+	parser.expect(ast.T_SEMICOLON)
+	return stm
+}
 
+func (parser *Parser) ParseRuleSet() ast.Statement {
 	var ruleset = ast.NewRuleSet()
 	ruleset.Selectors = parser.ParseSelectorList()
 
@@ -872,13 +881,11 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 func (parser *Parser) ParseList() ast.Expression {
 	debug("ParseList at %d", parser.Pos)
 	var pos = parser.Pos
-	var list = parser.ParseCommaSepList()
-	if list == nil {
-		debug("ParseList failed")
-		parser.restore(pos)
-		return nil
+	if list := parser.ParseCommaSepList(); list != nil {
+		return list
 	}
-	return list
+	parser.restore(pos)
+	return nil
 }
 
 func (parser *Parser) ParseCommaSepList() ast.Expression {

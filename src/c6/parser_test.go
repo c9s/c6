@@ -597,6 +597,10 @@ func TestParserMixinContentDirective(t *testing.T) {
 	`)
 }
 
+func TestParserExtend(t *testing.T) {
+	RunParserTest(`@extend .foo-bar;`)
+}
+
 func TestParserInclude(t *testing.T) {
 	RunParserTest(`
 		@include apply-to-ie6-only;
