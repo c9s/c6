@@ -14,7 +14,17 @@ type Context struct {
 }
 
 func NewContext() *Context {
-	return &Context{}
+	return &Context{
+		GlobalBlock:    ast.NewBlock(),
+		GlobalSymTable: &symtable.SymTable{},
+	}
+}
+
+func (context *Context) CurrentBlock() ast.BlockNode {
+	if ruleSet := context.TopRuleSet(); ruleSet != nil {
+		return ruleSet.Block
+	}
+	return context.GlobalBlock
 }
 
 func (context *Context) PushRuleSet(ruleSet *ast.RuleSet) {
