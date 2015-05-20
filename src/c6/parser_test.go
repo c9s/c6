@@ -597,8 +597,16 @@ func TestParserMixinContentDirective(t *testing.T) {
 	`)
 }
 
-func TestParserExtend(t *testing.T) {
+func TestParserExtendClassSelector(t *testing.T) {
 	RunParserTest(`@extend .foo-bar;`)
+}
+
+func TestParserExtendIdSelector(t *testing.T) {
+	RunParserTest(`@extend #myId;`)
+}
+
+func TestParserExtendComplexSelector(t *testing.T) {
+	RunParserTest(`@extend #myId > .foo-bar;`)
 }
 
 func TestParserInclude(t *testing.T) {

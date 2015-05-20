@@ -255,6 +255,10 @@ func (parser *Parser) ParseSimpleSelector(parentRuleSet *ast.RuleSet) ast.Select
 	debug("ParseSimpleSelector")
 
 	var tok = parser.next()
+	if tok == nil {
+		return nil
+	}
+
 	switch tok.Type {
 
 	case ast.T_TYPE_SELECTOR:
@@ -351,6 +355,9 @@ func (parser *Parser) ParseComplexSelector(parentRuleSet *ast.RuleSet) *ast.Comp
 
 	for {
 		var tok = parser.next()
+		if tok == nil {
+			return complexSel
+		}
 
 		var comb ast.Combinator
 

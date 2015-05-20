@@ -95,7 +95,7 @@ func (parser *Parser) rollback() {
 
 func (parser *Parser) accept(tokenType ast.TokenType) *ast.Token {
 	var tok = parser.next()
-	if tok.Type == tokenType {
+	if tok != nil && tok.Type == tokenType {
 		return tok
 	}
 	parser.backup()
@@ -133,7 +133,7 @@ func (parser *Parser) acceptAnyOf3(tokType1, tokType2, tokType3 ast.TokenType) *
 
 func (parser *Parser) expect(tokenType ast.TokenType) *ast.Token {
 	var tok = parser.next()
-	if tok.Type != tokenType {
+	if tok != nil && tok.Type != tokenType {
 		parser.backup()
 		panic(SyntaxError{
 			Reason:      tokenType.String(),
