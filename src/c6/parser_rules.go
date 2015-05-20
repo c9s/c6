@@ -710,28 +710,27 @@ func (parser *Parser) ParseMap() ast.Expression {
 
 	var mapval = ast.NewMap()
 
+	// TODO: check and report Map syntax error
 	tok = parser.peek()
 	for tok.Type != ast.T_PAREN_CLOSE {
 		var keyExpr = parser.ParseExpression(false)
 		if keyExpr == nil {
-			debug("expecting key expression, restoring...")
 			parser.restore(pos)
 			return nil
 		}
 
 		if parser.accept(ast.T_COLON) == nil {
-			debug("expecting colon, restoring...")
 			parser.restore(pos)
 			return nil
 		}
 
 		var valueExpr = parser.ParseExpression(false)
 		if valueExpr == nil {
-			debug("expecting value expression, restoring...")
 			parser.restore(pos)
 			return nil
 		}
 
+		// register the map value
 		mapval.Set(keyExpr, valueExpr)
 		parser.accept(ast.T_COMMA)
 		tok = parser.peek()
@@ -812,9 +811,6 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 	debug("ParseMap")
 	if mapValue := parser.ParseMap(); mapValue != nil {
 		var tok = parser.peek()
-
-		debug("OK Map: next %s", tok)
-
 		if stopTokType == 0 || tok.Type == stopTokType {
 			debug("OK Map Meet Stop Token")
 			return mapValue
