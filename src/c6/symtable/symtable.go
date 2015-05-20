@@ -25,6 +25,12 @@ func (self SymTable) Get(name string) (SymTableItem, bool) {
 	return nil, false
 }
 
+func (self SymTable) Merge(a *SymTable) {
+	for key, val := range *a {
+		self[key] = val
+	}
+}
+
 func (self SymTable) Has(name string) bool {
 	if _, ok := self[name]; ok {
 		return true
