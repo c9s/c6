@@ -622,15 +622,22 @@ func TestParserFunctionSimple4(t *testing.T) {
 	`)
 }
 
-/*
-func TestParserFunctionSimple4(t *testing.T) {
+func TestParserFunctionSimple5(t *testing.T) {
 	RunParserTest(`
 @function g() {
   @return variable-exists(foo);
 }
 	`)
 }
-*/
+
+func TestParserFunctionWithAssignments(t *testing.T) {
+	RunParserTest(`
+@function g() {
+  $a: 2 * 10;
+  @return $a * 99;
+}
+	`)
+}
 
 func TestParserMassiveRules(t *testing.T) {
 	var buffers []string = []string{
