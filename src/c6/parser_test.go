@@ -466,18 +466,33 @@ func TestParserVariableAssignmentWithBooleanFalse(t *testing.T) {
 }
 
 func TestParserVariableAssignmentWithNull(t *testing.T) {
-	var block = RunParserTest(`$foo: null;`)
-	t.Logf("%+v\n", block)
+	var stmts = RunParserTest(`$foo: null;`)
+	assert.Equal(t, 1, len(*stmts))
+}
+
+func TestParserVariableAssignmentList(t *testing.T) {
+	var stmts = RunParserTest(`$foo: 1 2 3 4;`)
+	assert.Equal(t, 1, len(*stmts))
+}
+
+func TestParserVariableAssignmentListWithParenthesis(t *testing.T) {
+	var stmts = RunParserTest(`$foo: (1 2 3 4);`)
+	assert.Equal(t, 1, len(*stmts))
+}
+
+func TestParserVariableAssignmentCommaSepList(t *testing.T) {
+	var stmts = RunParserTest(`$foo: (1,2,3,4);`)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserVariableAssignmentWithMorePlus(t *testing.T) {
-	var block = RunParserTest(`$foo: 12px + 20px + 20px;`)
-	t.Logf("%+v\n", block)
+	var stmts = RunParserTest(`$foo: 12px + 20px + 20px;`)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserVariableAssignmentWithExpressionDefaultFlag(t *testing.T) {
-	var block = RunParserTest(`$foo: 12px + 20px + 20px !default;`)
-	t.Logf("%+v\n", block)
+	var stmts = RunParserTest(`$foo: 12px + 20px + 20px !default;`)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserVariableAssignmentWithExpressionOptionalFlag(t *testing.T) {
