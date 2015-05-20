@@ -2,13 +2,48 @@ package c6
 
 import (
 	"c6/ast"
-	"github.com/stretchr/testify/assert"
+	"io/ioutil"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func RunParserTest(code string) *ast.StatementList {
 	var parser = NewParser(NewContext())
 	return parser.ParseScss(code)
+}
+
+func TestParserGetFileType(t *testing.T) {
+	matrix := map[uint]string{
+		UnknownFileType: ".css",
+		ScssFileType:    ".scss",
+		SassFileType:    ".sass",
+		EcssFileType:    ".ecss",
+	}
+
+	for k, v := range matrix {
+		assert.Equal(t, k, getFileTypeByExtension(v))
+	}
+
+}
+
+func TestParserParseFile(t *testing.T) {
+	testPath := "test/file.scss"
+	bs, _ := ioutil.ReadFile(testPath)
+
+	p := NewParser(&Context{})
+	err := p.ParseFile(testPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if e := string(bs); e != p.Content {
+		t.Fatalf("got: %s wanted: %s", p.Content, e)
+	}
+
+	if e := testPath; e != p.File {
+		t.Fatalf("got: %s wanted: %s", p.File, e)
+	}
 }
 
 func TestParserEmptyRuleSetWithUniversalSelector(t *testing.T) {
@@ -655,7 +690,7 @@ func TestParserClassSelector(t *testing.T) {
 func TestParserDescendantCombinatorSelector(t *testing.T) {
 	parser := NewParser(NewContext())
 	stmts := parser.ParseScss(`
-	.foo    
+	.foo
 	.bar
 	.zoo { width: auto; }`)
 	ruleset, ok := (*stmts)[0].(*ast.RuleSet)
