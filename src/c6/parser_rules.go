@@ -701,36 +701,45 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 
 func (parser *Parser) ParseMap() ast.Expression {
 	var pos = parser.Pos
-	var tok = parser.next()
+	var tok = parser.accept(ast.T_PAREN_OPEN)
 	// since it's not started with '(', it's not map
-	if tok.Type != ast.T_PAREN_OPEN {
+	if tok == nil {
 		parser.restore(pos)
 		return nil
 	}
+
+	var mapval = ast.NewMap()
 
 	tok = parser.peek()
 	for tok.Type != ast.T_PAREN_CLOSE {
 		var keyExpr = parser.ParseExpression(false)
 		if keyExpr == nil {
+			debug("expecting key expression, restoring...")
 			parser.restore(pos)
 			return nil
 		}
 
 		if parser.accept(ast.T_COLON) == nil {
+			debug("expecting colon, restoring...")
 			parser.restore(pos)
 			return nil
 		}
 
 		var valueExpr = parser.ParseExpression(false)
 		if valueExpr == nil {
+			debug("expecting value expression, restoring...")
 			parser.restore(pos)
 			return nil
 		}
 
+		mapval.Set(keyExpr, valueExpr)
 		parser.accept(ast.T_COMMA)
 		tok = parser.peek()
 	}
-	return nil
+	if parser.accept(ast.T_PAREN_CLOSE) == nil {
+		return nil
+	}
+	return mapval
 }
 
 func (parser *Parser) ParseString() ast.Expression {
@@ -804,8 +813,10 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 	if mapValue := parser.ParseMap(); mapValue != nil {
 		var tok = parser.peek()
 
+		debug("OK Map: next %s", tok)
+
 		if stopTokType == 0 || tok.Type == stopTokType {
-			debug("OK List")
+			debug("OK Map Meet Stop Token")
 			return mapValue
 		}
 	}

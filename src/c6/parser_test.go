@@ -480,6 +480,11 @@ func TestParserVariableAssignmentListWithParenthesis(t *testing.T) {
 	assert.Equal(t, 1, len(*stmts))
 }
 
+func TestParserVariableAssignmentMap(t *testing.T) {
+	var stmts = RunParserTest(`$foo: (bar: 1, foo: 2);`)
+	assert.Equal(t, 1, len(*stmts))
+}
+
 func TestParserVariableAssignmentCommaSepList(t *testing.T) {
 	var stmts = RunParserTest(`$foo: (1,2,3,4);`)
 	assert.Equal(t, 1, len(*stmts))
