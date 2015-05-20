@@ -194,8 +194,7 @@ func (parser *Parser) ParseCondition() ast.Expression {
 	debug("ParseCondition")
 
 	// Boolean 'Not'
-	var tok = parser.peek()
-	if tok.Type == ast.T_LOGICAL_NOT {
+	if tok := parser.accept(ast.T_LOGICAL_NOT); tok != nil {
 		var logicexpr = parser.ParseLogicExpression()
 		return ast.NewUnaryExpression(ast.NewOpWithToken(tok), logicexpr)
 	}

@@ -95,7 +95,7 @@ To run specific test
   - [x] Parse Nested Properties
   - [x] Parse options: `!default`, `!global`, `!optional`
   - [ ] Parse CSS Hack for different browser (support more syntax sugar for this)
-  - [ ] Parse `@font-face` block
+  - [x] Parse `@font-face` block
   - [x] Parse `@if` statement
   - [x] Parse `@for` statement
   - [x] Parse `@while` statement
@@ -103,7 +103,7 @@ To run specific test
   - [x] Parse `@include` statement
   - [x] Parse `@function` statement
   - [x] Parse `@return` statement
-  - [ ] Parse `@extend` statement
+  - [x] Parse `@extend` statement
   - [ ] Parse keyword arguments for `@function`
   - [ ] Parse `@switch` statement
   - [ ] Parse `@case` statement
