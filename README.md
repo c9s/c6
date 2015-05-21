@@ -241,7 +241,7 @@ to compile the stylesheets of our application, libsass is fast but it does not
 catch up the ruby sass implementation , and you can't compile them with Compass.
 Since Go is simple, easy & fast, thus we implement SASS in Go to move faster.
 
-Further, we want to design a new language that is compatible with SASS 3.4 or
+Further, we want to design a new language (ECSS temporarily named) that is compatible with SASS 3.4 or
 even SASS 4.0 with more powerful features.
 
 ## Reference
