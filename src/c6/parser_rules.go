@@ -1447,6 +1447,14 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 				if err != nil {
 					panic(err)
 				}
+
+				// 1. For nested rules, we need to merge the rulesets and assignment to the parent ruleset
+				//    we can expand the the statements in the parsing-time.
+				//
+				// 2. for root level statements, we need to merge the statements into the global block.
+				//    for symbal table, we also need to merge them
+				//
+				// note that the parse method might push the statements to global block, we should avoid that.
 				var currentBlock = parser.Context.CurrentBlock()
 				currentBlock.MergeStatements(stmts)
 			}
