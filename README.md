@@ -3,10 +3,10 @@ C6
 Hate waiting for SASS compiling your stylesheets with Compass over 10 seconds
 everytime?  C6 helps you write style sheets with efficiency.
 
-C6 is a SASS 3.2 compatible implementation written in Go. But wait! this is not only to
-implement SASS, but also to improve the language for better consistency, syntax
-and performance. And yes, this means we're free to accept new language
-feature requests.
+C6 is a SASS 3.2 compatible implementation written in Go. But wait! this is not
+only to implement SASS, but also to create a new language for better
+consistency, syntax and performance. And yes, this means we're free to accept
+new language feature requests.
 
 [![Build Status](https://travis-ci.org/c9s/c6.svg)](https://travis-ci.org/c9s/c6)
 [![Coverage Status](https://coveralls.io/repos/c9s/c6/badge.svg)](https://coveralls.io/r/c9s/c6)
