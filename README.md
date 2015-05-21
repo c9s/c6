@@ -254,7 +254,10 @@ A feature check list from libsass:
 - <https://github.com/sass/libsass/releases/tag/3.2.0>
 - <https://github.com/sass/sass/issues/1094>
 
-Grammar Ambiguity <https://www.facebook.com/cindylinz/posts/10202186527405801?hc_location=ufi>
+Grammar Ambiguity:
+
+- <https://www.facebook.com/cindylinz/posts/10202186527405801?hc_location=ufi>
+- <https://www.facebook.com/yoan.lin/posts/10152968537931715?_rdr>
 
 Standards:
 
