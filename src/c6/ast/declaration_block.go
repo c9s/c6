@@ -43,6 +43,10 @@ func (self *DeclarationBlock) MergeStatements(stmts *StatementList) {
 	}
 }
 
+func (self *DeclarationBlock) GetSymTable() *symtable.SymTable {
+	return self.SymTable
+}
+
 func (self DeclarationBlock) String() (out string) {
 	out += "{\n"
 	for _, decl := range *self.Statements {

@@ -9,6 +9,7 @@ type Block struct {
 
 type BlockNode interface {
 	MergeStatements(stmts *StatementList)
+	GetSymTable() *symtable.SymTable
 }
 
 func NewBlock() *Block {
@@ -16,6 +17,10 @@ func NewBlock() *Block {
 		SymTable:   &symtable.SymTable{},
 		Statements: &StatementList{},
 	}
+}
+
+func (self *Block) GetSymTable() *symtable.SymTable {
+	return self.SymTable
 }
 
 // Override the statements
