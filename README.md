@@ -269,11 +269,13 @@ Standards:
 - Railroad diagram <https://github.com/tabatkins/railroad-diagrams>
 - CSS 2.1 Grammar <http://www.w3.org/TR/CSS21/grammar.html>
 
-Frameworks, libraries:
+SASS/CSS Frameworks, libraries:
 
 - Bourbon <http://bourbon.io/>
 - Marx <https://github.com/mblode/marx>
 - FormHack <http://formhack.io/>
+- Susy <http://susy.oddbird.net/>
+- Gumby <http://www.gumbyframework.com/>
 
 Articles:
 
