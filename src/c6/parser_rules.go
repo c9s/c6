@@ -128,6 +128,8 @@ func (parser *Parser) ParseStatement() ast.Statement {
 		return parser.ParseForStatement()
 	case ast.T_CONTENT:
 		return parser.ParseContentStatement()
+	case ast.T_ERROR, ast.T_WARN, ast.T_INFO:
+		return parser.ParseLogStatement()
 	}
 
 	if token.IsSelector() {
@@ -961,11 +963,13 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 		})
 	}
 
-	if ruleset := parser.Context.TopRuleSet(); ruleset != nil {
-		ruleset.Block.SymTable.Set(variable.Name, expr)
-	} else if parser.Context.GlobalBlock != nil {
-		parser.Context.GlobalBlock.SymTable.Set(variable.Name, expr)
-	}
+	/*
+		if ruleset := parser.Context.TopRuleSet(); ruleset != nil {
+			ruleset.Block.SymTable.Set(variable.Name, expr)
+		} else if parser.Context.GlobalBlock != nil {
+			parser.Context.GlobalBlock.SymTable.Set(variable.Name, expr)
+		}
+	*/
 
 	var stm = ast.NewVariableAssignment(variable, expr)
 	parser.ParseFlags(stm)
@@ -1642,6 +1646,19 @@ func (parser *Parser) ParseFontFaceStatement() ast.Statement {
 	parser.expect(ast.T_FONT_FACE)
 	block := parser.ParseDeclarationBlock()
 	return &ast.FontFaceStatement{block}
+}
+
+func (parser *Parser) ParseLogStatement() ast.Statement {
+	if directiveTok := parser.acceptAnyOf3(ast.T_ERROR, ast.T_WARN, ast.T_INFO); directiveTok != nil {
+		var expr = parser.ParseExpression()
+		parser.expect(ast.T_SEMICOLON)
+		return &ast.LogStatement{directiveTok, expr}
+	}
+	panic(SyntaxError{
+		Reason:      "Expecting @error, @warn, @info directive",
+		ActualToken: directiveTok,
+	})
+	return nil
 }
 
 /*
