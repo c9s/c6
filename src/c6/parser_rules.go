@@ -664,7 +664,7 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 			if uexpr, ok := expr.(*ast.UnaryExpression); ok {
 
 				// if it's evaluatable just return the evaluated value.
-				if val := EvaluateUnaryExpression(uexpr, nil); val != nil {
+				if val := EvaluateUnaryExpression(uexpr, parser.Context); val != nil {
 					expr = ast.Expression(val)
 				}
 			}
@@ -691,7 +691,7 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 			// XXX: check parenthesis
 			var bexpr = ast.NewBinaryExpression(ast.NewOpWithToken(rightTok), expr, rightTerm, inParenthesis)
 
-			if val := EvaluateBinaryExpression(bexpr, nil); val != nil {
+			if val := EvaluateBinaryExpression(bexpr, parser.Context); val != nil {
 
 				expr = ast.Expression(val)
 
@@ -829,7 +829,7 @@ func (parser *Parser) ParseLiteralExpression() ast.Expression {
 			}
 		} else {
 			// Return expression as css slash syntax string
-			return EvaluateExpression(expr, nil)
+			return EvaluateExpression(expr, parser.Context)
 		}
 
 		// if we can't evaluate the value, just return the expression tree
