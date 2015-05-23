@@ -1,6 +1,7 @@
 package c6
 
 import "c6/ast"
+import "bytes"
 
 // import "fmt"
 
@@ -18,12 +19,16 @@ const (
 
 type CompactCompiler struct {
 	Context   *Context
+	Buffer    bytes.Buffer
 	Compliant int
+	Indent    int
 }
 
 func NewCompactCompiler(context *Context) *CompactCompiler {
 	return &CompactCompiler{
-		Context: context,
+		Context:   context,
+		Indent:    0,
+		Compliant: 0,
 	}
 }
 
