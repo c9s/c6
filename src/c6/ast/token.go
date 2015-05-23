@@ -47,6 +47,9 @@ var KeywordList = []KeywordToken{
 	KeywordToken{"@mixin", T_MIXIN},
 	KeywordToken{"@font-face", T_FONT_FACE},
 	KeywordToken{"@for", T_FOR},
+	KeywordToken{"@error", T_ERROR},
+	KeywordToken{"@warn", T_WARN},
+	KeywordToken{"@info", T_INFO},
 	KeywordToken{"@while", T_WHILE},
 	KeywordToken{"@content", T_CONTENT},
 	KeywordToken{"@extend", T_EXTEND},
@@ -259,6 +262,9 @@ const (
 	T_MIXIN    // for @mixin
 	T_EXTEND   // for @extend
 	T_FUNCTION // for @function
+	T_WARN     // @warn
+	T_ERROR    // @error
+	T_INFO     // @info
 	T_FOR
 	T_FOR_FROM
 	T_FOR_THROUGH
