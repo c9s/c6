@@ -77,8 +77,8 @@ func (compiler *CompactCompiler) CompileStatement(anyStm ast.Statement) string {
 	case *ast.ImportStatement:
 	case *ast.VariableAssignment:
 	}
-
-	return "stms"
+	panic("Unsupported compilation")
+	return "fail"
 }
 
 func (compiler *CompactCompiler) CompileString(any interface{}) string {
