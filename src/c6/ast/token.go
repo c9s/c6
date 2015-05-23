@@ -18,10 +18,11 @@ type KeywordToken struct {
 type KeywordTokenList []KeywordToken
 
 var FlagTokenList = KeywordTokenList{
-	KeywordToken{"!global", T_GLOBAL},
-	KeywordToken{"!default", T_DEFAULT},
-	KeywordToken{"!important", T_IMPORTANT},
-	KeywordToken{"!optional", T_OPTIONAL},
+	KeywordToken{"!global", T_FLAG_GLOBAL},
+	KeywordToken{"!default", T_FLAG_DEFAULT},
+	KeywordToken{"!important", T_FLAG_IMPORTANT},
+	KeywordToken{"!optional", T_FLAG_OPTIONAL},
+	KeywordToken{"!constant", T_FLAG_CONSTANT},
 }
 
 var ForRangeKeywordTokenList = KeywordTokenList{
@@ -159,7 +160,7 @@ func (tok Token) IsAttributeMatchOperator() bool {
 
 func (tok Token) IsFlagKeyword() bool {
 	switch tok.Type {
-	case T_DEFAULT, T_OPTIONAL, T_GLOBAL, T_IMPORTANT:
+	case T_FLAG_DEFAULT, T_FLAG_OPTIONAL, T_FLAG_GLOBAL, T_FLAG_IMPORTANT:
 		return true
 	}
 	return false
@@ -276,10 +277,10 @@ const (
 	T_CONTENT // for '@content'
 
 	// Flag token types
-	T_GLOBAL
-	T_DEFAULT
-	T_IMPORTANT
-	T_OPTIONAL
+	T_FLAG_GLOBAL
+	T_FLAG_DEFAULT
+	T_FLAG_IMPORTANT
+	T_FLAG_OPTIONAL
 
 	T_FONT_FACE
 	T_NAMESPACE
@@ -333,7 +334,7 @@ const (
 	T_UNQUOTE_STRING
 	T_PAREN_OPEN
 	T_PAREN_CLOSE
-	T_CONSTANT
+	T_FLAG_CONSTANT
 	T_INTEGER
 	T_FLOAT
 

@@ -32,10 +32,21 @@ func NewCompactCompiler(context *Context) *CompactCompiler {
 	}
 }
 
+func (compiler *CompactCompiler) Indent(level int) string {
+	// two space
+	return strings.Repeat("  ", level)
+}
+
+/*
+ * Enable compliant
+ */
 func (compiler *CompactCompiler) EnableCompliant(compliant int) {
 	compiler.Compliant |= compliant
 }
 
+/*
+ * Disable compliant
+ */
 func (compiler *CompactCompiler) DisableCompliant(compliant int) {
 	compiler.Compliant = (compiler.Compliant | compliant) ^ compliant
 }

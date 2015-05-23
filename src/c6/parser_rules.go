@@ -983,13 +983,13 @@ func (parser *Parser) ParseFlags(stm *ast.VariableAssignment) {
 		parser.next()
 
 		switch tok.Type {
-		case ast.T_DEFAULT:
+		case ast.T_FLAG_DEFAULT:
 			stm.Default = true
-		case ast.T_OPTIONAL:
+		case ast.T_FLAG_OPTIONAL:
 			stm.Optional = true
-		case ast.T_IMPORTANT:
+		case ast.T_FLAG_IMPORTANT:
 			stm.Important = true
-		case ast.T_GLOBAL:
+		case ast.T_FLAG_GLOBAL:
 			stm.Global = true
 		}
 		tok = parser.peek()
