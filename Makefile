@@ -1,6 +1,6 @@
 all:
 	go generate c6/ast c6
-	go build c6/ast c6/runtime c6
+	go build c6/ast c6
 
 vendor:
 	source goinstall
@@ -12,7 +12,7 @@ install:
 	go install c6/...
 
 test: all
-	go test c6/ast c6/runtime c6
+	go test c6/ast c6
 
 benchupdatebase:
 	go test -run=NONE -bench=. c6 >| benchmarks/old.txt
@@ -36,7 +36,7 @@ cross-compile:
 	gox -output "build/{{.Dir}}.{{.OS}}_{{.Arch}}" c6/...
 
 cover:
-	go test -cover -coverprofile c6.cov -coverpkg c6,c6/ast,c6/runtime c6
+	go test -cover -coverprofile c6.cov -coverpkg c6,c6/ast c6
 
 cover-annotate: cov
 	vendor/bin/gocov convert c6.cov | vendor/bin/gocov annotate -
