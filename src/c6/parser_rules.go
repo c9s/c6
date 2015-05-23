@@ -1452,6 +1452,12 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 					panic(err)
 				}
 
+				// Cache the compiled statement in the AST, so we can include the compiled AST nodes when watch mode is enabled
+				// if it's not changed.
+				ASTCache[importPath] = stmts
+
+				// For root @import and nested ruleset @import:
+				//
 				// 1. For nested rules, we need to merge the rulesets and assignment to the parent ruleset
 				//    we can expand the the statements in the parsing-time.
 				//
