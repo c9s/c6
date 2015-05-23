@@ -1,7 +1,6 @@
 package c6
 
 import "c6/ast"
-import "c6/symtable"
 import "fmt"
 
 /*
@@ -322,7 +321,7 @@ func IsConstantValue(val ast.Value) bool {
 	return false
 }
 
-func EvaluateExpressionInBooleanContext(anyexpr ast.Expression, symTable *symtable.SymTable) ast.Value {
+func EvaluateExpressionInBooleanContext(anyexpr ast.Expression, symTable *Context) ast.Value {
 	switch expr := anyexpr.(type) {
 
 	case *ast.BinaryExpression:
@@ -339,7 +338,7 @@ func EvaluateExpressionInBooleanContext(anyexpr ast.Expression, symTable *symtab
 	return nil
 }
 
-func EvaluateBinaryExpressionInBooleanContext(expr *ast.BinaryExpression, symTable *symtable.SymTable) ast.Value {
+func EvaluateBinaryExpressionInBooleanContext(expr *ast.BinaryExpression, symTable *Context) ast.Value {
 
 	var lval ast.Value = nil
 	var rval ast.Value = nil
@@ -372,7 +371,7 @@ func EvaluateBinaryExpressionInBooleanContext(expr *ast.BinaryExpression, symTab
 	return nil
 }
 
-func EvaluateUnaryExpressionInBooleanContext(expr *ast.UnaryExpression, symTable *symtable.SymTable) ast.Value {
+func EvaluateUnaryExpressionInBooleanContext(expr *ast.UnaryExpression, symTable *Context) ast.Value {
 	var val ast.Value = nil
 
 	switch t := expr.Expr.(type) {
@@ -400,7 +399,7 @@ EvaluateExpression calls EvaluateBinaryExpression. except EvaluateExpression
 prevents calculate css slash as division.  otherwise it's the same as
 EvaluateBinaryExpression.
 */
-func EvaluateExpression(expr ast.Expression, symTable *symtable.SymTable) ast.Value {
+func EvaluateExpression(expr ast.Expression, symTable *Context) ast.Value {
 
 	switch t := expr.(type) {
 
@@ -432,7 +431,7 @@ func EvaluateExpression(expr ast.Expression, symTable *symtable.SymTable) ast.Va
 /*
 EvaluateBinaryExpression recursively.
 */
-func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *symtable.SymTable) ast.Value {
+func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *Context) ast.Value {
 	var lval ast.Value = nil
 	var rval ast.Value = nil
 
@@ -475,7 +474,7 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *symtable.Sym
 	return nil
 }
 
-func EvaluateUnaryExpression(expr *ast.UnaryExpression, symTable *symtable.SymTable) ast.Value {
+func EvaluateUnaryExpression(expr *ast.UnaryExpression, symTable *Context) ast.Value {
 	var val ast.Value = nil
 
 	switch t := expr.Expr.(type) {
