@@ -8,7 +8,7 @@ func AssertCompile(t *testing.T, code string, expected string) {
 	var parser = NewParser(context)
 	var stmts = parser.ParseScss(code)
 	var compiler = NewCompactCompiler(context)
-	var out = compiler.Compile(stmts)
+	var out = compiler.CompileString(stmts)
 	assert.Equal(t, expected, out)
 }
 

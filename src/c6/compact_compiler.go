@@ -81,16 +81,20 @@ func (compiler *CompactCompiler) CompileStatement(anyStm ast.Statement) string {
 	return "stms"
 }
 
-func (compiler *CompactCompiler) Compile(any interface{}) (out string) {
+func (compiler *CompactCompiler) CompileString(any interface{}) string {
+	return compiler.Compile(any).String()
+}
+
+func (compiler *CompactCompiler) Compile(any interface{}) *bytes.Buffer {
 	switch v := any.(type) {
 	case ast.StatementList:
 		for _, stm := range v {
-			out += compiler.CompileStatement(stm)
+			compiler.Buffer.WriteString(compiler.CompileStatement(stm))
 		}
 	case *ast.StatementList:
 		for _, stm := range *v {
-			out += compiler.CompileStatement(stm)
+			compiler.Buffer.WriteString(compiler.CompileStatement(stm))
 		}
 	}
-	return out
+	return &compiler.Buffer
 }
