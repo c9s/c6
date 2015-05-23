@@ -966,6 +966,9 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 	// Even we can visit the variable assignment in the AST visitors but if we
 	// could save the information, we can reduce the effort for the visitors.
 	var currentBlock = parser.Context.CurrentBlock()
+	if currentBlock == nil {
+		panic("nil block")
+	}
 	currentBlock.GetSymTable().Set(variable.Name, expr)
 
 	var stm = ast.NewVariableAssignment(variable, expr)
