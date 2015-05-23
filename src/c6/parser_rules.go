@@ -1650,13 +1650,13 @@ func (parser *Parser) ParseFontFaceStatement() ast.Statement {
 
 func (parser *Parser) ParseLogStatement() ast.Statement {
 	if directiveTok := parser.acceptAnyOf3(ast.T_ERROR, ast.T_WARN, ast.T_INFO); directiveTok != nil {
-		var expr = parser.ParseExpression()
+		var expr = parser.ParseExpression(false)
 		parser.expect(ast.T_SEMICOLON)
 		return &ast.LogStatement{directiveTok, expr}
 	}
 	panic(SyntaxError{
 		Reason:      "Expecting @error, @warn, @info directive",
-		ActualToken: directiveTok,
+		ActualToken: parser.peek(),
 	})
 	return nil
 }
