@@ -1,4 +1,4 @@
-package runtime
+package c6
 
 import "c6/ast"
 import "c6/symtable"
@@ -429,7 +429,7 @@ func EvaluateExpression(expr ast.Expression, symTable *symtable.SymTable) ast.Va
 	return nil
 }
 
-/**
+/*
 EvaluateBinaryExpression recursively.
 */
 func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *symtable.SymTable) ast.Value {
@@ -455,6 +455,15 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, symTable *symtable.Sym
 
 	case *ast.BinaryExpression:
 		rval = EvaluateBinaryExpression(expr, symTable)
+
+	case *ast.Variable:
+		// look up varaible from symTable
+		/*
+			if retval := symTable.Lookup(expr.Name); retval != nil {
+			} else {
+				panic("Undefined Variable")
+			}
+		*/
 
 	default:
 		rval = ast.Value(expr)

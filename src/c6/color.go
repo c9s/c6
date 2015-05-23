@@ -1,4 +1,4 @@
-package runtime
+package c6
 
 import (
 	"c6/ast"
