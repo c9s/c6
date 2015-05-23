@@ -963,13 +963,13 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 		})
 	}
 
-	/*
-		if ruleset := parser.Context.TopRuleSet(); ruleset != nil {
-			ruleset.Block.SymTable.Set(variable.Name, expr)
-		} else if parser.Context.GlobalBlock != nil {
-			parser.Context.GlobalBlock.SymTable.Set(variable.Name, expr)
-		}
-	*/
+	// Even we can visit the variable assignment in the AST visitors but if we
+	// could save the information, we can reduce the effort for the visitors.
+	if ruleset := parser.Context.TopRuleSet(); ruleset != nil {
+		ruleset.Block.SymTable.Set(variable.Name, expr)
+	} else if parser.Context.GlobalBlock != nil {
+		parser.Context.GlobalBlock.SymTable.Set(variable.Name, expr)
+	}
 
 	var stm = ast.NewVariableAssignment(variable, expr)
 	parser.ParseFlags(stm)

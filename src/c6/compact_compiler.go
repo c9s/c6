@@ -2,6 +2,7 @@ package c6
 
 import "c6/ast"
 import "bytes"
+import "strings"
 
 // import "fmt"
 
@@ -32,7 +33,7 @@ func NewCompactCompiler(context *Context) *CompactCompiler {
 	}
 }
 
-func (compiler *CompactCompiler) Indent(level int) string {
+func Indent(level int) string {
 	// two space
 	return strings.Repeat("  ", level)
 }
