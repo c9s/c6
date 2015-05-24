@@ -962,6 +962,18 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 		})
 	}
 
+	// Optimize the expression only when it's an expression
+	// TODO: for expression inside a map or list we should also optmise them too
+	if bexpr, ok := valExpr.(ast.BinaryExpression); ok {
+		if reducedExpr, ok := ReduceExpression(bexpr, parser.Context); ok {
+			valExpr = reducedExpr
+		}
+	} else if uexpr, ok := valExpr.(ast.UnaryExpression); ok {
+		if reducedExpr, ok := ReduceExpression(uexpr, parser.Context); ok {
+			valExpr = reducedExpr
+		}
+	}
+
 	// Even we can visit the variable assignment in the AST visitors but if we
 	// could save the information, we can reduce the effort for the visitors.
 	if currentBlock := parser.Context.CurrentBlock(); currentBlock != nil {

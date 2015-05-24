@@ -551,13 +551,22 @@ func TestParserVariableAssignmentWithPxValue(t *testing.T) {
 	t.Logf("%+v\n", stmts)
 }
 
-func TestParserVariableAssignmentWithVariableRef(t *testing.T) {
+func TestParserVariableAssignmentWithSolveableVariableRef(t *testing.T) {
 	var stmts = RunParserTest(`
 	$a: 10px; 
 	$b: 10px;
 	$c: $a + $b;
 	`)
 	t.Logf("%+v\n", stmts)
+}
+
+func TestParserVariableAssignmentWithUnknownVariableRef(t *testing.T) {
+	var stmts = RunParserTest(`
+	$a: 10px; 
+	$b: 10px;
+	$c: 3 * ($a + $b) + $c;
+	`)
+	t.Logf("%+v\n", stmts) // should be 60px + $c
 }
 
 func TestParserVariableAssignmentWithFunctionCall(t *testing.T) {
