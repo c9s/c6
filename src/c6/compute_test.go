@@ -9,7 +9,7 @@ func TestReduceExpressionForUnsolveableExpression(t *testing.T) {
 	expr2 := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS), expr, ast.NewVariable("$a"), false)
 	_, ok := ReduceExpression(expr2, nil)
 	assert.False(t, ok)
-	assert.Equal(t, "13 + $a", expr2.String())
+	assert.Equal(t, "13+$a", expr2.String())
 	t.Logf("Reduced expression: %+v", expr2)
 }
 
@@ -34,7 +34,7 @@ func TestReduceExpressionForUnsolveableExpression2(t *testing.T) {
 	)
 	_, ok := ReduceExpression(expr, context)
 	assert.False(t, ok)
-	assert.Equal(t, "40 + $c", expr.String())
+	assert.Equal(t, "40+$c", expr.String())
 	t.Logf("Reduced expression: %+v", expr)
 }
 

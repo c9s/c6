@@ -32,7 +32,7 @@ func (self BinaryExpression) String() string {
 		panic("Missing operator")
 	}
 
-	var out = self.Left.String() + " " + self.Op.String() + " " + self.Right.String()
+	var out = self.Left.String() + self.Op.String() + self.Right.String()
 	if self.Grouped {
 		return "(" + out + ")"
 	}
