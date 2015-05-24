@@ -16,21 +16,36 @@ Reduce constant expression to constant.
 @return (Value, ok)
 
 ok = true means the expression is reduced to simple constant.
+
+The difference between Evaluate*Expression method is:
+
+- `ReduceExpression` returns either value or expression (when there is an unsolved expression)
+- `EvaluateBinaryExpression` returns nil if there is an unsolved expression.
+
 */
-func ReduceExpression(expr ast.Expression) (ast.Value, bool) {
+func ReduceExpression(expr ast.Expression, context *Context) (ast.Value, bool) {
 	switch e := expr.(type) {
 	case *ast.BinaryExpression:
-		if exprLeft, ok := ReduceExpression(e.Left); ok {
+		if exprLeft, ok := ReduceExpression(e.Left, context); ok {
 			e.Left = exprLeft
 		}
-		if exprRight, ok := ReduceExpression(e.Right); ok {
+		if exprRight, ok := ReduceExpression(e.Right, context); ok {
 			e.Right = exprRight
 		}
 
 	case *ast.UnaryExpression:
 
-		if retExpr, ok := ReduceExpression(e.Expr); ok {
+		if retExpr, ok := ReduceExpression(e.Expr, context); ok {
 			e.Expr = retExpr
+		}
+
+	case *ast.Variable:
+		if context == nil {
+			return nil, false
+		}
+
+		if varVal, ok := context.GetVariable(e.Name); ok {
+			return varVal.(ast.Expression), true
 		}
 
 	default:
@@ -41,9 +56,9 @@ func ReduceExpression(expr ast.Expression) (ast.Value, bool) {
 	if IsConstantExpression(expr) {
 		switch e := expr.(type) {
 		case *ast.BinaryExpression:
-			return EvaluateBinaryExpression(e, nil), true
+			return EvaluateBinaryExpression(e, context), true
 		case *ast.UnaryExpression:
-			return EvaluateUnaryExpression(e, nil), true
+			return EvaluateUnaryExpression(e, context), true
 		}
 	}
 	// not a constant expression

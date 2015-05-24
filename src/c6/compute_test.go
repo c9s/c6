@@ -4,11 +4,23 @@ import "c6/ast"
 import "testing"
 import "github.com/stretchr/testify/assert"
 
-func TestReduceExpression(t *testing.T) {
+func TestReduceExpressionForUnsolveableExpression(t *testing.T) {
+	expr := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS), ast.NewNumber(10, nil, nil), ast.NewNumber(3, nil, nil), false)
+	expr2 := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS), expr, ast.NewVariable("a"), false)
+	expr3 := ast.NewUnaryExpression(ast.NewOp(ast.T_NOP), expr2)
+	val, ok := ReduceExpression(expr3, nil)
+	assert.False(t, ok)
+	_ = val
+	t.Logf("Reduced expression: %+v", expr3)
+	// assert.NotNil(t, val)
+
+}
+
+func TestReduceExpressionForSolveableExpression(t *testing.T) {
 	expr := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS), ast.NewNumber(10, nil, nil), ast.NewNumber(3, nil, nil), false)
 	expr2 := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS), expr, ast.NewNumber(3, nil, nil), false)
 	expr3 := ast.NewUnaryExpression(ast.NewOp(ast.T_NOP), expr2)
-	val, ok := ReduceExpression(expr3)
+	val, ok := ReduceExpression(expr3, nil)
 	assert.True(t, ok)
 	assert.NotNil(t, val)
 

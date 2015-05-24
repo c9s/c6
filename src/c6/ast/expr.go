@@ -14,7 +14,10 @@ func NewUnaryExpression(op *Op, expr Expression) *UnaryExpression {
 }
 
 func (self UnaryExpression) String() string {
-	return "(" + self.Op.String() + " " + self.Expr.String() + ")"
+	if self.Op != nil {
+		return self.Op.String() + self.Expr.String()
+	}
+	return self.Expr.String()
 }
 
 type BinaryExpression struct {

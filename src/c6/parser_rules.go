@@ -824,7 +824,7 @@ func (parser *Parser) ParseLiteralExpression() ast.Expression {
 		// Check if the expression is reduce-able
 		// For now, division looks like CSS slash at the first level, should be string.
 		if CanReduceExpression(expr) {
-			if reducedExpr, ok := ReduceExpression(expr); ok {
+			if reducedExpr, ok := ReduceExpression(expr, parser.Context); ok {
 				return reducedExpr
 			}
 		} else {
@@ -1299,7 +1299,7 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 	if parser.accept(ast.T_FOR_FROM) != nil {
 
 		var fromExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := ReduceExpression(fromExpr); ok {
+		if reducedExpr, ok := ReduceExpression(fromExpr, parser.Context); ok {
 			fromExpr = reducedExpr
 		}
 		stm.From = fromExpr
@@ -1316,7 +1316,7 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 		}
 
 		var endExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := ReduceExpression(endExpr); ok {
+		if reducedExpr, ok := ReduceExpression(endExpr, parser.Context); ok {
 			endExpr = reducedExpr
 		}
 
@@ -1333,7 +1333,7 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 	} else if parser.accept(ast.T_FOR_IN) != nil {
 
 		var fromExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := ReduceExpression(fromExpr); ok {
+		if reducedExpr, ok := ReduceExpression(fromExpr, parser.Context); ok {
 			fromExpr = reducedExpr
 		}
 		stm.From = fromExpr
@@ -1341,7 +1341,7 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 		parser.expect(ast.T_RANGE)
 
 		var endExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := ReduceExpression(endExpr); ok {
+		if reducedExpr, ok := ReduceExpression(endExpr, parser.Context); ok {
 			endExpr = reducedExpr
 		}
 
