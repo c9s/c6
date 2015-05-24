@@ -1,7 +1,7 @@
 package c6
 
 import (
-	"c6/ast"
+	"github.com/c9s/c6/src/c6/ast"
 	"fmt"
 	"math"
 )

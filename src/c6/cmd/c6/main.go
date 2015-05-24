@@ -1,6 +1,6 @@
 package main
 
-import "c6"
+import "github.com/c9s/c6/src/c6"
 import "github.com/spf13/cobra"
 import "fmt"
 

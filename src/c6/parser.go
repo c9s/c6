@@ -5,7 +5,7 @@ package c6
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import "fmt"
-import "c6/ast"
+import "github.com/c9s/c6/src/c6/ast"
 import "path/filepath"
 import "io/ioutil"
 import "os"

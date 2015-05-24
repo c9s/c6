@@ -1,6 +1,6 @@
 package c6
 
-import "c6/ast"
+import "github.com/c9s/c6/src/c6/ast"
 
 func CanReduceExpression(expr ast.Expression) bool {
 	switch e := expr.(type) {

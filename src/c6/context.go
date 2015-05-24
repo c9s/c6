@@ -1,7 +1,7 @@
 package c6
 
-import "c6/symtable"
-import "c6/ast"
+import "github.com/c9s/c6/src/c6/symtable"
+import "github.com/c9s/c6/src/c6/ast"
 
 /**
 The Context contains all runtime variables and ruleset stack

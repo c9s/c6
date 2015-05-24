@@ -7,7 +7,7 @@ package c6
 import "fmt"
 import "io/ioutil"
 import "strconv"
-import "c6/ast"
+import "github.com/c9s/c6/src/c6/ast"
 import "regexp"
 import "strings"
 import "os"

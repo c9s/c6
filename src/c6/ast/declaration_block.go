@@ -1,6 +1,6 @@
 package ast
 
-import "c6/symtable"
+import "github.com/c9s/c6/src/c6/symtable"
 
 /*
 DeclarationBlock.
