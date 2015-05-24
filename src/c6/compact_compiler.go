@@ -76,8 +76,10 @@ func (compiler *CompactCompiler) CompileDeclarationBlock(block *ast.DeclarationB
 }
 
 func (compiler *CompactCompiler) CompileRuleSet(ruleset *ast.RuleSet) (out string) {
+	compiler.Context.PushRuleSet(ruleset)
 	out = compiler.CompileComplexSelectorList(ruleset.Selectors)
 	out += " " + compiler.CompileDeclarationBlock(ruleset.Block)
+	compiler.Context.PopRuleSet()
 	return out
 }
 
