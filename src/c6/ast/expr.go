@@ -33,9 +33,9 @@ func (self BinaryExpression) String() string {
 	}
 
 	var out = self.Left.String() + " " + self.Op.String() + " " + self.Right.String()
-	// if self.Grouped {
-	return "(" + out + ")"
-	// }
+	if self.Grouped {
+		return "(" + out + ")"
+	}
 	return out
 }
 
