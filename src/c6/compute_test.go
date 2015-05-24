@@ -6,11 +6,11 @@ import "github.com/stretchr/testify/assert"
 
 func TestReduceExpressionForUnsolveableExpression(t *testing.T) {
 	expr := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS), ast.NewNumber(10, nil, nil), ast.NewNumber(3, nil, nil), false)
-	expr2 := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS), expr, ast.NewVariable("a"), false)
+	expr2 := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS), expr, ast.NewVariable("$a"), false)
 	expr3 := ast.NewUnaryExpression(ast.NewOp(ast.T_NOP), expr2)
-	val, ok := ReduceExpression(expr3, nil)
+	_, ok := ReduceExpression(expr3, nil)
 	assert.False(t, ok)
-	_ = val
+	assert.Equal(t, "13 + $a", expr3.String())
 	t.Logf("Reduced expression: %+v", expr3)
 	// assert.NotNil(t, val)
 
