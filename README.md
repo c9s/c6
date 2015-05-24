@@ -135,11 +135,13 @@ To run specific test
   - [x] `@include` statement node
   - [x] `@return` statement node
   - [ ] `@each` statement node
+
 - [ ] Runtime
   - [ ] HSL Color computation
   - [ ] Function Call Invoke mech
   - [ ] Mixin Include
   - [ ] Import
+
 - [ ] SASS Built-in Functions
   - [ ] RGB functions
     - [ ] `rgb($red, $green, $blue)`
@@ -210,10 +212,24 @@ To run specific test
   - [ ] Selector Functions
     - .... to be expanded ...
 
-
 - [ ] CodeGen
-  - [ ] NestedStyleCompiler
-    - [ ] .... list ast nodes here ....
+  - [ ] CompactCompiler
+    - [ ] CompileCssImportStatement: `@import url(...);`
+    - [ ] CompileRuleSet
+    - [ ] CompileSelectors
+      - [ ] CoimpileParentSelector
+    - [ ] CompileSubRuleSet
+    - [ ] CompileCommentBlock
+    - [ ] CompileDeclarationBlock
+    - [ ] CompileMediaQuery: `@media`
+    - [ ] CompileSupportrQuery: `@support`
+    - [ ] CompileFontFace: `@support`
+    - [ ] CompileForStatement
+    - [ ] CompileIfStatement
+      - [ ] CompileElseIfStatement
+    - [ ] CompileWhileStatement
+    - [ ] CompileEachStatement
+    - [ ] ... list more ast nodes here ...
 
 - [ ] Syntax
   - [ ] built-in `@import-once`
