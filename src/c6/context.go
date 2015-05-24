@@ -7,16 +7,14 @@ import "c6/ast"
 The Context contains all runtime variables and ruleset stack
 */
 type Context struct {
-	RuleSetStack   []*ast.RuleSet
-	GlobalBlock    *ast.Block
-	GlobalSymTable *symtable.SymTable
-	ImportedPath   map[string]bool
+	RuleSetStack []*ast.RuleSet
+	GlobalBlock  *ast.Block
+	ImportedPath map[string]bool
 }
 
 func NewContext() *Context {
 	return &Context{
-		GlobalBlock:    ast.NewBlock(),
-		GlobalSymTable: &symtable.SymTable{},
+		GlobalBlock: ast.NewBlock(),
 	}
 }
 
