@@ -1,6 +1,6 @@
 package compiler
 
-import "c6/ast"
+import "github.com/c9s/c6/src/c6/ast"
 
 type Compiler interface {
 	CompileBlock(block *ast.Block) string

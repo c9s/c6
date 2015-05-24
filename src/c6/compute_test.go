@@ -1,6 +1,6 @@
 package c6
 
-import "c6/ast"
+import "github.com/c9s/c6/src/c6/ast"
 import "testing"
 import "github.com/stretchr/testify/assert"
 

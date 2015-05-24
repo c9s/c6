@@ -2,7 +2,7 @@ package c6
 
 import "testing"
 import "github.com/stretchr/testify/assert"
-import "c6/ast"
+import "github.com/c9s/c6/src/c6/ast"
 
 func TestLexerClassNameSelector(t *testing.T) {
 	l := NewLexerWithString(`.class { }`)
@@ -358,7 +358,7 @@ func TestLexerRuleWithMultipleSelector(t *testing.T) {
 
 func TestLexerRuleWithSubRuleWithParentSelector(t *testing.T) {
 	l := NewLexerWithString(`.test {
-		-webkit-transition: none;  
+		-webkit-transition: none;
 		&.foo { color: #fff; }
 	}`)
 	assert.NotNil(t, l)
