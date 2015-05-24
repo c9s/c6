@@ -445,7 +445,7 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, context *Context) ast.
 
 	case *ast.Variable:
 		if varVal, ok := context.GetVariable(expr.Name); ok {
-			_ = varVal
+			lval = varVal.(ast.Expression)
 		}
 
 	default:
@@ -462,7 +462,7 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, context *Context) ast.
 
 	case *ast.Variable:
 		if varVal, ok := context.GetVariable(expr.Name); ok {
-			_ = varVal
+			rval = varVal.(ast.Expression)
 		}
 
 	default:
@@ -485,7 +485,7 @@ func EvaluateUnaryExpression(expr *ast.UnaryExpression, context *Context) ast.Va
 		val = EvaluateUnaryExpression(t, context)
 	case *ast.Variable:
 		if varVal, ok := context.GetVariable(t.Name); ok {
-			_ = varVal
+			val = varVal.(ast.Expression)
 		}
 	default:
 		val = ast.Value(t)
