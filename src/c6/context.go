@@ -63,5 +63,8 @@ func (context *Context) GetVariable(name string) (symtable.SymTableItem, bool) {
 			return variable, true
 		}
 	}
+	if variable, ok := context.GlobalBlock.SymTable.Get(name); ok {
+		return variable, true
+	}
 	return nil, false
 }
