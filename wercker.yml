@@ -5,14 +5,16 @@ build:
     - script:
         name: Install
         code: |
-          source goenv
-          source goinstall
+          make deps
     - script:
         name: Build
         code: |
-          source goenv && make
+          find .
+          mkdir -p ~/go/src/github.com/c9s/c6/src/c6
+          cp -R -v src/c6 ~/go/src/github.com/c9s/c6/src
+          make
 
     - script:
         name: Test
         code: |
-          source goenv && make test
+          make test
