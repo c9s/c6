@@ -137,6 +137,9 @@ To run specific test
   - [ ] `@each` statement node
 - [ ] Runtime
   - [ ] HSL Color computation
+  - [ ] Function Call Invoke mech
+  - [ ] Mixin Include
+  - [ ] Import
 - [ ] SASS Built-in Functions
   - [ ] RGB functions
     - [ ] `rgb($red, $green, $blue)`
