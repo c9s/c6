@@ -638,33 +638,37 @@ func TestParserInclude(t *testing.T) {
 }
 
 func TestParserIncludeWithContentBlock(t *testing.T) {
-	RunParserTest(`
+	var stmts = RunParserTest(`
 		@include apply-to-ie6-only {
 			color: white;
 		};
 	`)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserFunctionSimple(t *testing.T) {
-	RunParserTest(`
+	var stmts = RunParserTest(`
 @function grid-width($n) {
   @return $n * $grid-width + ($n - 1) * $gutter-width;
 }
 	`)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserFunctionSimple2(t *testing.T) {
-	RunParserTest(`
+	var stmts = RunParserTest(`
 @function exists($name) {
   @return variable-exists($name);
 }
 	`)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserFunctionSimple3(t *testing.T) {
-	RunParserTest(`
+	var stmts = RunParserTest(`
 @function f() { }
 	`)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserFunctionSimple4(t *testing.T) {
