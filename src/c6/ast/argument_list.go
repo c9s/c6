@@ -1,12 +1,20 @@
 package ast
 
-type ArgumentList []*Argument
+type ArgumentList struct {
+	Arguments []*Argument
+	Keywords  map[string]*Argument
+}
 
-func (args ArgumentList) Append(arg *Argument) {
-	newargs := append(args, arg)
-	args = newargs
+// type ArgumentList []*Argument
+
+func (self ArgumentList) Append(arg *Argument) {
+	self.Arguments = append(self.Arguments, arg)
+	self.Keywords[arg.VariableName.Str] = arg
 }
 
 func NewArgumentList() *ArgumentList {
-	return &ArgumentList{}
+	return &ArgumentList{
+		Arguments: []*Argument{},
+		Keywords:  map[string]*Argument{},
+	}
 }

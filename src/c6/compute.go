@@ -429,7 +429,9 @@ func EvaluateExpression(expr ast.Expression, context *Context) ast.Value {
 }
 
 func EvaluateFunctionCall(fcall ast.FunctionCall, context *Context) ast.Value {
-	if fun, ok = context.Functions.Get(fcall.Ident); ok {
+	if fun, ok := context.Functions.Get(fcall.Ident); ok {
+
+		_ = fun
 
 	} else {
 		panic("Function " + fcall.Ident + " is undefined.")
