@@ -1530,16 +1530,13 @@ func (parser *Parser) ParseMixinStatement() ast.Statement {
 	} else if tok.Type == ast.T_FUNCTION_NAME {
 
 		stm.Ident = tok
-
 		stm.ArgumentList = parser.ParseFunctionPrototype()
 
 	} else {
-
 		panic("Syntax error")
-
 	}
-
 	stm.Block = parser.ParseDeclarationBlock()
+	parser.Context.Mixins.Set(stm.Ident.Str, stm.Block)
 	return stm
 }
 

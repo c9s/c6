@@ -9,12 +9,16 @@ The Context contains all runtime variables and ruleset stack
 type Context struct {
 	RuleSetStack []*ast.RuleSet
 	GlobalBlock  *ast.Block
+	Mixins       *symtable.SymTable
+	Functions    *symtable.SymTable
 	ImportedPath map[string]bool
 }
 
 func NewContext() *Context {
 	return &Context{
 		GlobalBlock: ast.NewBlock(),
+		Mixins:      &symtable.SymTable{},
+		Functions:   &symtable.SymTable{},
 	}
 }
 
