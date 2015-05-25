@@ -1518,6 +1518,7 @@ func (parser *Parser) ParseFunction() ast.Statement {
 	var fun = ast.NewFunctionWithToken(identTok)
 	fun.ArgumentList = args
 	fun.Block = parser.ParseBlock()
+	parser.Context.Functions.Set(identTok.Str, fun)
 	return fun
 }
 
@@ -1541,7 +1542,7 @@ func (parser *Parser) ParseMixinStatement() ast.Statement {
 		panic("Syntax error")
 	}
 	stm.Block = parser.ParseDeclarationBlock()
-	parser.Context.Mixins.Set(stm.Ident.Str, stm.Block)
+	parser.Context.Mixins.Set(stm.Ident.Str, stm)
 	return stm
 }
 
