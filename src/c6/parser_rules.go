@@ -1573,7 +1573,7 @@ func (parser *Parser) ParseFunctionPrototype() *ast.ArgumentList {
 	for tok.Type != ast.T_PAREN_CLOSE {
 		var arg *ast.Argument = nil
 		if arg = parser.ParseFunctionPrototypeArgument(); arg != nil {
-			args.Append(arg)
+			args.Add(arg)
 		} else {
 			// if fail
 			break
@@ -1617,7 +1617,7 @@ func (parser *Parser) ParseFunctionCallArguments() *ast.ArgumentList {
 	for tok.Type != ast.T_PAREN_CLOSE {
 		var arg *ast.Argument = nil
 		if arg = parser.ParseFunctionCallArgument(); arg != nil {
-			args.Append(arg)
+			args.Add(arg)
 		} else {
 			// if fail
 			break

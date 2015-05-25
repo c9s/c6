@@ -7,7 +7,7 @@ type ArgumentList struct {
 
 // type ArgumentList []*Argument
 
-func (self ArgumentList) Append(arg *Argument) {
+func (self ArgumentList) Add(arg *Argument) {
 	self.Arguments = append(self.Arguments, arg)
 	self.Keywords[arg.VariableName.Str] = arg
 }
