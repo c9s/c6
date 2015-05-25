@@ -125,10 +125,14 @@ func (parser *Parser) ParseStatement() ast.Statement {
 		return parser.ParseExtendStatement()
 	case ast.T_FOR:
 		return parser.ParseForStatement()
+	case ast.T_WHILE:
+		return parser.ParseWhileStatement()
 	case ast.T_CONTENT:
 		return parser.ParseContentStatement()
 	case ast.T_ERROR, ast.T_WARN, ast.T_INFO:
 		return parser.ParseLogStatement()
+	case ast.T_BRACKET_CLOSE:
+		return nil
 	}
 
 	if token.IsSelector() {
@@ -137,7 +141,8 @@ func (parser *Parser) ParseStatement() ast.Statement {
 
 	} else {
 
-		// panic(fmt.Errorf("parse failed, unknown token", parser.peek()))
+		// panic(fmt.Errorf("statement parse failed, unknown token", parser.peek()))
+
 	}
 	return nil
 }

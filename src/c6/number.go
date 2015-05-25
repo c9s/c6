@@ -14,7 +14,7 @@ func NumberComparable(a *ast.Number, b *ast.Number) bool {
 }
 
 func NumberSubNumber(a *ast.Number, b *ast.Number) *ast.Number {
-	if a.Unit.Type != b.Unit.Type {
+	if a.Unit != nil && b.Unit != nil && a.Unit.Type != b.Unit.Type {
 		fmt.Printf("Incompatible unit %s != %s.  %v - %v \n", a.Unit, b.Unit, a, b)
 		return nil
 	}

@@ -416,8 +416,7 @@ $i: 6;
 @while $i > 0 { $i: $i - 2; }
 `
 	var stmts = RunParserTest(code)
-	assert.Equal(t, 1, len(*stmts))
-
+	assert.Equal(t, 2, len(*stmts))
 }
 
 func TestParserCSS3Gradient(t *testing.T) {
@@ -669,29 +668,32 @@ func TestParserFunctionSimple3(t *testing.T) {
 }
 
 func TestParserFunctionSimple4(t *testing.T) {
-	RunParserTest(`
+	var stmts = RunParserTest(`
 @function f() {
   $foo: hi;
   @return g();
 }
 	`)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserFunctionSimple5(t *testing.T) {
-	RunParserTest(`
+	var stmts = RunParserTest(`
 @function g() {
   @return variable-exists(foo);
 }
 	`)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserFunctionWithAssignments(t *testing.T) {
-	RunParserTest(`
+	var stmts = RunParserTest(`
 @function g() {
   $a: 2 * 10;
   @return $a * 99;
 }
 	`)
+	assert.Equal(t, 1, len(*stmts))
 }
 
 func TestParserMassiveRules(t *testing.T) {
