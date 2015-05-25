@@ -2,7 +2,7 @@ package c6
 
 import "unicode"
 import _ "fmt"
-import "c6/ast"
+import "github.com/c9s/c6/src/c6/ast"
 
 func IsInterpolationStartToken(r rune, r2 rune) bool {
 	return r == '#' && r2 == '{'

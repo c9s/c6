@@ -1,7 +1,7 @@
 package c6
 
 import "unicode"
-import "c6/ast"
+import "github.com/c9s/c6/src/c6/ast"
 
 func lexPropertyNameToken(l *Lexer) stateFn {
 	var r = l.next()

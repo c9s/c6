@@ -1,18 +1,17 @@
 language: go
 before_install:
-  - source goenv
-  - source goinstall
-  - export PATH="$PATH:$TRAVIS_BUILD_DIR/vendor/bin"
+  - make deps
+install:
+  - cd src/c6 && go get -t ./...
+  - cd ../..
 script:
   - make
   - make test
   - make cover
 after_success:
   - make benchcmp
-  - vendor/bin/goveralls -coverprofile=c6.cov -service=travis-ci
+  - goveralls -coverprofile=c6.cov -service=travis-ci
 cache:
-  directories:
-    - vendor
 notifications:
   slack:
     secure: Af6bRpbwtC4794UtB1phbubk63KdethyuMFkk9bxTrEwzTgMN4AdLLv4DYjoeETBhPw3FKc6LurzhsRfNnNT14FaZAW3ZmMTUPxHNKnxu9EvloaizXpwxkKgeVNHneA8gytXZ+s/r/rgP/IkSJcbvbLfpkNvT+lNyPW32jK0CW8=

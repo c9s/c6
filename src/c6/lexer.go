@@ -9,7 +9,7 @@ import "unicode/utf8"
 import "strings"
 import "fmt"
 import "unicode"
-import "c6/ast"
+import "github.com/c9s/c6/src/c6/ast"
 
 const TOKEN_CHANNEL_BUFFER = 1024
 

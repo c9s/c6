@@ -2,7 +2,7 @@ package c6
 
 import "github.com/stretchr/testify/assert"
 import "testing"
-import "c6/ast"
+import "github.com/c9s/c6/src/c6/ast"
 
 func AssertLexerTokenSequenceFromState(t *testing.T, scss string, fn stateFn, tokenList []ast.TokenType) {
 	t.Logf("Testing SCSS: %s\n", scss)

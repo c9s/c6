@@ -1,7 +1,7 @@
 package c6
 
 import (
-	"c6/ast"
+	"github.com/c9s/c6/src/c6/ast"
 	"io/ioutil"
 	"testing"
 
@@ -552,7 +552,7 @@ func TestParserVariableAssignmentWithPxValue(t *testing.T) {
 
 func TestParserVariableAssignmentWithSolveableVariableRef(t *testing.T) {
 	var stmts = RunParserTest(`
-	$a: 10px; 
+	$a: 10px;
 	$b: 10px;
 	$c: $a + $b;
 	`)
@@ -561,7 +561,7 @@ func TestParserVariableAssignmentWithSolveableVariableRef(t *testing.T) {
 
 func TestParserVariableAssignmentWithUnknownVariableRef(t *testing.T) {
 	var stmts = RunParserTest(`
-	$a: 10px; 
+	$a: 10px;
 	$b: 10px;
 	$c: 3 * ($a + $b) + $c;
 	`)
