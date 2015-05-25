@@ -428,6 +428,15 @@ func EvaluateExpression(expr ast.Expression, context *Context) ast.Value {
 	return nil
 }
 
+func EvaluateFunctionCall(fcall ast.FunctionCall, context *Context) ast.Value {
+	if fun, ok = context.Functions.Get(fcall.Ident); ok {
+
+	} else {
+		panic("Function " + fcall.Ident + " is undefined.")
+	}
+	return nil
+}
+
 /*
 EvaluateBinaryExpression recursively.
 */

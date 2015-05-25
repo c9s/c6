@@ -9,14 +9,3 @@ type Argument struct {
 func NewArgumentWithToken(variableName *Token) *Argument {
 	return &Argument{variableName, nil, false}
 }
-
-type ArgumentList []*Argument
-
-func (args ArgumentList) Append(arg *Argument) {
-	newargs := append(args, arg)
-	args = newargs
-}
-
-func NewArgumentList() *ArgumentList {
-	return &ArgumentList{}
-}

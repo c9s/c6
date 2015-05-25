@@ -1,14 +1,14 @@
 package ast
 
 type FunctionCall struct {
-	Function  string
+	Ident     string
 	Arguments []Expression
 	Token     *Token
 }
 
 func (self FunctionCall) CanBeNode() {}
 func (self FunctionCall) String() (out string) {
-	out = self.Function + "("
+	out = self.Ident + "("
 	for _, arg := range self.Arguments {
 		out += arg.String() + ", "
 	}
