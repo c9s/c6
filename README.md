@@ -47,6 +47,11 @@ The reason of using `goenv` instead `go get` is:
 > using goenv: install packages on specific tag or branch. This is to prevent
 > unexpected results while we need to build stable application for users.
 
+The other reason of not using `github.com/c9s/c6` as our import path is:
+
+> We host c6 project source code in a private repository, hence the private build process shouldn't depend
+> on `github.com/...`. The remote import path restricts the flexibility of our build process.
+
 If you need to build your application with c6, you need to clone the repository into your GOPATH manually:
 
     git clone https://github.com/c9s/c6.git $(echo -e $GOPATH | cut -d':' -f1)/src/c6
