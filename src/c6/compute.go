@@ -299,21 +299,27 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 	return nil
 }
 
-func IsConstantExpression(expr ast.Expression) bool {
+/*
+A simple expression means the operands are scalar, and can be evaluated.
+*/
+func IsSimpleExpression(expr ast.Expression) bool {
 	switch e := expr.(type) {
 	case *ast.BinaryExpression:
-		if IsConstantValue(e.Left) && IsConstantValue(e.Right) {
+		if IsValue(e.Left) && IsValue(e.Right) {
 			return true
 		}
 	case *ast.UnaryExpression:
-		if IsConstantValue(e.Expr) {
+		if IsValue(e.Expr) {
 			return true
 		}
 	}
 	return false
 }
 
-func IsConstantValue(val ast.Value) bool {
+/*
+This function returns true when the val is a scalar value, not an expression.
+*/
+func IsValue(val ast.Expression) bool {
 	switch val.(type) {
 	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor, *ast.Boolean:
 		return true
@@ -420,7 +426,7 @@ func EvaluateExpression(expr ast.Expression, context *Context) ast.Value {
 	}
 
 	// shouldn't call here.
-	if IsConstantValue(expr) {
+	if IsValue(expr) {
 		return ast.Value(expr)
 	}
 

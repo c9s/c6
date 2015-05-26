@@ -53,7 +53,7 @@ func ReduceExpression(expr ast.Expression, context *Context) (ast.Value, bool) {
 		return e, true
 	}
 
-	if IsConstantExpression(expr) {
+	if IsSimpleExpression(expr) {
 		switch e := expr.(type) {
 		case *ast.BinaryExpression:
 			return EvaluateBinaryExpression(e, context), true

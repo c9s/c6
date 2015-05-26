@@ -11,7 +11,7 @@ func OptimizeIfStatement(parentBlock *ast.Block, stm *ast.IfStatement) {
 	var ignoreBlock = false
 	var val = EvaluateExpressionInBooleanContext(stm.Condition, nil)
 	// check if the expression is evaluated
-	if IsConstantValue(val) {
+	if IsValue(val) {
 		if b, ok := val.(ast.BooleanValue); ok {
 			if b.Boolean() {
 				mergeBlock = true

@@ -1,23 +1,33 @@
 ======
 
-VariableAssignment Flag support:
-
-- [x] Add Flag struct to VariableAssignment struct
-- [x] Parse Flag keywords and push to VariableAssignment struct
-
-CharsetStatement support
-
-- [x] Add CharsetStatement struct
-- [x] Add Encoding field
-- [x] Add ParseCharsetStatement method to parser.
-
 SymbolTable
 
 - [x] Register parsed variable to the scope symbol table.
   - [x] RuleSet symbol table
   - [x] Global symbol table
-- [ ] Add symbol table lookup method to the expression evaluator.
-  - Add type switch case for ast.Variable struct
+- [x] Add symbol table lookup method to the expression evaluator.
+  - [x] Add type switch case for ast.Variable struct
+- [ ] Remove symbol table from DeclarationBlock since we need new context to evaluate the blocks.
+- [ ] The context needs to be a stack, so we can push new context into the stack to evaluate the values.
+- [ ] Only constants can be registered to the DeclarationBlock
+
+Function Evaluation
+
+Evaluating function calls, we:
+
+1. Fetch the funtion definition 
+2. Push the arguments into the stack.
+3. Create a new context for the function call
+4. Create a symbol table for the function call.
+5. Pop the arguments from the stack into a new content.
+6. Push the return value onto the stack.
+7. Go back to the caller.
+8. Pop the returning result from the stack.
+
+
+
+
+
 
 Optimizer
 

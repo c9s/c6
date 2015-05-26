@@ -47,7 +47,7 @@ Please note thist method does not test CSS slash, the caller should handle by it
 
 This works for both boolean evaluation and arithmetic evaluation.
 */
-func (self BinaryExpression) IsConstantExpression() bool {
+func (self BinaryExpression) IsSimpleExpression() bool {
 	_, ok1 := self.Left.(*Variable)
 	_, ok2 := self.Right.(*Variable)
 	return ok1 || ok2

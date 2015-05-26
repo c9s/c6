@@ -10,6 +10,8 @@ DeclarationBlock.
 }
 */
 type DeclarationBlock struct {
+	// The symbol table for storing constant values
+	// Only constants can be stored here...
 	SymTable *symtable.SymTable
 
 	Statements *StatementList
