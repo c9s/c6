@@ -510,6 +510,14 @@ func (parser *Parser) ParseNumber() ast.Expression {
 	return ast.NewNumber(val, nil, tok)
 }
 
+func (parser *Parser) ParseKeywordArguments(fcall *ast.FunctionCall) {
+	for tok := parser.accept(ast.T_VARIABLE); tok != nil; tok = parser.accept(ast.T_VARIABLE) {
+		parser.expect(ast.T_COLON)
+		parser.ParseExpression(false)
+		parser.accept(ast.T_COMMA)
+	}
+}
+
 func (parser *Parser) ParseFunctionCall() *ast.FunctionCall {
 	var identTok = parser.next()
 
@@ -520,17 +528,25 @@ func (parser *Parser) ParseFunctionCall() *ast.FunctionCall {
 	parser.expect(ast.T_PAREN_OPEN)
 
 	var tok = parser.peek()
-	for tok.Type != ast.T_PAREN_CLOSE {
-		if arg := parser.ParseFactor(); arg != nil {
-			fcall.AppendArgument(arg)
-			debug("ParseFunctionCall => arg: %+v", arg)
-		} else {
-			break
-		}
+	var tok2 = parser.peekBy(2)
+	if tok.Type == ast.T_VARIABLE && tok2.Type == ast.T_COLON {
 
-		if parser.accept(ast.T_COMMA) != nil {
-			tok = parser.peek()
-			continue
+		parser.ParseKeywordArguments(fcall)
+
+	} else {
+		for tok.Type != ast.T_PAREN_CLOSE {
+
+			if arg := parser.ParseFactor(); arg != nil {
+				fcall.AppendArgument(arg)
+				debug("ParseFunctionCall => arg: %+v", arg)
+			} else {
+				break
+			}
+
+			if parser.accept(ast.T_COMMA) != nil {
+				tok = parser.peek()
+				continue
+			}
 		}
 	}
 	parser.expect(ast.T_PAREN_CLOSE)

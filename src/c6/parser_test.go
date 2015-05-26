@@ -700,6 +700,16 @@ func TestParserFunctionWithAssignments(t *testing.T) {
 	assert.Equal(t, 1, len(*stmts))
 }
 
+func TestParserFunctionCallKeywordArguments(t *testing.T) {
+	var stmts = RunParserTest(`
+	@function foo($a, $b) {
+		@return $a + $b;
+	}
+	$c: foo($a: 2, $b: 2);
+	`)
+	assert.Equal(t, 2, len(*stmts))
+}
+
 func TestParserMassiveRules(t *testing.T) {
 	var buffers []string = []string{
 		`div { width: auto; }`,
