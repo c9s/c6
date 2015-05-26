@@ -301,6 +301,12 @@ Articles:
 - Logic in media queries - <https://css-tricks.com/logic-in-media-queries/>
 
 
+## Contribution
+
+Please open up an issue on GitHub before you put a lot efforts on pull request.
+
+The code submitting to PR must be filtered with `gofmt`
+
 ## Community
 
 - Slack: we are on Slack channel `#c6`, go invite yourself here:
