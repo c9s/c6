@@ -11,6 +11,7 @@ type Context struct {
 	GlobalBlock  *ast.Block
 	Mixins       *symtable.SymTable
 	Functions    *symtable.SymTable
+	Stack        *Stack
 	ImportedPath map[string]bool
 }
 
@@ -19,6 +20,7 @@ func NewContext() *Context {
 		GlobalBlock: ast.NewBlock(),
 		Mixins:      &symtable.SymTable{},
 		Functions:   &symtable.SymTable{},
+		Stack:       &Stack{},
 	}
 }
 
