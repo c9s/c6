@@ -7,13 +7,13 @@ type ArgumentList struct {
 
 // type ArgumentList []*Argument
 
-func (self ArgumentList) Add(arg *Argument) {
-	arg.Position = uint8(len(self.Arguments))
+func (self *ArgumentList) Add(arg *Argument) {
+	arg.Position = len(self.Arguments)
 	self.Arguments = append(self.Arguments, arg)
 	self.Keywords[arg.Name.Str] = arg
 }
 
-func (self ArgumentList) Lookup(name string) *Argument {
+func (self *ArgumentList) Lookup(name string) *Argument {
 	if arg, ok := self.Keywords[name]; ok {
 		return arg
 	}

@@ -705,7 +705,7 @@ func TestParserFunctionCallKeywordArguments(t *testing.T) {
 	@function foo($a, $b) {
 		@return $a + $b;
 	}
-	$c: foo($a: 2, $b: 2);
+	$c: foo($b: 2, $a: 1);
 	`)
 	assert.Equal(t, 2, len(*stmts))
 }

@@ -1,10 +1,17 @@
 package ast
 
+import "strconv"
+
 type Argument struct {
 	Name           *Token
 	DefaultValue   Expression
 	VariableLength bool
-	Position       uint8
+	Position       int
+}
+
+func (arg Argument) String() string {
+	// TODO: output DefaultValue, VariableLength, Position
+	return arg.Name.Str + "(" + strconv.FormatInt(int64(arg.Position), 10) + ")"
 }
 
 func NewArgumentWithToken(name *Token) *Argument {
@@ -12,5 +19,6 @@ func NewArgumentWithToken(name *Token) *Argument {
 		Name:           name,
 		DefaultValue:   nil,
 		VariableLength: false,
+		Position:       -1,
 	}
 }

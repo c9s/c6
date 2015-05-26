@@ -510,7 +510,15 @@ func (parser *Parser) ParseNumber() ast.Expression {
 	return ast.NewNumber(val, nil, tok)
 }
 
-func (parser *Parser) ParseKeywordArguments(fcall *ast.FunctionCall) {
+/*
+This parse method looks up the argument in the function declaration and convert
+the keyword arguments into the argument list. this way, we can handle the function call
+in a simple way - push/pop the stack.
+
+@param fcall ast.FunctionCall The current parsing function call ast node
+@return arguments []Expression
+*/
+func (parser *Parser) ParseKeywordArguments(fcall *ast.FunctionCall) *ast.FunctionCallArguments {
 	// look up function declaration
 	var item, ok = parser.Context.Functions.Get(fcall.Ident.Str)
 	if !ok {
@@ -518,16 +526,26 @@ func (parser *Parser) ParseKeywordArguments(fcall *ast.FunctionCall) {
 	}
 	var fun = item.(*ast.Function)
 
+	var arguments = ast.FunctionCallArguments{}
 	for tok := parser.accept(ast.T_VARIABLE); tok != nil; tok = parser.accept(ast.T_VARIABLE) {
-		var arg = fun.ArgumentList.Lookup(tok.Str)
-		if arg == nil {
+		var argdef = fun.ArgumentList.Lookup(tok.Str)
+		if argdef == nil {
 			panic("Undefined function argument: " + tok.Str)
 		}
 
 		parser.expect(ast.T_COLON)
-		parser.ParseExpression(false)
+		var argExpr = parser.ParseExpression(false)
 		parser.accept(ast.T_COMMA)
+
+		var arg = ast.NewFunctionCallArgument(argExpr)
+		arg.ArgumentDefineReference = argdef
+
+		arguments = append(arguments, arg)
 	}
+
+	// sort arguments by ArgumentDefineReference
+	arguments.Sort()
+	return &arguments
 }
 
 func (parser *Parser) ParseFunctionCall() *ast.FunctionCall {
@@ -543,7 +561,7 @@ func (parser *Parser) ParseFunctionCall() *ast.FunctionCall {
 	var tok2 = parser.peekBy(2)
 	if tok.Type == ast.T_VARIABLE && tok2.Type == ast.T_COLON {
 
-		parser.ParseKeywordArguments(fcall)
+		fcall.Arguments = *parser.ParseKeywordArguments(fcall)
 
 	} else {
 		for tok.Type != ast.T_PAREN_CLOSE {
