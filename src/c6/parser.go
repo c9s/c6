@@ -36,7 +36,8 @@ func getFileTypeByExtension(extension string) uint {
 }
 
 type Parser struct {
-	Context *Context
+	GlobalContext *Context
+	ContextStack  []Context
 
 	File     string
 	FileInfo os.FileInfo
@@ -51,10 +52,10 @@ type Parser struct {
 
 func NewParser(context *Context) *Parser {
 	return &Parser{
-		Context:     context,
-		Input:       nil,
-		Pos:         0,
-		RollbackPos: 0,
+		GlobalContext: context,
+		Input:         nil,
+		Pos:           0,
+		RollbackPos:   0,
 	}
 }
 

@@ -19,10 +19,11 @@ const (
 )
 
 type CompactCompiler struct {
-	Context   *Context
-	Buffer    bytes.Buffer
-	Compliant int
-	Indent    int
+	Context      *Context
+	ContextStack []Context
+	Buffer       bytes.Buffer
+	Compliant    int
+	Indent       int
 }
 
 func NewCompactCompiler(context *Context) *CompactCompiler {

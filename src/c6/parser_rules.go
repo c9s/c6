@@ -406,7 +406,7 @@ func (parser *Parser) ParseComplexSelector(parentRuleSet *ast.RuleSet) *ast.Comp
 func (parser *Parser) ParseSelectorList() *ast.ComplexSelectorList {
 	debug("ParseSelectorList")
 
-	var parentRuleSet = parser.Context.TopRuleSet()
+	var parentRuleSet = parser.GlobalContext.TopRuleSet()
 
 	var complexSelectorList = &ast.ComplexSelectorList{}
 
@@ -439,9 +439,9 @@ func (parser *Parser) ParseRuleSet() ast.Statement {
 	var ruleset = ast.NewRuleSet()
 	ruleset.Selectors = parser.ParseSelectorList()
 
-	parser.Context.PushRuleSet(ruleset)
+	parser.GlobalContext.PushRuleSet(ruleset)
 	ruleset.Block = parser.ParseDeclarationBlock()
-	parser.Context.PopRuleSet()
+	parser.GlobalContext.PopRuleSet()
 
 	return ruleset
 }
@@ -520,7 +520,7 @@ in a simple way - push/pop the stack.
 */
 func (parser *Parser) ParseKeywordArguments(fcall *ast.FunctionCall) *ast.FunctionCallArguments {
 	// look up function declaration
-	var item, ok = parser.Context.Functions.Get(fcall.Ident.Str)
+	var item, ok = parser.GlobalContext.Functions.Get(fcall.Ident.Str)
 	if !ok {
 		panic("Undefined function " + fcall.Ident.Str)
 	}
@@ -715,7 +715,7 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 			if uexpr, ok := expr.(*ast.UnaryExpression); ok {
 
 				// if it's evaluatable just return the evaluated value.
-				if val, ok := ReduceExpression(uexpr, parser.Context); ok {
+				if val, ok := ReduceExpression(uexpr, parser.GlobalContext); ok {
 					expr = ast.Expression(val)
 				}
 			}
@@ -742,7 +742,7 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 			// XXX: check parenthesis
 			var bexpr = ast.NewBinaryExpression(ast.NewOpWithToken(rightTok), expr, rightTerm, inParenthesis)
 
-			if val, ok := ReduceExpression(bexpr, parser.Context); ok {
+			if val, ok := ReduceExpression(bexpr, parser.GlobalContext); ok {
 
 				expr = ast.Expression(val)
 
@@ -875,13 +875,13 @@ func (parser *Parser) ParseLiteralExpression() ast.Expression {
 		// Check if the expression is reduce-able
 		// For now, division looks like CSS slash at the first level, should be string.
 		if CanReduceExpression(expr) {
-			if reducedExpr, ok := ReduceExpression(expr, parser.Context); ok {
+			if reducedExpr, ok := ReduceExpression(expr, parser.GlobalContext); ok {
 				return reducedExpr
 			}
 		} else {
 			// Return expression as css slash syntax string
 			// TODO: re-visit here later
-			return EvaluateExpression(expr, parser.Context)
+			return EvaluateExpression(expr, parser.GlobalContext)
 		}
 
 		// if we can't evaluate the value, just return the expression tree
@@ -1017,18 +1017,18 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 	// Optimize the expression only when it's an expression
 	// TODO: for expression inside a map or list we should also optmise them too
 	if bexpr, ok := valExpr.(ast.BinaryExpression); ok {
-		if reducedExpr, ok := ReduceExpression(bexpr, parser.Context); ok {
+		if reducedExpr, ok := ReduceExpression(bexpr, parser.GlobalContext); ok {
 			valExpr = reducedExpr
 		}
 	} else if uexpr, ok := valExpr.(ast.UnaryExpression); ok {
-		if reducedExpr, ok := ReduceExpression(uexpr, parser.Context); ok {
+		if reducedExpr, ok := ReduceExpression(uexpr, parser.GlobalContext); ok {
 			valExpr = reducedExpr
 		}
 	}
 
 	// Even we can visit the variable assignment in the AST visitors but if we
 	// could save the information, we can reduce the effort for the visitors.
-	if currentBlock := parser.Context.CurrentBlock(); currentBlock != nil {
+	if currentBlock := parser.GlobalContext.CurrentBlock(); currentBlock != nil {
 		currentBlock.GetSymTable().Set(variable.Name, valExpr)
 	} else {
 		panic("nil block")
@@ -1168,7 +1168,7 @@ func (parser *Parser) ParseDeclaration() ast.Statement {
 
 func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 	var declBlock = ast.NewDeclarationBlock()
-	var parentRuleSet = parser.Context.TopRuleSet()
+	var parentRuleSet = parser.GlobalContext.TopRuleSet()
 
 	parser.expect(ast.T_BRACE_OPEN)
 
@@ -1363,7 +1363,7 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 	if parser.accept(ast.T_FOR_FROM) != nil {
 
 		var fromExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := ReduceExpression(fromExpr, parser.Context); ok {
+		if reducedExpr, ok := ReduceExpression(fromExpr, parser.GlobalContext); ok {
 			fromExpr = reducedExpr
 		}
 		stm.From = fromExpr
@@ -1380,7 +1380,7 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 		}
 
 		var endExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := ReduceExpression(endExpr, parser.Context); ok {
+		if reducedExpr, ok := ReduceExpression(endExpr, parser.GlobalContext); ok {
 			endExpr = reducedExpr
 		}
 
@@ -1397,7 +1397,7 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 	} else if parser.accept(ast.T_FOR_IN) != nil {
 
 		var fromExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := ReduceExpression(fromExpr, parser.Context); ok {
+		if reducedExpr, ok := ReduceExpression(fromExpr, parser.GlobalContext); ok {
 			fromExpr = reducedExpr
 		}
 		stm.From = fromExpr
@@ -1405,7 +1405,7 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 		parser.expect(ast.T_RANGE)
 
 		var endExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := ReduceExpression(endExpr, parser.Context); ok {
+		if reducedExpr, ok := ReduceExpression(endExpr, parser.GlobalContext); ok {
 			endExpr = reducedExpr
 		}
 
@@ -1507,12 +1507,12 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 			}
 			stm.Url = ast.ScssImportUrl(importPath)
 
-			if _, ok := parser.Context.ImportedPath[importPath]; !ok {
+			if _, ok := parser.GlobalContext.ImportedPath[importPath]; !ok {
 				// Set imported path to true
-				parser.Context.ImportedPath[importPath] = true
+				parser.GlobalContext.ImportedPath[importPath] = true
 
 				// parse the imported file using the same context
-				var subparser = NewParser(parser.Context)
+				var subparser = NewParser(parser.GlobalContext)
 				var stmts, err = subparser.ParseScssFile(importPath)
 				if err != nil {
 					panic(err)
@@ -1531,7 +1531,7 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 				//    for symbal table, we also need to merge them
 				//
 				// note that the parse method might push the statements to global block, we should avoid that.
-				var currentBlock = parser.Context.CurrentBlock()
+				var currentBlock = parser.GlobalContext.CurrentBlock()
 				currentBlock.MergeStatements(stmts)
 			}
 
@@ -1564,7 +1564,7 @@ func (parser *Parser) ParseFunctionDeclaration() ast.Statement {
 	var fun = ast.NewFunctionWithToken(identTok)
 	fun.ArgumentList = args
 	fun.Block = parser.ParseBlock()
-	parser.Context.Functions.Set(identTok.Str, fun)
+	parser.GlobalContext.Functions.Set(identTok.Str, fun)
 	return fun
 }
 
@@ -1588,7 +1588,7 @@ func (parser *Parser) ParseMixinStatement() ast.Statement {
 		panic("Syntax error")
 	}
 	stm.Block = parser.ParseDeclarationBlock()
-	parser.Context.Mixins.Set(stm.Ident.Str, stm)
+	parser.GlobalContext.Mixins.Set(stm.Ident.Str, stm)
 	return stm
 }
 
