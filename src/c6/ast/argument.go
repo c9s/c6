@@ -1,11 +1,16 @@
 package ast
 
 type Argument struct {
-	VariableName   *Token
+	Name           *Token
 	DefaultValue   Expression
 	VariableLength bool
+	Position       uint8
 }
 
-func NewArgumentWithToken(variableName *Token) *Argument {
-	return &Argument{variableName, nil, false}
+func NewArgumentWithToken(name *Token) *Argument {
+	return &Argument{
+		Name:           name,
+		DefaultValue:   nil,
+		VariableLength: false,
+	}
 }

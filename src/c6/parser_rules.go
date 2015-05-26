@@ -512,7 +512,12 @@ func (parser *Parser) ParseNumber() ast.Expression {
 
 func (parser *Parser) ParseKeywordArguments(fcall *ast.FunctionCall) {
 	// look up function declaration
+	var fun, ok = parser.Context.Functions.Get(fcall.Ident.Str)
+	if !ok {
+		panic("Undefined function " + fcall.Ident.Str)
+	}
 
+	_ = fun
 	for tok := parser.accept(ast.T_VARIABLE); tok != nil; tok = parser.accept(ast.T_VARIABLE) {
 		parser.expect(ast.T_COLON)
 		parser.ParseExpression(false)

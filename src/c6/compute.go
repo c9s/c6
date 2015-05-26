@@ -429,12 +429,12 @@ func EvaluateExpression(expr ast.Expression, context *Context) ast.Value {
 }
 
 func EvaluateFunctionCall(fcall ast.FunctionCall, context *Context) ast.Value {
-	if fun, ok := context.Functions.Get(fcall.Ident); ok {
+	if fun, ok := context.Functions.Get(fcall.Ident.Str); ok {
 
 		_ = fun
 
 	} else {
-		panic("Function " + fcall.Ident + " is undefined.")
+		panic("Function " + fcall.Ident.Str + " is undefined.")
 	}
 	return nil
 }
