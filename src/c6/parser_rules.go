@@ -110,7 +110,7 @@ func (parser *Parser) ParseStatement() ast.Statement {
 	case ast.T_MIXIN:
 		return parser.ParseMixinStatement()
 	case ast.T_FUNCTION:
-		return parser.ParseFunction()
+		return parser.ParseFunctionDeclaration()
 	case ast.T_FONT_FACE:
 		return parser.ParseFontFaceStatement()
 	case ast.T_INCLUDE:
@@ -511,6 +511,8 @@ func (parser *Parser) ParseNumber() ast.Expression {
 }
 
 func (parser *Parser) ParseKeywordArguments(fcall *ast.FunctionCall) {
+	// look up function declaration
+
 	for tok := parser.accept(ast.T_VARIABLE); tok != nil; tok = parser.accept(ast.T_VARIABLE) {
 		parser.expect(ast.T_COLON)
 		parser.ParseExpression(false)
@@ -1527,7 +1529,7 @@ func (parser *Parser) ParseReturnStatement() ast.Statement {
 	return ast.NewReturnStatementWithToken(returnTok, valueExpr)
 }
 
-func (parser *Parser) ParseFunction() ast.Statement {
+func (parser *Parser) ParseFunctionDeclaration() ast.Statement {
 	parser.expect(ast.T_FUNCTION)
 	var identTok = parser.expect(ast.T_FUNCTION_NAME)
 	var args = parser.ParseFunctionPrototype()
