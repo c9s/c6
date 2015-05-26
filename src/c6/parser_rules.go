@@ -4,14 +4,16 @@ package c6
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import "fmt"
-import "io/ioutil"
-import "strconv"
-import "c6/ast"
-import "regexp"
-import "strings"
-import "os"
-import "path/filepath"
+import (
+	"c6/ast"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"regexp"
+	"strconv"
+	"strings"
+)
 
 var HttpUrlPattern = regexp.MustCompile("^https?://")
 var AbsoluteUrlPattern = regexp.MustCompile("^[a-zA-Z]+?://")
