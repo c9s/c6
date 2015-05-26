@@ -34,6 +34,25 @@ To run specific test
 
     go test -run TestParser -x -v c6
 
+
+## Installation
+
+C6 project source does not depend on the import path `github.com/c9s/c6`,
+therefore the project needs to be built standalone.
+
+The reason of using `goenv` instead `go get` is:
+
+> If any dependent package API changed on master, everything will be broken
+> when user runs go get. Therefore we control the package dependency we used by
+> using goenv: install packages on specific tag or branch. This is to prevent
+> unexpected results while we need to build stable application for users.
+
+If you need to build your application with c6, you need to clone the repository into your GOPATH manually:
+
+    git clone https://github.com/c9s/c6.git $(echo -e $GOPATH | cut -d':' -f1)/src/c6
+    go get -x c6  # if you want to get the dependencies via "go get"
+    go build c6   # should work for you.
+
 ## Working in progress
 
 - [ ] Lexing
