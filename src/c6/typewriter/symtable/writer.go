@@ -3,6 +3,7 @@ package symtable
 import (
 	"github.com/clipperhouse/typewriter"
 	"io"
+	"log"
 )
 
 func init() {
@@ -19,7 +20,7 @@ func NewSymTableWriter() *SymTableWriter {
 }
 
 func (sw *SymTableWriter) Name() string {
-	return "set"
+	return "symtable"
 }
 
 func (sw *SymTableWriter) Imports(t typewriter.Type) (result []typewriter.ImportSpec) {
@@ -35,6 +36,8 @@ func (sw *SymTableWriter) Write(w io.Writer, t typewriter.Type) error {
 		return nil
 	}
 
+	log.Printf("Found tag %+v\n", tag)
+
 	license := `// SymTableWriter is a modification of https://github.com/deckarep/golang-set
 // The MIT License (MIT)
 // Copyright (c) 2015 Yo-An Lin (yoanlin93@gmail.com)
@@ -43,14 +46,24 @@ func (sw *SymTableWriter) Write(w io.Writer, t typewriter.Type) error {
 		return err
 	}
 
+	log.Printf("Finding template by tag %+v\n", tag)
 	tmpl, err := templates.ByTag(t, tag)
-
 	if err != nil {
 		return err
 	}
 
-	if err := tmpl.Execute(w, t); err != nil {
+	m := model{
+		Type:          t,
+		Name:          t.Name,
+		TypeParameter: tag.Values[0].TypeParameters[0],
+		Tag:           tag,
+	}
+
+	log.Println("Rendering templates")
+	if err := tmpl.Execute(w, m); err != nil {
 		return err
 	}
+
+	log.Println("Done!")
 	return nil
 }
