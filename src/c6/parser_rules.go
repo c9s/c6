@@ -6,6 +6,7 @@ package c6
 
 import (
 	"c6/ast"
+	"c6/lexer"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -41,32 +42,32 @@ func (parser *Parser) ParseScssFile(file string) (*ast.StatementList, error) {
 	}
 
 	// XXX: this seems to copy the whole string, we should avoid this.
-	l := NewLexerWithString(parser.Content)
-	parser.Input = l.getOutput()
+	l := lexer.NewLexerWithString(parser.Content)
+	parser.Input = l.GetOutput()
 
 	// Run lexer concurrently
-	go l.run()
+	go l.Run()
 
 	var tok *ast.Token = nil
 	for tok = <-parser.Input; tok != nil; tok = <-parser.Input {
 		parser.Tokens = append(parser.Tokens, tok)
 	}
-	l.close()
+	l.Close()
 	return parser.ParseStatements(), nil
 }
 
 func (parser *Parser) ParseScss(code string) *ast.StatementList {
-	l := NewLexerWithString(code)
-	parser.Input = l.getOutput()
+	l := lexer.NewLexerWithString(code)
+	parser.Input = l.GetOutput()
 
 	// Run lexer concurrently
-	go l.run()
+	go l.Run()
 
 	var tok *ast.Token = nil
 	for tok = <-parser.Input; tok != nil; tok = <-parser.Input {
 		parser.Tokens = append(parser.Tokens, tok)
 	}
-	l.close()
+	l.Close()
 	return parser.ParseStatements()
 }
 

@@ -8,19 +8,19 @@ func AssertLexerTokenSequenceFromState(t *testing.T, scss string, fn stateFn, to
 	t.Logf("Testing SCSS: %s\n", scss)
 	var lexer = NewLexerWithString(scss)
 	assert.NotNil(t, lexer)
-	lexer.runFrom(fn)
-	lexer.run()
+	lexer.RunFrom(fn)
+	lexer.Run()
 	AssertTokenSequence(t, lexer, tokenList)
-	lexer.close()
+	lexer.Close()
 }
 
 func AssertLexerTokenSequence(t *testing.T, scss string, tokenList []ast.TokenType) {
 	t.Logf("Testing SCSS: %s\n", scss)
 	var lexer = NewLexerWithString(scss)
 	assert.NotNil(t, lexer)
-	lexer.run()
+	lexer.Run()
 	AssertTokenSequence(t, lexer, tokenList)
-	lexer.close()
+	lexer.Close()
 }
 
 func OutputGreen(t *testing.T, msg string, args ...interface{}) {

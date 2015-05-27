@@ -108,7 +108,7 @@ func NewLexerWithFile(file string) (*Lexer, error) {
 	}, nil
 }
 
-func (l *Lexer) getOutput() ast.TokenChannel {
+func (l *Lexer) GetOutput() ast.TokenChannel {
 	if l.Output != nil {
 		return l.Output
 	}
@@ -425,7 +425,7 @@ func (l *Lexer) ignoreSpaces() int {
 	return space
 }
 
-func (l *Lexer) dispatchFn(fn stateFn) stateFn {
+func (l *Lexer) DispatchFn(fn stateFn) stateFn {
 	for l.State = fn; l.State != nil; {
 		fn := l.State(l)
 		if fn != nil {
@@ -441,23 +441,23 @@ func (l *Lexer) dump() {
 	fmt.Printf("Lexer: %+v\n", l)
 }
 
-func (l *Lexer) runFrom(fn stateFn) {
+func (l *Lexer) RunFrom(fn stateFn) {
 	if l.Output == nil {
 		l.Output = make(ast.TokenChannel, TOKEN_CHANNEL_BUFFER)
 	}
-	l.dispatchFn(fn)
+	l.DispatchFn(fn)
 	l.Output <- nil
 }
 
-func (l *Lexer) run() {
+func (l *Lexer) Run() {
 	if l.Output == nil {
 		l.Output = make(ast.TokenChannel, TOKEN_CHANNEL_BUFFER)
 	}
-	l.dispatchFn(lexStart)
+	l.DispatchFn(lexStart)
 	l.Output <- nil
 }
 
-func (l *Lexer) close() {
+func (l *Lexer) Close() {
 	if l.Output != nil {
 		close(l.Output)
 	}
