@@ -2,6 +2,7 @@ package parser
 
 import (
 	"c6/ast"
+	"c6/runtime"
 	"io/ioutil"
 	"testing"
 
@@ -9,8 +10,8 @@ import (
 )
 
 func RunParserTest(code string) *ast.StatementList {
-	var parser = NewParser(NewContext())
-	return parser.ParseScss(code)
+	var p = NewParser(runtime.NewContext())
+	return p.ParseScss(code)
 }
 
 func TestParserGetFileType(t *testing.T) {
@@ -30,8 +31,7 @@ func TestParserGetFileType(t *testing.T) {
 func TestParserParseFile(t *testing.T) {
 	testPath := "test/file.scss"
 	bs, _ := ioutil.ReadFile(testPath)
-
-	p := NewParser(&Context{})
+	p := NewParser(runtime.NewContext())
 	err := p.ParseFile(testPath)
 	if err != nil {
 		t.Fatal(err)
@@ -154,8 +154,8 @@ func TestParserImportRuleWithUnquoteUrl(t *testing.T) {
 }
 
 func TestParserImportRuleWithUrl(t *testing.T) {
-	parser := NewParser(NewContext())
-	stmts := parser.ParseScss(`@import url("http://foo.com/bar.css");`)
+	p := NewParser(runtime.NewContext())
+	stmts := p.ParseScss(`@import url("http://foo.com/bar.css");`)
 	assert.Equal(t, 1, len(*stmts))
 
 	rule, ok := (*stmts)[0].(*ast.ImportStatement)
@@ -164,8 +164,8 @@ func TestParserImportRuleWithUrl(t *testing.T) {
 }
 
 func TestParserImportRuleWithString(t *testing.T) {
-	parser := NewParser(NewContext())
-	stmts := parser.ParseScss(`@import "foo.css";`)
+	p := NewParser(runtime.NewContext())
+	stmts := p.ParseScss(`@import "foo.css";`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
@@ -729,16 +729,16 @@ func TestParserMassiveRules(t *testing.T) {
 	}
 	for _, buffer := range buffers {
 		t.Logf("%s\n", buffer)
-		var parser = NewParser(NewContext())
-		var stmts = parser.ParseScss(buffer)
+		var p = NewParser(runtime.NewContext())
+		var stmts = p.ParseScss(buffer)
 		t.Logf("%+v\n", stmts)
 	}
 }
 
 /*
 func TestParserIfStatementTrueCondition(t *testing.T) {
-	parser := NewParser(NewContext())
-	block := parser.ParseScss(`
+	p := NewParser(runtime.NewContext())
+	block := p.ParseScss(`
 	div {
 		@if true {
 			color: red;
@@ -750,24 +750,24 @@ func TestParserIfStatementTrueCondition(t *testing.T) {
 */
 
 func TestParserTypeSelector(t *testing.T) {
-	parser := NewParser(NewContext())
-	stmts := parser.ParseScss(`div { width: auto; }`)
+	p := NewParser(runtime.NewContext())
+	stmts := p.ParseScss(`div { width: auto; }`)
 	ruleset, ok := (*stmts)[0].(*ast.RuleSet)
 	assert.True(t, ok)
 	assert.NotNil(t, ruleset)
 }
 
 func TestParserClassSelector(t *testing.T) {
-	parser := NewParser(NewContext())
-	stmts := parser.ParseScss(`.foo-bar { width: auto; }`)
+	p := NewParser(runtime.NewContext())
+	stmts := p.ParseScss(`.foo-bar { width: auto; }`)
 	ruleset, ok := (*stmts)[0].(*ast.RuleSet)
 	assert.True(t, ok)
 	assert.NotNil(t, ruleset)
 }
 
 func TestParserDescendantCombinatorSelector(t *testing.T) {
-	parser := NewParser(NewContext())
-	stmts := parser.ParseScss(`
+	p := NewParser(runtime.NewContext())
+	stmts := p.ParseScss(`
 	.foo
 	.bar
 	.zoo { width: auto; }`)
@@ -777,24 +777,24 @@ func TestParserDescendantCombinatorSelector(t *testing.T) {
 }
 
 func TestParserAdjacentCombinator(t *testing.T) {
-	parser := NewParser(NewContext())
-	stmts := parser.ParseScss(`.foo + .bar { width: auto; }`)
+	p := NewParser(runtime.NewContext())
+	stmts := p.ParseScss(`.foo + .bar { width: auto; }`)
 	ruleset, ok := (*stmts)[0].(*ast.RuleSet)
 	assert.True(t, ok)
 	assert.NotNil(t, ruleset)
 }
 
 func TestParserGeneralSiblingCombinator(t *testing.T) {
-	parser := NewParser(NewContext())
-	stmts := parser.ParseScss(`.foo ~ .bar { width: auto; }`)
+	p := NewParser(runtime.NewContext())
+	stmts := p.ParseScss(`.foo ~ .bar { width: auto; }`)
 	ruleset, ok := (*stmts)[0].(*ast.RuleSet)
 	assert.True(t, ok)
 	assert.NotNil(t, ruleset)
 }
 
 func TestParserChildCombinator(t *testing.T) {
-	parser := NewParser(NewContext())
-	stmts := parser.ParseScss(`.foo > .bar { width: auto; }`)
+	p := NewParser(runtime.NewContext())
+	stmts := p.ParseScss(`.foo > .bar { width: auto; }`)
 	ruleset, ok := (*stmts)[0].(*ast.RuleSet)
 	assert.True(t, ok)
 	assert.NotNil(t, ruleset)
@@ -802,36 +802,36 @@ func TestParserChildCombinator(t *testing.T) {
 
 func BenchmarkParserClassSelector(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var parser = NewParser(NewContext())
-		parser.ParseScss(`.foo-bar {}`)
+		var p = NewParser(runtime.NewContext())
+		p.ParseScss(`.foo-bar {}`)
 	}
 }
 
 func BenchmarkParserAttributeSelector(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var parser = NewParser(NewContext())
-		parser.ParseScss(`input[type=text] {  }`)
+		var p = NewParser(runtime.NewContext())
+		p.ParseScss(`input[type=text] {  }`)
 	}
 }
 
 func BenchmarkParserComplexSelector(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var parser = NewParser(NewContext())
-		parser.ParseScss(`div#myId.first-name.last-name, span, html, .first-name, .last-name { }`)
+		var p = NewParser(runtime.NewContext())
+		p.ParseScss(`div#myId.first-name.last-name, span, html, .first-name, .last-name { }`)
 	}
 }
 
 func BenchmarkParserMediaQueryAllAndMinWidth(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var parser = NewParser(NewContext())
-		parser.ParseScss(`@media all and (min-width:500px) {  .red { color: red; } }`)
+		var p = NewParser(runtime.NewContext())
+		p.ParseScss(`@media all and (min-width:500px) {  .red { color: red; } }`)
 	}
 }
 
 func BenchmarkParserOverAll(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		var parser = NewParser(NewContext())
-		parser.ParseScss(`div#myId.first-name.last-name {
+		var p = NewParser(runtime.NewContext())
+		p.ParseScss(`div#myId.first-name.last-name {
 			.foo-bar {
 				color: red;
 				background: #fff;
