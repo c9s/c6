@@ -461,4 +461,5 @@ func (l *Lexer) Close() {
 	if l.Output != nil {
 		close(l.Output)
 	}
+	l.Output = nil
 }

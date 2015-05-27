@@ -9,7 +9,6 @@ func AssertLexerTokenSequenceFromState(t *testing.T, scss string, fn stateFn, to
 	var lexer = NewLexerWithString(scss)
 	assert.NotNil(t, lexer)
 	lexer.RunFrom(fn)
-	lexer.Run()
 	AssertTokenSequence(t, lexer, tokenList)
 	lexer.Close()
 }

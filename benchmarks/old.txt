@@ -1,14 +1,27 @@
+?   	c6	[no test files]
 PASS
-BenchmarkLexerBasic	   50000	     25581 ns/op
-BenchmarkLexerTypeSelector	  100000	     17097 ns/op
-BenchmarkLexerIdSelector	  100000	     17816 ns/op
-BenchmarkLexerClassSelector	  100000	     16922 ns/op
-BenchmarkLexerAttributeSelector	  100000	     17483 ns/op
-BenchmarkLexerImportRule	  100000	     19206 ns/op
-BenchmarkLexerVariableDeclaration	   50000	     30988 ns/op
-BenchmarkParserClassSelector	  100000	     18669 ns/op
-BenchmarkParserAttributeSelector	  100000	     22994 ns/op
-BenchmarkParserComplexSelector	   50000	     32686 ns/op
-BenchmarkParserMediaQueryAllAndMinWidth	   30000	     49102 ns/op
-BenchmarkParserOverAll	exit status 2
-FAIL	c6	21.636s
+ok  	c6/ast	0.010s
+?   	c6/cmd/c6	[no test files]
+PASS
+ok  	c6/compiler	0.011s
+PASS
+BenchmarkLexerBasic	   50000	     31632 ns/op
+BenchmarkLexerTypeSelector	  100000	     20587 ns/op
+BenchmarkLexerIdSelector	  100000	     21517 ns/op
+BenchmarkLexerClassSelector	  100000	     19834 ns/op
+BenchmarkLexerAttributeSelector	  100000	     21234 ns/op
+BenchmarkLexerImportRule	  100000	     22563 ns/op
+BenchmarkLexerVariableDeclaration	   50000	     31443 ns/op
+ok  	c6/lexer	16.430s
+PASS
+ok  	c6/logger	0.029s
+PASS
+BenchmarkParserClassSelector	  100000	     19622 ns/op
+BenchmarkParserAttributeSelector	  100000	     24285 ns/op
+BenchmarkParserComplexSelector	   50000	     40539 ns/op
+BenchmarkParserMediaQueryAllAndMinWidth	   30000	     60933 ns/op
+BenchmarkParserOverAll	    5000	    377026 ns/op
+ok  	c6/parser	11.585s
+PASS
+ok  	c6/runtime	0.054s
+?   	c6/symtable	[no test files]

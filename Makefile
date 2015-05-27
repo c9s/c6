@@ -15,13 +15,13 @@ test: all
 	go test c6/...
 
 benchupdatebase:
-	go test -run=NONE -bench=. c6 >| benchmarks/old.txt
+	go test -run=NONE -bench=. c6/... >| benchmarks/old.txt
 
 benchrecord:
-	go test -run=NONE -bench=. c6 >| benchmarks/new.txt
+	go test -run=NONE -bench=. c6/... >| benchmarks/new.txt
 
 bench:
-	go test -run=NONE -bench=. -benchmem c6 
+	go test -run=NONE -bench=. -benchmem c6/...
 
 benchcmp: all benchrecord
 	vendor/bin/benchcmp benchmarks/old.txt benchmarks/new.txt
