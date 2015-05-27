@@ -1,4 +1,4 @@
-package c6
+package runtime
 
 import "c6/ast"
 import "fmt"

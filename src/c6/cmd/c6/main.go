@@ -1,6 +1,6 @@
 package main
 
-import "c6"
+import "c6/runtime"
 import "github.com/spf13/cobra"
 import "fmt"
 
@@ -31,7 +31,7 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Println("Run compile!")
 
-			_ = c6.NewContext()
+			_ = runtime.NewContext()
 		},
 	}
 	rootCmd.AddCommand(compileCmd)

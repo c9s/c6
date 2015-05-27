@@ -1,14 +1,15 @@
-package c6
+package parser
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import "fmt"
 import "c6/ast"
+import "c6/runtime"
 import "path/filepath"
 import "io/ioutil"
 import "os"
+import "fmt"
 
 const (
 	UnknownFileType uint = iota
@@ -36,8 +37,8 @@ func getFileTypeByExtension(extension string) uint {
 }
 
 type Parser struct {
-	GlobalContext *Context
-	ContextStack  []Context
+	GlobalContext *runtime.Context
+	ContextStack  []runtime.Context
 
 	File     string
 	FileInfo os.FileInfo
@@ -50,7 +51,7 @@ type Parser struct {
 	Tokens      []*ast.Token
 }
 
-func NewParser(context *Context) *Parser {
+func NewParser(context *runtime.Context) *Parser {
 	return &Parser{
 		GlobalContext: context,
 		Input:         nil,

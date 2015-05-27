@@ -1,4 +1,4 @@
-package c6
+package parser
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -7,6 +7,7 @@ package c6
 import (
 	"c6/ast"
 	"c6/lexer"
+	"c6/runtime"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -718,7 +719,7 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 			if uexpr, ok := expr.(*ast.UnaryExpression); ok {
 
 				// if it's evaluatable just return the evaluated value.
-				if val, ok := ReduceExpression(uexpr, parser.GlobalContext); ok {
+				if val, ok := runtime.ReduceExpression(uexpr, parser.GlobalContext); ok {
 					expr = ast.Expression(val)
 				}
 			}
@@ -745,7 +746,7 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 			// XXX: check parenthesis
 			var bexpr = ast.NewBinaryExpression(ast.NewOpWithToken(rightTok), expr, rightTerm, inParenthesis)
 
-			if val, ok := ReduceExpression(bexpr, parser.GlobalContext); ok {
+			if val, ok := runtime.ReduceExpression(bexpr, parser.GlobalContext); ok {
 
 				expr = ast.Expression(val)
 
@@ -877,14 +878,14 @@ func (parser *Parser) ParseLiteralExpression() ast.Expression {
 
 		// Check if the expression is reduce-able
 		// For now, division looks like CSS slash at the first level, should be string.
-		if CanReduceExpression(expr) {
-			if reducedExpr, ok := ReduceExpression(expr, parser.GlobalContext); ok {
+		if runtime.CanReduceExpression(expr) {
+			if reducedExpr, ok := runtime.ReduceExpression(expr, parser.GlobalContext); ok {
 				return reducedExpr
 			}
 		} else {
 			// Return expression as css slash syntax string
 			// TODO: re-visit here later
-			return EvaluateExpression(expr, parser.GlobalContext)
+			return runtime.EvaluateExpression(expr, parser.GlobalContext)
 		}
 
 		// if we can't evaluate the value, just return the expression tree
@@ -1020,11 +1021,11 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 	// Optimize the expression only when it's an expression
 	// TODO: for expression inside a map or list we should also optmise them too
 	if bexpr, ok := valExpr.(ast.BinaryExpression); ok {
-		if reducedExpr, ok := ReduceExpression(bexpr, parser.GlobalContext); ok {
+		if reducedExpr, ok := runtime.ReduceExpression(bexpr, parser.GlobalContext); ok {
 			valExpr = reducedExpr
 		}
 	} else if uexpr, ok := valExpr.(ast.UnaryExpression); ok {
-		if reducedExpr, ok := ReduceExpression(uexpr, parser.GlobalContext); ok {
+		if reducedExpr, ok := runtime.ReduceExpression(uexpr, parser.GlobalContext); ok {
 			valExpr = reducedExpr
 		}
 	}
@@ -1366,7 +1367,7 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 	if parser.accept(ast.T_FOR_FROM) != nil {
 
 		var fromExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := ReduceExpression(fromExpr, parser.GlobalContext); ok {
+		if reducedExpr, ok := runtime.ReduceExpression(fromExpr, parser.GlobalContext); ok {
 			fromExpr = reducedExpr
 		}
 		stm.From = fromExpr
@@ -1383,7 +1384,7 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 		}
 
 		var endExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := ReduceExpression(endExpr, parser.GlobalContext); ok {
+		if reducedExpr, ok := runtime.ReduceExpression(endExpr, parser.GlobalContext); ok {
 			endExpr = reducedExpr
 		}
 
@@ -1400,7 +1401,7 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 	} else if parser.accept(ast.T_FOR_IN) != nil {
 
 		var fromExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := ReduceExpression(fromExpr, parser.GlobalContext); ok {
+		if reducedExpr, ok := runtime.ReduceExpression(fromExpr, parser.GlobalContext); ok {
 			fromExpr = reducedExpr
 		}
 		stm.From = fromExpr
@@ -1408,7 +1409,7 @@ func (parser *Parser) ParseForStatement() ast.Statement {
 		parser.expect(ast.T_RANGE)
 
 		var endExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := ReduceExpression(endExpr, parser.GlobalContext); ok {
+		if reducedExpr, ok := runtime.ReduceExpression(endExpr, parser.GlobalContext); ok {
 			endExpr = reducedExpr
 		}
 

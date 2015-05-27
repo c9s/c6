@@ -1,6 +1,6 @@
 // +build debug
 
-package c6
+package parser
 
 const debugParser = true
 const DEBUG_EMIT = true

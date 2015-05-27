@@ -1,4 +1,4 @@
-package c6
+package runtime
 
 import "testing"
 import "c6/ast"

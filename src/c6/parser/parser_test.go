@@ -1,4 +1,4 @@
-package c6
+package parser
 
 import (
 	"c6/ast"

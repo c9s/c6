@@ -1,6 +1,7 @@
 package c6
 
 import "c6/ast"
+import "c6/runtime"
 import "bytes"
 import "strings"
 
@@ -19,14 +20,14 @@ const (
 )
 
 type CompactCompiler struct {
-	Context      *Context
-	ContextStack []Context
+	Context      *runtime.Context
+	ContextStack []runtime.Context
 	Buffer       bytes.Buffer
 	Compliant    int
 	Indent       int
 }
 
-func NewCompactCompiler(context *Context) *CompactCompiler {
+func NewCompactCompiler(context *runtime.Context) *CompactCompiler {
 	return &CompactCompiler{
 		Context:   context,
 		Indent:    0,

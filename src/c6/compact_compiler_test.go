@@ -1,11 +1,13 @@
 package c6
 
 import "testing"
+import "c6/runtime"
+import "c6/parser"
 import "github.com/stretchr/testify/assert"
 
 func AssertCompile(t *testing.T, code string, expected string) {
-	var context = NewContext()
-	var parser = NewParser(context)
+	var context = runtime.NewContext()
+	var parser = parser.NewParser(context)
 	var stmts = parser.ParseScss(code)
 	var compiler = NewCompactCompiler(context)
 	var out = compiler.CompileString(stmts)
@@ -13,7 +15,7 @@ func AssertCompile(t *testing.T, code string, expected string) {
 }
 
 func TestCompilerCompliant(t *testing.T) {
-	var context = NewContext()
+	var context = runtime.NewContext()
 	var compiler = NewCompactCompiler(context)
 	compiler.EnableCompliant(CSS3Compliant)
 	compiler.EnableCompliant(IE7Compliant)

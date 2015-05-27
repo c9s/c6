@@ -1,4 +1,4 @@
-package c6
+package parser
 
 /**
 We will cache the compiled ast.Block in the map,
