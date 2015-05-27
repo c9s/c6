@@ -25,7 +25,7 @@ func New{{.Name}}() *{{.Name}} {
 	return &{{.Name}}{}
 }
 
-func (self *{{.Name}}) Set(name string, v *{{.TypeParameter.LongName}}) {
+func (self {{.Name}}) Set(name string, v *{{.TypeParameter.LongName}}) {
 	self[name] = v
 }
 
@@ -36,13 +36,13 @@ func (self {{.Name}}) Get(name string) (*{{.TypeParameter.LongName}}, bool) {
 	return nil, false
 }
 
-func (self *{{.Name}}) Merge(a *{{.Name}}) {
+func (self {{.Name}}) Merge(a *{{.Name}}) {
 	for key, val := range *a {
 		self[key] = val
 	}
 }
 
-func (self *{{.Name}}) Has(name string) bool {
+func (self {{.Name}}) Has(name string) bool {
 	if _, ok := self[name]; ok {
 		return true
 	} else {

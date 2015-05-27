@@ -12,7 +12,7 @@ func NewFunctionSymTable() *FunctionSymTable {
 	return &FunctionSymTable{}
 }
 
-func (self *FunctionSymTable) Set(name string, v *Function) {
+func (self FunctionSymTable) Set(name string, v *Function) {
 	self[name] = v
 }
 
@@ -23,13 +23,13 @@ func (self FunctionSymTable) Get(name string) (*Function, bool) {
 	return nil, false
 }
 
-func (self *FunctionSymTable) Merge(a *FunctionSymTable) {
+func (self FunctionSymTable) Merge(a *FunctionSymTable) {
 	for key, val := range *a {
 		self[key] = val
 	}
 }
 
-func (self *FunctionSymTable) Has(name string) bool {
+func (self FunctionSymTable) Has(name string) bool {
 	if _, ok := self[name]; ok {
 		return true
 	} else {
