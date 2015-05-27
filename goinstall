@@ -10,3 +10,9 @@ get golang.org/x/tools/cmd/benchcmp
 get github.com/ajstarks/svgo/benchviz
 get github.com/spf13/cobra
 get github.com/axw/gocov/gocov
+
+# dependencies for Gen
+get github.com/clipperhouse/gen
+get github.com/clipperhouse/typewriter
+get github.com/clipperhouse/stringer
+get github.com/clipperhouse/slice
