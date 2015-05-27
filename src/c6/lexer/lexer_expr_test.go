@@ -1,4 +1,4 @@
-package c6
+package lexer
 
 import "testing"
 import "c6/ast"

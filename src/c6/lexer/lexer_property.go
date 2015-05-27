@@ -1,4 +1,4 @@
-package c6
+package lexer
 
 import "unicode"
 import "c6/ast"

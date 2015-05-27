@@ -1,4 +1,4 @@
-package c6
+package lexer
 
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -262,10 +262,8 @@ func (l *Lexer) take() string {
 }
 
 func (l *Lexer) emitToken(token *ast.Token) {
-	if DEBUG_EMIT {
-		fmt.Printf("emit: %+v\n", token)
-	}
-
+	// TODO: debug emit flag
+	// fmt.Printf("emit: %+v\n", token)
 	l.Tokens = append(l.Tokens, *token)
 	l.Output <- token
 	l.Start = l.Offset
