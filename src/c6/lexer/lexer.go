@@ -437,7 +437,7 @@ func (l *Lexer) DispatchFn(fn stateFn) stateFn {
 	return l.State
 }
 
-func (l *Lexer) dump() {
+func (l *Lexer) Dump() {
 	fmt.Printf("Lexer: %+v\n", l)
 }
 
