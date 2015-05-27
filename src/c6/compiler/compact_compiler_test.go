@@ -1,4 +1,4 @@
-package c6
+package compiler
 
 import "testing"
 import "c6/runtime"

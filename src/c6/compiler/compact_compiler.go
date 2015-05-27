@@ -1,4 +1,4 @@
-package c6
+package compiler
 
 import "c6/ast"
 import "c6/runtime"
