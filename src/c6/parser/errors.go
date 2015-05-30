@@ -21,7 +21,7 @@ type SyntaxError struct {
 	ActualToken *ast.Token
 	Guide       string
 	GuideUrl    string
-	File        string
+	File        *ast.File
 	// TODO: provide correction later
 }
 
@@ -30,7 +30,7 @@ func (err SyntaxError) Error() (out string) {
 	if err.ActualToken != nil {
 		out += fmt.Sprintf(" at line %d, offset %d. got %s\n", err.ActualToken.Line, err.ActualToken.LineOffset, err.ActualToken.Type.String())
 	}
-	if err.File != "" {
+	if err.File != nil {
 		out += fmt.Sprintf(" in file %s\n", err.File)
 	}
 

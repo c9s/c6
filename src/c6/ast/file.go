@@ -21,3 +21,7 @@ func NewFile(filename string) (*File, error) {
 func (f *File) ReadFile() ([]byte, error) {
 	return ioutil.ReadFile(f.FileName)
 }
+
+func (f *File) String() string {
+	return f.FileName
+}

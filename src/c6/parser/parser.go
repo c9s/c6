@@ -4,12 +4,12 @@ package parser
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import "c6/ast"
-import "c6/runtime"
-import "path/filepath"
-import "io/ioutil"
-import "os"
-import "fmt"
+import (
+	"c6/ast"
+	"c6/runtime"
+	"fmt"
+	"path/filepath"
+)
 
 const (
 	UnknownFileType uint = iota
@@ -40,8 +40,7 @@ type Parser struct {
 	GlobalContext *runtime.Context
 	ContextStack  []runtime.Context
 
-	File     string
-	FileInfo os.FileInfo
+	File *ast.File
 
 	// file content
 	Content string
@@ -73,13 +72,18 @@ func NewParser(context *runtime.Context) *Parser {
 func (parser *Parser) ParseFile(path string) error {
 	ext := filepath.Ext(path)
 	filetype := getFileTypeByExtension(ext)
-	data, err := ioutil.ReadFile(path)
+
+	f, err := ast.NewFile(path)
+	if err != nil {
+		return err
+	}
+	data, err := f.ReadFile()
 	if err != nil {
 		return err
 	}
 
 	parser.Content = string(data)
-	parser.File = path
+	parser.File = f
 
 	switch filetype {
 	case ScssFileType:

@@ -9,7 +9,6 @@ import (
 	"c6/lexer"
 	"c6/runtime"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -21,17 +20,15 @@ var HttpUrlPattern = regexp.MustCompile("^https?://")
 var AbsoluteUrlPattern = regexp.MustCompile("^[a-zA-Z]+?://")
 
 func (parser *Parser) ReadFile(file string) error {
-	fi, err := os.Stat(file)
+	f, err := ast.NewFile(file)
 	if err != nil {
 		return err
 	}
-	parser.FileInfo = fi
-
-	data, err := ioutil.ReadFile(file)
+	data, err := f.ReadFile()
 	if err != nil {
 		return err
 	}
-	parser.File = file
+	parser.File = f
 	parser.Content = string(data)
 	return nil
 }
@@ -1488,7 +1485,7 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 
 		} else {
 			// check scss import url by file system
-			if parser.File == "" {
+			if parser.File != nil {
 				panic("Unknown scss file to detect import path.")
 			}
 
