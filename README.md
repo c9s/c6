@@ -108,7 +108,7 @@ If you need to build your application with c6, you need to clone the repository 
   - [ ] Parse Selector with interpolation
   - [x] Parse RuleSet
   - [x] Parse DeclarationBlock
-  - [x] Parse Variable Assignment Statement
+  - [x] Parse Variable Assignment Stmt
   - [x] Parse PropertyName
   - [x] Parse PropertyName with interpolation
   - [x] Parse PropertyValue
@@ -238,7 +238,7 @@ If you need to build your application with c6, you need to clone the repository 
 
 - [ ] CodeGen
   - [ ] CompactCompiler
-    - [ ] CompileCssImportStatement: `@import url(...);`
+    - [ ] CompileCssImportStmt: `@import url(...);`
     - [ ] CompileRuleSet
     - [ ] CompileSelectors
       - [ ] CoimpileParentSelector
@@ -248,11 +248,11 @@ If you need to build your application with c6, you need to clone the repository 
     - [ ] CompileMediaQuery: `@media`
     - [ ] CompileSupportrQuery: `@support`
     - [ ] CompileFontFace: `@support`
-    - [ ] CompileForStatement
-    - [ ] CompileIfStatement
-      - [ ] CompileElseIfStatement
-    - [ ] CompileWhileStatement
-    - [ ] CompileEachStatement
+    - [ ] CompileForStmt
+    - [ ] CompileIfStmt
+      - [ ] CompileElseIfStmt
+    - [ ] CompileWhileStmt
+    - [ ] CompileEachStmt
     - [ ] ... list more ast nodes here ...
 
 - [ ] Syntax

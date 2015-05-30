@@ -1,5 +1,5 @@
 
-Statement := RuleSet | At-Rule | Mixin-Statement | FunctionStatement | VariableAssignment
+Stmt := RuleSet | At-Rule | Mixin-Stmt | FunctionStmt | VariableAssignment
 
 VariableAssignment := Variable ':' Value ';'
 
@@ -67,7 +67,7 @@ MapPairList := MapPair ',' MapPairList
 MapPair := Expression ':' Value
 
 
-IfStatement := 'if' <Condition> <Block>
+IfStmt := 'if' <Condition> <Block>
 
 Condition := <CompareCondition> ['and' <CompareCondition>]
            | <CompareCondition> ['or' <CompareCondition>]

@@ -19,7 +19,7 @@ type Property struct {
 Property is one of the declaration
 */
 func (self Property) CanBeDeclaration() {}
-func (self Property) CanBeStatement()   {}
+func (self Property) CanBeStmt()   {}
 
 func (self Property) AppendValue(value Expression) {
 	self.Values = append(self.Values, value)

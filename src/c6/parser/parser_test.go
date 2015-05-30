@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func RunParserTest(code string) *ast.StatementList {
+func RunParserTest(code string) *ast.StmtList {
 	var p = NewParser(runtime.NewContext())
 	return p.ParseScss(code)
 }
@@ -158,8 +158,8 @@ func TestParserImportRuleWithUrl(t *testing.T) {
 	stmts := p.ParseScss(`@import url("http://foo.com/bar.css");`)
 	assert.Equal(t, 1, len(*stmts))
 
-	rule, ok := (*stmts)[0].(*ast.ImportStatement)
-	assert.True(t, ok, "Convert to ImportStatement OK")
+	rule, ok := (*stmts)[0].(*ast.ImportStmt)
+	assert.True(t, ok, "Convert to ImportStmt OK")
 	assert.NotNil(t, rule)
 }
 
@@ -307,27 +307,27 @@ func TestParserMediaQueryNested(t *testing.T) {
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserIfTrueStatement(t *testing.T) {
+func TestParserIfTrueStmt(t *testing.T) {
 	var stmts = RunParserTest(`@if true {  }`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserIfFalseElseStatement(t *testing.T) {
+func TestParserIfFalseElseStmt(t *testing.T) {
 	var stmts = RunParserTest(`@if false {  } @else {  }`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserIfFalseOrTrueElseStatement(t *testing.T) {
+func TestParserIfFalseOrTrueElseStmt(t *testing.T) {
 	var stmts = RunParserTest(`@if false or true {  } @else {  }`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserIfTrueAndTrueOrFalseElseStatement(t *testing.T) {
+func TestParserIfTrueAndTrueOrFalseElseStmt(t *testing.T) {
 	var stmts = RunParserTest(`@if true and true or true {  } @else {  }`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserIfTrueAndTrueOrFalseElseStatement2(t *testing.T) {
+func TestParserIfTrueAndTrueOrFalseElseStmt2(t *testing.T) {
 	var stmts = RunParserTest(`@if (true and true) or true {  } @else {  }`)
 	assert.Equal(t, 1, len(*stmts))
 }
@@ -387,30 +387,30 @@ func TestParserIfDeclarationBlock(t *testing.T) {
 	`)
 }
 
-func TestParserForStatementSimple(t *testing.T) {
+func TestParserForStmtSimple(t *testing.T) {
 	var stmts = RunParserTest(`@for $var from 1 through 20 { }`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserForStatementExpressionReduce(t *testing.T) {
+func TestParserForStmtExpressionReduce(t *testing.T) {
 	var stmts = RunParserTest(`@for $var from 2 * 3 through 20 * 5 + 10 { }`)
 	assert.Equal(t, 1, len(*stmts))
 
 }
 
-func TestParserForStatementRangeOperator(t *testing.T) {
+func TestParserForStmtRangeOperator(t *testing.T) {
 	var stmts = RunParserTest(`@for $var in 1 .. 10 { }`)
 	assert.Equal(t, 1, len(*stmts))
 
 }
 
-func TestParserForStatementRangeOperatorWithExpression(t *testing.T) {
+func TestParserForStmtRangeOperatorWithExpression(t *testing.T) {
 	var stmts = RunParserTest(`@for $var in 2 + 3 .. 10 * 10 { }`)
 	assert.Equal(t, 1, len(*stmts))
 
 }
 
-func TestParserWhileStatement(t *testing.T) {
+func TestParserWhileStmt(t *testing.T) {
 	code := `
 $i: 6;
 @while $i > 0 { $i: $i - 2; }
@@ -736,7 +736,7 @@ func TestParserMassiveRules(t *testing.T) {
 }
 
 /*
-func TestParserIfStatementTrueCondition(t *testing.T) {
+func TestParserIfStmtTrueCondition(t *testing.T) {
 	p := NewParser(runtime.NewContext())
 	block := p.ParseScss(`
 	div {

@@ -1,21 +1,21 @@
 package ast
 
-type WhileStatement struct {
+type WhileStmt struct {
 	Condition Expression
 	Block     *DeclarationBlock
 	ElseBlock *DeclarationBlock
 }
 
-func (stm WhileStatement) CanBeStatement() {}
+func (stm WhileStmt) CanBeStmt() {}
 
-func (stm WhileStatement) SetElseBlock(block *DeclarationBlock) {
+func (stm WhileStmt) SetElseBlock(block *DeclarationBlock) {
 	stm.ElseBlock = block
 }
 
-func (stm WhileStatement) String() string {
+func (stm WhileStmt) String() string {
 	return "(if statement STRING() un-implemented)"
 }
 
-func NewWhileStatement(condition Expression, block *DeclarationBlock) *WhileStatement {
-	return &WhileStatement{condition, block, nil}
+func NewWhileStmt(condition Expression, block *DeclarationBlock) *WhileStmt {
+	return &WhileStmt{condition, block, nil}
 }

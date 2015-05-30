@@ -1,16 +1,16 @@
 package ast
 
-type CharsetStatement struct {
+type CharsetStmt struct {
 	Encoding string
 	Token    *Token
 }
 
-func (self CharsetStatement) CanBeStatement() {}
+func (self CharsetStmt) CanBeStmt() {}
 
-func (self CharsetStatement) String() string {
+func (self CharsetStmt) String() string {
 	return "@charset " + self.Encoding + ";"
 }
 
-func NewCharsetStatementWithToken(token *Token) *CharsetStatement {
-	return &CharsetStatement{token.Str, token}
+func NewCharsetStmtWithToken(token *Token) *CharsetStmt {
+	return &CharsetStmt{token.Str, token}
 }

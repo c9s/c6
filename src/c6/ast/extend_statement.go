@@ -1,12 +1,12 @@
 package ast
 
-type ExtendStatement struct {
+type ExtendStmt struct {
 	Selectors *ComplexSelectorList
 }
 
-func (stm ExtendStatement) CanBeStatement() {}
-func (stm ExtendStatement) String() string  { return "@extend" }
+func (stm ExtendStmt) CanBeStmt() {}
+func (stm ExtendStmt) String() string  { return "@extend" }
 
-func NewExtendStatement() *ExtendStatement {
-	return &ExtendStatement{}
+func NewExtendStmt() *ExtendStmt {
+	return &ExtendStmt{}
 }

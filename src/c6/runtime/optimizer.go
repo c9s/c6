@@ -2,7 +2,7 @@ package runtime
 
 import "c6/ast"
 
-func OptimizeIfStatement(parentBlock *ast.Block, stm *ast.IfStatement) {
+func OptimizeIfStmt(parentBlock *ast.Block, stm *ast.IfStmt) {
 
 	// TODO: select passed condition and merge block
 	// try to simplify the condition without context and symbol table

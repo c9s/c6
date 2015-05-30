@@ -10,7 +10,7 @@ DeclarationBlock.
 type DeclarationBlock struct {
 	// The symbol table for storing constant values
 	// Only constants can be stored here...
-	Statements *StatementList
+	Stmts *StmtList
 
 	// Nested rulesets
 	SubRuleSets []*RuleSet
@@ -18,15 +18,15 @@ type DeclarationBlock struct {
 
 func NewDeclarationBlock() *DeclarationBlock {
 	return &DeclarationBlock{
-		Statements: &StatementList{},
+		Stmts: &StmtList{},
 	}
 }
 
 /**
 Append a Declaration
 */
-func (self *DeclarationBlock) Append(decl Statement) {
-	self.Statements.Append(decl)
+func (self *DeclarationBlock) Append(decl Stmt) {
+	self.Stmts.Append(decl)
 }
 
 func (self *DeclarationBlock) AppendSubRuleSet(ruleset *RuleSet) {
@@ -34,15 +34,15 @@ func (self *DeclarationBlock) AppendSubRuleSet(ruleset *RuleSet) {
 	self.SubRuleSets = newRuleSets
 }
 
-func (self *DeclarationBlock) MergeStatements(stmts *StatementList) {
+func (self *DeclarationBlock) MergeStmts(stmts *StmtList) {
 	for _, stm := range *stmts {
-		self.Statements.Append(stm)
+		self.Stmts.Append(stm)
 	}
 }
 
 func (self DeclarationBlock) String() (out string) {
 	out += "{\n"
-	for _, decl := range *self.Statements {
+	for _, decl := range *self.Stmts {
 		out += decl.String() + "\n"
 	}
 	out += "}"

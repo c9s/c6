@@ -17,7 +17,7 @@ type VariableAssignment struct {
 Property is one of the declaration
 */
 func (self VariableAssignment) CanBeDeclaration() {}
-func (self VariableAssignment) CanBeStatement()   {}
+func (self VariableAssignment) CanBeStmt()   {}
 
 func (self VariableAssignment) String() string {
 	return self.Variable.String() + " = " + self.Expression.String()

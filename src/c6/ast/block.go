@@ -1,32 +1,32 @@
 package ast
 
 type Block struct {
-	Statements *StatementList
+	Stmts *StmtList
 }
 
 type BlockNode interface {
-	MergeStatements(stmts *StatementList)
+	MergeStmts(stmts *StmtList)
 }
 
 func NewBlock() *Block {
 	return &Block{
-		Statements: &StatementList{},
+		Stmts: &StmtList{},
 	}
 }
 
 // Override the statements
-func (self *Block) SetStatements(stms *StatementList) {
-	self.Statements = stms
+func (self *Block) SetStmts(stms *StmtList) {
+	self.Stmts = stms
 }
 
 func (self *Block) MergeBlock(block *Block) {
-	for _, stm := range *block.Statements {
-		*self.Statements = append(*self.Statements, stm)
+	for _, stm := range *block.Stmts {
+		*self.Stmts = append(*self.Stmts, stm)
 	}
 }
 
-func (self *Block) MergeStatements(stmts *StatementList) {
+func (self *Block) MergeStmts(stmts *StmtList) {
 	for _, stm := range *stmts {
-		self.Statements.Append(stm)
+		self.Stmts.Append(stm)
 	}
 }

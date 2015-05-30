@@ -1,15 +1,15 @@
 package ast
 
-type ContentStatement struct {
+type ContentStmt struct {
 	Token *Token
 }
 
-func (stm ContentStatement) CanBeStatement() {}
+func (stm ContentStmt) CanBeStmt() {}
 
-func (stm ContentStatement) String() string {
+func (stm ContentStmt) String() string {
 	return stm.Token.String()
 }
 
-func NewContentStatementWithToken(tok *Token) *ContentStatement {
-	return &ContentStatement{tok}
+func NewContentStmtWithToken(tok *Token) *ContentStmt {
+	return &ContentStmt{tok}
 }

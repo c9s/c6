@@ -33,7 +33,7 @@ Evaluating function calls, we:
 Optimizer
 
 - [x] Constant Value elimination optimizer for VariableAssignment.
-- [ ] Call IfStatementOptimizer after the if statement is parsed.
+- [ ] Call IfStmtOptimizer after the if statement is parsed.
 
 CSS Slash and Divide
 
@@ -47,7 +47,7 @@ Nested properties
 
 - [ ] Allow declaration block after the colon of property name.
 - [ ] Allow declaration block after the property value.
-- [ ] `lexPropertyValue` should check if there is another '{' token, then we should go to `lexStatement` state.
+- [ ] `lexPropertyValue` should check if there is another '{' token, then we should go to `lexStmt` state.
 
 `@my` statement
 

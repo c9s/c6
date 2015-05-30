@@ -2,16 +2,16 @@ package ast
 
 // import ""
 
-type MixinStatement struct {
+type MixinStmt struct {
 	Token        *Token
 	Ident        *Token
 	Block        *DeclarationBlock
 	ArgumentList *ArgumentList
 }
 
-func (stm MixinStatement) CanBeStatement() {}
-func (stm MixinStatement) String() string  { return "{mixin}" }
+func (stm MixinStmt) CanBeStmt() {}
+func (stm MixinStmt) String() string  { return "{mixin}" }
 
-func NewMixinStatementWithToken(tok *Token) *MixinStatement {
-	return &MixinStatement{Token: tok}
+func NewMixinStmtWithToken(tok *Token) *MixinStmt {
+	return &MixinStmt{Token: tok}
 }

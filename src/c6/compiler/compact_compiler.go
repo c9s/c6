@@ -68,8 +68,8 @@ func (compiler *CompactCompiler) CompileComplexSelectorList(selectorList *ast.Co
 
 func (compiler *CompactCompiler) CompileDeclarationBlock(block *ast.DeclarationBlock) (out string) {
 	out += "{"
-	if block.Statements != nil {
-		for _, stm := range *block.Statements {
+	if block.Stmts != nil {
+		for _, stm := range *block.Stmts {
 			_ = stm
 		}
 	}
@@ -85,12 +85,12 @@ func (compiler *CompactCompiler) CompileRuleSet(ruleset *ast.RuleSet) (out strin
 	return out
 }
 
-func (compiler *CompactCompiler) CompileStatement(anyStm ast.Statement) string {
+func (compiler *CompactCompiler) CompileStmt(anyStm ast.Stmt) string {
 
 	switch stm := anyStm.(type) {
 	case *ast.RuleSet:
 		return compiler.CompileRuleSet(stm)
-	case *ast.ImportStatement:
+	case *ast.ImportStmt:
 	case *ast.VariableAssignment:
 	}
 	panic("Unsupported compilation")
@@ -103,13 +103,13 @@ func (compiler *CompactCompiler) CompileString(any interface{}) string {
 
 func (compiler *CompactCompiler) Compile(any interface{}) *bytes.Buffer {
 	switch v := any.(type) {
-	case ast.StatementList:
+	case ast.StmtList:
 		for _, stm := range v {
-			compiler.Buffer.WriteString(compiler.CompileStatement(stm))
+			compiler.Buffer.WriteString(compiler.CompileStmt(stm))
 		}
-	case *ast.StatementList:
+	case *ast.StmtList:
 		for _, stm := range *v {
-			compiler.Buffer.WriteString(compiler.CompileStatement(stm))
+			compiler.Buffer.WriteString(compiler.CompileStmt(stm))
 		}
 	}
 	return &compiler.Buffer

@@ -1,14 +1,14 @@
 package ast
 
-type ReturnStatement struct {
+type ReturnStmt struct {
 	Token *Token
 	Value Expression
 }
 
-func (stm ReturnStatement) CanBeStatement() {}
+func (stm ReturnStmt) CanBeStmt() {}
 
-func (stm ReturnStatement) String() string { return "ReturnStatement.String()" }
+func (stm ReturnStmt) String() string { return "ReturnStmt.String()" }
 
-func NewReturnStatementWithToken(tok *Token, expr Expression) *ReturnStatement {
-	return &ReturnStatement{Token: tok, Value: expr}
+func NewReturnStmtWithToken(tok *Token, expr Expression) *ReturnStmt {
+	return &ReturnStmt{Token: tok, Value: expr}
 }

@@ -33,7 +33,7 @@ func (parser *Parser) ReadFile(file string) error {
 	return nil
 }
 
-func (parser *Parser) ParseScssFile(file string) (*ast.StatementList, error) {
+func (parser *Parser) ParseScssFile(file string) (*ast.StmtList, error) {
 	err := parser.ReadFile(file)
 	if err != nil {
 		return nil, err
@@ -55,10 +55,10 @@ func (parser *Parser) ParseScssFile(file string) (*ast.StatementList, error) {
 		parser.Tokens = append(parser.Tokens, tok)
 	}
 	l.Close()
-	return parser.ParseStatements(), nil
+	return parser.ParseStmts(), nil
 }
 
-func (parser *Parser) ParseScss(code string) *ast.StatementList {
+func (parser *Parser) ParseScss(code string) *ast.StmtList {
 	l := lexer.NewLexerWithString(code)
 	parser.Input = l.GetOutput()
 
@@ -70,7 +70,7 @@ func (parser *Parser) ParseScss(code string) *ast.StatementList {
 		parser.Tokens = append(parser.Tokens, tok)
 	}
 	l.Close()
-	return parser.ParseStatements()
+	return parser.ParseStmts()
 }
 
 /*
@@ -80,16 +80,16 @@ func (parser *Parser) ParseBlock() *ast.Block {
 	debug("ParseBlock")
 	parser.expect(ast.T_BRACE_OPEN)
 	var block = ast.NewBlock()
-	block.Statements = parser.ParseStatements()
+	block.Stmts = parser.ParseStmts()
 	parser.expect(ast.T_BRACE_CLOSE)
 	return block
 }
 
-func (parser *Parser) ParseStatements() *ast.StatementList {
-	var stmts = new(ast.StatementList)
+func (parser *Parser) ParseStmts() *ast.StmtList {
+	var stmts = new(ast.StmtList)
 	// stop at t_brace end
 	for !parser.eof() {
-		if stm := parser.ParseStatement(); stm != nil {
+		if stm := parser.ParseStmt(); stm != nil {
 			*stmts = append(*stmts, stm)
 		} else {
 			break
@@ -98,7 +98,7 @@ func (parser *Parser) ParseStatements() *ast.StatementList {
 	return stmts
 }
 
-func (parser *Parser) ParseStatement() ast.Statement {
+func (parser *Parser) ParseStmt() ast.Stmt {
 	var token = parser.peek()
 
 	if token == nil {
@@ -107,35 +107,35 @@ func (parser *Parser) ParseStatement() ast.Statement {
 
 	switch token.Type {
 	case ast.T_IMPORT:
-		return parser.ParseImportStatement()
+		return parser.ParseImportStmt()
 	case ast.T_CHARSET:
-		return parser.ParseCharsetStatement()
+		return parser.ParseCharsetStmt()
 	case ast.T_MEDIA:
-		return parser.ParseMediaQueryStatement()
+		return parser.ParseMediaQueryStmt()
 	case ast.T_MIXIN:
-		return parser.ParseMixinStatement()
+		return parser.ParseMixinStmt()
 	case ast.T_FUNCTION:
 		return parser.ParseFunctionDeclaration()
 	case ast.T_FONT_FACE:
-		return parser.ParseFontFaceStatement()
+		return parser.ParseFontFaceStmt()
 	case ast.T_INCLUDE:
-		return parser.ParseIncludeStatement()
+		return parser.ParseIncludeStmt()
 	case ast.T_VARIABLE:
 		return parser.ParseVariableAssignment()
 	case ast.T_RETURN:
-		return parser.ParseReturnStatement()
+		return parser.ParseReturnStmt()
 	case ast.T_IF:
-		return parser.ParseIfStatement()
+		return parser.ParseIfStmt()
 	case ast.T_EXTEND:
-		return parser.ParseExtendStatement()
+		return parser.ParseExtendStmt()
 	case ast.T_FOR:
-		return parser.ParseForStatement()
+		return parser.ParseForStmt()
 	case ast.T_WHILE:
-		return parser.ParseWhileStatement()
+		return parser.ParseWhileStmt()
 	case ast.T_CONTENT:
-		return parser.ParseContentStatement()
+		return parser.ParseContentStmt()
 	case ast.T_ERROR, ast.T_WARN, ast.T_INFO:
-		return parser.ParseLogStatement()
+		return parser.ParseLogStmt()
 	case ast.T_BRACKET_CLOSE:
 		return nil
 	}
@@ -152,7 +152,7 @@ func (parser *Parser) ParseStatement() ast.Statement {
 	return nil
 }
 
-func (parser *Parser) ParseIfStatement() ast.Statement {
+func (parser *Parser) ParseIfStmt() ast.Stmt {
 	parser.expect(ast.T_IF)
 	condition := parser.ParseCondition()
 	if condition == nil {
@@ -160,9 +160,9 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 	}
 
 	var block = parser.ParseDeclarationBlock()
-	var stm = ast.NewIfStatement(condition, block)
+	var stm = ast.NewIfStmt(condition, block)
 
-	// TODO: OptimizeIfStatement(...)
+	// TODO: OptimizeIfStmt(...)
 
 	// If these is more else if statement
 	var tok = parser.peek()
@@ -172,7 +172,7 @@ func (parser *Parser) ParseIfStatement() ast.Statement {
 		// XXX: handle error here
 		var condition = parser.ParseCondition()
 		var elseifblock = parser.ParseDeclarationBlock()
-		var elseIfStm = ast.NewIfStatement(condition, elseifblock)
+		var elseIfStm = ast.NewIfStmt(condition, elseifblock)
 		stm.AppendElseIf(elseIfStm)
 		tok = parser.peek()
 	}
@@ -432,15 +432,15 @@ func (parser *Parser) ParseSelectorList() *ast.ComplexSelectorList {
 	return complexSelectorList
 }
 
-func (parser *Parser) ParseExtendStatement() ast.Statement {
+func (parser *Parser) ParseExtendStmt() ast.Stmt {
 	parser.expect(ast.T_EXTEND)
-	var stm = ast.NewExtendStatement()
+	var stm = ast.NewExtendStmt()
 	stm.Selectors = parser.ParseSelectorList()
 	parser.expect(ast.T_SEMICOLON)
 	return stm
 }
 
-func (parser *Parser) ParseRuleSet() ast.Statement {
+func (parser *Parser) ParseRuleSet() ast.Stmt {
 	var ruleset = ast.NewRuleSet()
 	ruleset.Selectors = parser.ParseSelectorList()
 
@@ -1003,7 +1003,7 @@ func (parser *Parser) ParseVariable() *ast.Variable {
 	return nil
 }
 
-func (parser *Parser) ParseVariableAssignment() ast.Statement {
+func (parser *Parser) ParseVariableAssignment() ast.Stmt {
 	var variable = parser.ParseVariable()
 
 	// skip ":", T_COLON token
@@ -1170,7 +1170,7 @@ func (parser *Parser) ParseInterpolation() ast.Expression {
 	return ast.NewInterpolation(expr, startToken, endToken)
 }
 
-func (parser *Parser) ParseDeclaration() ast.Statement {
+func (parser *Parser) ParseDeclaration() ast.Stmt {
 	return nil
 }
 
@@ -1207,7 +1207,7 @@ func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 				}
 			}
 
-		} else if stm := parser.ParseStatement(); stm != nil {
+		} else if stm := parser.ParseStmt(); stm != nil {
 
 		} else {
 			panic(fmt.Errorf("Parse failed at token %s", tok))
@@ -1219,10 +1219,10 @@ func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 	return declBlock
 }
 
-func (parser *Parser) ParseCharsetStatement() ast.Statement {
+func (parser *Parser) ParseCharsetStmt() ast.Stmt {
 	parser.expect(ast.T_CHARSET)
 	var tok = parser.next()
-	var stm = ast.NewCharsetStatementWithToken(tok)
+	var stm = ast.NewCharsetStmtWithToken(tok)
 	parser.expect(ast.T_SEMICOLON)
 	return stm
 }
@@ -1231,9 +1231,9 @@ func (parser *Parser) ParseCharsetStatement() ast.Statement {
 	Media Query Syntax:
 	https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Media_queries
 */
-func (parser *Parser) ParseMediaQueryStatement() ast.Statement {
+func (parser *Parser) ParseMediaQueryStmt() ast.Stmt {
 	// expect the '@media' token
-	var stm = ast.NewMediaQueryStatement()
+	var stm = ast.NewMediaQueryStmt()
 	parser.expect(ast.T_MEDIA)
 	if list := parser.ParseMediaQueryList(); list != nil {
 		stm.MediaQueryList = list
@@ -1345,11 +1345,11 @@ func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
 	return nil
 }
 
-func (parser *Parser) ParseWhileStatement() ast.Statement {
+func (parser *Parser) ParseWhileStmt() ast.Stmt {
 	parser.expect(ast.T_WHILE)
 	var condition = parser.ParseCondition()
 	var block = parser.ParseDeclarationBlock()
-	return ast.NewWhileStatement(condition, block)
+	return ast.NewWhileStmt(condition, block)
 }
 
 /*
@@ -1361,12 +1361,12 @@ Parse the SASS @for statement.
 
 @see http://sass-lang.com/documentation/file.SASS_REFERENCE.html#_10
 */
-func (parser *Parser) ParseForStatement() ast.Statement {
+func (parser *Parser) ParseForStmt() ast.Stmt {
 	parser.expect(ast.T_FOR)
 
 	// get the variable token
 	var variable = parser.ParseVariable()
-	var stm = ast.NewForStatement(variable)
+	var stm = ast.NewForStmt(variable)
 
 	if parser.accept(ast.T_FOR_FROM) != nil {
 
@@ -1435,12 +1435,12 @@ The @import syntax is described here:
 
 @see https://developer.mozilla.org/en-US/docs/Web/CSS/@import
 */
-func (parser *Parser) ParseImportStatement() ast.Statement {
+func (parser *Parser) ParseImportStmt() ast.Stmt {
 	// skip the ast.T_IMPORT token
 	parser.expect(ast.T_IMPORT)
 
 	// Create the import statement node
-	var stm = ast.NewImportStatement()
+	var stm = ast.NewImportStmt()
 
 	var tok = parser.peek()
 
@@ -1540,7 +1540,7 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 				//
 				// note that the parse method might push the statements to global block, we should avoid that.
 				var currentBlock = parser.GlobalContext.CurrentBlock()
-				currentBlock.MergeStatements(stmts)
+				currentBlock.MergeStmts(stmts)
 			}
 
 		}
@@ -1558,14 +1558,14 @@ func (parser *Parser) ParseImportStatement() ast.Statement {
 	return stm
 }
 
-func (parser *Parser) ParseReturnStatement() ast.Statement {
+func (parser *Parser) ParseReturnStmt() ast.Stmt {
 	var returnTok = parser.expect(ast.T_RETURN)
 	var valueExpr = parser.ParseExpression(true)
 	parser.expect(ast.T_SEMICOLON)
-	return ast.NewReturnStatementWithToken(returnTok, valueExpr)
+	return ast.NewReturnStmtWithToken(returnTok, valueExpr)
 }
 
-func (parser *Parser) ParseFunctionDeclaration() ast.Statement {
+func (parser *Parser) ParseFunctionDeclaration() ast.Stmt {
 	parser.expect(ast.T_FUNCTION)
 	var identTok = parser.expect(ast.T_FUNCTION_NAME)
 	var args = parser.ParseFunctionPrototype()
@@ -1576,9 +1576,9 @@ func (parser *Parser) ParseFunctionDeclaration() ast.Statement {
 	return fun
 }
 
-func (parser *Parser) ParseMixinStatement() ast.Statement {
+func (parser *Parser) ParseMixinStmt() ast.Stmt {
 	var mixinTok = parser.expect(ast.T_MIXIN)
-	var stm = ast.NewMixinStatementWithToken(mixinTok)
+	var stm = ast.NewMixinStmtWithToken(mixinTok)
 
 	var tok = parser.next()
 
@@ -1689,9 +1689,9 @@ func (parser *Parser) ParseFunctionCallArguments() *ast.ArgumentList {
 	return args
 }
 
-func (parser *Parser) ParseIncludeStatement() ast.Statement {
+func (parser *Parser) ParseIncludeStmt() ast.Stmt {
 	var tok = parser.expect(ast.T_INCLUDE)
-	var stm = ast.NewIncludeStatementWithToken(tok)
+	var stm = ast.NewIncludeStmtWithToken(tok)
 
 	var tok2 = parser.next()
 
@@ -1720,17 +1720,17 @@ func (parser *Parser) ParseIncludeStatement() ast.Statement {
 	return stm
 }
 
-func (parser *Parser) ParseFontFaceStatement() ast.Statement {
+func (parser *Parser) ParseFontFaceStmt() ast.Stmt {
 	parser.expect(ast.T_FONT_FACE)
 	block := parser.ParseDeclarationBlock()
-	return &ast.FontFaceStatement{block}
+	return &ast.FontFaceStmt{block}
 }
 
-func (parser *Parser) ParseLogStatement() ast.Statement {
+func (parser *Parser) ParseLogStmt() ast.Stmt {
 	if directiveTok := parser.acceptAnyOf3(ast.T_ERROR, ast.T_WARN, ast.T_INFO); directiveTok != nil {
 		var expr = parser.ParseExpression(false)
 		parser.expect(ast.T_SEMICOLON)
-		return &ast.LogStatement{directiveTok, expr}
+		return &ast.LogStmt{directiveTok, expr}
 	}
 	panic(SyntaxError{
 		Reason:      "Expecting @error, @warn, @info directive",
@@ -1742,8 +1742,8 @@ func (parser *Parser) ParseLogStatement() ast.Statement {
 /*
 @content directive is only allowed in mixin block
 */
-func (parser *Parser) ParseContentStatement() ast.Statement {
+func (parser *Parser) ParseContentStmt() ast.Stmt {
 	var tok = parser.expect(ast.T_CONTENT)
 	parser.expect(ast.T_SEMICOLON)
-	return ast.NewContentStatementWithToken(tok)
+	return ast.NewContentStmtWithToken(tok)
 }

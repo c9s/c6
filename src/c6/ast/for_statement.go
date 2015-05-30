@@ -1,6 +1,6 @@
 package ast
 
-type ForStatement struct {
+type ForStmt struct {
 	Variable *Variable
 	From     Expression
 	Through  Expression
@@ -8,14 +8,14 @@ type ForStatement struct {
 	Block    *DeclarationBlock
 }
 
-func (stm ForStatement) CanBeStatement() {}
+func (stm ForStmt) CanBeStmt() {}
 
-func (stm ForStatement) String() string {
+func (stm ForStmt) String() string {
 	return "@for " + stm.Variable.String() + " from " + stm.From.String() + " through " + stm.Through.String() + " {  }\n"
 }
 
-func NewForStatement(variable *Variable) *ForStatement {
-	return &ForStatement{
+func NewForStmt(variable *Variable) *ForStmt {
+	return &ForStmt{
 		Variable: variable,
 	}
 }

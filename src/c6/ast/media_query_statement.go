@@ -1,6 +1,6 @@
 package ast
 
-type MediaQueryStatement struct {
+type MediaQueryStmt struct {
 	MediaQueryList *MediaQueryList
 	Block          *DeclarationBlock
 }
@@ -11,13 +11,13 @@ func NewMediaQueryList() *MediaQueryList {
 	return &MediaQueryList{}
 }
 
-func (stm MediaQueryStatement) CanBeStatement() {}
+func (stm MediaQueryStmt) CanBeStmt() {}
 
-func NewMediaQueryStatement() *MediaQueryStatement {
-	return &MediaQueryStatement{}
+func NewMediaQueryStmt() *MediaQueryStmt {
+	return &MediaQueryStmt{}
 }
 
-func (stm MediaQueryStatement) String() (out string) {
+func (stm MediaQueryStmt) String() (out string) {
 	for _, mediaQuery := range *stm.MediaQueryList {
 		out += ", " + mediaQuery.String()
 	}

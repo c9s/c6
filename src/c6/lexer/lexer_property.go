@@ -119,7 +119,7 @@ func lexProperty(l *Lexer) stateFn {
 
 			l.next()
 			l.emit(ast.T_BRACE_OPEN)
-			return lexStatement
+			return lexStmt
 
 		} else if lexExpression(l) == nil {
 			break
@@ -142,7 +142,7 @@ func lexProperty(l *Lexer) stateFn {
 	if l.accept("}") {
 		l.emit(ast.T_BRACE_CLOSE)
 	}
-	return lexStatement
+	return lexStmt
 }
 
 func lexColon(l *Lexer) stateFn {

@@ -1,8 +1,8 @@
 package ast
 
-type FontFaceStatement struct {
+type FontFaceStmt struct {
 	Block *DeclarationBlock
 }
 
-func (stm FontFaceStatement) CanBeStatement() {}
-func (stm FontFaceStatement) String() string  { return "" }
+func (stm FontFaceStmt) CanBeStmt() {}
+func (stm FontFaceStmt) String() string  { return "" }

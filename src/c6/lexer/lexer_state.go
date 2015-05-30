@@ -39,7 +39,7 @@ func lexCommentLine(l *Lexer, emit bool) stateFn {
 	} else {
 		l.ignore()
 	}
-	return lexStatement
+	return lexStmt
 }
 
 /*
@@ -88,12 +88,12 @@ func lexCommentBlock(l *Lexer, emit bool) stateFn {
 			}
 			l.match("*/")
 			l.ignore()
-			return lexStatement
+			return lexStmt
 		}
 		r = l.next()
 	}
 	l.error("Expecting comment end mark '*/'.", r)
-	return lexStatement
+	return lexStmt
 }
 
 func lexComment(l *Lexer, emit bool) stateFn {
@@ -191,7 +191,7 @@ func lexAtRule(l *Lexer) stateFn {
 			l.ignoreSpaces()
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
-			return lexStatement
+			return lexStmt
 
 		case ast.T_PAGE:
 			l.ignoreSpaces()
@@ -200,45 +200,45 @@ func lexAtRule(l *Lexer) stateFn {
 			if l.peek() == ':' {
 				lexPseudoSelector(l)
 			}
-			return lexStatement
+			return lexStmt
 
 		case ast.T_MEDIA:
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
-			return lexStatement
+			return lexStmt
 
 		case ast.T_CHARSET:
 			l.ignoreSpaces()
-			return lexStatement
+			return lexStmt
 
 		case ast.T_IF:
 
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
-			return lexStatement
+			return lexStmt
 
 		case ast.T_ELSE_IF:
 
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
-			return lexStatement
+			return lexStmt
 
 		case ast.T_ELSE:
 
-			return lexStatement
+			return lexStmt
 
 		case ast.T_FOR:
 
-			return lexForStatement
+			return lexForStmt
 
 		case ast.T_WHILE:
 
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
-			return lexStatement
+			return lexStmt
 
 		case ast.T_CONTENT:
-			return lexStatement
+			return lexStmt
 
 		case ast.T_EXTEND:
 			return lexSelectors
@@ -246,10 +246,10 @@ func lexAtRule(l *Lexer) stateFn {
 		case ast.T_FUNCTION, ast.T_RETURN, ast.T_MIXIN, ast.T_INCLUDE:
 			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
 			}
-			return lexStatement
+			return lexStmt
 
 		case ast.T_FONT_FACE:
-			return lexStatement
+			return lexStmt
 
 		default:
 			var r = l.next()
@@ -321,10 +321,10 @@ func lexVariableAssignment(l *Lexer) stateFn {
 	} else if l.accept("}") {
 		l.emit(ast.T_BRACE_CLOSE)
 	}
-	return lexStatement
+	return lexStmt
 }
 
-func lexForStatement(l *Lexer) stateFn {
+func lexForStmt(l *Lexer) stateFn {
 	l.ignoreSpaces()
 	lexVariableName(l)
 
@@ -335,7 +335,7 @@ func lexForStatement(l *Lexer) stateFn {
 	for fn != nil {
 		fn = lexExpression(l)
 	}
-	return lexStatement
+	return lexStmt
 }
 
 // $var-rgba(255,255,0)
@@ -370,7 +370,7 @@ func lexVariableName(l *Lexer) stateFn {
 		} else if r == '}' {
 			l.backup()
 			l.emit(ast.T_VARIABLE)
-			return lexStatement
+			return lexStmt
 			break
 		} else if unicode.IsSpace(r) || r == ';' {
 			break
@@ -384,7 +384,7 @@ func lexVariableName(l *Lexer) stateFn {
 		l.emit(ast.T_VARIABLE_LENGTH_ARGUMENTS)
 	}
 
-	return lexStatement
+	return lexStmt
 }
 
 func lexHexColor(l *Lexer) stateFn {
@@ -439,7 +439,7 @@ func lexNumberUnit(l *Lexer) stateFn {
 	}
 
 	if l.peek() == ';' {
-		return lexStatement
+		return lexStmt
 	}
 	return lexExpression
 }
@@ -487,7 +487,7 @@ func lexNumber(l *Lexer) stateFn {
 	return lexNumberUnit
 }
 
-func lexStatement(l *Lexer) stateFn {
+func lexStmt(l *Lexer) stateFn {
 	// strip the leading spaces of a statement
 	l.ignoreSpaces()
 
@@ -515,29 +515,29 @@ func lexStatement(l *Lexer) stateFn {
 
 		l.next()
 		l.emit(ast.T_BRACE_OPEN)
-		return lexStatement
+		return lexStmt
 
 	} else if r == '}' {
 
 		l.next()
 		l.emit(ast.T_BRACE_CLOSE)
-		return lexStatement
+		return lexStmt
 
 	} else if l.match("<!--") {
 
 		l.emit(ast.T_CDO)
-		return lexStatement
+		return lexStmt
 
 	} else if l.match("-->") {
 
 		l.emit(ast.T_CDC)
-		return lexStatement
+		return lexStmt
 
 	} else if r == '/' && (r2 == '*' || r2 == '/') {
 
 		lexComment(l, true)
 
-		return lexStatement
+		return lexStmt
 
 	} else if r == '$' { // it's a variable assignment statement
 
@@ -629,5 +629,5 @@ func lexStatement(l *Lexer) stateFn {
 }
 
 func lexStart(l *Lexer) stateFn {
-	return lexStatement
+	return lexStmt
 }

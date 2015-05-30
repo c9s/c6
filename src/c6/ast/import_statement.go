@@ -45,15 +45,15 @@ hides the style sheet from Netscape 4, IE 4 and below, Konqueror 2
 	@import "../styles.css";
 
 */
-type ImportStatement struct {
+type ImportStmt struct {
 	Url            Url // if it's wrapped with url(...) or "string"
 	MediaQueryList []*MediaQuery
 }
 
-func NewImportStatement() *ImportStatement {
-	return &ImportStatement{}
+func NewImportStmt() *ImportStmt {
+	return &ImportStmt{}
 }
 
-func (self ImportStatement) CanBeStatement() {}
+func (self ImportStmt) CanBeStmt() {}
 
-func (self ImportStatement) String() string { return "ImportStatement.String()" }
+func (self ImportStmt) String() string { return "ImportStmt.String()" }

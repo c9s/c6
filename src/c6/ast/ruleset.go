@@ -19,7 +19,7 @@ func (self *RuleSet) GetSubRuleSets() []*RuleSet {
 }
 
 // Complete the statement interface
-func (self *RuleSet) CanBeStatement() {}
+func (self *RuleSet) CanBeStmt() {}
 
 func (self RuleSet) String() string {
 	return "String() not implemented yet."

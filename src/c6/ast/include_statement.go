@@ -1,17 +1,17 @@
 package ast
 
-type IncludeStatement struct {
+type IncludeStmt struct {
 	Token        *Token // @include
 	MixinIdent   *Token // mixin identitfier
 	ArgumentList *ArgumentList
 	ContentBlock *DeclarationBlock // if any
 }
 
-func (stm IncludeStatement) CanBeStatement() {}
-func (stm IncludeStatement) String() string  { return "IncludeStatement.String()" }
+func (stm IncludeStmt) CanBeStmt() {}
+func (stm IncludeStmt) String() string  { return "IncludeStmt.String()" }
 
-func NewIncludeStatementWithToken(token *Token) *IncludeStatement {
-	return &IncludeStatement{
+func NewIncludeStmtWithToken(token *Token) *IncludeStmt {
+	return &IncludeStmt{
 		Token: token,
 	}
 }

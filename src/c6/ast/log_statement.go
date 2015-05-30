@@ -1,9 +1,9 @@
 package ast
 
-type LogStatement struct {
+type LogStmt struct {
 	Directive *Token
 	Expr      Expression
 }
 
-func (stm LogStatement) CanBeStatement() {}
-func (stm LogStatement) String() string  { return "LogStatement.String()" }
+func (stm LogStmt) CanBeStmt() {}
+func (stm LogStmt) String() string  { return "LogStmt.String()" }

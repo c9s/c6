@@ -434,9 +434,9 @@ func TestLexerRuleWithSubRule(t *testing.T) {
 }
 
 /**********************************************************************
-If Statement Test Case
+If Stmt Test Case
 ***********************************************************************/
-func TestLexerIfStatementTrueCondition(t *testing.T) {
+func TestLexerIfStmtTrueCondition(t *testing.T) {
 	AssertLexerTokenSequence(t, `
 	@if true {
 		color: red;
@@ -450,7 +450,7 @@ func TestLexerIfStatementTrueCondition(t *testing.T) {
 	})
 }
 
-func TestLexerIfStatementFalseCondition(t *testing.T) {
+func TestLexerIfStmtFalseCondition(t *testing.T) {
 	AssertLexerTokenSequence(t, `
 	@if false {
 		color: red;
@@ -464,7 +464,7 @@ func TestLexerIfStatementFalseCondition(t *testing.T) {
 	})
 }
 
-func TestLexerIfStatementTrueOrFalseCondition(t *testing.T) {
+func TestLexerIfStmtTrueOrFalseCondition(t *testing.T) {
 	AssertLexerTokenSequence(t, `
 	@if true or false {
 		color: red;
@@ -479,7 +479,7 @@ func TestLexerIfStatementTrueOrFalseCondition(t *testing.T) {
 	})
 }
 
-func TestLexerIfStatementFunctionCallEqualToNumber(t *testing.T) {
+func TestLexerIfStmtFunctionCallEqualToNumber(t *testing.T) {
 	AssertLexerTokenSequence(t, `
 	@if type-of(nth($x, 3)) == 10 {
 	}
@@ -491,7 +491,7 @@ func TestLexerIfStatementFunctionCallEqualToNumber(t *testing.T) {
 /**********************************************************************
 For statement
 ***********************************************************************/
-func TestLexerForStatementSimpleFromThrough(t *testing.T) {
+func TestLexerForStmtSimpleFromThrough(t *testing.T) {
 	AssertLexerTokenSequence(t, `@for $var from 1 through 20 {  }`, []ast.TokenType{
 		ast.T_FOR, ast.T_VARIABLE, ast.T_FOR_FROM, ast.T_INTEGER, ast.T_FOR_THROUGH, ast.T_INTEGER, ast.T_BRACE_OPEN, ast.T_BRACE_CLOSE,
 	})
