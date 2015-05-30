@@ -6,19 +6,19 @@ SymTableItem can be anything
 This package doesn't use ast.* types because we have to avoid package acyclic
 reference.
 */
-type SymTableItem interface{}
+type SymTable map[string]interface{}
 
-type SymTable map[string]SymTableItem
+// type FunctionSymTable map[string]*ast.Function
 
 func NewSymTable() *SymTable {
 	return &SymTable{}
 }
 
-func (self SymTable) Set(name string, v SymTableItem) {
+func (self SymTable) Set(name string, v interface{}) {
 	self[name] = v
 }
 
-func (self SymTable) Get(name string) (SymTableItem, bool) {
+func (self SymTable) Get(name string) (interface{}, bool) {
 	if val, ok := self[name]; ok {
 		return val, true
 	}
