@@ -49,6 +49,10 @@ func (parser *Parser) ParseScssFile(file string) (*ast.StatementList, error) {
 	// Run lexer concurrently
 	go l.Run()
 
+	// consume the tokens from the input channel of the lexer
+	// TODO: use concurrent method to consume the inputs, we also need to
+	// benchmark this when the file is large. Don't need to consider small files because small files
+	// can always be compiled fast (less than 500 millisecond).
 	var tok *ast.Token = nil
 	for tok = <-parser.Input; tok != nil; tok = <-parser.Input {
 		parser.Tokens = append(parser.Tokens, tok)
