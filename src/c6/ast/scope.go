@@ -66,3 +66,8 @@ var objectKindStrings = [...]string{
 }
 
 func (kind ObjectKind) String() string { return objectKindStrings[kind] }
+
+// This function creates a new object of a given kind and name.
+func NewObject(kind ObjectKind, name string) *Object {
+	return &Object{Kind: kind, Name: name}
+}
