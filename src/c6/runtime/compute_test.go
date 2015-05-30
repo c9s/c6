@@ -4,6 +4,7 @@ import "c6/ast"
 import "testing"
 import "github.com/stretchr/testify/assert"
 
+/*
 func TestReduceExpressionForUnsolveableExpression(t *testing.T) {
 	expr := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS), ast.NewNumber(10, nil, nil), ast.NewNumber(3, nil, nil), false)
 	expr2 := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS), expr, ast.NewVariable("$a"), false)
@@ -12,7 +13,9 @@ func TestReduceExpressionForUnsolveableExpression(t *testing.T) {
 	assert.Equal(t, "13+$a", expr2.String())
 	t.Logf("Reduced expression: %+v", expr2)
 }
+*/
 
+/*
 func TestReduceExpressionForUnsolveableExpression2(t *testing.T) {
 	context := NewContext()
 	context.CurrentBlock().GetSymTable().Set("$a", ast.NewNumber(10, nil, nil))
@@ -37,6 +40,7 @@ func TestReduceExpressionForUnsolveableExpression2(t *testing.T) {
 	assert.Equal(t, "40+$c", expr.String())
 	t.Logf("Reduced expression: %+v", expr)
 }
+*/
 
 func TestReduceExpressionForSolveableExpression(t *testing.T) {
 	expr := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS), ast.NewNumber(10, nil, nil), ast.NewNumber(3, nil, nil), false)
