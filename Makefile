@@ -36,7 +36,7 @@ cross-compile:
 	gox -output "build/{{.Dir}}.{{.OS}}_{{.Arch}}" c6/...
 
 cover:
-	go test -cover -coverprofile c6.cov -coverpkg c6,c6/ast,c6/runtime,c6/parser c6/parser
+	go test -cover -coverprofile c6.cov -coverpkg c6/ast,c6/runtime,c6/parser c6/parser
 
 cover-annotate: cov
 	vendor/bin/gocov convert c6.cov | vendor/bin/gocov annotate -
