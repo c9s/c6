@@ -42,13 +42,23 @@ type Parser struct {
 
 	File     string
 	FileInfo os.FileInfo
-	Content  string
-	Input    chan *ast.Token
 
-	// integer for counting token
-	Pos         int
+	// file content
+	Content string
+
+	// The token input channel, feeded by c6/lexer
+	Input chan *ast.Token
+
+	// Integer for counting token
+	Pos int
+
+	// Position saved for rollbacking back.
 	RollbackPos int
-	Tokens      []*ast.Token
+
+	// A token slice that contains all lexed tokens
+	Tokens []*ast.Token
+
+	TopScope *ast.Scope // The top-most scope
 }
 
 func NewParser(context *runtime.Context) *Parser {

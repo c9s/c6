@@ -20,7 +20,7 @@ import (
 var HttpUrlPattern = regexp.MustCompile("^https?://")
 var AbsoluteUrlPattern = regexp.MustCompile("^[a-zA-Z]+?://")
 
-func (parser *Parser) OpenFile(file string) error {
+func (parser *Parser) ReadFile(file string) error {
 	fi, err := os.Stat(file)
 	if err != nil {
 		return err
@@ -37,7 +37,7 @@ func (parser *Parser) OpenFile(file string) error {
 }
 
 func (parser *Parser) ParseScssFile(file string) (*ast.StatementList, error) {
-	err := parser.OpenFile(file)
+	err := parser.ReadFile(file)
 	if err != nil {
 		return nil, err
 	}
