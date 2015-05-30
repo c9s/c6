@@ -1,7 +1,5 @@
 package ast
 
-import "c6/symtable"
-
 /*
 DeclarationBlock.
 
@@ -12,8 +10,6 @@ DeclarationBlock.
 type DeclarationBlock struct {
 	// The symbol table for storing constant values
 	// Only constants can be stored here...
-	SymTable *symtable.SymTable
-
 	Statements *StatementList
 
 	// Nested rulesets
@@ -23,7 +19,6 @@ type DeclarationBlock struct {
 func NewDeclarationBlock() *DeclarationBlock {
 	return &DeclarationBlock{
 		Statements: &StatementList{},
-		SymTable:   &symtable.SymTable{},
 	}
 }
 
@@ -43,10 +38,6 @@ func (self *DeclarationBlock) MergeStatements(stmts *StatementList) {
 	for _, stm := range *stmts {
 		self.Statements.Append(stm)
 	}
-}
-
-func (self *DeclarationBlock) GetSymTable() *symtable.SymTable {
-	return self.SymTable
 }
 
 func (self DeclarationBlock) String() (out string) {

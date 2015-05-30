@@ -1030,13 +1030,16 @@ func (parser *Parser) ParseVariableAssignment() ast.Statement {
 		}
 	}
 
+	// FIXME
 	// Even we can visit the variable assignment in the AST visitors but if we
 	// could save the information, we can reduce the effort for the visitors.
-	if currentBlock := parser.GlobalContext.CurrentBlock(); currentBlock != nil {
-		currentBlock.GetSymTable().Set(variable.Name, valExpr)
-	} else {
-		panic("nil block")
-	}
+	/*
+		if currentBlock := parser.GlobalContext.CurrentBlock(); currentBlock != nil {
+			currentBlock.GetSymTable().Set(variable.Name, valExpr)
+		} else {
+			panic("nil block")
+		}
+	*/
 
 	var stm = ast.NewVariableAssignment(variable, valExpr)
 	parser.ParseFlags(stm)

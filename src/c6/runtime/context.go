@@ -62,13 +62,19 @@ func (context *Context) TopRuleSet() *ast.RuleSet {
 func (context *Context) GetVariable(name string) (symtable.SymTableItem, bool) {
 	var idx = len(context.RuleSetStack) - 1
 	for ; idx > 0; idx-- {
-		ruleset := context.RuleSetStack[idx]
-		if variable, ok := ruleset.Block.SymTable.Get(name); ok {
+		/*
+			FIXME:
+			ruleset := context.RuleSetStack[idx]
+			if variable, ok := ruleset.Block.SymTable.Get(name); ok {
+				return variable, true
+			}
+		*/
+	}
+	/*
+		FIXME:
+		if variable, ok := context.GlobalBlock.SymTable.Get(name); ok {
 			return variable, true
 		}
-	}
-	if variable, ok := context.GlobalBlock.SymTable.Get(name); ok {
-		return variable, true
-	}
+	*/
 	return nil, false
 }

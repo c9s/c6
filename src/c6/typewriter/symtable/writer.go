@@ -23,9 +23,11 @@ func (sw *SymTableWriter) Name() string {
 	return "symtable"
 }
 
-func (sw *SymTableWriter) Imports(t typewriter.Type) (result []typewriter.ImportSpec) {
-	// none
-	return result
+func (sw *SymTableWriter) Imports(t typewriter.Type) []typewriter.ImportSpec {
+	imports := []typewriter.ImportSpec{
+		{Path: "c6/ast"},
+	}
+	return imports
 }
 
 func (sw *SymTableWriter) Write(w io.Writer, t typewriter.Type) error {

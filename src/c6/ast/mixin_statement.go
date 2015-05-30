@@ -10,7 +10,7 @@ type MixinStatement struct {
 }
 
 func (stm MixinStatement) CanBeStatement() {}
-func (stm MixinStatement) String() string  { return "" }
+func (stm MixinStatement) String() string  { return "{mixin}" }
 
 func NewMixinStatementWithToken(tok *Token) *MixinStatement {
 	return &MixinStatement{Token: tok}

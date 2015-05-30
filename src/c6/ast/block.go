@@ -1,26 +1,17 @@
 package ast
 
-import "c6/symtable"
-
 type Block struct {
-	SymTable   *symtable.SymTable
 	Statements *StatementList
 }
 
 type BlockNode interface {
 	MergeStatements(stmts *StatementList)
-	GetSymTable() *symtable.SymTable
 }
 
 func NewBlock() *Block {
 	return &Block{
-		SymTable:   &symtable.SymTable{},
 		Statements: &StatementList{},
 	}
-}
-
-func (self *Block) GetSymTable() *symtable.SymTable {
-	return self.SymTable
 }
 
 // Override the statements
