@@ -103,10 +103,13 @@ func (parser *Parser) remember() {
 	parser.RollbackPos = parser.Pos
 }
 
+// rollback to the save position
 func (parser *Parser) rollback() {
 	parser.Pos = parser.RollbackPos
 }
 
+// accept() accepts one token type one time.
+// rolls back if the token type mismatch
 func (parser *Parser) accept(tokenType ast.TokenType) *ast.Token {
 	var tok = parser.next()
 	if tok != nil && tok.Type == tokenType {
@@ -116,6 +119,8 @@ func (parser *Parser) accept(tokenType ast.TokenType) *ast.Token {
 	return nil
 }
 
+// acceptAny accepts some token types, or it rolls back when the token mismatch
+// the token types.
 func (parser *Parser) acceptAny(tokenTypes ...ast.TokenType) *ast.Token {
 	var tok = parser.next()
 	for _, tokType := range tokenTypes {
