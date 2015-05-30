@@ -59,7 +59,7 @@ func (context *Context) TopRuleSet() *ast.RuleSet {
 	return nil
 }
 
-func (context *Context) GetVariable(name string) (symtable.SymTableItem, bool) {
+func (context *Context) GetVariable(name string) (interface{}, bool) {
 	var idx = len(context.RuleSetStack) - 1
 	for ; idx > 0; idx-- {
 		/*
