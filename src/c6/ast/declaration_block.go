@@ -14,6 +14,8 @@ type DeclarationBlock struct {
 
 	// Nested rulesets
 	SubRuleSets []*RuleSet
+
+	Scope *Scope
 }
 
 func NewDeclarationBlock() *DeclarationBlock {
