@@ -1,15 +1,16 @@
 ======
 
-SymbolTable
+Parser Information
 
-- [x] Register parsed variable to the scope symbol table.
-  - [x] RuleSet symbol table
-  - [x] Global symbol table
-- [x] Add symbol table lookup method to the expression evaluator.
-  - [x] Add type switch case for ast.Variable struct
-- [ ] Remove symbol table from DeclarationBlock since we need new context to evaluate the blocks.
-- [ ] The context needs to be a stack, so we can push new context into the stack to evaluate the values.
-- [ ] Only constants can be registered to the DeclarationBlock
+- [ ] File Level Scope should record funtion decl, mixin decl, var decl
+- [ ] Create new scope object when entering mixin, function or a declaration
+  block of a ruleset.
+- [ ] When parsing expression, we should lookup the related symbol and connect
+  the parsed factors.  For example, connect `$a` to the parent scope `$a`
+  declaration. this is required for compiler to evaluate the result
+
+- [ ] The ast.Scope contains the declaration, not the evaludated value.
+- [ ] compiler.Scope is somewhere that might contains the evaluated value.
 
 Function Evaluation
 

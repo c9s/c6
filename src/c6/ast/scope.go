@@ -11,7 +11,7 @@ type Scope struct {
 }
 
 func NewScope(parent *Scope) *Scope {
-	return &Scope{parent, make(map[string]*Object, 4)}
+	return &Scope{Parent: parent, Objects: make(map[string]*Object, 4)}
 }
 
 func (s *Scope) Lookup(name string) *Object {

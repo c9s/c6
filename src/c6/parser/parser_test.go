@@ -41,8 +41,8 @@ func TestParserParseFile(t *testing.T) {
 		t.Fatalf("got: %s wanted: %s", p.Content, e)
 	}
 
-	if e := testPath; e != p.File {
-		t.Fatalf("got: %s wanted: %s", p.File, e)
+	if e := testPath; e != p.File.FileName {
+		t.Fatalf("got: %s wanted: %s", p.File.FileName, e)
 	}
 }
 
