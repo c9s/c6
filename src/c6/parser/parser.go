@@ -85,6 +85,8 @@ func (parser *Parser) ParseFile(path string) error {
 	case ScssFileType:
 		parser.ParseScss(parser.Content)
 		break
+	default:
+		return fmt.Errorf("Unsupported file format: %s", path)
 	}
 	return nil
 }
