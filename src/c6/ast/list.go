@@ -4,14 +4,14 @@ import "strings"
 
 type List struct {
 	Separator   string
-	Expressions []Expression
+	Exprs []Expr
 }
 
 /*
 When there is more than one item, we return true for boolean context
 */
 func (self List) Boolean() bool {
-	return len(self.Expressions) > 0
+	return len(self.Exprs) > 0
 }
 
 func (self List) GetValueType() ValueType {
@@ -20,30 +20,30 @@ func (self List) GetValueType() ValueType {
 
 func (list List) String() string {
 	var exprstrs []string
-	for _, expr := range list.Expressions {
+	for _, expr := range list.Exprs {
 		exprstrs = append(exprstrs, expr.String())
 	}
 	return strings.Join(exprstrs, list.Separator)
 }
 
 func (list *List) Len() int {
-	return len(list.Expressions)
+	return len(list.Exprs)
 }
 
-func (list *List) Append(expr Expression) {
-	var newList = append(list.Expressions, expr)
-	list.Expressions = newList
+func (list *List) Append(expr Expr) {
+	var newList = append(list.Exprs, expr)
+	list.Exprs = newList
 }
 
 // By the default, the separator is space
 func NewList(sep string) *List {
-	return &List{sep, []Expression{}}
+	return &List{sep, []Expr{}}
 }
 
 func NewSpaceSepList() *List {
-	return &List{" ", []Expression{}}
+	return &List{" ", []Expr{}}
 }
 
 func NewCommaSepList() *List {
-	return &List{", ", []Expression{}}
+	return &List{", ", []Expr{}}
 }

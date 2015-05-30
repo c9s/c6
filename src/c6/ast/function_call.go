@@ -18,7 +18,7 @@ func (self FunctionCall) String() (out string) {
 	return out
 }
 
-func (self *FunctionCall) AppendArgument(arg Expression) {
+func (self *FunctionCall) AppendArgument(arg Expr) {
 	self.Arguments = append(self.Arguments, NewFunctionCallArgument(arg))
 }
 

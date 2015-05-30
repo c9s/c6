@@ -20,7 +20,7 @@ func lexFunctionParams(l *Lexer) stateFn {
 			l.emit(ast.T_PAREN_CLOSE)
 			break
 		}
-		if lexExpression(l) == nil {
+		if lexExpr(l) == nil {
 			break
 		}
 
@@ -46,7 +46,7 @@ func lexIdentifier(l *Lexer) stateFn {
 			var r2 = l.peek()
 			if !unicode.IsLetter(r2) && r2 != '-' {
 				l.backup()
-				return lexExpression
+				return lexExpr
 			}
 		}
 
@@ -65,13 +65,13 @@ func lexIdentifier(l *Lexer) stateFn {
 	} else {
 		l.emit(ast.T_IDENT)
 	}
-	return lexExpression
+	return lexExpr
 }
 
 /*
 Lexing expression with interpolation support.
 */
-func lexExpression(l *Lexer) stateFn {
+func lexExpr(l *Lexer) stateFn {
 	var leadingSpaces = l.ignoreSpaces()
 
 	var r, r2 = l.peek2()
@@ -277,5 +277,5 @@ func lexExpression(l *Lexer) stateFn {
 	}
 
 	// the default return stats
-	return lexExpression
+	return lexExpr
 }

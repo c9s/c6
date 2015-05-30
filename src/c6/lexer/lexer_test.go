@@ -276,7 +276,7 @@ func TestLexerMediaQueryCondition(t *testing.T) {
 		})
 }
 
-func TestLexerMediaQueryConditionWithExpressions(t *testing.T) {
+func TestLexerMediaQueryConditionWithExprs(t *testing.T) {
 	AssertLexerTokenSequence(t, `@media #{$media} and ($feature: $value) {
   .sidebar {
     width: 500px;

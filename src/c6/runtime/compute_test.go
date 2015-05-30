@@ -5,10 +5,10 @@ import "testing"
 import "github.com/stretchr/testify/assert"
 
 /*
-func TestReduceExpressionForUnsolveableExpression(t *testing.T) {
-	expr := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS), ast.NewNumber(10, nil, nil), ast.NewNumber(3, nil, nil), false)
-	expr2 := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS), expr, ast.NewVariable("$a"), false)
-	_, ok := ReduceExpression(expr2, nil)
+func TestReduceExprForUnsolveableExpr(t *testing.T) {
+	expr := ast.NewBinaryExpr(ast.NewOp(ast.T_PLUS), ast.NewNumber(10, nil, nil), ast.NewNumber(3, nil, nil), false)
+	expr2 := ast.NewBinaryExpr(ast.NewOp(ast.T_PLUS), expr, ast.NewVariable("$a"), false)
+	_, ok := ReduceExpr(expr2, nil)
 	assert.False(t, ok)
 	assert.Equal(t, "13+$a", expr2.String())
 	t.Logf("Reduced expression: %+v", expr2)
@@ -16,16 +16,16 @@ func TestReduceExpressionForUnsolveableExpression(t *testing.T) {
 */
 
 /*
-func TestReduceExpressionForUnsolveableExpression2(t *testing.T) {
+func TestReduceExprForUnsolveableExpr2(t *testing.T) {
 	context := NewContext()
 	context.CurrentBlock().GetSymTable().Set("$a", ast.NewNumber(10, nil, nil))
 	context.CurrentBlock().GetSymTable().Set("$b", ast.NewNumber(10, nil, nil))
-	expr := ast.NewBinaryExpression(
+	expr := ast.NewBinaryExpr(
 		ast.NewOp(ast.T_PLUS),
-		ast.NewBinaryExpression(
+		ast.NewBinaryExpr(
 			ast.NewOp(ast.T_MUL),
 			ast.NewNumber(2, nil, nil),
-			ast.NewBinaryExpression(
+			ast.NewBinaryExpr(
 				ast.NewOp(ast.T_PLUS),
 				ast.NewVariable("$a"),
 				ast.NewVariable("$b"),
@@ -35,17 +35,17 @@ func TestReduceExpressionForUnsolveableExpression2(t *testing.T) {
 		ast.NewVariable("$c"),
 		false,
 	)
-	_, ok := ReduceExpression(expr, context)
+	_, ok := ReduceExpr(expr, context)
 	assert.False(t, ok)
 	assert.Equal(t, "40+$c", expr.String())
 	t.Logf("Reduced expression: %+v", expr)
 }
 */
 
-func TestReduceExpressionForSolveableExpression(t *testing.T) {
-	expr := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS), ast.NewNumber(10, nil, nil), ast.NewNumber(3, nil, nil), false)
-	expr2 := ast.NewBinaryExpression(ast.NewOp(ast.T_PLUS), expr, ast.NewNumber(3, nil, nil), false)
-	val, ok := ReduceExpression(expr2, nil)
+func TestReduceExprForSolveableExpr(t *testing.T) {
+	expr := ast.NewBinaryExpr(ast.NewOp(ast.T_PLUS), ast.NewNumber(10, nil, nil), ast.NewNumber(3, nil, nil), false)
+	expr2 := ast.NewBinaryExpr(ast.NewOp(ast.T_PLUS), expr, ast.NewNumber(3, nil, nil), false)
+	val, ok := ReduceExpr(expr2, nil)
 	assert.True(t, ok)
 	assert.NotNil(t, val)
 
@@ -55,9 +55,9 @@ func TestReduceExpressionForSolveableExpression(t *testing.T) {
 	assert.Equal(t, 16.0, num.Value)
 }
 
-func TestReduceCSSSlashExpression(t *testing.T) {
-	expr := ast.NewBinaryExpression(ast.NewOp(ast.T_DIV), ast.NewNumber(10, ast.NewUnit(ast.T_UNIT_PX, nil), nil), ast.NewNumber(3, ast.NewUnit(ast.T_UNIT_PX, nil), nil), false)
-	ok := CanReduceExpression(expr)
+func TestReduceCSSSlashExpr(t *testing.T) {
+	expr := ast.NewBinaryExpr(ast.NewOp(ast.T_DIV), ast.NewNumber(10, ast.NewUnit(ast.T_UNIT_PX, nil), nil), ast.NewNumber(3, ast.NewUnit(ast.T_UNIT_PX, nil), nil), false)
+	ok := CanReduceExpr(expr)
 	assert.False(t, ok)
 }
 

@@ -189,7 +189,7 @@ func lexAtRule(l *Lexer) stateFn {
 		switch tok.Type {
 		case ast.T_IMPORT:
 			l.ignoreSpaces()
-			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
+			for fn := lexExpr(l); fn != nil; fn = lexExpr(l) {
 			}
 			return lexStmt
 
@@ -203,7 +203,7 @@ func lexAtRule(l *Lexer) stateFn {
 			return lexStmt
 
 		case ast.T_MEDIA:
-			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
+			for fn := lexExpr(l); fn != nil; fn = lexExpr(l) {
 			}
 			return lexStmt
 
@@ -213,13 +213,13 @@ func lexAtRule(l *Lexer) stateFn {
 
 		case ast.T_IF:
 
-			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
+			for fn := lexExpr(l); fn != nil; fn = lexExpr(l) {
 			}
 			return lexStmt
 
 		case ast.T_ELSE_IF:
 
-			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
+			for fn := lexExpr(l); fn != nil; fn = lexExpr(l) {
 			}
 			return lexStmt
 
@@ -233,7 +233,7 @@ func lexAtRule(l *Lexer) stateFn {
 
 		case ast.T_WHILE:
 
-			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
+			for fn := lexExpr(l); fn != nil; fn = lexExpr(l) {
 			}
 			return lexStmt
 
@@ -244,7 +244,7 @@ func lexAtRule(l *Lexer) stateFn {
 			return lexSelectors
 
 		case ast.T_FUNCTION, ast.T_RETURN, ast.T_MIXIN, ast.T_INCLUDE:
-			for fn := lexExpression(l); fn != nil; fn = lexExpression(l) {
+			for fn := lexExpr(l); fn != nil; fn = lexExpr(l) {
 			}
 			return lexStmt
 
@@ -307,7 +307,7 @@ func lexVariableAssignment(l *Lexer) stateFn {
 	lexVariableName(l)
 	lexColon(l)
 	var r = l.peek()
-	for r != ';' && r != '}' && r != EOF && lexExpression(l) != nil {
+	for r != ';' && r != '}' && r != EOF && lexExpr(l) != nil {
 		r = l.peek()
 	}
 	// l.backup()
@@ -328,12 +328,12 @@ func lexForStmt(l *Lexer) stateFn {
 	l.ignoreSpaces()
 	lexVariableName(l)
 
-	fn := lexExpression(l)
+	fn := lexExpr(l)
 	if fn == nil {
 		panic("Expecting range expression after 'from'.")
 	}
 	for fn != nil {
-		fn = lexExpression(l)
+		fn = lexExpr(l)
 	}
 	return lexStmt
 }
@@ -359,7 +359,7 @@ func lexVariableName(l *Lexer) stateFn {
 			} else if unicode.IsDigit(r2) { // $a-3 should be $a '-' 3
 				l.backup()
 				l.emit(ast.T_VARIABLE)
-				return lexExpression
+				return lexExpr
 			} else {
 				break
 			}
@@ -405,7 +405,7 @@ func lexHexColor(l *Lexer) stateFn {
 		panic(fmt.Errorf("Invalid hex color, expecting 3, 6 or 8 hex characters, got %d - %s", length, l.current()))
 	}
 	l.emit(ast.T_HEX_COLOR)
-	return lexExpression
+	return lexExpr
 }
 
 /**
@@ -441,7 +441,7 @@ func lexNumberUnit(l *Lexer) stateFn {
 	if l.peek() == ';' {
 		return lexStmt
 	}
-	return lexExpression
+	return lexExpr
 }
 
 /**

@@ -2,13 +2,13 @@ package ast
 
 type ReturnStmt struct {
 	Token *Token
-	Value Expression
+	Value Expr
 }
 
 func (stm ReturnStmt) CanBeStmt() {}
 
 func (stm ReturnStmt) String() string { return "ReturnStmt.String()" }
 
-func NewReturnStmtWithToken(tok *Token, expr Expression) *ReturnStmt {
+func NewReturnStmtWithToken(tok *Token, expr Expr) *ReturnStmt {
 	return &ReturnStmt{Token: tok, Value: expr}
 }

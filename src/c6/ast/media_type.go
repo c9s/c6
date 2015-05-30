@@ -1,10 +1,10 @@
 package ast
 
 type MediaType struct {
-	Expr Expression
+	Expr Expr
 }
 
-func NewMediaType(expr Expression) *MediaType {
+func NewMediaType(expr Expr) *MediaType {
 	return &MediaType{expr}
 }
 
@@ -13,13 +13,13 @@ func (self MediaType) String() string {
 }
 
 type MediaFeature struct {
-	Feature Expression
-	Value   Expression
+	Feature Expr
+	Value   Expr
 	Open    *Token
 	Close   *Token
 }
 
-func NewMediaFeature(feature, value Expression) *MediaFeature {
+func NewMediaFeature(feature, value Expr) *MediaFeature {
 	return &MediaFeature{Feature: feature, Value: value}
 }
 

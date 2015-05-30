@@ -6,11 +6,11 @@ A struct that contains many concatable strings
 	{any}{expression}{any}
 */
 type LiteralConcat struct {
-	Left  Expression
-	Right Expression
+	Left  Expr
+	Right Expr
 }
 
-func NewLiteralConcat(left, right Expression) *LiteralConcat {
+func NewLiteralConcat(left, right Expr) *LiteralConcat {
 	return &LiteralConcat{left, right}
 }
 

@@ -47,7 +47,7 @@ func lexMicrosoftProgIdFunction(l *Lexer) stateFn {
 		l.accept("=")
 		l.emit(ast.T_ATTR_EQUAL)
 
-		lexExpression(l)
+		lexExpr(l)
 
 		l.ignoreSpaces()
 		r = l.peek()
@@ -121,7 +121,7 @@ func lexProperty(l *Lexer) stateFn {
 			l.emit(ast.T_BRACE_OPEN)
 			return lexStmt
 
-		} else if lexExpression(l) == nil {
+		} else if lexExpr(l) == nil {
 			break
 		}
 

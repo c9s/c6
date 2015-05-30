@@ -100,7 +100,7 @@ If you need to build your application with c6, you need to clone the repository 
   - .... to be listed
 - [ ] Parser
   - [x] Parse `@import`
-  - [x] Parse Expression
+  - [x] Parse Expr
   - [x] Parse Space-Sep List
   - [x] Parse Comma-Sep List
   - [x] Parse Map (tests required)
@@ -139,15 +139,15 @@ If you need to build your application with c6, you need to clone the repository 
   - [x] PropertyValue
   - [x] Comma-Separated List
   - [x] Space-Separated List
-  - [x] Basic Expressions
+  - [x] Basic Exprs
   - [x] FunctionCall
-  - [x] Expression with interpolation
+  - [x] Expr with interpolation
   - [x] Variable statements
   - [x] Built-in color keyword table
   - [x] Hex Color computation
   - [x] Number operation: add, sub, mul, div
   - [x] Length operation: number operation for px, pt, em, rem, cm ...etc
-  - [x] Expression evaluation
+  - [x] Expr evaluation
   - [x] Boolean expression evaluation
   - [x] Media Query conditions
   - [x] `@if` If Condition

@@ -28,11 +28,11 @@ func (stm MediaQueryStmt) String() (out string) {
 One MediaQuery may contain media type or media expression.
 */
 type MediaQuery struct {
-	MediaType       Expression
-	MediaExpression Expression
+	MediaType       Expr
+	MediaExpr Expr
 }
 
-func NewMediaQuery(mediaType Expression, expr Expression) *MediaQuery {
+func NewMediaQuery(mediaType Expr, expr Expr) *MediaQuery {
 	return &MediaQuery{mediaType, expr}
 }
 
@@ -47,11 +47,11 @@ func (stm MediaQuery) String() (out string) {
 	if stm.MediaType != nil {
 		out += stm.MediaType.String()
 	}
-	if stm.MediaExpression != nil {
+	if stm.MediaExpr != nil {
 		if stm.MediaType != nil {
 			out += " and "
 		}
-		out += stm.MediaExpression.String()
+		out += stm.MediaExpr.String()
 	}
 	return out
 }

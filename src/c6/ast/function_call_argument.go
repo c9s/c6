@@ -2,9 +2,9 @@ package ast
 
 import "sort"
 
-// type FunctionCallArgument Expression
+// type FunctionCallArgument Expr
 type FunctionCallArgument struct {
-	Argument                Expression
+	Argument                Expr
 	ArgumentDefineReference *Argument
 }
 
@@ -16,7 +16,7 @@ func (arg FunctionCallArgument) String() (out string) {
 	return out
 }
 
-func NewFunctionCallArgument(expr Expression) *FunctionCallArgument {
+func NewFunctionCallArgument(expr Expr) *FunctionCallArgument {
 	return &FunctionCallArgument{expr, nil}
 }
 

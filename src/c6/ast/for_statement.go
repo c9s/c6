@@ -2,9 +2,9 @@ package ast
 
 type ForStmt struct {
 	Variable *Variable
-	From     Expression
-	Through  Expression
-	To       Expression
+	From     Expr
+	Through  Expr
+	To       Expr
 	Block    *DeclarationBlock
 }
 

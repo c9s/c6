@@ -2,13 +2,13 @@ package ast
 
 type Variable struct {
 	Name  string
-	Value Expression
+	Value Expr
 	Token *Token
 }
 
 func (self Variable) CanBeNode() {}
 
-func (self *Variable) SetValue(val Expression) {
+func (self *Variable) SetValue(val Expr) {
 	self.Value = val
 }
 

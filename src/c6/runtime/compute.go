@@ -302,13 +302,13 @@ func Compute(op *ast.Op, a ast.Value, b ast.Value) ast.Value {
 /*
 A simple expression means the operands are scalar, and can be evaluated.
 */
-func IsSimpleExpression(expr ast.Expression) bool {
+func IsSimpleExpr(expr ast.Expr) bool {
 	switch e := expr.(type) {
-	case *ast.BinaryExpression:
+	case *ast.BinaryExpr:
 		if IsValue(e.Left) && IsValue(e.Right) {
 			return true
 		}
-	case *ast.UnaryExpression:
+	case *ast.UnaryExpr:
 		if IsValue(e.Expr) {
 			return true
 		}
@@ -319,7 +319,7 @@ func IsSimpleExpression(expr ast.Expression) bool {
 /*
 This function returns true when the val is a scalar value, not an expression.
 */
-func IsValue(val ast.Expression) bool {
+func IsValue(val ast.Expr) bool {
 	switch val.(type) {
 	case *ast.Number, *ast.HexColor, *ast.RGBColor, *ast.RGBAColor, *ast.HSLColor, *ast.HSVColor, *ast.Boolean:
 		return true
@@ -327,14 +327,14 @@ func IsValue(val ast.Expression) bool {
 	return false
 }
 
-func EvaluateExpressionInBooleanContext(anyexpr ast.Expression, context *Context) ast.Value {
+func EvaluateExprInBooleanContext(anyexpr ast.Expr, context *Context) ast.Value {
 	switch expr := anyexpr.(type) {
 
-	case *ast.BinaryExpression:
-		return EvaluateBinaryExpressionInBooleanContext(expr, context)
+	case *ast.BinaryExpr:
+		return EvaluateBinaryExprInBooleanContext(expr, context)
 
-	case *ast.UnaryExpression:
-		return EvaluateUnaryExpressionInBooleanContext(expr, context)
+	case *ast.UnaryExpr:
+		return EvaluateUnaryExprInBooleanContext(expr, context)
 
 	default:
 		if bval, ok := expr.(ast.BooleanValue); ok {
@@ -344,28 +344,28 @@ func EvaluateExpressionInBooleanContext(anyexpr ast.Expression, context *Context
 	return nil
 }
 
-func EvaluateBinaryExpressionInBooleanContext(expr *ast.BinaryExpression, context *Context) ast.Value {
+func EvaluateBinaryExprInBooleanContext(expr *ast.BinaryExpr, context *Context) ast.Value {
 
 	var lval ast.Value = nil
 	var rval ast.Value = nil
 
 	switch expr := expr.Left.(type) {
-	case *ast.UnaryExpression:
-		lval = EvaluateUnaryExpressionInBooleanContext(expr, context)
+	case *ast.UnaryExpr:
+		lval = EvaluateUnaryExprInBooleanContext(expr, context)
 
-	case *ast.BinaryExpression:
-		lval = EvaluateBinaryExpressionInBooleanContext(expr, context)
+	case *ast.BinaryExpr:
+		lval = EvaluateBinaryExprInBooleanContext(expr, context)
 
 	default:
 		lval = expr
 	}
 
 	switch expr := expr.Right.(type) {
-	case *ast.UnaryExpression:
-		rval = EvaluateUnaryExpressionInBooleanContext(expr, context)
+	case *ast.UnaryExpr:
+		rval = EvaluateUnaryExprInBooleanContext(expr, context)
 
-	case *ast.BinaryExpression:
-		rval = EvaluateBinaryExpressionInBooleanContext(expr, context)
+	case *ast.BinaryExpr:
+		rval = EvaluateBinaryExprInBooleanContext(expr, context)
 
 	default:
 		rval = expr
@@ -377,14 +377,14 @@ func EvaluateBinaryExpressionInBooleanContext(expr *ast.BinaryExpression, contex
 	return nil
 }
 
-func EvaluateUnaryExpressionInBooleanContext(expr *ast.UnaryExpression, context *Context) ast.Value {
+func EvaluateUnaryExprInBooleanContext(expr *ast.UnaryExpr, context *Context) ast.Value {
 	var val ast.Value = nil
 
 	switch t := expr.Expr.(type) {
-	case *ast.BinaryExpression:
-		val = EvaluateBinaryExpression(t, context)
-	case *ast.UnaryExpression:
-		val = EvaluateUnaryExpression(t, context)
+	case *ast.BinaryExpr:
+		val = EvaluateBinaryExpr(t, context)
+	case *ast.UnaryExpr:
+		val = EvaluateUnaryExpr(t, context)
 	default:
 		val = ast.Value(t)
 	}
@@ -401,24 +401,24 @@ func EvaluateUnaryExpressionInBooleanContext(expr *ast.UnaryExpression, context 
 }
 
 /*
-EvaluateExpression calls EvaluateBinaryExpression. except EvaluateExpression
+EvaluateExpr calls EvaluateBinaryExpr. except EvaluateExpr
 prevents calculate css slash as division.  otherwise it's the same as
-EvaluateBinaryExpression.
+EvaluateBinaryExpr.
 */
-func EvaluateExpression(expr ast.Expression, context *Context) ast.Value {
+func EvaluateExpr(expr ast.Expr, context *Context) ast.Value {
 
 	switch t := expr.(type) {
 
-	case *ast.BinaryExpression:
+	case *ast.BinaryExpr:
 		// For binary expression that is a CSS slash, we evaluate the expression as a literal string (unquoted)
 		if t.IsCssSlash() {
 			// return string object without quote
 			return ast.NewString(0, t.Left.(*ast.Number).String()+"/"+t.Right.(*ast.Number).String(), nil)
 		}
-		return EvaluateBinaryExpression(t, context)
+		return EvaluateBinaryExpr(t, context)
 
-	case *ast.UnaryExpression:
-		return EvaluateUnaryExpression(t, context)
+	case *ast.UnaryExpr:
+		return EvaluateUnaryExpr(t, context)
 
 	default:
 		return ast.Value(expr)
@@ -430,7 +430,7 @@ func EvaluateExpression(expr ast.Expression, context *Context) ast.Value {
 		return ast.Value(expr)
 	}
 
-	panic("EvaluateExpression: Unsupported expression type")
+	panic("EvaluateExpr: Unsupported expression type")
 	return nil
 }
 
@@ -446,23 +446,23 @@ func EvaluateFunctionCall(fcall ast.FunctionCall, context *Context) ast.Value {
 }
 
 /*
-EvaluateBinaryExpression recursively.
+EvaluateBinaryExpr recursively.
 */
-func EvaluateBinaryExpression(expr *ast.BinaryExpression, context *Context) ast.Value {
+func EvaluateBinaryExpr(expr *ast.BinaryExpr, context *Context) ast.Value {
 	var lval ast.Value = nil
 	var rval ast.Value = nil
 
 	switch expr := expr.Left.(type) {
 
-	case *ast.BinaryExpression:
-		lval = EvaluateBinaryExpression(expr, context)
+	case *ast.BinaryExpr:
+		lval = EvaluateBinaryExpr(expr, context)
 
-	case *ast.UnaryExpression:
-		lval = EvaluateUnaryExpression(expr, context)
+	case *ast.UnaryExpr:
+		lval = EvaluateUnaryExpr(expr, context)
 
 	case *ast.Variable:
 		if varVal, ok := context.GetVariable(expr.Name); ok {
-			lval = varVal.(ast.Expression)
+			lval = varVal.(ast.Expr)
 		}
 
 	default:
@@ -471,15 +471,15 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, context *Context) ast.
 
 	switch expr := expr.Right.(type) {
 
-	case *ast.UnaryExpression:
-		rval = EvaluateUnaryExpression(expr, context)
+	case *ast.UnaryExpr:
+		rval = EvaluateUnaryExpr(expr, context)
 
-	case *ast.BinaryExpression:
-		rval = EvaluateBinaryExpression(expr, context)
+	case *ast.BinaryExpr:
+		rval = EvaluateBinaryExpr(expr, context)
 
 	case *ast.Variable:
 		if varVal, ok := context.GetVariable(expr.Name); ok {
-			rval = varVal.(ast.Expression)
+			rval = varVal.(ast.Expr)
 		}
 
 	default:
@@ -492,17 +492,17 @@ func EvaluateBinaryExpression(expr *ast.BinaryExpression, context *Context) ast.
 	return nil
 }
 
-func EvaluateUnaryExpression(expr *ast.UnaryExpression, context *Context) ast.Value {
+func EvaluateUnaryExpr(expr *ast.UnaryExpr, context *Context) ast.Value {
 	var val ast.Value = nil
 
 	switch t := expr.Expr.(type) {
-	case *ast.BinaryExpression:
-		val = EvaluateBinaryExpression(t, context)
-	case *ast.UnaryExpression:
-		val = EvaluateUnaryExpression(t, context)
+	case *ast.BinaryExpr:
+		val = EvaluateBinaryExpr(t, context)
+	case *ast.UnaryExpr:
+		val = EvaluateUnaryExpr(t, context)
 	case *ast.Variable:
 		if varVal, ok := context.GetVariable(t.Name); ok {
-			val = varVal.(ast.Expression)
+			val = varVal.(ast.Expr)
 		}
 	default:
 		val = ast.Value(t)

@@ -1,7 +1,7 @@
 package ast
 
 type WhileStmt struct {
-	Condition Expression
+	Condition Expr
 	Block     *DeclarationBlock
 	ElseBlock *DeclarationBlock
 }
@@ -16,6 +16,6 @@ func (stm WhileStmt) String() string {
 	return "(if statement STRING() un-implemented)"
 }
 
-func NewWhileStmt(condition Expression, block *DeclarationBlock) *WhileStmt {
+func NewWhileStmt(condition Expr, block *DeclarationBlock) *WhileStmt {
 	return &WhileStmt{condition, block, nil}
 }

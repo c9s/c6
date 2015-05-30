@@ -12,7 +12,7 @@ type Property struct {
 
 		`padding: 3px 3px;`
 	*/
-	Values []Expression
+	Values []Expr
 }
 
 /**
@@ -21,7 +21,7 @@ Property is one of the declaration
 func (self Property) CanBeDeclaration() {}
 func (self Property) CanBeStmt()   {}
 
-func (self Property) AppendValue(value Expression) {
+func (self Property) AppendValue(value Expr) {
 	self.Values = append(self.Values, value)
 }
 
@@ -53,5 +53,5 @@ func NewPropertyName(tok *Token) *PropertyName {
 }
 
 func NewProperty(nameTok *Token) *Property {
-	return &Property{NewPropertyName(nameTok), []Expression{}}
+	return &Property{NewPropertyName(nameTok), []Expr{}}
 }

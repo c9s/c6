@@ -24,13 +24,13 @@ PropertyValue: List
 
 Url := T_URL '(' T_QQ_STRING ')'
 
-StringExpression := <String> T_CONCAT <String>
+StringExpr := <String> T_CONCAT <String>
                   | <String> {['+'] <String>}
 
-Expression := <Term> {'+' <Term>}
+Expr := <Term> {'+' <Term>}
             | <Term> {'-' <Term>}
 
-String := "#{" <Expression> "}"
+String := "#{" <Expr> "}"
         | T_IDENT
         | T_QUOTE_STRING
         | T_DOUBLE_QUOTE_STRING
@@ -40,12 +40,12 @@ Term := <Factor> '*' <Factor>
 
 Factor := Number
        | Variable
-       | '(' Expression ')'
+       | '(' Expr ')'
 
 Value := Map
        | List
        | String
-       | Expression
+       | Expr
        | Keyword
        | Url
        | Color
@@ -64,7 +64,7 @@ Map := '(' MapPair ')'
 MapPairList := MapPair ',' MapPairList
              | MapPair
 
-MapPair := Expression ':' Value
+MapPair := Expr ':' Value
 
 
 IfStmt := 'if' <Condition> <Block>
@@ -72,11 +72,11 @@ IfStmt := 'if' <Condition> <Block>
 Condition := <CompareCondition> ['and' <CompareCondition>]
            | <CompareCondition> ['or' <CompareCondition>]
 
-CompareCondition := <Expression> ['==' <Expression>]
-          | <Expression> ['>=' <Expression>]
-          | <Expression> ['!=' <Expression>]
-          | <Expression> ['>' <Expression>]
-          | <Expression> ['<' <Expression>]
+CompareCondition := <Expr> ['==' <Expr>]
+          | <Expr> ['>=' <Expr>]
+          | <Expr> ['!=' <Expr>]
+          | <Expr> ['>' <Expr>]
+          | <Expr> ['<' <Expr>]
 
 
 

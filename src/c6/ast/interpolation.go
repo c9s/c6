@@ -1,7 +1,7 @@
 package ast
 
 type Interpolation struct {
-	Expression Expression
+	Expr Expr
 	StartToken *Token
 	EndToken   *Token
 }
@@ -9,9 +9,9 @@ type Interpolation struct {
 func (self Interpolation) CanBeNode() {}
 
 func (self Interpolation) String() string {
-	return self.Expression.String()
+	return self.Expr.String()
 }
 
-func NewInterpolation(expr Expression, startToken *Token, endToken *Token) *Interpolation {
+func NewInterpolation(expr Expr, startToken *Token, endToken *Token) *Interpolation {
 	return &Interpolation{expr, startToken, endToken}
 }

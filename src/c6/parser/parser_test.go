@@ -244,7 +244,7 @@ func TestParserMediaQueryJustAll(t *testing.T) {
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserMediaQueryWithExpression1(t *testing.T) {
+func TestParserMediaQueryWithExpr1(t *testing.T) {
 	var code = `
 @media #{$media} {
   .sidebar {
@@ -256,7 +256,7 @@ func TestParserMediaQueryWithExpression1(t *testing.T) {
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserMediaQueryWithExpression2(t *testing.T) {
+func TestParserMediaQueryWithExpr2(t *testing.T) {
 	var code = `
 @media #{$media} and ($feature: $value) {
   .sidebar {
@@ -367,7 +367,7 @@ func TestParserIfComparisonUnequalElseIf(t *testing.T) {
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserIfComparisonAndLogicalExpression(t *testing.T) {
+func TestParserIfComparisonAndLogicalExpr(t *testing.T) {
 	var stmts = RunParserTest(`@if 3 > 1 and 4 < 10 and 5 > 3 {  } @else if (3+3) == 6 {  } @else {  }`)
 	assert.Equal(t, 1, len(*stmts))
 }
@@ -392,7 +392,7 @@ func TestParserForStmtSimple(t *testing.T) {
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserForStmtExpressionReduce(t *testing.T) {
+func TestParserForStmtExprReduce(t *testing.T) {
 	var stmts = RunParserTest(`@for $var from 2 * 3 through 20 * 5 + 10 { }`)
 	assert.Equal(t, 1, len(*stmts))
 
@@ -404,7 +404,7 @@ func TestParserForStmtRangeOperator(t *testing.T) {
 
 }
 
-func TestParserForStmtRangeOperatorWithExpression(t *testing.T) {
+func TestParserForStmtRangeOperatorWithExpr(t *testing.T) {
 	var stmts = RunParserTest(`@for $var in 2 + 3 .. 10 * 10 { }`)
 	assert.Equal(t, 1, len(*stmts))
 
@@ -436,7 +436,7 @@ func TestParserCSS3Gradient(t *testing.T) {
 	}
 }
 
-func TestParserPropertyListExpression(t *testing.T) {
+func TestParserPropertyListExpr(t *testing.T) {
 	var buffers []string = []string{
 		`div { width: 1px; }`,
 		`div { width: 2px 3px; }`,
@@ -499,17 +499,17 @@ func TestParserVariableAssignmentWithMorePlus(t *testing.T) {
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserVariableAssignmentWithExpressionDefaultFlag(t *testing.T) {
+func TestParserVariableAssignmentWithExprDefaultFlag(t *testing.T) {
 	var stmts = RunParserTest(`$foo: 12px + 20px + 20px !default;`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserVariableAssignmentWithExpressionOptionalFlag(t *testing.T) {
+func TestParserVariableAssignmentWithExprOptionalFlag(t *testing.T) {
 	var block = RunParserTest(`$foo: 12px + 20px + 20px !optional;`)
 	t.Logf("%+v\n", block)
 }
 
-func TestParserVariableAssignmentWithComplexExpression(t *testing.T) {
+func TestParserVariableAssignmentWithComplexExpr(t *testing.T) {
 	var stmts = RunParserTest(`$foo: 12px * (20px + 20px) + 4px / 2;`)
 	assert.Equal(t, 1, len(*stmts))
 }

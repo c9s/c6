@@ -1,33 +1,33 @@
 package ast
 
-type Expression interface {
+type Expr interface {
 	String() string
 }
 
-type UnaryExpression struct {
+type UnaryExpr struct {
 	Op   *Op
-	Expr Expression
+	Expr Expr
 }
 
-func NewUnaryExpression(op *Op, expr Expression) *UnaryExpression {
-	return &UnaryExpression{op, expr}
+func NewUnaryExpr(op *Op, expr Expr) *UnaryExpr {
+	return &UnaryExpr{op, expr}
 }
 
-func (self UnaryExpression) String() string {
+func (self UnaryExpr) String() string {
 	if self.Op != nil {
 		return self.Op.String() + self.Expr.String()
 	}
 	return self.Expr.String()
 }
 
-type BinaryExpression struct {
+type BinaryExpr struct {
 	Op      *Op
-	Left    Expression
-	Right   Expression
+	Left    Expr
+	Right   Expr
 	Grouped bool
 }
 
-func (self BinaryExpression) String() string {
+func (self BinaryExpr) String() string {
 	if self.Op == nil {
 		panic("Missing operator")
 	}
@@ -47,7 +47,7 @@ Please note thist method does not test CSS slash, the caller should handle by it
 
 This works for both boolean evaluation and arithmetic evaluation.
 */
-func (self BinaryExpression) IsSimpleExpression() bool {
+func (self BinaryExpr) IsSimpleExpr() bool {
 	_, ok1 := self.Left.(*Variable)
 	_, ok2 := self.Right.(*Variable)
 	return ok1 || ok2
@@ -64,7 +64,7 @@ This method needs to be called on the top caller to prevent unexpected result.
 
 @see http://sass-lang.com/documentation/file.SASS_REFERENCE.html#division-and-slash
 */
-func (self *BinaryExpression) IsCssSlash() bool {
+func (self *BinaryExpr) IsCssSlash() bool {
 	if self.Op.Type == T_DIV {
 		_, aok := self.Left.(*Number)
 		_, bok := self.Right.(*Number)
@@ -78,6 +78,6 @@ func (self *BinaryExpression) IsCssSlash() bool {
 	return false
 }
 
-func NewBinaryExpression(op *Op, left Expression, right Expression, grouped bool) *BinaryExpression {
-	return &BinaryExpression{op, left, right, grouped}
+func NewBinaryExpr(op *Op, left Expr, right Expr, grouped bool) *BinaryExpr {
+	return &BinaryExpr{op, left, right, grouped}
 }

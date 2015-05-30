@@ -2,7 +2,7 @@ package ast
 
 type LogStmt struct {
 	Directive *Token
-	Expr      Expression
+	Expr      Expr
 }
 
 func (stm LogStmt) CanBeStmt() {}

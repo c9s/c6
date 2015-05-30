@@ -1,16 +1,16 @@
 package ast
 
 type MapItem struct {
-	Key   Expression
-	Value Expression
+	Key   Expr
+	Value Expr
 }
 
 type Map struct {
 	Items []*MapItem
-	Map   map[string]Expression
+	Map   map[string]Expr
 }
 
-func (self *Map) Set(key Expression, val Expression) {
+func (self *Map) Set(key Expr, val Expr) {
 	var item = &MapItem{key, val}
 	self.Items = append(self.Items, item)
 
@@ -18,7 +18,7 @@ func (self *Map) Set(key Expression, val Expression) {
 	self.Map[key.String()] = val
 }
 
-func (self *Map) Get(key Expression) Expression {
+func (self *Map) Get(key Expr) Expr {
 	if val, ok := self.Map[key.String()]; ok {
 		return val
 	}
@@ -36,6 +36,6 @@ func (self Map) String() string {
 func NewMap() *Map {
 	return &Map{
 		Items: []*MapItem{},
-		Map:   map[string]Expression{},
+		Map:   map[string]Expr{},
 	}
 }

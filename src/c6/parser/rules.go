@@ -201,56 +201,56 @@ The operator precedence is described here
 
 @see http://introcs.cs.princeton.edu/java/11precedence/
 */
-func (parser *Parser) ParseCondition() ast.Expression {
+func (parser *Parser) ParseCondition() ast.Expr {
 	debug("ParseCondition")
 
 	// Boolean 'Not'
 	if tok := parser.accept(ast.T_LOGICAL_NOT); tok != nil {
-		var logicexpr = parser.ParseLogicExpression()
-		return ast.NewUnaryExpression(ast.NewOpWithToken(tok), logicexpr)
+		var logicexpr = parser.ParseLogicExpr()
+		return ast.NewUnaryExpr(ast.NewOpWithToken(tok), logicexpr)
 	}
-	return parser.ParseLogicExpression()
+	return parser.ParseLogicExpr()
 }
 
-func (parser *Parser) ParseLogicExpression() ast.Expression {
-	debug("ParseLogicExpression")
-	var expr = parser.ParseLogicANDExpression()
+func (parser *Parser) ParseLogicExpr() ast.Expr {
+	debug("ParseLogicExpr")
+	var expr = parser.ParseLogicANDExpr()
 	for tok := parser.accept(ast.T_LOGICAL_OR); tok != nil; tok = parser.accept(ast.T_LOGICAL_OR) {
-		if subexpr := parser.ParseLogicANDExpression(); subexpr != nil {
-			expr = ast.NewBinaryExpression(ast.NewOpWithToken(tok), expr, subexpr, false)
+		if subexpr := parser.ParseLogicANDExpr(); subexpr != nil {
+			expr = ast.NewBinaryExpr(ast.NewOpWithToken(tok), expr, subexpr, false)
 		}
 	}
 	return expr
 }
 
-func (parser *Parser) ParseLogicANDExpression() ast.Expression {
-	debug("ParseLogicANDExpression")
+func (parser *Parser) ParseLogicANDExpr() ast.Expr {
+	debug("ParseLogicANDExpr")
 
-	var expr = parser.ParseComparisonExpression()
+	var expr = parser.ParseComparisonExpr()
 	for tok := parser.accept(ast.T_LOGICAL_AND); tok != nil; tok = parser.accept(ast.T_LOGICAL_AND) {
-		if subexpr := parser.ParseComparisonExpression(); subexpr != nil {
-			expr = ast.NewBinaryExpression(ast.NewOpWithToken(tok), expr, subexpr, false)
+		if subexpr := parser.ParseComparisonExpr(); subexpr != nil {
+			expr = ast.NewBinaryExpr(ast.NewOpWithToken(tok), expr, subexpr, false)
 		}
 	}
 	return expr
 }
 
-func (parser *Parser) ParseComparisonExpression() ast.Expression {
-	debug("ParseComparisonExpression")
+func (parser *Parser) ParseComparisonExpr() ast.Expr {
+	debug("ParseComparisonExpr")
 
-	var expr ast.Expression = nil
+	var expr ast.Expr = nil
 	if parser.accept(ast.T_PAREN_OPEN) != nil {
-		expr = parser.ParseLogicExpression()
+		expr = parser.ParseLogicExpr()
 		parser.expect(ast.T_PAREN_CLOSE)
 	} else {
-		expr = parser.ParseExpression(false)
+		expr = parser.ParseExpr(false)
 	}
 
 	var tok = parser.peek()
 	for tok != nil && tok.IsComparisonOperator() {
 		parser.advance()
-		if subexpr := parser.ParseExpression(false); subexpr != nil {
-			expr = ast.NewBinaryExpression(ast.NewOpWithToken(tok), expr, subexpr, false)
+		if subexpr := parser.ParseExpr(false); subexpr != nil {
+			expr = ast.NewBinaryExpr(ast.NewOpWithToken(tok), expr, subexpr, false)
 		}
 		tok = parser.peek()
 	}
@@ -451,14 +451,14 @@ func (parser *Parser) ParseRuleSet() ast.Stmt {
 	return ruleset
 }
 
-func (parser *Parser) ParseBoolean() ast.Expression {
+func (parser *Parser) ParseBoolean() ast.Expr {
 	if tok := parser.acceptAnyOf2(ast.T_TRUE, ast.T_FALSE); tok != nil {
 		return ast.NewBooleanWithToken(tok)
 	}
 	return nil
 }
 
-func (parser *Parser) ParseNumber() ast.Expression {
+func (parser *Parser) ParseNumber() ast.Expr {
 	var pos = parser.Pos
 	debug("ParseNumber at %d", parser.Pos)
 
@@ -521,7 +521,7 @@ the keyword arguments into the argument list. this way, we can handle the functi
 in a simple way - push/pop the stack.
 
 @param fcall ast.FunctionCall The current parsing function call ast node
-@return arguments []Expression
+@return arguments []Expr
 */
 func (parser *Parser) ParseKeywordArguments(fcall *ast.FunctionCall) *ast.FunctionCallArguments {
 	// look up function declaration
@@ -539,7 +539,7 @@ func (parser *Parser) ParseKeywordArguments(fcall *ast.FunctionCall) *ast.Functi
 		}
 
 		parser.expect(ast.T_COLON)
-		var argExpr = parser.ParseExpression(false)
+		var argExpr = parser.ParseExpr(false)
 		parser.accept(ast.T_COMMA)
 
 		var arg = ast.NewFunctionCallArgument(argExpr)
@@ -597,15 +597,15 @@ func (parser *Parser) ParseIdent() *ast.Ident {
 }
 
 /**
-The ParseFactor must return an Expression interface compatible object
+The ParseFactor must return an Expr interface compatible object
 */
-func (parser *Parser) ParseFactor() ast.Expression {
+func (parser *Parser) ParseFactor() ast.Expr {
 	var tok = parser.peek()
 
 	if tok.Type == ast.T_PAREN_OPEN {
 
 		parser.expect(ast.T_PAREN_OPEN)
-		var expr = parser.ParseExpression(true)
+		var expr = parser.ParseExpr(true)
 		parser.expect(ast.T_PAREN_CLOSE)
 		return expr
 
@@ -646,7 +646,7 @@ func (parser *Parser) ParseFactor() ast.Expression {
 	} else if tok.Type == ast.T_FUNCTION_NAME {
 
 		var fcall = parser.ParseFunctionCall()
-		return ast.Expression(fcall)
+		return ast.Expr(fcall)
 
 	} else if tok.Type == ast.T_VARIABLE {
 
@@ -675,7 +675,7 @@ func (parser *Parser) ParseFactor() ast.Expression {
 	return nil
 }
 
-func (parser *Parser) ParseTerm() ast.Expression {
+func (parser *Parser) ParseTerm() ast.Expr {
 	var pos = parser.Pos
 	var factor = parser.ParseFactor()
 	if factor == nil {
@@ -686,7 +686,7 @@ func (parser *Parser) ParseTerm() ast.Expression {
 	// see if the next token is '*' or '/'
 	if tok := parser.acceptAnyOf2(ast.T_MUL, ast.T_DIV); tok != nil {
 		if term := parser.ParseTerm(); term != nil {
-			return ast.NewBinaryExpression(ast.NewOpWithToken(tok), factor, term, false)
+			return ast.NewBinaryExpr(ast.NewOpWithToken(tok), factor, term, false)
 		} else {
 			panic(SyntaxError{
 				Reason:      "Expecting term after '*' or '/'",
@@ -706,22 +706,22 @@ We here treat the property values as expressions:
 	margin: {expression};
 
 */
-func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
+func (parser *Parser) ParseExpr(inParenthesis bool) ast.Expr {
 	var pos = parser.Pos
 
 	// plus or minus. This creates an unary expression that holds the later term.
 	// this is for:  +3 or -4
-	var expr ast.Expression = nil
+	var expr ast.Expr = nil
 
 	if tok := parser.acceptAnyOf2(ast.T_PLUS, ast.T_MINUS); tok != nil {
 		if term := parser.ParseTerm(); term != nil {
-			expr = ast.NewUnaryExpression(ast.NewOpWithToken(tok), term)
+			expr = ast.NewUnaryExpr(ast.NewOpWithToken(tok), term)
 
-			if uexpr, ok := expr.(*ast.UnaryExpression); ok {
+			if uexpr, ok := expr.(*ast.UnaryExpr); ok {
 
 				// if it's evaluatable just return the evaluated value.
-				if val, ok := runtime.ReduceExpression(uexpr, parser.GlobalContext); ok {
-					expr = ast.Expression(val)
+				if val, ok := runtime.ReduceExpr(uexpr, parser.GlobalContext); ok {
+					expr = ast.Expr(val)
 				}
 			}
 		} else {
@@ -733,7 +733,7 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 	}
 
 	if expr == nil {
-		debug("ParseExpression failed, got %+v, restoring to %d", expr, pos)
+		debug("ParseExpr failed, got %+v, restoring to %d", expr, pos)
 		parser.restore(pos)
 		return nil
 	}
@@ -745,15 +745,15 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 
 		if rightTerm := parser.ParseTerm(); rightTerm != nil {
 			// XXX: check parenthesis
-			var bexpr = ast.NewBinaryExpression(ast.NewOpWithToken(rightTok), expr, rightTerm, inParenthesis)
+			var bexpr = ast.NewBinaryExpr(ast.NewOpWithToken(rightTok), expr, rightTerm, inParenthesis)
 
-			if val, ok := runtime.ReduceExpression(bexpr, parser.GlobalContext); ok {
+			if val, ok := runtime.ReduceExpr(bexpr, parser.GlobalContext); ok {
 
-				expr = ast.Expression(val)
+				expr = ast.Expr(val)
 
 			} else {
 				// wrap the existing expression with the new binary expression object
-				expr = ast.Expression(bexpr)
+				expr = ast.Expr(bexpr)
 			}
 		} else {
 			panic(SyntaxError{
@@ -767,7 +767,7 @@ func (parser *Parser) ParseExpression(inParenthesis bool) ast.Expression {
 	return expr
 }
 
-func (parser *Parser) ParseMap() ast.Expression {
+func (parser *Parser) ParseMap() ast.Expr {
 	var pos = parser.Pos
 	var tok = parser.accept(ast.T_PAREN_OPEN)
 	// since it's not started with '(', it's not map
@@ -781,7 +781,7 @@ func (parser *Parser) ParseMap() ast.Expression {
 	// TODO: check and report Map syntax error
 	tok = parser.peek()
 	for tok.Type != ast.T_PAREN_CLOSE {
-		var keyExpr = parser.ParseExpression(false)
+		var keyExpr = parser.ParseExpr(false)
 		if keyExpr == nil {
 			parser.restore(pos)
 			return nil
@@ -792,7 +792,7 @@ func (parser *Parser) ParseMap() ast.Expression {
 			return nil
 		}
 
-		var valueExpr = parser.ParseExpression(false)
+		var valueExpr = parser.ParseExpr(false)
 		if valueExpr == nil {
 			parser.restore(pos)
 			return nil
@@ -809,7 +809,7 @@ func (parser *Parser) ParseMap() ast.Expression {
 	return mapval
 }
 
-func (parser *Parser) ParseString() ast.Expression {
+func (parser *Parser) ParseString() ast.Expr {
 	if tok := parser.accept(ast.T_QQ_STRING); tok != nil {
 
 		return ast.NewStringWithQuote('"', tok)
@@ -835,14 +835,14 @@ func (parser *Parser) ParseString() ast.Expression {
 	return nil
 }
 
-func (parser *Parser) ParseInterp() ast.Expression {
+func (parser *Parser) ParseInterp() ast.Expr {
 	var startTok = parser.expect(ast.T_INTERPOLATION_START)
-	var innerExpr = parser.ParseExpression(true)
+	var innerExpr = parser.ParseExpr(true)
 	var endTok = parser.expect(ast.T_INTERPOLATION_END)
 	return ast.NewInterpolation(innerExpr, startTok, endTok)
 }
 
-func (parser *Parser) ParseValueStrict() ast.Expression {
+func (parser *Parser) ParseValueStrict() ast.Expr {
 	var pos = parser.Pos
 
 	if tok := parser.accept(ast.T_PAREN_OPEN); tok != nil {
@@ -857,16 +857,16 @@ func (parser *Parser) ParseValueStrict() ast.Expression {
 		parser.restore(pos)
 	}
 	// Reduce the expression
-	return parser.ParseExpression(false)
+	return parser.ParseExpr(false)
 }
 
 /*
 Parse string literal expression (literal concat with interpolation)
 */
-func (parser *Parser) ParseLiteralExpression() ast.Expression {
-	if expr := parser.ParseExpression(false); expr != nil {
+func (parser *Parser) ParseLiteralExpr() ast.Expr {
+	if expr := parser.ParseExpr(false); expr != nil {
 		for tok := parser.accept(ast.T_LITERAL_CONCAT); tok != nil; tok = parser.accept(ast.T_LITERAL_CONCAT) {
-			var rightExpr = parser.ParseExpression(false)
+			var rightExpr = parser.ParseExpr(false)
 			if rightExpr == nil {
 				panic(SyntaxError{
 					Reason:      "Expecting expression or ident after the literal concat operator.",
@@ -879,14 +879,14 @@ func (parser *Parser) ParseLiteralExpression() ast.Expression {
 
 		// Check if the expression is reduce-able
 		// For now, division looks like CSS slash at the first level, should be string.
-		if runtime.CanReduceExpression(expr) {
-			if reducedExpr, ok := runtime.ReduceExpression(expr, parser.GlobalContext); ok {
+		if runtime.CanReduceExpr(expr) {
+			if reducedExpr, ok := runtime.ReduceExpr(expr, parser.GlobalContext); ok {
 				return reducedExpr
 			}
 		} else {
 			// Return expression as css slash syntax string
 			// TODO: re-visit here later
-			return runtime.EvaluateExpression(expr, parser.GlobalContext)
+			return runtime.EvaluateExpr(expr, parser.GlobalContext)
 		}
 
 		// if we can't evaluate the value, just return the expression tree
@@ -907,7 +907,7 @@ To parse mixin argument or function argument, we only allow comma-separated list
 The stop token is used from variable assignment expression,
 We expect ';' semicolon at the end of expression to avoid the ambiguity of list, map and expression.
 */
-func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
+func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expr {
 	var pos = parser.Pos
 
 	// try parse map
@@ -934,11 +934,11 @@ func (parser *Parser) ParseValue(stopTokType ast.TokenType) ast.Expression {
 	debug("List parse failed, restoring to %d", pos)
 	parser.restore(pos)
 
-	debug("ParseLiteralExpression trying", pos)
-	return parser.ParseLiteralExpression()
+	debug("ParseLiteralExpr trying", pos)
+	return parser.ParseLiteralExpr()
 }
 
-func (parser *Parser) ParseList() ast.Expression {
+func (parser *Parser) ParseList() ast.Expr {
 	debug("ParseList at %d", parser.Pos)
 	var pos = parser.Pos
 	if list := parser.ParseCommaSepList(); list != nil {
@@ -948,7 +948,7 @@ func (parser *Parser) ParseList() ast.Expression {
 	return nil
 }
 
-func (parser *Parser) ParseCommaSepList() ast.Expression {
+func (parser *Parser) ParseCommaSepList() ast.Expr {
 	debug("ParseCommaSepList at %d", parser.Pos)
 	var list = ast.NewCommaSepList()
 
@@ -990,7 +990,7 @@ func (parser *Parser) ParseCommaSepList() ast.Expression {
 
 	} else if list.Len() == 1 {
 
-		return list.Expressions[0]
+		return list.Exprs[0]
 
 	}
 	return list
@@ -1021,12 +1021,12 @@ func (parser *Parser) ParseVariableAssignment() ast.Stmt {
 
 	// Optimize the expression only when it's an expression
 	// TODO: for expression inside a map or list we should also optmise them too
-	if bexpr, ok := valExpr.(ast.BinaryExpression); ok {
-		if reducedExpr, ok := runtime.ReduceExpression(bexpr, parser.GlobalContext); ok {
+	if bexpr, ok := valExpr.(ast.BinaryExpr); ok {
+		if reducedExpr, ok := runtime.ReduceExpr(bexpr, parser.GlobalContext); ok {
 			valExpr = reducedExpr
 		}
-	} else if uexpr, ok := valExpr.(ast.UnaryExpression); ok {
-		if reducedExpr, ok := runtime.ReduceExpression(uexpr, parser.GlobalContext); ok {
+	} else if uexpr, ok := valExpr.(ast.UnaryExpr); ok {
+		if reducedExpr, ok := runtime.ReduceExpr(uexpr, parser.GlobalContext); ok {
 			valExpr = reducedExpr
 		}
 	}
@@ -1070,7 +1070,7 @@ func (parser *Parser) ParseFlags(stm *ast.VariableAssignment) {
 	}
 }
 
-func (parser *Parser) ParseSpaceSepList() ast.Expression {
+func (parser *Parser) ParseSpaceSepList() ast.Expr {
 	debug("ParseSpaceSepList at %d", parser.Pos)
 
 	var list = ast.NewSpaceSepList()
@@ -1085,9 +1085,9 @@ func (parser *Parser) ParseSpaceSepList() ast.Expression {
 
 	var tok = parser.peek()
 	for tok.Type != ast.T_SEMICOLON && tok.Type != ast.T_BRACE_CLOSE {
-		var subexpr = parser.ParseExpression(true)
+		var subexpr = parser.ParseExpr(true)
 		if subexpr != nil {
-			debug("Parsed Expression: %+v", subexpr)
+			debug("Parsed Expr: %+v", subexpr)
 			list.Append(subexpr)
 		} else {
 			break
@@ -1101,7 +1101,7 @@ func (parser *Parser) ParseSpaceSepList() ast.Expression {
 	if list.Len() == 0 {
 		return nil
 	} else if list.Len() == 1 {
-		return list.Expressions[0]
+		return list.Exprs[0]
 	} else if list.Len() > 1 {
 		return list
 	}
@@ -1131,7 +1131,7 @@ func (parser *Parser) ParsePropertyValue(parentRuleSet *ast.RuleSet, property *a
 	return list
 }
 
-func (parser *Parser) ParsePropertyName() ast.Expression {
+func (parser *Parser) ParsePropertyName() ast.Expr {
 	var ident = parser.ParsePropertyNameToken()
 	if ident == nil {
 		return nil
@@ -1147,7 +1147,7 @@ func (parser *Parser) ParsePropertyName() ast.Expression {
 	return ident // TODO: new literal concat ast
 }
 
-func (parser *Parser) ParsePropertyNameToken() ast.Expression {
+func (parser *Parser) ParsePropertyNameToken() ast.Expr {
 	if tok := parser.accept(ast.T_PROPERTY_NAME_TOKEN); tok != nil {
 		return ast.NewIdentWithToken(tok)
 	}
@@ -1159,13 +1159,13 @@ func (parser *Parser) ParsePropertyNameToken() ast.Expression {
 	return nil
 }
 
-func (parser *Parser) ParseInterpolation() ast.Expression {
+func (parser *Parser) ParseInterpolation() ast.Expr {
 	debug("ParseInterpolation")
 	var startToken *ast.Token
 	if startToken = parser.accept(ast.T_INTERPOLATION_START); startToken == nil {
 		return nil
 	}
-	var expr = parser.ParseExpression(true)
+	var expr = parser.ParseExpr(true)
 	var endToken = parser.expect(ast.T_INTERPOLATION_END)
 	return ast.NewInterpolation(expr, startToken, endToken)
 }
@@ -1281,30 +1281,30 @@ func (parser *Parser) ParseMediaQuery() *ast.MediaQuery {
 	}
 
 	// parse the media expression after the media type.
-	var mediaExpression = parser.ParseMediaQueryExpression()
-	if mediaExpression == nil {
+	var mediaExpr = parser.ParseMediaQueryExpr()
+	if mediaExpr == nil {
 		if mediaType == nil {
 			return nil
 		}
-		return ast.NewMediaQuery(mediaType, mediaExpression)
+		return ast.NewMediaQuery(mediaType, mediaExpr)
 	}
 
 	// @media query only allows AND operator here..
 	for tok := parser.accept(ast.T_LOGICAL_AND); tok != nil; tok = parser.accept(ast.T_LOGICAL_AND) {
 		// parse another mediq query expression
-		var expr2 = parser.ParseMediaQueryExpression()
-		mediaExpression = ast.NewBinaryExpression(ast.NewOpWithToken(tok), mediaExpression, expr2, false)
+		var expr2 = parser.ParseMediaQueryExpr()
+		mediaExpr = ast.NewBinaryExpr(ast.NewOpWithToken(tok), mediaExpr, expr2, false)
 	}
-	return ast.NewMediaQuery(mediaType, mediaExpression)
+	return ast.NewMediaQuery(mediaType, mediaExpr)
 }
 
 /*
-ParseMediaType returns Ident Node or UnaryExpression as ast.Expression
+ParseMediaType returns Ident Node or UnaryExpr as ast.Expr
 */
 func (parser *Parser) ParseMediaType() *ast.MediaType {
 	if tok := parser.acceptAnyOf2(ast.T_LOGICAL_NOT, ast.T_ONLY); tok != nil {
 		var mediaType = parser.expect(ast.T_IDENT)
-		return ast.NewMediaType(ast.NewUnaryExpression(ast.NewOpWithToken(tok), mediaType))
+		return ast.NewMediaType(ast.NewUnaryExpr(ast.NewOpWithToken(tok), mediaType))
 	}
 
 	var tok = parser.peek()
@@ -1313,7 +1313,7 @@ func (parser *Parser) ParseMediaType() *ast.MediaType {
 		return nil
 	}
 
-	var expr = parser.ParseExpression(false)
+	var expr = parser.ParseExpr(false)
 	if expr != nil {
 		return ast.NewMediaType(expr)
 	}
@@ -1325,17 +1325,17 @@ func (parser *Parser) ParseMediaType() *ast.MediaType {
 /*
 An media query expression must start with a '(' and ends with ')'
 */
-func (parser *Parser) ParseMediaQueryExpression() ast.Expression {
+func (parser *Parser) ParseMediaQueryExpr() ast.Expr {
 
 	// it's not an media query expression
 	if openTok := parser.accept(ast.T_PAREN_OPEN); openTok != nil {
-		var featureExpr = parser.ParseExpression(false)
+		var featureExpr = parser.ParseExpr(false)
 		var feature = ast.NewMediaFeature(featureExpr, nil)
 
 		// if the next token is a colon, then we expect a feature value
 		// after the colon.
 		if tok := parser.accept(ast.T_COLON); tok != nil {
-			feature.Value = parser.ParseExpression(false)
+			feature.Value = parser.ParseExpr(false)
 		}
 		var closeTok = parser.expect(ast.T_PAREN_CLOSE)
 		feature.Open = openTok
@@ -1370,8 +1370,8 @@ func (parser *Parser) ParseForStmt() ast.Stmt {
 
 	if parser.accept(ast.T_FOR_FROM) != nil {
 
-		var fromExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := runtime.ReduceExpression(fromExpr, parser.GlobalContext); ok {
+		var fromExpr = parser.ParseExpr(true)
+		if reducedExpr, ok := runtime.ReduceExpr(fromExpr, parser.GlobalContext); ok {
 			fromExpr = reducedExpr
 		}
 		stm.From = fromExpr
@@ -1387,8 +1387,8 @@ func (parser *Parser) ParseForStmt() ast.Stmt {
 			})
 		}
 
-		var endExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := runtime.ReduceExpression(endExpr, parser.GlobalContext); ok {
+		var endExpr = parser.ParseExpr(true)
+		if reducedExpr, ok := runtime.ReduceExpr(endExpr, parser.GlobalContext); ok {
 			endExpr = reducedExpr
 		}
 
@@ -1404,16 +1404,16 @@ func (parser *Parser) ParseForStmt() ast.Stmt {
 
 	} else if parser.accept(ast.T_FOR_IN) != nil {
 
-		var fromExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := runtime.ReduceExpression(fromExpr, parser.GlobalContext); ok {
+		var fromExpr = parser.ParseExpr(true)
+		if reducedExpr, ok := runtime.ReduceExpr(fromExpr, parser.GlobalContext); ok {
 			fromExpr = reducedExpr
 		}
 		stm.From = fromExpr
 
 		parser.expect(ast.T_RANGE)
 
-		var endExpr = parser.ParseExpression(true)
-		if reducedExpr, ok := runtime.ReduceExpression(endExpr, parser.GlobalContext); ok {
+		var endExpr = parser.ParseExpr(true)
+		if reducedExpr, ok := runtime.ReduceExpr(endExpr, parser.GlobalContext); ok {
 			endExpr = reducedExpr
 		}
 
@@ -1560,7 +1560,7 @@ func (parser *Parser) ParseImportStmt() ast.Stmt {
 
 func (parser *Parser) ParseReturnStmt() ast.Stmt {
 	var returnTok = parser.expect(ast.T_RETURN)
-	var valueExpr = parser.ParseExpression(true)
+	var valueExpr = parser.ParseExpr(true)
 	parser.expect(ast.T_SEMICOLON)
 	return ast.NewReturnStmtWithToken(returnTok, valueExpr)
 }
@@ -1728,7 +1728,7 @@ func (parser *Parser) ParseFontFaceStmt() ast.Stmt {
 
 func (parser *Parser) ParseLogStmt() ast.Stmt {
 	if directiveTok := parser.acceptAnyOf3(ast.T_ERROR, ast.T_WARN, ast.T_INFO); directiveTok != nil {
-		var expr = parser.ParseExpression(false)
+		var expr = parser.ParseExpr(false)
 		parser.expect(ast.T_SEMICOLON)
 		return &ast.LogStmt{directiveTok, expr}
 	}

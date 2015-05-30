@@ -142,7 +142,7 @@ func TestLexerMapWithExtraComma(t *testing.T) {
 	})
 }
 
-func TestLexerMapWithExpression(t *testing.T) {
+func TestLexerMapWithExpr(t *testing.T) {
 	AssertLexerTokenSequence(t, `$var: (foo: 2px + 3px, bar: $var2);`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON,
 		ast.T_PAREN_OPEN,
 		ast.T_IDENT, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_PLUS, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_COMMA,

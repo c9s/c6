@@ -176,7 +176,7 @@ func lexPseudoSelector(l *Lexer) stateFn {
 
 			r = l.peek()
 			for r != ')' && r != EOF {
-				if fn := lexExpression(l); fn == nil {
+				if fn := lexExpr(l); fn == nil {
 					break
 				}
 				r = l.peek()

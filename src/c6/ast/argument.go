@@ -4,7 +4,7 @@ import "strconv"
 
 type Argument struct {
 	Name           *Token
-	DefaultValue   Expression
+	DefaultValue   Expr
 	VariableLength bool
 	Position       int
 }

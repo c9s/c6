@@ -5,7 +5,7 @@ Variable can be used in block as statement and declaration block
 */
 type VariableAssignment struct {
 	Variable   *Variable
-	Expression Expression
+	Expr Expr
 
 	Default   bool
 	Optional  bool
@@ -20,9 +20,9 @@ func (self VariableAssignment) CanBeDeclaration() {}
 func (self VariableAssignment) CanBeStmt()   {}
 
 func (self VariableAssignment) String() string {
-	return self.Variable.String() + " = " + self.Expression.String()
+	return self.Variable.String() + " = " + self.Expr.String()
 }
 
-func NewVariableAssignment(variable *Variable, expr Expression) *VariableAssignment {
+func NewVariableAssignment(variable *Variable, expr Expr) *VariableAssignment {
 	return &VariableAssignment{variable, expr, false, false, false, false}
 }

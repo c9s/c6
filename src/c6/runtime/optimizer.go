@@ -9,7 +9,7 @@ func OptimizeIfStmt(parentBlock *ast.Block, stm *ast.IfStmt) {
 
 	var mergeBlock = false
 	var ignoreBlock = false
-	var val = EvaluateExpressionInBooleanContext(stm.Condition, nil)
+	var val = EvaluateExprInBooleanContext(stm.Condition, nil)
 	// check if the expression is evaluated
 	if IsValue(val) {
 		if b, ok := val.(ast.BooleanValue); ok {
