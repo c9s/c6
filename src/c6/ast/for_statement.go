@@ -5,7 +5,7 @@ type ForStmt struct {
 	From     Expr
 	Through  Expr
 	To       Expr
-	Block    *DeclarationBlock
+	Block    *DeclBlock
 }
 
 func (stm ForStmt) CanBeStmt() {}

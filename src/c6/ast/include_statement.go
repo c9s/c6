@@ -4,7 +4,7 @@ type IncludeStmt struct {
 	Token        *Token // @include
 	MixinIdent   *Token // mixin identitfier
 	ArgumentList *ArgumentList
-	ContentBlock *DeclarationBlock // if any
+	ContentBlock *DeclBlock // if any
 }
 
 func (stm IncludeStmt) CanBeStmt() {}

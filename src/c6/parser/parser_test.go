@@ -372,7 +372,7 @@ func TestParserIfComparisonAndLogicalExpr(t *testing.T) {
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserIfDeclarationBlock(t *testing.T) {
+func TestParserIfDeclBlock(t *testing.T) {
 	RunParserTest(`
 @if $i == 1 {
 	color: #111;

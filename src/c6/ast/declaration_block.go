@@ -1,13 +1,13 @@
 package ast
 
 /*
-DeclarationBlock.
+DeclBlock.
 
 .foo {
 	property-name: property-value;
 }
 */
-type DeclarationBlock struct {
+type DeclBlock struct {
 	// The symbol table for storing constant values
 	// Only constants can be stored here...
 	Stmts *StmtList
@@ -18,8 +18,8 @@ type DeclarationBlock struct {
 	Scope *Scope
 }
 
-func NewDeclarationBlock() *DeclarationBlock {
-	return &DeclarationBlock{
+func NewDeclBlock() *DeclBlock {
+	return &DeclBlock{
 		Stmts: &StmtList{},
 	}
 }
@@ -27,22 +27,22 @@ func NewDeclarationBlock() *DeclarationBlock {
 /**
 Append a Declaration
 */
-func (self *DeclarationBlock) Append(decl Stmt) {
+func (self *DeclBlock) Append(decl Stmt) {
 	self.Stmts.Append(decl)
 }
 
-func (self *DeclarationBlock) AppendSubRuleSet(ruleset *RuleSet) {
+func (self *DeclBlock) AppendSubRuleSet(ruleset *RuleSet) {
 	newRuleSets := append(self.SubRuleSets, ruleset)
 	self.SubRuleSets = newRuleSets
 }
 
-func (self *DeclarationBlock) MergeStmts(stmts *StmtList) {
+func (self *DeclBlock) MergeStmts(stmts *StmtList) {
 	for _, stm := range *stmts {
 		self.Stmts.Append(stm)
 	}
 }
 
-func (self DeclarationBlock) String() (out string) {
+func (self DeclBlock) String() (out string) {
 	out += "{\n"
 	for _, decl := range *self.Stmts {
 		out += decl.String() + "\n"

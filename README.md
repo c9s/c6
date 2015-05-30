@@ -107,7 +107,7 @@ If you need to build your application with c6, you need to clone the repository 
   - [x] Parse Selector
   - [ ] Parse Selector with interpolation
   - [x] Parse RuleSet
-  - [x] Parse DeclarationBlock
+  - [x] Parse DeclBlock
   - [x] Parse Variable Assignment Stmt
   - [x] Parse PropertyName
   - [x] Parse PropertyName with interpolation
@@ -134,7 +134,7 @@ If you need to build your application with c6, you need to clone the repository 
   - [ ] Parse `@use` statement
 - [ ] Building AST
   - [x] RuleSet
-  - [x] DeclarationBlock
+  - [x] DeclBlock
   - [x] PropertyName
   - [x] PropertyValue
   - [x] Comma-Separated List
@@ -244,7 +244,7 @@ If you need to build your application with c6, you need to clone the repository 
       - [ ] CoimpileParentSelector
     - [ ] CompileSubRuleSet
     - [ ] CompileCommentBlock
-    - [ ] CompileDeclarationBlock
+    - [ ] CompileDeclBlock
     - [ ] CompileMediaQuery: `@media`
     - [ ] CompileSupportrQuery: `@support`
     - [ ] CompileFontFace: `@support`

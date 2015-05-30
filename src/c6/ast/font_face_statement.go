@@ -1,7 +1,7 @@
 package ast
 
 type FontFaceStmt struct {
-	Block *DeclarationBlock
+	Block *DeclBlock
 }
 
 func (stm FontFaceStmt) CanBeStmt() {}

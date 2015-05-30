@@ -7,7 +7,7 @@ import "testing"
 func TestRuleSet(t *testing.T) {
 	sel := IdSelector{"myId"}
 	combinedSel := CombinedSelector{"", []Selector{sel}}
-	ruleset := RuleSet{&combinedSel, DeclarationBlockl{}}
+	ruleset := RuleSet{&combinedSel, DeclBlockl{}}
 	_ = ruleset
 }
 */

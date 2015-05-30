@@ -5,7 +5,7 @@ package ast
 type MixinStmt struct {
 	Token        *Token
 	Ident        *Token
-	Block        *DeclarationBlock
+	Block        *DeclBlock
 	ArgumentList *ArgumentList
 }
 

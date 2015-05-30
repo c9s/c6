@@ -159,7 +159,7 @@ func (parser *Parser) ParseIfStmt() ast.Stmt {
 		panic("if statement syntax error")
 	}
 
-	var block = parser.ParseDeclarationBlock()
+	var block = parser.ParseDeclBlock()
 	var stm = ast.NewIfStmt(condition, block)
 
 	// TODO: OptimizeIfStmt(...)
@@ -171,7 +171,7 @@ func (parser *Parser) ParseIfStmt() ast.Stmt {
 
 		// XXX: handle error here
 		var condition = parser.ParseCondition()
-		var elseifblock = parser.ParseDeclarationBlock()
+		var elseifblock = parser.ParseDeclBlock()
 		var elseIfStm = ast.NewIfStmt(condition, elseifblock)
 		stm.AppendElseIf(elseIfStm)
 		tok = parser.peek()
@@ -182,7 +182,7 @@ func (parser *Parser) ParseIfStmt() ast.Stmt {
 		parser.advance()
 
 		// XXX: handle error here
-		if elseBlock := parser.ParseDeclarationBlock(); elseBlock != nil {
+		if elseBlock := parser.ParseDeclBlock(); elseBlock != nil {
 			stm.ElseBlock = elseBlock
 		} else {
 			panic(SyntaxError{
@@ -445,7 +445,7 @@ func (parser *Parser) ParseRuleSet() ast.Stmt {
 	ruleset.Selectors = parser.ParseSelectorList()
 
 	parser.GlobalContext.PushRuleSet(ruleset)
-	ruleset.Block = parser.ParseDeclarationBlock()
+	ruleset.Block = parser.ParseDeclBlock()
 	parser.GlobalContext.PopRuleSet()
 
 	return ruleset
@@ -1174,8 +1174,8 @@ func (parser *Parser) ParseDeclaration() ast.Stmt {
 	return nil
 }
 
-func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
-	var declBlock = ast.NewDeclarationBlock()
+func (parser *Parser) ParseDeclBlock() *ast.DeclBlock {
+	var declBlock = ast.NewDeclBlock()
 	var parentRuleSet = parser.GlobalContext.TopRuleSet()
 
 	parser.expect(ast.T_BRACE_OPEN)
@@ -1195,7 +1195,7 @@ func (parser *Parser) ParseDeclarationBlock() *ast.DeclarationBlock {
 			// if nested property found
 			if tok2.Type == ast.T_BRACE_OPEN {
 				// TODO: merge them back to current block
-				parser.ParseDeclarationBlock()
+				parser.ParseDeclBlock()
 			}
 
 			if parser.accept(ast.T_SEMICOLON) == nil {
@@ -1238,7 +1238,7 @@ func (parser *Parser) ParseMediaQueryStmt() ast.Stmt {
 	if list := parser.ParseMediaQueryList(); list != nil {
 		stm.MediaQueryList = list
 	}
-	stm.Block = parser.ParseDeclarationBlock()
+	stm.Block = parser.ParseDeclBlock()
 	return stm
 }
 
@@ -1348,7 +1348,7 @@ func (parser *Parser) ParseMediaQueryExpr() ast.Expr {
 func (parser *Parser) ParseWhileStmt() ast.Stmt {
 	parser.expect(ast.T_WHILE)
 	var condition = parser.ParseCondition()
-	var block = parser.ParseDeclarationBlock()
+	var block = parser.ParseDeclBlock()
 	return ast.NewWhileStmt(condition, block)
 }
 
@@ -1420,7 +1420,7 @@ func (parser *Parser) ParseForStmt() ast.Stmt {
 		stm.To = endExpr
 	}
 
-	if b := parser.ParseDeclarationBlock(); b != nil {
+	if b := parser.ParseDeclBlock(); b != nil {
 		stm.Block = b
 	} else {
 		panic("The @for statement expecting block after the range syntax")
@@ -1595,7 +1595,7 @@ func (parser *Parser) ParseMixinStmt() ast.Stmt {
 	} else {
 		panic("Syntax error")
 	}
-	stm.Block = parser.ParseDeclarationBlock()
+	stm.Block = parser.ParseDeclBlock()
 	parser.GlobalContext.Mixins.Set(stm.Ident.Str, stm)
 	return stm
 }
@@ -1713,7 +1713,7 @@ func (parser *Parser) ParseIncludeStmt() ast.Stmt {
 
 	var tok3 = parser.peek()
 	if tok3.Type == ast.T_BRACE_OPEN {
-		stm.ContentBlock = parser.ParseDeclarationBlock()
+		stm.ContentBlock = parser.ParseDeclBlock()
 	}
 
 	parser.expect(ast.T_SEMICOLON)
@@ -1722,7 +1722,7 @@ func (parser *Parser) ParseIncludeStmt() ast.Stmt {
 
 func (parser *Parser) ParseFontFaceStmt() ast.Stmt {
 	parser.expect(ast.T_FONT_FACE)
-	block := parser.ParseDeclarationBlock()
+	block := parser.ParseDeclBlock()
 	return &ast.FontFaceStmt{block}
 }
 

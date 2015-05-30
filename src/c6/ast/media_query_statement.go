@@ -2,7 +2,7 @@ package ast
 
 type MediaQueryStmt struct {
 	MediaQueryList *MediaQueryList
-	Block          *DeclarationBlock
+	Block          *DeclBlock
 }
 
 type MediaQueryList []*MediaQuery
