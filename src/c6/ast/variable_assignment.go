@@ -3,7 +3,7 @@ package ast
 /**
 Variable can be used in block as statement and declaration block
 */
-type VariableAssignment struct {
+type AssignStmt struct {
 	Variable   *Variable
 	Expr Expr
 
@@ -16,13 +16,13 @@ type VariableAssignment struct {
 /*
 Property is one of the declaration
 */
-func (self VariableAssignment) CanBeDeclaration() {}
-func (self VariableAssignment) CanBeStmt()   {}
+func (self AssignStmt) CanBeDeclaration() {}
+func (self AssignStmt) CanBeStmt()   {}
 
-func (self VariableAssignment) String() string {
+func (self AssignStmt) String() string {
 	return self.Variable.String() + " = " + self.Expr.String()
 }
 
-func NewVariableAssignment(variable *Variable, expr Expr) *VariableAssignment {
-	return &VariableAssignment{variable, expr, false, false, false, false}
+func NewAssignStmt(variable *Variable, expr Expr) *AssignStmt {
+	return &AssignStmt{variable, expr, false, false, false, false}
 }

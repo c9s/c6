@@ -459,98 +459,98 @@ func TestParserFontCssSlash(t *testing.T) {
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserVariableAssignmentWithBooleanTrue(t *testing.T) {
+func TestParserAssignStmtWithBooleanTrue(t *testing.T) {
 	var block = RunParserTest(`$foo: true;`)
 	t.Logf("%+v\n", block)
 }
 
-func TestParserVariableAssignmentWithBooleanFalse(t *testing.T) {
+func TestParserAssignStmtWithBooleanFalse(t *testing.T) {
 	var block = RunParserTest(`$foo: false;`)
 	t.Logf("%+v\n", block)
 }
 
-func TestParserVariableAssignmentWithNull(t *testing.T) {
+func TestParserAssignStmtWithNull(t *testing.T) {
 	var stmts = RunParserTest(`$foo: null;`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserVariableAssignmentList(t *testing.T) {
+func TestParserAssignStmtList(t *testing.T) {
 	var stmts = RunParserTest(`$foo: 1 2 3 4;`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserVariableAssignmentListWithParenthesis(t *testing.T) {
+func TestParserAssignStmtListWithParenthesis(t *testing.T) {
 	var stmts = RunParserTest(`$foo: (1 2 3 4);`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserVariableAssignmentMap(t *testing.T) {
+func TestParserAssignStmtMap(t *testing.T) {
 	var stmts = RunParserTest(`$foo: (bar: 1, foo: 2);`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserVariableAssignmentCommaSepList(t *testing.T) {
+func TestParserAssignStmtCommaSepList(t *testing.T) {
 	var stmts = RunParserTest(`$foo: (1,2,3,4);`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserVariableAssignmentWithMorePlus(t *testing.T) {
+func TestParserAssignStmtWithMorePlus(t *testing.T) {
 	var stmts = RunParserTest(`$foo: 12px + 20px + 20px;`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserVariableAssignmentWithExprDefaultFlag(t *testing.T) {
+func TestParserAssignStmtWithExprDefaultFlag(t *testing.T) {
 	var stmts = RunParserTest(`$foo: 12px + 20px + 20px !default;`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserVariableAssignmentWithExprOptionalFlag(t *testing.T) {
+func TestParserAssignStmtWithExprOptionalFlag(t *testing.T) {
 	var block = RunParserTest(`$foo: 12px + 20px + 20px !optional;`)
 	t.Logf("%+v\n", block)
 }
 
-func TestParserVariableAssignmentWithComplexExpr(t *testing.T) {
+func TestParserAssignStmtWithComplexExpr(t *testing.T) {
 	var stmts = RunParserTest(`$foo: 12px * (20px + 20px) + 4px / 2;`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserVariableAssignmentWithInterpolation(t *testing.T) {
+func TestParserAssignStmtWithInterpolation(t *testing.T) {
 	var stmts = RunParserTest(`$foo: #{ 10 + 20 }px;`)
 	assert.Equal(t, 1, len(*stmts))
 }
 
-func TestParserVariableAssignmentLengthPlusLength(t *testing.T) {
+func TestParserAssignStmtLengthPlusLength(t *testing.T) {
 	var stmts = RunParserTest(`$foo: 10px + 20px;`)
 	assert.Equal(t, 1, len(*stmts))
 	t.Logf("%+v\n", stmts)
 }
 
-func TestParserVariableAssignmentNumberPlusNumberMulLength(t *testing.T) {
+func TestParserAssignStmtNumberPlusNumberMulLength(t *testing.T) {
 	var stmts = RunParserTest(`$foo: (10 + 20) * 3px;`)
 	t.Logf("%+v\n", stmts)
 }
 
-func TestParserVariableAssignmentWithHexColorAddOperation(t *testing.T) {
+func TestParserAssignStmtWithHexColorAddOperation(t *testing.T) {
 	var stmts = RunParserTest(`$foo: #000 + 10;`)
 	t.Logf("%+v\n", stmts)
 }
 
-func TestParserVariableAssignmentWithHexColorMulOperation(t *testing.T) {
+func TestParserAssignStmtWithHexColorMulOperation(t *testing.T) {
 	var stmts = RunParserTest(`$foo: #010101 * 20;`)
 	t.Logf("%+v\n", stmts)
 }
 
-func TestParserVariableAssignmentWithHexColorDivOperation(t *testing.T) {
+func TestParserAssignStmtWithHexColorDivOperation(t *testing.T) {
 	var stmts = RunParserTest(`$foo: #121212 / 2;`)
 	t.Logf("%+v\n", stmts)
 }
 
-func TestParserVariableAssignmentWithPxValue(t *testing.T) {
+func TestParserAssignStmtWithPxValue(t *testing.T) {
 	var stmts = RunParserTest(`$foo: 10px;`)
 	t.Logf("%+v\n", stmts)
 }
 
-func TestParserVariableAssignmentWithSolveableVariableRef(t *testing.T) {
+func TestParserAssignStmtWithSolveableVariableRef(t *testing.T) {
 	var stmts = RunParserTest(`
 	$a: 10px; 
 	$b: 10px;
@@ -559,7 +559,7 @@ func TestParserVariableAssignmentWithSolveableVariableRef(t *testing.T) {
 	t.Logf("%+v\n", stmts)
 }
 
-func TestParserVariableAssignmentWithUnknownVariableRef(t *testing.T) {
+func TestParserAssignStmtWithUnknownVariableRef(t *testing.T) {
 	var stmts = RunParserTest(`
 	$a: 10px; 
 	$b: 10px;
@@ -568,22 +568,22 @@ func TestParserVariableAssignmentWithUnknownVariableRef(t *testing.T) {
 	t.Logf("%+v\n", stmts) // should be 60px + $c
 }
 
-func TestParserVariableAssignmentWithFunctionCall(t *testing.T) {
+func TestParserAssignStmtWithFunctionCall(t *testing.T) {
 	var stmts = RunParserTest(`$foo: go();`)
 	t.Logf("%+v\n", stmts)
 }
 
-func TestParserVariableAssignmentWithFunctionCallIntegerArgument(t *testing.T) {
+func TestParserAssignStmtWithFunctionCallIntegerArgument(t *testing.T) {
 	var stmts = RunParserTest(`$foo: go(1,2,3);`)
 	t.Logf("%+v\n", stmts)
 }
 
-func TestParserVariableAssignmentWithFunctionCallFunctionCallArgument(t *testing.T) {
+func TestParserAssignStmtWithFunctionCallFunctionCallArgument(t *testing.T) {
 	var stmts = RunParserTest(`$foo: go(bar());`)
 	t.Logf("%+v\n", stmts)
 }
 
-func TestParserVariableAssignmentWithFunctionCallVariableArgument(t *testing.T) {
+func TestParserAssignStmtWithFunctionCallVariableArgument(t *testing.T) {
 	var stmts = RunParserTest(`$foo: go($a,$b,$c);`)
 	t.Logf("%+v\n", stmts)
 }

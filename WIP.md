@@ -32,7 +32,7 @@ Evaluating function calls, we:
 
 Optimizer
 
-- [x] Constant Value elimination optimizer for VariableAssignment.
+- [x] Constant Value elimination optimizer for AssignStmt.
 - [ ] Call IfStmtOptimizer after the if statement is parsed.
 
 CSS Slash and Divide

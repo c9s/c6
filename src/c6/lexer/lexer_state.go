@@ -303,7 +303,7 @@ func lexUnquoteString(l *Lexer) stateFn {
 	return nil
 }
 
-func lexVariableAssignment(l *Lexer) stateFn {
+func lexAssignStmt(l *Lexer) stateFn {
 	lexVariableName(l)
 	lexColon(l)
 	var r = l.peek()
@@ -541,7 +541,7 @@ func lexStmt(l *Lexer) stateFn {
 
 	} else if r == '$' { // it's a variable assignment statement
 
-		return lexVariableAssignment
+		return lexAssignStmt
 
 	} else if r == ';' {
 

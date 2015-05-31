@@ -91,7 +91,7 @@ func (compiler *CompactCompiler) CompileStmt(anyStm ast.Stmt) string {
 	case *ast.RuleSet:
 		return compiler.CompileRuleSet(stm)
 	case *ast.ImportStmt:
-	case *ast.VariableAssignment:
+	case *ast.AssignStmt:
 	}
 	panic("Unsupported compilation")
 	return "fail"

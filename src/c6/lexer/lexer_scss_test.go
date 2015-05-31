@@ -6,45 +6,45 @@ import "testing"
 /**
 Variable assignment test cases
 */
-func TestLexerVariableAssignmentWithCommentBlock(t *testing.T) {
+func TestLexerAssignStmtWithCommentBlock(t *testing.T) {
 	AssertLexerTokenSequence(t, `$favorite: /* comment */ #fff /* comment 2 */;`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON})
 }
 
-func TestLexerVariableAssignmentHexColor(t *testing.T) {
+func TestLexerAssignStmtHexColor(t *testing.T) {
 	AssertLexerTokenSequence(t, `$favorite: #fff;`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON})
 }
 
-func TestLexerVariableAssignmentString(t *testing.T) {
+func TestLexerAssignStmtString(t *testing.T) {
 	AssertLexerTokenSequence(t, `$favorite: 'string';`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_Q_STRING, ast.T_SEMICOLON})
 }
 
-func TestLexerVariableAssignmentQQString(t *testing.T) {
+func TestLexerAssignStmtQQString(t *testing.T) {
 	AssertLexerTokenSequence(t, `$favorite: "string";`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_QQ_STRING, ast.T_SEMICOLON})
 }
 
-func TestLexerVariableAssignmentQQStringEscape(t *testing.T) {
+func TestLexerAssignStmtQQStringEscape(t *testing.T) {
 	AssertLexerTokenSequence(t, `$favorite: "str\ning";`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_QQ_STRING, ast.T_SEMICOLON})
 }
 
-func TestLexerVariableAssignmentWithDefaultFlag(t *testing.T) {
+func TestLexerAssignStmtWithDefaultFlag(t *testing.T) {
 	AssertLexerTokenSequence(t, `$favorite: #fff !default;`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_HEX_COLOR, ast.T_FLAG_DEFAULT, ast.T_SEMICOLON})
 }
 
-func TestLexerVariableAssignmentWithImportantFlag(t *testing.T) {
+func TestLexerAssignStmtWithImportantFlag(t *testing.T) {
 	AssertLexerTokenSequence(t, `$favorite: #fff !important;`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_HEX_COLOR, ast.T_FLAG_IMPORTANT, ast.T_SEMICOLON})
 }
 
-func TestLexerVariableAssignmentWithOptionalFlag(t *testing.T) {
+func TestLexerAssignStmtWithOptionalFlag(t *testing.T) {
 	AssertLexerTokenSequence(t, `$favorite: #fff !optional;`, []ast.TokenType{ast.T_VARIABLE, ast.T_COLON, ast.T_HEX_COLOR, ast.T_FLAG_OPTIONAL, ast.T_SEMICOLON})
 }
 
-func TestLexerVariableAssignmentWithInterp(t *testing.T) {
+func TestLexerAssignStmtWithInterp(t *testing.T) {
 	AssertLexerTokenSequence(t, `$favorite: #{ 10 + 2 }px;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_INTERPOLATION_START, ast.T_INTEGER, ast.T_PLUS, ast.T_INTEGER, ast.T_INTERPOLATION_END, ast.T_LITERAL_CONCAT, ast.T_IDENT, ast.T_SEMICOLON,
 	})
 }
 
-func TestLexerVariableAssignmentWithIdent(t *testing.T) {
+func TestLexerAssignStmtWithIdent(t *testing.T) {
 	AssertLexerTokenSequence(t, `$media: screen;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_IDENT, ast.T_SEMICOLON,
 	})
@@ -53,25 +53,25 @@ func TestLexerVariableAssignmentWithIdent(t *testing.T) {
 	})
 }
 
-func TestLexerVariableAssignmentWithFloatingNumber(t *testing.T) {
+func TestLexerAssignStmtWithFloatingNumber(t *testing.T) {
 	AssertLexerTokenSequence(t, `$value: 1.5;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_SEMICOLON,
 	})
 }
 
-func TestLexerVariableAssignmentWithPtValue(t *testing.T) {
+func TestLexerAssignStmtWithPtValue(t *testing.T) {
 	AssertLexerTokenSequence(t, `$foo: 10pt;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PT, ast.T_SEMICOLON,
 	})
 }
 
-func TestLexerVariableAssignmentWithLengthValueStartWithDot(t *testing.T) {
+func TestLexerAssignStmtWithLengthValueStartWithDot(t *testing.T) {
 	AssertLexerTokenSequence(t, `$foo: .3em;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_EM, ast.T_SEMICOLON,
 	})
 }
 
-func TestLexerVariableAssignmentWithLengthValue(t *testing.T) {
+func TestLexerAssignStmtWithLengthValue(t *testing.T) {
 	AssertLexerTokenSequence(t, `$foo: 10px;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PX, ast.T_SEMICOLON,
 	})
@@ -95,7 +95,7 @@ func TestLexerVariableAssignmentWithLengthValue(t *testing.T) {
 	})
 }
 
-func TestLexerVariableAssignmentWithDpiValue(t *testing.T) {
+func TestLexerAssignStmtWithDpiValue(t *testing.T) {
 	AssertLexerTokenSequence(t, `$foo: 0.3dpi;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_FLOAT, ast.T_UNIT_DPI, ast.T_SEMICOLON,
 	})
@@ -107,13 +107,13 @@ func TestLexerVariableAssignmentWithDpiValue(t *testing.T) {
 	})
 }
 
-func TestLexerVariableAssignmentWithPercent(t *testing.T) {
+func TestLexerAssignStmtWithPercent(t *testing.T) {
 	AssertLexerTokenSequence(t, `width: 20%;`, []ast.TokenType{
 		ast.T_PROPERTY_NAME_TOKEN, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_PERCENT, ast.T_SEMICOLON,
 	})
 }
 
-func TestLexerMultipleVariableAssignment(t *testing.T) {
+func TestLexerMultipleAssignStmt(t *testing.T) {
 	AssertLexerTokenSequence(t, `$favorite: #fff; $foo: 10em;`, []ast.TokenType{
 		ast.T_VARIABLE, ast.T_COLON, ast.T_HEX_COLOR, ast.T_SEMICOLON,
 		ast.T_VARIABLE, ast.T_COLON, ast.T_INTEGER, ast.T_UNIT_EM, ast.T_SEMICOLON,

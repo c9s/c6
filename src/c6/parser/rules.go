@@ -121,7 +121,7 @@ func (parser *Parser) ParseStmt() ast.Stmt {
 	case ast.T_INCLUDE:
 		return parser.ParseIncludeStmt()
 	case ast.T_VARIABLE:
-		return parser.ParseVariableAssignment()
+		return parser.ParseAssignStmt()
 	case ast.T_RETURN:
 		return parser.ParseReturnStmt()
 	case ast.T_IF:
@@ -1003,7 +1003,7 @@ func (parser *Parser) ParseVariable() *ast.Variable {
 	return nil
 }
 
-func (parser *Parser) ParseVariableAssignment() ast.Stmt {
+func (parser *Parser) ParseAssignStmt() ast.Stmt {
 	var variable = parser.ParseVariable()
 
 	// skip ":", T_COLON token
@@ -1042,7 +1042,7 @@ func (parser *Parser) ParseVariableAssignment() ast.Stmt {
 		}
 	*/
 
-	var stm = ast.NewVariableAssignment(variable, valExpr)
+	var stm = ast.NewAssignStmt(variable, valExpr)
 	parser.ParseFlags(stm)
 	parser.accept(ast.T_SEMICOLON)
 	return stm
@@ -1051,7 +1051,7 @@ func (parser *Parser) ParseVariableAssignment() ast.Stmt {
 /*
 ParseFlags requires a variable assignment.
 */
-func (parser *Parser) ParseFlags(stm *ast.VariableAssignment) {
+func (parser *Parser) ParseFlags(stm *ast.AssignStmt) {
 	var tok = parser.peek()
 	for tok.IsFlagKeyword() {
 		parser.next()
@@ -1251,7 +1251,7 @@ func (parser *Parser) ParseMediaQueryList() *ast.MediaQueryList {
 	var queries = &ast.MediaQueryList{query}
 	for parser.accept(ast.T_COMMA) != nil {
 		if query := parser.ParseMediaQuery(); query != nil {
-			*queries = append(*queries, query)
+			queries.Append(query)
 		}
 	}
 	return queries
@@ -1593,8 +1593,11 @@ func (parser *Parser) ParseMixinStmt() ast.Stmt {
 		stm.ArgumentList = parser.ParseFunctionPrototype()
 
 	} else {
+
 		panic("Syntax error")
+
 	}
+
 	stm.Block = parser.ParseDeclBlock()
 	parser.GlobalContext.Mixins.Set(stm.Ident.Str, stm)
 	return stm

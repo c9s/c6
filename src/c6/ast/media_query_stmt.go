@@ -7,6 +7,11 @@ type MediaQueryStmt struct {
 
 type MediaQueryList []*MediaQuery
 
+func (list MediaQueryList) Append(query *MediaQuery) {
+	newlist := append(list, query)
+	list = newlist
+}
+
 func NewMediaQueryList() *MediaQueryList {
 	return &MediaQueryList{}
 }
@@ -28,7 +33,7 @@ func (stm MediaQueryStmt) String() (out string) {
 One MediaQuery may contain media type or media expression.
 */
 type MediaQuery struct {
-	MediaType       Expr
+	MediaType Expr
 	MediaExpr Expr
 }
 

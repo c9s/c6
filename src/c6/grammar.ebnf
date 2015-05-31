@@ -1,7 +1,7 @@
 
-Stmt := RuleSet | At-Rule | Mixin-Stmt | FunctionStmt | VariableAssignment
+Stmt := RuleSet | At-Rule | Mixin-Stmt | FunctionStmt | AssignStmt
 
-VariableAssignment := Variable ':' Value ';'
+AssignStmt := Variable ':' Value ';'
 
 At-Rule := '@' T_IDENT ';'
 
