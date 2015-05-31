@@ -7,10 +7,11 @@ type MixinStmt struct {
 	Ident        *Token
 	Block        *DeclBlock
 	ArgumentList *ArgumentList
+	Scope        *Scope
 }
 
-func (stm MixinStmt) CanBeStmt() {}
-func (stm MixinStmt) String() string  { return "{mixin}" }
+func (stm MixinStmt) CanBeStmt()     {}
+func (stm MixinStmt) String() string { return "{mixin}" }
 
 func NewMixinStmtWithToken(tok *Token) *MixinStmt {
 	return &MixinStmt{Token: tok}

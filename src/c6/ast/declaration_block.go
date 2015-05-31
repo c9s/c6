@@ -16,8 +16,6 @@ type DeclBlock struct {
 
 	// Nested rulesets
 	SubRuleSets []*RuleSet
-
-	Scope *Scope
 }
 
 func NewDeclBlock(parentRuleSet *RuleSet) *DeclBlock {
