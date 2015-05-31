@@ -127,7 +127,7 @@ If you need to build your application with c6, you need to clone the repository 
   - [x] Parse `@function` statement
   - [x] Parse `@return` statement
   - [x] Parse `@extend` statement
-  - [ ] Parse keyword arguments for `@function`
+  - [x] Parse keyword arguments for `@function`
   - [ ] Parse `@switch` statement
   - [ ] Parse `@case` statement
   - [ ] Parse `@use` statement
