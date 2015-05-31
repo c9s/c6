@@ -4,7 +4,6 @@ type Function struct {
 	Ident        *Token
 	ArgumentList *ArgumentList
 	Block        *Block
-	Scope        *Scope
 }
 
 func (f Function) CanBeStmt()     {}

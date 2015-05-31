@@ -1,6 +1,7 @@
 package ast
 
 type Block struct {
+	Scope *Scope
 	Stmts *StmtList
 }
 

@@ -170,7 +170,7 @@ func TestLexerRuleAttributeSelectorWithInterpolationInAttributeName(t *testing.T
 	l := NewLexerWithString(`[#{ $foo }] {  }`)
 	assert.NotNil(t, l)
 	l.Run()
-	output := l.TokenStream()()
+	output := l.TokenStream()
 	var token = <-output
 	token = <-output
 	assert.True(t, token.ContainsInterpolation)
@@ -181,7 +181,7 @@ func TestLexerRuleAttributeSelectorWithInterpolationInAttributeNameInTheMiddle(t
 	l := NewLexerWithString(`[data-#{ $foo }-type] {  }`)
 	assert.NotNil(t, l)
 	l.Run()
-	output := l.TokenStream()()
+	output := l.TokenStream()
 	var token = <-output
 	token = <-output
 	assert.True(t, token.ContainsInterpolation)

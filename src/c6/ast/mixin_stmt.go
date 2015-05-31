@@ -7,7 +7,6 @@ type MixinStmt struct {
 	Ident        *Token
 	Block        *DeclBlock
 	ArgumentList *ArgumentList
-	Scope        *Scope
 }
 
 func (stm MixinStmt) CanBeStmt()     {}

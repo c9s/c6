@@ -3,7 +3,6 @@ package ast
 type RuleSet struct {
 	Selectors *ComplexSelectorList
 	Block     *DeclBlock
-	Scope     *Scope
 }
 
 func NewRuleSet() *RuleSet {
