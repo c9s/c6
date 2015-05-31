@@ -54,9 +54,8 @@ The other reason of not using `github.com/c9s/c6` as our import path is:
 
 If you need to build your application with c6, you need to clone the repository into your GOPATH manually:
 
-    git clone https://github.com/c9s/c6.git $(echo -e $GOPATH | cut -d':' -f1)/src/c6
-    go get -x c6  # if you want to get the dependencies via "go get"
-    go build c6   # should work for you.
+    git clone https://github.com/c9s/c6.git vendor/c6
+    export GOPATH=vendor/c6:$GOPATH
 
 ## Working in progress
 
