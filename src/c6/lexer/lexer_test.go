@@ -59,7 +59,7 @@ func TestLexerIgnoreSpace(t *testing.T) {
 
 func TestLexerString(t *testing.T) {
 	l := NewLexerWithString(`   "foo"`)
-	output := l.GetOutput()
+	output := l.TokenStream()()
 	assert.NotNil(t, l)
 	l.til("\"")
 	lexString(l)
@@ -339,7 +339,7 @@ func BenchmarkLexerBasic(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		// Fib(10)
 		var l = NewLexerWithString(`.test, .foo, .bar { color: #fff; }`)
-		var o = l.GetOutput()
+		var o = l.TokenStream()()
 		l.Run()
 		var token = <-o
 		for ; token != nil; token = <-o {
@@ -352,7 +352,7 @@ func BenchmarkLexerTypeSelector(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		// Fib(10)
 		var l = NewLexerWithString(`div { }`)
-		var o = l.GetOutput()
+		var o = l.TokenStream()()
 		l.Run()
 		var token = <-o
 		for ; token != nil; token = <-o {
@@ -365,7 +365,7 @@ func BenchmarkLexerIdSelector(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		// Fib(10)
 		var l = NewLexerWithString(`#myId { }`)
-		var o = l.GetOutput()
+		var o = l.TokenStream()()
 		l.Run()
 		var token = <-o
 		for ; token != nil; token = <-o {
@@ -378,7 +378,7 @@ func BenchmarkLexerClassSelector(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		// Fib(10)
 		var l = NewLexerWithString(`.foo-bar-zoo { }`)
-		var o = l.GetOutput()
+		var o = l.TokenStream()()
 		l.Run()
 		var token = <-o
 		for ; token != nil; token = <-o {
@@ -393,7 +393,7 @@ func BenchmarkLexerAttributeSelector(b *testing.B) {
 		var l = NewLexerWithString(`
 		[href*=ftp] { }
 		`)
-		var o = l.GetOutput()
+		var o = l.TokenStream()()
 		l.Run()
 		var token = <-o
 		for ; token != nil; token = <-o {
@@ -406,7 +406,7 @@ func BenchmarkLexerImportRule(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		// Fib(10)
 		var l = NewLexerWithString(`@import url(../test.scss);`)
-		var o = l.GetOutput()
+		var o = l.TokenStream()()
 		l.Run()
 		var token = <-o
 		for ; token != nil; token = <-o {
@@ -419,7 +419,7 @@ func BenchmarkLexerVariableDeclaration(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		// Fib(10)
 		var l = NewLexerWithString(`$color: (3+1) * 4;`)
-		var o = l.GetOutput()
+		var o = l.TokenStream()()
 		l.Run()
 		var token = <-o
 		for ; token != nil; token = <-o {

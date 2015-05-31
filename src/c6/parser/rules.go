@@ -41,7 +41,7 @@ func (parser *Parser) ParseScssFile(file string) (*ast.StmtList, error) {
 
 	// XXX: this seems to copy the whole string, we should avoid this.
 	l := lexer.NewLexerWithString(parser.Content)
-	parser.Input = l.GetOutput()
+	parser.Input = l.TokenStream()
 
 	// Run lexer concurrently
 	go l.Run()
@@ -60,7 +60,7 @@ func (parser *Parser) ParseScssFile(file string) (*ast.StmtList, error) {
 
 func (parser *Parser) ParseScss(code string) *ast.StmtList {
 	l := lexer.NewLexerWithString(code)
-	parser.Input = l.GetOutput()
+	parser.Input = l.TokenStream()
 
 	// Run lexer concurrently
 	go l.Run()

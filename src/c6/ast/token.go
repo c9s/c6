@@ -110,7 +110,7 @@ type Token struct {
 	ContainsInterpolation bool
 }
 
-type TokenChannel chan *Token
+type TokenStream chan *Token
 
 /**
 Implement the stringer interface

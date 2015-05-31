@@ -108,7 +108,7 @@ func NewLexerWithFile(file string) (*Lexer, error) {
 	}, nil
 }
 
-func (l *Lexer) GetOutput() ast.TokenChannel {
+func (l *Lexer) TokenStream() ast.TokenStream {
 	if l.Output != nil {
 		return l.Output
 	}
@@ -443,7 +443,7 @@ func (l *Lexer) Dump() {
 
 func (l *Lexer) RunFrom(fn stateFn) {
 	if l.Output == nil {
-		l.Output = make(ast.TokenChannel, TOKEN_CHANNEL_BUFFER)
+		l.Output = make(ast.TokenStream, TOKEN_CHANNEL_BUFFER)
 	}
 	l.DispatchFn(fn)
 	l.Output <- nil
@@ -451,7 +451,7 @@ func (l *Lexer) RunFrom(fn stateFn) {
 
 func (l *Lexer) Run() {
 	if l.Output == nil {
-		l.Output = make(ast.TokenChannel, TOKEN_CHANNEL_BUFFER)
+		l.Output = make(ast.TokenStream, TOKEN_CHANNEL_BUFFER)
 	}
 	l.DispatchFn(lexStart)
 	l.Output <- nil
