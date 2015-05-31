@@ -1175,8 +1175,8 @@ func (parser *Parser) ParseDeclaration() ast.Stmt {
 }
 
 func (parser *Parser) ParseDeclBlock() *ast.DeclBlock {
-	var declBlock = ast.NewDeclBlock()
 	var parentRuleSet = parser.GlobalContext.TopRuleSet()
+	var declBlock = ast.NewDeclBlock(parentRuleSet)
 
 	parser.expect(ast.T_BRACE_OPEN)
 
