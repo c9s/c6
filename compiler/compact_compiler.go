@@ -94,7 +94,6 @@ func (compiler *CompactCompiler) CompileStmt(anyStm ast.Stmt) string {
 	case *ast.AssignStmt:
 	}
 	panic("Unsupported compilation")
-	return "fail"
 }
 
 func (compiler *CompactCompiler) CompileString(any interface{}) string {

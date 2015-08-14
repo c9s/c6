@@ -425,13 +425,6 @@ func EvaluateExpr(expr ast.Expr, context *Context) ast.Value {
 
 	}
 
-	// shouldn't call here.
-	if IsValue(expr) {
-		return ast.Value(expr)
-	}
-
-	panic("EvaluateExpr: Unsupported expression type")
-	return nil
 }
 
 func EvaluateFunctionCall(fcall ast.FunctionCall, context *Context) ast.Value {

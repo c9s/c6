@@ -1,13 +1,19 @@
 gen:
-	go get github.com/clipperhouse/gen
-	go get github.com/clipperhouse/typewriter
-	go get github.com/clipperhouse/stringer
+	go get -u github.com/clipperhouse/gen
+	go get -u github.com/clipperhouse/typewriter
+	go get -u github.com/clipperhouse/stringer
 	go generate github.com/c9s/c6/...
 	go build github.com/c9s/c6/...
 	gen add github.com/c9s/c6/typewriter/symtable
 
-test: gen
+
+vet:
+	go vet github.com/c9s/c6/...
+
+
+test: gen vet 
 	go test github.com/c9s/c6/...
+
 
 benchupdatebase:
 	go test -run=NONE -bench=. github.com/c9s/c6/... >| benchmarks/old.txt

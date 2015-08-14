@@ -3,8 +3,9 @@ package lexer
 import (
 	"errors"
 	"fmt"
-	"github.com/c9s/c6/ast"
 	"unicode"
+
+	"github.com/c9s/c6/ast"
 )
 
 type stateFn func(*Lexer) stateFn
@@ -599,7 +600,6 @@ func lexStmt(l *Lexer) stateFn {
 				break
 			} else if r == EOF {
 				panic("unexpected EOF")
-				break
 			}
 			r = l.next()
 		}

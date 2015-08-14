@@ -2,8 +2,9 @@ package runtime
 
 import (
 	"fmt"
-	"github.com/c9s/c6/ast"
 	"math"
+
+	"github.com/c9s/c6/ast"
 )
 
 func HexColorAddNumber(c *ast.HexColor, num *ast.Number) *ast.HexColor {
@@ -11,7 +12,13 @@ func HexColorAddNumber(c *ast.HexColor, num *ast.Number) *ast.HexColor {
 	g := c.G + uint32(num.Value)
 	b := c.B + uint32(num.Value)
 	hex := ast.Hex(fmt.Sprintf("#%02X%02X%02X", r, g, b))
-	return &ast.HexColor{hex, r, g, b, nil}
+	return &ast.HexColor{
+		Hex:   hex,
+		R:     r,
+		G:     g,
+		B:     b,
+		Token: nil,
+	}
 }
 
 func uintsub(a, b uint32) uint32 {
@@ -27,7 +34,13 @@ func HexColorSubNumber(c *ast.HexColor, num *ast.Number) *ast.HexColor {
 	g := uintsub(c.G, val)
 	b := uintsub(c.B, val)
 	hex := ast.Hex(fmt.Sprintf("#%02X%02X%02X", r, g, b))
-	return &ast.HexColor{hex, r, g, b, nil}
+	return &ast.HexColor{
+		Hex:   hex,
+		R:     r,
+		G:     g,
+		B:     b,
+		Token: nil,
+	}
 }
 
 func HexColorMulNumber(color *ast.HexColor, num *ast.Number) *ast.HexColor {
@@ -35,7 +48,13 @@ func HexColorMulNumber(color *ast.HexColor, num *ast.Number) *ast.HexColor {
 	g := uint32(math.Floor(float64(color.G) * num.Value))
 	b := uint32(math.Floor(float64(color.B) * num.Value))
 	hex := ast.Hex(fmt.Sprintf("#%02X%02X%02X", r, g, b))
-	return &ast.HexColor{hex, r, g, b, nil}
+	return &ast.HexColor{
+		Hex:   hex,
+		R:     r,
+		G:     g,
+		B:     b,
+		Token: nil,
+	}
 }
 
 func HexColorDivNumber(color *ast.HexColor, num *ast.Number) *ast.HexColor {
@@ -43,7 +62,13 @@ func HexColorDivNumber(color *ast.HexColor, num *ast.Number) *ast.HexColor {
 	g := uint32(math.Floor(float64(color.G) / num.Value))
 	b := uint32(math.Floor(float64(color.B) / num.Value))
 	hex := ast.Hex(fmt.Sprintf("#%02X%02X%02X", r, g, b))
-	return &ast.HexColor{hex, r, g, b, nil}
+	return &ast.HexColor{
+		Hex:   hex,
+		R:     r,
+		G:     g,
+		B:     b,
+		Token: nil,
+	}
 }
 
 func RGBColorAddNumber(c *ast.RGBColor, n *ast.Number) *ast.RGBColor {

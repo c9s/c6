@@ -6,14 +6,15 @@ package parser
 
 import (
 	"fmt"
-	"github.com/c9s/c6/ast"
-	"github.com/c9s/c6/lexer"
-	"github.com/c9s/c6/runtime"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/c9s/c6/ast"
+	"github.com/c9s/c6/lexer"
+	"github.com/c9s/c6/runtime"
 )
 
 var HttpUrlPattern = regexp.MustCompile("^https?://")
@@ -405,7 +406,6 @@ func (parser *Parser) ParseComplexSelector(parentRuleSet *ast.RuleSet) *ast.Comp
 
 		}
 	}
-	return complexSel
 }
 
 func (parser *Parser) ParseSelectorList() *ast.ComplexSelectorList {
@@ -1726,20 +1726,23 @@ func (parser *Parser) ParseIncludeStmt() ast.Stmt {
 func (parser *Parser) ParseFontFaceStmt() ast.Stmt {
 	parser.expect(ast.T_FONT_FACE)
 	block := parser.ParseDeclBlock()
-	return &ast.FontFaceStmt{block}
+	return &ast.FontFaceStmt{Block: block}
 }
 
 func (parser *Parser) ParseLogStmt() ast.Stmt {
 	if directiveTok := parser.acceptAnyOf3(ast.T_ERROR, ast.T_WARN, ast.T_INFO); directiveTok != nil {
 		var expr = parser.ParseExpr(false)
 		parser.expect(ast.T_SEMICOLON)
-		return &ast.LogStmt{directiveTok, expr}
+		return &ast.LogStmt{
+			Directive: directiveTok,
+			Expr:      expr,
+		}
+
 	}
 	panic(SyntaxError{
 		Reason:      "Expecting @error, @warn, @info directive",
 		ActualToken: parser.peek(),
 	})
-	return nil
 }
 
 /*

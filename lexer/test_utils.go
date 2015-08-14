@@ -66,7 +66,7 @@ func AssertTokenSequence(t *testing.T, l *Lexer, tokenList []ast.TokenType) []as
 		}
 	}
 	if failure {
-		t.Fatal()
+		t.Fatal("See log.")
 	}
 
 	return tokens
