@@ -5,9 +5,9 @@ package parser
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import (
+	"fmt"
 	"github.com/c9s/c6/ast"
 	"github.com/c9s/c6/runtime"
-	"fmt"
 	"path/filepath"
 )
 

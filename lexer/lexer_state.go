@@ -1,9 +1,9 @@
 package lexer
 
 import (
-	"github.com/c9s/c6/ast"
 	"errors"
 	"fmt"
+	"github.com/c9s/c6/ast"
 	"unicode"
 )
 

@@ -7,8 +7,8 @@ type IncludeStmt struct {
 	ContentBlock *DeclBlock // if any
 }
 
-func (stm IncludeStmt) CanBeStmt() {}
-func (stm IncludeStmt) String() string  { return "IncludeStmt.String()" }
+func (stm IncludeStmt) CanBeStmt()     {}
+func (stm IncludeStmt) String() string { return "IncludeStmt.String()" }
 
 func NewIncludeStmtWithToken(token *Token) *IncludeStmt {
 	return &IncludeStmt{

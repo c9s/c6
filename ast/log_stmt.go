@@ -5,5 +5,5 @@ type LogStmt struct {
 	Expr      Expr
 }
 
-func (stm LogStmt) CanBeStmt() {}
-func (stm LogStmt) String() string  { return "LogStmt.String()" }
+func (stm LogStmt) CanBeStmt()     {}
+func (stm LogStmt) String() string { return "LogStmt.String()" }

@@ -1,7 +1,7 @@
 package ast
 
 type Interpolation struct {
-	Expr Expr
+	Expr       Expr
 	StartToken *Token
 	EndToken   *Token
 }

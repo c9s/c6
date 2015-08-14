@@ -1,8 +1,8 @@
 package runtime
 
 import (
-	"github.com/c9s/c6/ast"
 	"fmt"
+	"github.com/c9s/c6/ast"
 	"math"
 )
 

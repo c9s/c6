@@ -3,8 +3,8 @@ package ast
 import "strings"
 
 type List struct {
-	Separator   string
-	Exprs []Expr
+	Separator string
+	Exprs     []Expr
 }
 
 /*
