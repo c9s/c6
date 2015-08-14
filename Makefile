@@ -48,7 +48,7 @@ cross-toolchain:
 	gox -build-toolchain
 
 cross-compile:
-	gox -output "build/{{.Dir}}.{{.OS}}_{{.Arch}}" c6/...
+	gox -output "build/{{.Dir}}.{{.OS}}_{{.Arch}}" github.com/c9s/c6/...
 
 cover:
-	go test -cover -coverprofile c6.cov -coverpkg github.com/c9s/c6/ast,github.com/c9s/c6/runtime,github.com/c9s/c6/parser
+	go test -cover -coverprofile c6.cov -coverpkg github.com/c9s/c6/ast,github.com/c9s/c6/runtime,github.com/c9s/c6/parser,github.com/c9s/c6/compiler github.com/c9s/c6/compiler
