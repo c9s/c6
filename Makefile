@@ -10,8 +10,12 @@ gen:
 vet:
 	go vet github.com/c9s/c6/...
 
+lint:
+	go get -u github.com/golang/lint/golint
+	golint github.com/c9s/c6/...
 
-test: gen vet 
+
+test: gen vet lint
 	go test github.com/c9s/c6/...
 
 
