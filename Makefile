@@ -1,27 +1,22 @@
-all:
-	go generate c6/...
-	go build c6/...
+gen:
+	go get github.com/clipperhouse/gen
+	go get github.com/clipperhouse/typewriter
+	go get github.com/clipperhouse/stringer
+	go generate github.com/c9s/c6/...
+	go build github.com/c9s/c6/...
+	gen add github.com/c9s/c6/typewriter/symtable
 
-vendor:
-	source goinstall
-
-clean:
-	go clean c6/...
-
-install:
-	go install c6/...
-
-test: all
-	go test c6/...
+test: gen
+	go test github.com/c9s/c6/...
 
 benchupdatebase:
-	go test -run=NONE -bench=. c6/... >| benchmarks/old.txt
+	go test -run=NONE -bench=. github.com/c9s/c6/... >| benchmarks/old.txt
 
 benchrecord:
-	go test -run=NONE -bench=. c6/... >| benchmarks/new.txt
+	go test -run=NONE -bench=. github.com/c9s/c6/... >| benchmarks/new.txt
 
 bench:
-	go test -run=NONE -bench=. -benchmem c6/...
+	go test -run=NONE -bench=. -benchmem github.com/c9s/c6/...
 
 benchcmp: all benchrecord
 	vendor/bin/benchcmp benchmarks/old.txt benchmarks/new.txt
@@ -36,7 +31,4 @@ cross-compile:
 	gox -output "build/{{.Dir}}.{{.OS}}_{{.Arch}}" c6/...
 
 cover:
-	go test -cover -coverprofile c6.cov -coverpkg c6/ast,c6/runtime,c6/parser c6/parser
-
-cover-annotate: cov
-	vendor/bin/gocov convert c6.cov | vendor/bin/gocov annotate -
+	go test -cover -coverprofile c6.cov -coverpkg github.com/c9s/c6/ast,github.com/c9s/c6/runtime,github.com/c9s/c6/parser c6/parser

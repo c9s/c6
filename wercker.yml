@@ -3,16 +3,10 @@ box: wercker/golang
 build:
   steps:
     - script:
-        name: Install
+        name: Get
         code: |
-          source goenv
-          source goinstall
-    - script:
-        name: Build
-        code: |
-          source goenv && make
-
+          go get github.com/c9s/c6/cmd/c6
     - script:
         name: Test
         code: |
-          source goenv && make test
+          make test
