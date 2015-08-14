@@ -6,9 +6,10 @@ package parser
 
 import (
 	"fmt"
+	"path/filepath"
+
 	"github.com/c9s/c6/ast"
 	"github.com/c9s/c6/runtime"
-	"path/filepath"
 )
 
 const (

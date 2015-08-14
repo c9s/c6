@@ -2,10 +2,7 @@ box: wercker/golang
 
 build:
   steps:
-    - script:
-        name: Get
-        code: |
-          go get github.com/c9s/c6/cmd/c6
+    - setup-go-workspace
     - script:
         name: Test
         code: |
