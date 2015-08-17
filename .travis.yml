@@ -1,9 +1,13 @@
 language: go
 script:
+  # test
+  - make get-dev
   - make test
   - make cover
+  # - make vet
+  #TODO: - make lint 
 after_success:
-  - make benchcmp
+  - make benchmark
   - goveralls -coverprofile=c6.cov -service=travis-ci
 notifications:
   slack:
