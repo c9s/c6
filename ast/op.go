@@ -31,7 +31,7 @@ func OpTokenName(tokType TokenType) string {
 		return ""
 	}
 	panic("Unsupported token type")
-	return ""
+	///XXX return ""
 }
 
 func (op Op) String() string {

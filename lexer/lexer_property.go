@@ -27,7 +27,7 @@ func lexMicrosoftProgIdFunction(l *Lexer) stateFn {
 	// here starts the sproperty
 	r = l.next()
 	if r != '(' {
-		l.error("Expecting '(' after the MS function name. Got %s", r)
+		l.errorf("Expecting '(' after the MS function name. Got %c", r)
 	}
 	l.emit(ast.T_PAREN_OPEN)
 
@@ -149,7 +149,7 @@ func lexColon(l *Lexer) stateFn {
 	l.ignoreSpaces()
 	var r = l.next()
 	if r != ':' {
-		l.error("Expecting ':' token, Got '%s'", r)
+		l.errorf("Expecting ':' token, Got '%c'", r)
 	}
 	l.emit(ast.T_COLON)
 

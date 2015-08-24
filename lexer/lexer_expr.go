@@ -6,7 +6,7 @@ import "github.com/c9s/c6/ast"
 func lexFunctionParams(l *Lexer) stateFn {
 	var r = l.next()
 	if r != '(' {
-		l.error("Expecting '('. Got '%s'.", r)
+		l.errorf("Expecting '('. Got '%c'.", r)
 	}
 	l.emit(ast.T_PAREN_OPEN)
 	l.ignoreSpaces()

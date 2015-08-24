@@ -52,7 +52,7 @@ func lexAttributeSelector(l *Lexer) stateFn {
 
 		r = l.next()
 		if !unicode.IsLetter(r) && !IsInterpolationStartToken(r, l.peek()) {
-			l.error("Unexpected token for attribute name. Got '%s'", r)
+			l.errorf("Unexpected token for attribute name. Got '%c'", r)
 		}
 		for {
 			if IsInterpolationStartToken(r, l.peek()) {
@@ -118,7 +118,7 @@ func lexAttributeSelector(l *Lexer) stateFn {
 		}
 
 	}
-	l.error("Unexpected token for attribute selector. Got '%s'", r)
+	l.errorf("Unexpected token for attribute selector. Got '%c'", r)
 	return nil
 }
 
@@ -127,7 +127,7 @@ func lexClassSelector(l *Lexer) stateFn {
 
 	var r = l.next()
 	if !unicode.IsLetter(r) {
-		l.error("Expecting letter for class selector. got '%s'", r)
+		l.errorf("Expecting letter for class selector. got '%c'", r)
 		return nil
 	}
 
@@ -152,7 +152,7 @@ func lexPseudoSelector(l *Lexer) stateFn {
 
 	r = l.next()
 	if !unicode.IsLetter(r) && !(r == '#' && l.peek() == '{') {
-		l.error("charater '%s' is not allowed in pseudo selector", r)
+		l.errorf("charater '%c' is not allowed in pseudo selector", r)
 	}
 	for r != EOF && (unicode.IsLetter(r) || r == '-' || r == '#') {
 		if IsInterpolationStartToken(r, l.peek()) {
@@ -376,7 +376,7 @@ func lexSelectors(l *Lexer) stateFn {
 		return lexStmt
 
 	} else {
-		l.error("Unexpected token '%s' for lexing selector.", r)
+		l.errorf("Unexpected token '%c' for lexing selector.", r)
 	}
 	return nil
 }
@@ -384,7 +384,7 @@ func lexSelectors(l *Lexer) stateFn {
 func lexTypeSelector(l *Lexer) stateFn {
 	var r = l.next()
 	if !unicode.IsLetter(r) && !IsInterpolationStartToken(r, l.peekBy(2)) {
-		l.error("Expecting letter token for tag name selector. got %s", r)
+		l.errorf("Expecting letter token for tag name selector. got %c", r)
 	}
 
 	var foundInterpolation = false
@@ -421,12 +421,12 @@ func lexLang(l *Lexer) stateFn {
 	// [a-z]{2}
 	var r = l.next()
 	if !unicode.IsLetter(r) {
-		l.error("Unexpected language token. Got '%s'", r)
+		l.errorf("Unexpected language token. Got '%c'", r)
 	}
 
 	r = l.next()
 	if !unicode.IsLetter(r) {
-		l.error("Unexpected language token. Got '%s'", r)
+		l.errorf("Unexpected language token. Got '%c'", r)
 	}
 
 	r = l.peek()
@@ -434,11 +434,11 @@ func lexLang(l *Lexer) stateFn {
 		l.next() // skip '-'
 		r = l.next()
 		if !unicode.IsLetter(r) {
-			l.error("Unexpected language token. Got '%s'", r)
+			l.errorf("Unexpected language token. Got '%c'", r)
 		}
 		r = l.next()
 		if !unicode.IsLetter(r) {
-			l.error("Unexpected language token. Got '%s'", r)
+			l.errorf("Unexpected language token. Got '%c'", r)
 		}
 	}
 	l.emit(ast.T_LANG_CODE)
@@ -450,7 +450,7 @@ func lexIdSelector(l *Lexer) stateFn {
 	var r = l.next()
 	r = l.next()
 	if !unicode.IsLetter(r) && r != '#' && l.peek() != '{' {
-		l.error("An identifier should start with at least a letter, Got '%s'", r)
+		l.errorf("An identifier should start with at least a letter, Got '%c'", r)
 	}
 	for {
 		if IsInterpolationStartToken(r, l.peek()) {
