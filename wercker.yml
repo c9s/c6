@@ -2,17 +2,8 @@ box: wercker/golang
 
 build:
   steps:
-    - script:
-        name: Install
-        code: |
-          source goenv
-          source goinstall
-    - script:
-        name: Build
-        code: |
-          source goenv && make
-
+    - setup-go-workspace
     - script:
         name: Test
         code: |
-          source goenv && make test
+          make test

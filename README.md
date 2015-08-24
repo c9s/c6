@@ -14,48 +14,12 @@ new language feature requests.
 
 [![wercker status](https://app.wercker.com/status/13aa03443c40dedeeabda923e1a95180/m "wercker status")](https://app.wercker.com/project/bykey/13aa03443c40dedeeabda923e1a95180)
 
-## Setup
-
-Setup GOPATH:
-
-    source goenv
-
-Setup dependencies:
-
-    source goinstall
-
-Run tests:
-
-    go test c6
-    go test -v c6
-    go test -v c6/ast
-
-To run specific test
-
-    go test -run TestParser -x -v c6
-
 
 ## Installation
 
-C6 project source does not depend on the import path `github.com/c9s/c6`,
-therefore the project needs to be built standalone.
-
-The reason of using `goenv` instead `go get` is:
-
-> If any dependent package API changed on master, everything will be broken
-> when user runs go get. Therefore we control the package dependency we used by
-> using goenv: install packages on specific tag or branch. This is to prevent
-> unexpected results while we need to build stable application for users.
-
-The other reason of not using `github.com/c9s/c6` as our import path is:
-
-> We host c6 project source code in a private repository, hence the private build process shouldn't depend
-> on `github.com/...`. The remote import path restricts the flexibility of our build process.
-
-If you need to build your application with c6, you need to clone the repository into your GOPATH manually:
-
-    git clone https://github.com/c9s/c6.git vendor/c6
-    export GOPATH=vendor/c6:$GOPATH
+```
+go get github.com/c9s/c6/cmd/c6`
+```
 
 ## Working in progress
 
