@@ -1,7 +1,6 @@
 package lexer
 
 import (
-	"errors"
 	"fmt"
 	"unicode"
 
@@ -13,8 +12,8 @@ type stateFn func(*Lexer) stateFn
 const LETTERS = "zxcvbnmasdfghjklqwertyuiop"
 const DIGITS = "1234567890"
 
-func (l *Lexer) error(msg string, r rune) {
-	var err = errors.New(fmt.Sprintf(msg, string(r)))
+func (l *Lexer) errorf(msg string, r rune) {
+	var err = fmt.Errorf(msg, string(r))
 	panic(err)
 }
 
@@ -93,7 +92,7 @@ func lexCommentBlock(l *Lexer, emit bool) stateFn {
 		}
 		r = l.next()
 	}
-	l.error("Expecting comment end mark '*/'.", r)
+	l.errorf("Expecting comment end mark '*/'. Got '%c'", r)
 	return lexStmt
 }
 
@@ -135,8 +134,8 @@ func lexString(l *Lexer) stateFn {
 			}
 			r = l.next()
 		}
-		l.backup()
-		return lexStart
+		//XXX l.backup()
+		//XXX return lexStart
 
 	} else if r == '\'' {
 		l.ignore()
@@ -156,7 +155,7 @@ func lexString(l *Lexer) stateFn {
 				panic("Expecting end of string")
 			}
 		}
-		return lexStart
+		//XXX return lexStart
 	}
 	l.backup()
 	return nil
@@ -272,7 +271,7 @@ func lexSpaces(l *Lexer) stateFn {
 			return nil
 		}
 	}
-	return lexStart
+	///XXX return lexStart
 }
 
 /*
@@ -343,12 +342,12 @@ func lexForStmt(l *Lexer) stateFn {
 func lexVariableName(l *Lexer) stateFn {
 	var r = l.next()
 	if r != '$' {
-		l.error("Unexpected token %s for lexVariable", r)
+		l.errorf("Unexpected token %c for lexVariable", r)
 	}
 
 	r = l.next()
 	if !unicode.IsLetter(r) {
-		l.error("The first character of a variable name must be letter. Got '%s'", r)
+		l.errorf("The first character of a variable name must be letter. Got '%c'", r)
 	}
 
 	r = l.next()
@@ -372,7 +371,7 @@ func lexVariableName(l *Lexer) stateFn {
 			l.backup()
 			l.emit(ast.T_VARIABLE)
 			return lexStmt
-			break
+			///XXX break
 		} else if unicode.IsSpace(r) || r == ';' {
 			break
 		}
@@ -392,7 +391,7 @@ func lexHexColor(l *Lexer) stateFn {
 	l.ignoreSpaces()
 	var r rune = l.next()
 	if r != '#' {
-		l.error("Expecting hex color, got '%s'", r)
+		l.errorf("Expecting hex color, got '%c'", r)
 	}
 
 	r = l.next()
@@ -457,7 +456,7 @@ func lexNumber(l *Lexer) stateFn {
 	if r == '.' {
 		r = l.next()
 		if !unicode.IsDigit(r) {
-			l.error("Expecting digits after '.'. Got %s", r)
+			l.errorf("Expecting digits after '.'. Got %c", r)
 		}
 		floatPoint = true
 	}
@@ -468,7 +467,7 @@ func lexNumber(l *Lexer) stateFn {
 			floatPoint = true
 			r = l.next()
 			if !unicode.IsDigit(r) {
-				l.error("Expecting at least one digit after the floating point, got '%s'", r)
+				l.errorf("Expecting at least one digit after the floating point, got '%c'", r)
 			}
 		} else if r == 'e' {
 			var r2, r3 = l.peek2()
@@ -622,7 +621,7 @@ func lexStmt(l *Lexer) stateFn {
 
 	} else {
 
-		l.error("Unexpected token", r)
+		l.errorf("Unexpected token: '%c'", r)
 
 	}
 	return nil

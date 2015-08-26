@@ -1,10 +1,16 @@
 language: go
+go:
+  - tip
+  - 1.5
+
 script:
   # test
+  - make vet
   - make get-dev
   - make test
+  # Vet after test too, as test calls go generate.
+  - make vet
   - make cover
-  # - make vet
   #TODO: - make lint 
 after_success:
   - make benchmark

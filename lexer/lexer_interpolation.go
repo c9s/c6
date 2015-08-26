@@ -54,11 +54,11 @@ func lexInterpolation(l *Lexer, emit bool) stateFn {
 func lexInterpolation2(l *Lexer) stateFn {
 	var r rune = l.next()
 	if r != '#' {
-		l.error("Expecting interpolation token '#', Got %s", r)
+		l.errorf("Expecting interpolation token '#', Got %c", r)
 	}
 	r = l.next()
 	if r != '{' {
-		l.error("Expecting interpolation token '{', Got %s", r)
+		l.errorf("Expecting interpolation token '{', Got %c", r)
 	}
 	l.emit(ast.T_INTERPOLATION_START)
 
