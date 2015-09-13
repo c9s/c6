@@ -18,7 +18,7 @@ new language feature requests.
 ## Installation
 
 ```
-go get github.com/c9s/c6/cmd/c6`
+go get github.com/c9s/c6/cmd/c6
 ```
 
 ## Working in progress
