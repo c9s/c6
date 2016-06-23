@@ -1,13 +1,15 @@
 ---
 # travis and modern c++ http://genbattle.bitbucket.org/blog/2016/01/17/c++-travis-ci/
 language: cpp
+git:
+  depth: 1
 addons:
   apt:
     packages:
     # - gcc-5
     # - g++-5
     # - clang-3.6
-    - libgflags-dev
+    # - libgflags-dev
 compiler:
 - clang
 - gcc
