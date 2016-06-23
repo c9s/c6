@@ -6,6 +6,13 @@ enable_testing()
 find_package(GTest REQUIRED)
 set(PROJECT_TEST_NAME "${PROJECT_NAME}_test")
 include_directories(${GTEST_INCLUDE_DIRS} ${INCLUDE_DIRECTORIES})
-add_executable(c6_options_test "c6_options_test.cc")
-target_link_libraries(c6_options_test ${PROJECT_NAME_STR} pthread ${GTEST_BOTH_LIBRARIES} ${Boost_LIBS})
-add_test(c6_options_test c6_options_test)
+
+file(GLOB TEST_SRC_FILES ${PROJECT_SOURCE_DIR}/tests/*.cc)
+add_executable(c6_options_test ${TEST_SRC_FILES})
+
+# target_link_libraries(c6_options_test ${PROJECT_NAME_STR} ${GTEST_BOTH_LIBRARIES} ${Boost_LIBS})
+target_link_libraries(c6_options_test
+    pthread
+    ${GTEST_BOTH_LIBRARIES}
+    ${Boost_LIBS})
+add_test(AllOptionTest c6_options_test)

@@ -16,7 +16,8 @@ SET(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
     )
 
-find_package(GooglePerfTools REQUIRED)
+# find_package(GooglePerfTools REQUIRED)
+find_package(GooglePerfTools)
 
 # set(Boost_USE_STATIC_LIBS OFF)
 # set(Boost_USE_MULTITHREADED ON)
@@ -50,17 +51,12 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg -O0 -g3")
 endif()
 
+# enable make test
+enable_testing()
+
 # IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 #     # Linux specific code
 #     SET(OperatingSystem "Linux")
 # ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-
-enable_testing()
-
-# set(gtest_SOURCE_DIR gtest-1.7.0)
-# add_subdirectory(${gtest_SOURCE_DIR})
-# include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-# set(ENV{GTEST_ROOT} ${PROJECT_SOURCE_DIR}/gtest)
-# add_subdirectory(gtest-1.7.0)
 add_subdirectory(src)
 add_subdirectory(tests)
