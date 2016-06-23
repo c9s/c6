@@ -9,7 +9,8 @@ include_directories(BEFORE ${GTEST_INCLUDE_DIRS})
 file(GLOB TEST_SRC_FILES ${PROJECT_SOURCE_DIR}/tests/*.cc)
 add_executable(c6_options_test ${TEST_SRC_FILES})
 target_link_libraries(c6_options_test
-    pthread
     ${GTEST_BOTH_LIBRARIES}
-    ${Boost_LIBS})
+    ${Boost_LIBS}
+    pthread
+    )
 add_test(c6_options_test c6_options_test)
