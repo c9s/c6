@@ -1,4 +1,3 @@
-*.cov
-benchmarks/new.txt
 vendor
+CMakeFiles
 CMakeCache.txt
