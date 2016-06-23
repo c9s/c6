@@ -1,6 +1,11 @@
-language: c
+---
+# travis and modern c++ http://genbattle.bitbucket.org/blog/2016/01/17/c++-travis-ci/
+language: cpp
+compiler:
+- clang
+- gcc
 script:
-- cmake
+- cmake .
 after_success:
 # - goveralls -coverprofile=c6.cov -service=travis-ci
 notifications:
