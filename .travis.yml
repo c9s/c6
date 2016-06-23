@@ -4,6 +4,7 @@ language: c++
 git:
   depth: 1
 sudo: required
+dist: trusty
 addons:
   apt:
     packages:
