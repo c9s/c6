@@ -1,9 +1,9 @@
-box: wercker/golang
+box: wercker/c
 
 build:
   steps:
-    - setup-go-workspace
-    - script:
-        name: Test
-        code: |
-          make test
+  - setup-c-workspace
+  - script:
+      name: CMake
+      code: |
+        cmake

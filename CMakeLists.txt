@@ -7,7 +7,7 @@ project(c6)
 
 # -DCMAKE_BUILD_TYPE=DEBUG
 # -DCMAKE_BUILD_TYPE=RELEASE
-# if(NOT CMAKE_BUILD_TYPE )
+# if(NOT CMAKE_BUILD_TYPE)
 #     set( CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 # endif()
 
