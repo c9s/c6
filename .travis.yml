@@ -1,7 +1,6 @@
 ---
 # travis and modern c++ http://genbattle.bitbucket.org/blog/2016/01/17/c++-travis-ci/
 language: c++
-sudo: required
 git:
   depth: 1
 addons:
@@ -24,8 +23,6 @@ install:
 - wget https://github.com/gflags/gflags/archive/v2.1.2.zip
 - unzip v2.1.2.zip
 - (cd gflags-2.1.2 && cmake . && make)
-
-- sudo apt-get install libgflags-dev
 script:
 - cmake .
 
