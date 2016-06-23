@@ -1,0 +1,4 @@
+*.cov
+benchmarks/new.txt
+vendor
+CMakeCache.txt
