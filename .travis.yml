@@ -1,8 +1,6 @@
 ---
 # travis and modern c++ http://genbattle.bitbucket.org/blog/2016/01/17/c++-travis-ci/
 language: c++
-git:
-  depth: 1
 sudo: required
 dist: trusty
 addons:
