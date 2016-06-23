@@ -12,7 +12,7 @@ addons:
     # - libgflags-dev
 os:
 - linux
-- osx
+# - osx
 compiler:
 - clang
 - gcc
