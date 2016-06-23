@@ -21,6 +21,10 @@ install:
 - wget 'https://googletest.googlecode.com/files/gtest-1.7.0.zip'
 - unzip gtest-1.7.0.zip
 - ln -s gtest-1.7.0 gtest
+- wget https://github.com/gflags/gflags/archive/v2.1.2.zip
+- unzip v2.1.2.zip
+- (cd gflags-2.1.2 && cmake . && make)
+
 - sudo apt-get install libgflags-dev
 script:
 - cmake .
