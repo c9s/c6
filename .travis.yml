@@ -20,6 +20,7 @@ install:
 - sh travis/install.sh
 script:
 - cmake -DGFlags_ROOT_DIR=vendor/gflags -DGTEST_ROOT=vendor/gtest -DGLog_ROOT_DIR=vendor/glog .
+- make && make test
 cache:
   apt: true
   directories:
