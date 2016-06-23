@@ -3,16 +3,17 @@
 language: c++
 sudo: required
 dist: trusty
-addons:
-  apt:
-    sources:
-    # add PPAs with more up-to-date toolchains
-    - ubuntu-toolchain-r-test
-    - llvm-toolchain-precise-3.6
-    packages:
-    - gcc-5
-    - g++-5
-    - clang-3.6
+# see: https://github.com/travis-ci/travis-ci/issues/6120#issuecomment-224072540
+# addons:
+#   apt:
+#     sources:
+#     # add PPAs with more up-to-date toolchains
+#     - ubuntu-toolchain-r-test
+#     - llvm-toolchain-precise-3.6
+#     packages:
+#     - gcc-5
+#     - g++-5
+#     - clang-3.6
 os:
 - linux
 # - osx
