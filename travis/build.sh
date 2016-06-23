@@ -1,1 +1,2 @@
-cmake -DGFlags_ROOT_DIR=vendor/gflags -DGTEST_ROOT=vendor/gtest -DGLog_ROOT_DIR=vendor/glog .
+#!/bin/bash
+cmake -DGFlags_ROOT_DIR=$(pwd)vendor/gflags -DGTEST_ROOT=$(pwd)vendor/gtest -DGLog_ROOT_DIR=$(pwd)/vendor/glog .
