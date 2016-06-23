@@ -22,10 +22,15 @@ install:
 - ln -s gtest-1.7.0 gtest
 - wget https://github.com/gflags/gflags/archive/v2.1.2.zip
 - unzip v2.1.2.zip
+- ln -s gflags-2.1.2 gflags
 - (cd gflags-2.1.2 && cmake . && make)
 script:
 - cmake .
-
+cache:
+  apt: true
+  directories:
+  - gtest-1.7.0
+  - gflags-2.1.2
 # after_success:
 # - goveralls -coverprofile=c6.cov -service=travis-ci
 # notifications:
