@@ -16,10 +16,7 @@ SET(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
     )
 
-find_package(OpenCV REQUIRED)
 find_package(GooglePerfTools REQUIRED)
-# find_package(opencv)
-# link_directories(${LINK_DIRECTORIES} ${opencv_LIBRARY_DIRS})
 
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
