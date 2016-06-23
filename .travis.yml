@@ -1,11 +1,19 @@
 ---
 # travis and modern c++ http://genbattle.bitbucket.org/blog/2016/01/17/c++-travis-ci/
 language: cpp
+addons:
+  apt:
+    packages:
+    - gcc-5
+    - g++-5
+    - clang-3.6
+    - libgflags-dev
 compiler:
 - clang
 - gcc
 script:
 - cmake .
+
 after_success:
 # - goveralls -coverprofile=c6.cov -service=travis-ci
 notifications:
