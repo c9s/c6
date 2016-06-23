@@ -31,8 +31,7 @@ script:
 cache:
   apt: true
   directories:
-  - gtest-1.7.0
-  - gflags-2.1.2
+  - vendor
 # after_success:
 # - goveralls -coverprofile=c6.cov -service=travis-ci
 # notifications:
