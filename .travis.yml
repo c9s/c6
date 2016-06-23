@@ -6,10 +6,11 @@ git:
 addons:
   apt:
     packages:
+    - libgflags-dev
+    - libgoogle-glog-dev
     # - gcc-5
     # - g++-5
     # - clang-3.6
-    # - libgflags-dev
 os:
 - linux
 # - osx
@@ -17,6 +18,7 @@ compiler:
 - clang
 - gcc
 install:
+# - sudo apt-get install libgflags-dev
 - sh travis/install.sh
 script:
 - sh travis/build.sh
