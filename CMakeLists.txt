@@ -40,7 +40,7 @@ include_directories(${INCLUDE_DIRECTORIES} ${OPENCV_INCLUDE_DIR})
 
 # http://www.openguru.com/2009/04/cmake-detecting-platformoperating.html
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    set(CMAKE_CXX_FLAGS "-std=c++0x -arch x86_64 -stdlib=libc++ -Wall -Wno-long-long -Wno-unused-value -Wno-overloaded-virtual")
+    set(CMAKE_CXX_FLAGS "-std=c++11 -arch x86_64 -stdlib=libc++ -Wall -Wno-long-long -Wno-unused-value -Wno-overloaded-virtual")
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Wno-long-long -Wno-unused-value -Wno-overloaded-virtual")
 endif()
