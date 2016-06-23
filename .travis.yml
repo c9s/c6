@@ -3,11 +3,10 @@
 language: c++
 git:
   depth: 1
+sudo: required
 addons:
   apt:
     packages:
-    - libgflags-dev
-    - libgoogle-glog-dev
     # - gcc-5
     # - g++-5
     # - clang-3.6
@@ -17,6 +16,9 @@ os:
 compiler:
 - clang
 - gcc
+before_install:
+- sudo apt-get -qq update
+- sudo apt-get -y install libgoogle-glog-dev libgflags-dev
 install:
 # - sudo apt-get install libgflags-dev
 - sh travis/install.sh
