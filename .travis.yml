@@ -18,11 +18,9 @@ compiler:
 - gcc
 install:
 - wget 'https://googletest.googlecode.com/files/gtest-1.7.0.zip'
-- unzip gtest-1.7.0.zip
-- ln -s gtest-1.7.0 gtest
+- (unzip -u gtest-1.7.0.zip && ln -s gtest-1.7.0 gtest)
 - wget https://github.com/gflags/gflags/archive/v2.1.2.zip
-- unzip v2.1.2.zip
-- ln -s gflags-2.1.2 gflags
+- (unzip -u v2.1.2.zip && ln -s gflags-2.1.2 gflags)
 - (cd gflags-2.1.2 && cmake . && make)
 script:
 - cmake -DGFlags_ROOT_DIR=gflags -DGTEST_ROOT=gtest .
