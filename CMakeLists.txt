@@ -18,21 +18,18 @@ SET(CMAKE_MODULE_PATH
 
 find_package(GooglePerfTools REQUIRED)
 
-set(Boost_USE_STATIC_LIBS OFF)
-set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
-
+# set(Boost_USE_STATIC_LIBS OFF)
+# set(Boost_USE_MULTITHREADED ON)
+# set(Boost_USE_STATIC_RUNTIME OFF)
 # find_package(Boost 1.54.0 COMPONENTS program_options filesystem regex)
-find_package(Boost 1.54.0 COMPONENTS program_options)
+# find_package(Boost 1.54.0 COMPONENTS program_options)
 find_package(GFlags REQUIRED)
 find_package(GLog REQUIRED)
 
 link_directories(${LINK_DIRECTORIES} /opt/local/lib /usr/lib)
 include_directories(. ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src /opt/local/include /usr/include)
 
-include_directories(${INCLUDE_DIRECTORIES} ${OPENCV_INCLUDE_DIR})
 # set (CMAKE_CXX_FLAGS "-std=c++0x -arch x86_64 -stdlib=libc++ -g3 -Wall -O0")
-
 # debug
 # -pg for profile
 # set (CMAKE_CXX_FLAGS "-std=c++0x -arch x86_64 -stdlib=libc++ -Wall -Wno-long-long -Wno-unused-value -Wno-overloaded-virtual -O3")
@@ -63,7 +60,7 @@ enable_testing()
 # set(gtest_SOURCE_DIR gtest-1.7.0)
 # add_subdirectory(${gtest_SOURCE_DIR})
 # include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-set(ENV{GTEST_ROOT} ${PROJECT_SOURCE_DIR}/gtest-1.7.0)
+# set(ENV{GTEST_ROOT} ${PROJECT_SOURCE_DIR}/gtest)
 # add_subdirectory(gtest-1.7.0)
 add_subdirectory(src)
 add_subdirectory(tests)
