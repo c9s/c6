@@ -2,7 +2,6 @@ mkdir -p vendor
 cd vendor
 (wget -c 'https://googletest.googlecode.com/files/gtest-1.7.0.zip' \
     && unzip -n gtest-1.7.0.zip && ln -s gtest-1.7.0 gtest)
-
 (cd gtest && cmake . && make)
 
 (wget -c -O gflags.zip https://github.com/gflags/gflags/archive/v2.1.2.zip \
