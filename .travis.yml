@@ -25,7 +25,7 @@ install:
 - ln -s gflags-2.1.2 gflags
 - (cd gflags-2.1.2 && cmake . && make)
 script:
-- cmake .
+- cmake -DGFlags_ROOT_DIR=gflags -DGTEST_ROOT=gtest .
 cache:
   apt: true
   directories:
