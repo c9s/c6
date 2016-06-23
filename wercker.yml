@@ -1,0 +1,9 @@
+box: wercker/golang
+
+build:
+  steps:
+    - setup-go-workspace
+    - script:
+        name: Test
+        code: |
+          make test

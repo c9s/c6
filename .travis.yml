@@ -1,0 +1,14 @@
+language: go
+script:
+  # test
+  - make get-dev
+  - make test
+  - make cover
+  # - make vet
+  #TODO: - make lint 
+after_success:
+  - make benchmark
+  - goveralls -coverprofile=c6.cov -service=travis-ci
+notifications:
+  slack:
+    secure: Af6bRpbwtC4794UtB1phbubk63KdethyuMFkk9bxTrEwzTgMN4AdLLv4DYjoeETBhPw3FKc6LurzhsRfNnNT14FaZAW3ZmMTUPxHNKnxu9EvloaizXpwxkKgeVNHneA8gytXZ+s/r/rgP/IkSJcbvbLfpkNvT+lNyPW32jK0CW8=
