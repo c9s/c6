@@ -25,7 +25,6 @@ set(Boost_USE_STATIC_RUNTIME OFF)
 # find_package(Boost 1.54.0 COMPONENTS program_options filesystem regex)
 find_package(Boost 1.54.0 COMPONENTS program_options)
 find_package(GFlags REQUIRED)
-# find_package(OpenMP)
 find_package(GLog REQUIRED)
 
 link_directories(${LINK_DIRECTORIES} /opt/local/lib /usr/lib)
@@ -53,7 +52,6 @@ else()
     # add_definitions(-DThread)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg -O0 -g3")
 endif()
-
 
 # IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 #     # Linux specific code
