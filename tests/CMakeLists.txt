@@ -1,6 +1,7 @@
 # cmakefile for check testing
 # followed from http://isti.bitbucket.org/2012/06/01/cmake-check.html
 #               http://johnlamp.net/cmake-tutorial-4-libraries-and-subdirectories.html
+# FindGTest: https://github.com/Kitware/CMake/blob/master/Modules/FindGTest.cmake
 enable_testing()
 find_package(GTest REQUIRED)
 set(PROJECT_TEST_NAME "${PROJECT_NAME}_test")
