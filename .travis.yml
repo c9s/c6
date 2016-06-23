@@ -13,6 +13,10 @@ addons:
 compiler:
 - clang
 - gcc
+install:
+- wget 'https://googletest.googlecode.com/files/gtest-1.7.0.zip'
+- unzip gtest-1.7.0.zip
+- ln -s gtest-1.7.0 gtest
 script:
 - cmake .
 
