@@ -10,6 +10,9 @@ addons:
     # - g++-5
     # - clang-3.6
     # - libgflags-dev
+os:
+- linux
+- osx
 compiler:
 - clang
 - gcc
