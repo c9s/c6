@@ -1,6 +1,7 @@
 ---
 # travis and modern c++ http://genbattle.bitbucket.org/blog/2016/01/17/c++-travis-ci/
 language: c++
+sudo: required
 git:
   depth: 1
 addons:
