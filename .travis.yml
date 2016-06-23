@@ -4,9 +4,9 @@ language: cpp
 addons:
   apt:
     packages:
-    - gcc-5
-    - g++-5
-    - clang-3.6
+    # - gcc-5
+    # - g++-5
+    # - clang-3.6
     - libgflags-dev
 compiler:
 - clang
