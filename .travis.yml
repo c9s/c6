@@ -1,6 +1,6 @@
 ---
 # travis and modern c++ http://genbattle.bitbucket.org/blog/2016/01/17/c++-travis-ci/
-language: cpp
+language: c++
 git:
   depth: 1
 addons:
@@ -20,6 +20,7 @@ install:
 - wget 'https://googletest.googlecode.com/files/gtest-1.7.0.zip'
 - unzip gtest-1.7.0.zip
 - ln -s gtest-1.7.0 gtest
+- sudo apt-get install libgflags-dev
 script:
 - cmake .
 
