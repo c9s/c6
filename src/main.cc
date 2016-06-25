@@ -11,7 +11,10 @@ struct CompilerOptions
 {
   bool verbose;
   bool help;
-  CompilerOptions(): verbose(false), help(false) { }
+  bool compile; // compile mode
+  bool watch;   // watch mode
+  std::string sourcemap;
+  CompilerOptions(): verbose(false), help(false), compile(false), watch(false) { }
 };
 
 CompilerOptions options;
@@ -22,6 +25,9 @@ int main(int args, char *argv[])
     desc.add_options()
         ("help", "Options related to the program.")
         ("verbose,v", boost::program_options::bool_switch(&options.verbose)->default_value(false), "Print to stdout information as job is processed.")
+        ("compile,c", boost::program_options::bool_switch(&options.compile)->default_value(false), "compile files")
+        ("watch,w", boost::program_options::bool_switch(&options.watch)->default_value(false), "watch files")
+        ("sourcemap", boost::program_options::value<std::string>(&options.sourcemap),"sourcemap type")
         ;
 
   // parse command line options
@@ -32,7 +38,7 @@ int main(int args, char *argv[])
       boost::program_options::notify(vm);
   }
   catch(std::exception &e)
-  { 
+  {
     std::cout << e.what() << std::endl;
     return EXIT_FAILURE;
   }
