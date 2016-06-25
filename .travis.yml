@@ -22,7 +22,7 @@ compiler:
 - gcc
 before_install:
 - sudo apt-get -qq update
-- sudo apt-get -y install libgoogle-glog-dev libgoogle-glog0 libgflags-dev
+- sudo apt-get -y install libgoogle-glog-dev libgoogle-glog0 libgflags-dev libboost-dev
 install:
 - sh travis/install.sh
 script:
