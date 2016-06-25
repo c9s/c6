@@ -1,6 +1,6 @@
 C6
 ===========================
-Hate waiting for SASS compiling your stylesheets with Compass over 10 seconds
+Hate waiting for Sass compiling your stylesheets with Compass over 10 seconds
 everytime?  C6 helps you write style sheets with efficiency.
 
 [![Build Status](https://travis-ci.org/c9s/c6.svg)](https://travis-ci.org/c9s/c6)
@@ -226,19 +226,19 @@ everytime?  C6 helps you write style sheets with efficiency.
 
 ## FAQ
 
-### Why do you want to implement another SASS compiler?
+### Why do you want to implement another Sass compiler?
 
-The original SASS is written in Ruby and it's really slow, we take 11 seconds
+The original Sass is written in Ruby and it's really slow, we take 11 seconds
 to compile the stylesheets of our application, libsass is fast but it does not 
 catch up the ruby sass implementation , and you can't compile them with Compass.
-Since Go is simple, easy & fast, thus we implement SASS in Go to move faster.
+Since Go is simple, easy & fast, thus we implement Sass in Go to move faster.
 
-Further, we want to design a new language (ECSS temporarily named) that is compatible with SASS 3.4 or
-even SASS 4.0 with more powerful features.
+Further, we want to design a new language (ECSS temporarily named) that is compatible with Sass 3.4 or
+even Sass 4.0 with more powerful features.
 
 ## Reference
 
-SASS Reference <http://sass-lang.com/documentation/file.SASS_REFERENCE.html>
+Sass Reference <http://sass-lang.com/documentation/file.SASS_REFERENCE.html>
 
 
 A feature check list from libsass:
@@ -262,7 +262,7 @@ Standards:
 - Railroad diagram <https://github.com/tabatkins/railroad-diagrams>
 - CSS 2.1 Grammar <http://www.w3.org/TR/CSS21/grammar.html>
 
-SASS/CSS Frameworks, libraries:
+Sass/CSS Frameworks, libraries:
 
 - Bourbon <http://bourbon.io/>
 - Marx <https://github.com/mblode/marx>
