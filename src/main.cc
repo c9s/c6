@@ -10,7 +10,8 @@
 struct CompilerOptions
 {
   bool verbose;
-  CompilerOptions(): verbose(false) { }
+  bool help;
+  CompilerOptions(): verbose(false), help(false) { }
 };
 
 CompilerOptions options;
