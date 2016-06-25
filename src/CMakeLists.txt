@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 include_directories("${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}")
 # find_package(PCRE REQUIRED)
-set(c6_SRCS main.cc)
+set(c6_SRCS main.cc constants.cc)
 set(LIBS ${LIBS} ${PCRE_LIBRARIES} c6)
 add_library(c6 STATIC ${c6_SRCS})
 target_link_libraries(c6 pcre)
