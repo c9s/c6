@@ -11,76 +11,75 @@ func lexStmt(l *Lexer) stateFn {
 
 	var r, r2 = l.peek2()
 
-	if r == EOF {
+	// lex simple statements
+	switch r {
+
+	case EOF:
 		return nil
-	}
 
-	if r == '@' {
-
+	case '@':
 		return lexAtRule
-
-	} else if r == '(' {
+	case '(':
 		l.next()
 		l.emit(ast.T_PAREN_OPEN)
 		return lexStart
-	} else if r == ')' {
-
+	case ')':
 		l.next()
 		l.emit(ast.T_PAREN_CLOSE)
 		return lexStart
 
-	} else if r == '{' {
-
+	case '{':
 		l.next()
 		l.emit(ast.T_BRACE_OPEN)
 		return lexStmt
 
-	} else if r == '}' {
-
+	case '}':
 		l.next()
 		l.emit(ast.T_BRACE_CLOSE)
 		return lexStmt
 
-	} else if l.match("<!--") {
+	case '$':
+		return lexAssignStmt
+
+	case ';':
+		l.next()
+		l.emit(ast.T_SEMICOLON)
+		return lexStart
+
+	case '-':
+		// Vendor prefix properties start with '-'
+		return lexProperty
+
+	case ',':
+		l.next()
+		l.emit(ast.T_COMMA)
+		return lexStart
+
+	case '/':
+		if r2 == '*' || r2 == '/' {
+			lexComment(l, true)
+			return lexStmt
+		}
+
+	case '#':
+		// make sure it's not an interpolation "#{" token
+		if r2 != '{' {
+			return lexSelectors
+		}
+
+	}
+
+	if l.match("<!--") {
 
 		l.emit(ast.T_CDOPEN)
+
 		return lexStmt
 
 	} else if l.match("-->") {
 
 		l.emit(ast.T_CDCLOSE)
-		return lexStmt
-
-	} else if r == '/' && (r2 == '*' || r2 == '/') {
-
-		lexComment(l, true)
 
 		return lexStmt
-
-	} else if r == '$' { // it's a variable assignment statement
-
-		return lexAssignStmt
-
-	} else if r == ';' {
-
-		l.next()
-		l.emit(ast.T_SEMICOLON)
-		return lexStart
-
-	} else if r == ',' {
-
-		l.next()
-		l.emit(ast.T_COMMA)
-		return lexStart
-
-	} else if r == '-' {
-
-		// lex the slash prefix property name
-		return lexProperty
-
-	} else if r == '#' && r2 != '{' {
-
-		return lexSelectors
 
 	} else if unicode.IsLetter(r) || (r == '#') { // it might be -vendor- property or a property name or a selector
 
@@ -132,10 +131,6 @@ func lexStmt(l *Lexer) stateFn {
 	} else if looksLikeSelector(r) {
 
 		return lexSelectors
-
-	} else if r == EOF {
-
-		return nil
 
 	} else {
 
