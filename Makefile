@@ -1,7 +1,6 @@
 get-dev:
 	go get -u golang.org/x/tools/cmd/benchcmp
 	go get -u golang.org/x/tools/cmd/stringer
-	go get -u github.com/golang/lint/golint
 	go get -u github.com/ajstarks/svgo/benchviz
 	go get -t github.com/c9s/c6/...
 
@@ -22,9 +21,6 @@ vet:
 gofmt:
 	#TODO: This should fail if any file is changed.
 	go fmt github.com/c9s/c6/...
-
-lint:
-	golint github.com/c9s/c6/...
 
 cover:
 	go test -cover -coverprofile c6.cov -coverpkg github.com/c9s/c6/ast,github.com/c9s/c6/runtime,github.com/c9s/c6/parser,github.com/c9s/c6/compiler github.com/c9s/c6/compiler
