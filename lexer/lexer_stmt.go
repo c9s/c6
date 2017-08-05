@@ -43,12 +43,12 @@ func lexStmt(l *Lexer) stateFn {
 
 	} else if l.match("<!--") {
 
-		l.emit(ast.T_CDO)
+		l.emit(ast.T_CDOPEN)
 		return lexStmt
 
 	} else if l.match("-->") {
 
-		l.emit(ast.T_CDC)
+		l.emit(ast.T_CDCLOSE)
 		return lexStmt
 
 	} else if r == '/' && (r2 == '*' || r2 == '/') {

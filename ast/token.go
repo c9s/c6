@@ -338,8 +338,8 @@ const (
 	T_INTEGER
 	T_FLOAT
 
-	T_CDO // for <!--
-	T_CDC // for -->
+	T_CDOPEN // for <!--
+	T_CDCLOSE // for -->
 
 	/*
 		unit tokens
