@@ -35,11 +35,6 @@ func NewCompactCompiler(context *runtime.Context) *CompactCompiler {
 	}
 }
 
-func Indent(level int) string {
-	// two space
-	return strings.Repeat("  ", level)
-}
-
 /*
  * Enable compliant
  */
