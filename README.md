@@ -233,6 +233,34 @@ go get github.com/c9s/c6/cmd/c6
 - [ ] `@sprite` syntax sugar
 -->
 
+## Ambiguity
+
+The original design of SASS contains a lot of grammar ambiguity.
+
+for example, as SASS uses interpolation:
+
+```
+#{$name}:before {
+
+}
+```
+
+Since nested properties are allowed, in the above code, we don't know if it's a
+selector or a property namespace if we don't know the `$name` variable.
+
+Where `before` might be a property value or a part of the selector.
+
+links:
+- <https://www.facebook.com/cindylinz/posts/10202186527405801?hc_location=ufi>
+- <https://www.facebook.com/yoan.lin/posts/10152968537931715?_rdr>
+
+
+
+
+
+
+
+
 
 ## Self Benchmarking
 
@@ -260,10 +288,6 @@ A feature check list from libsass:
 - <https://github.com/sass/libsass/releases/tag/3.2.0>
 - <https://github.com/sass/sass/issues/1094>
 
-Grammar Ambiguity:
-
-- <https://www.facebook.com/cindylinz/posts/10202186527405801?hc_location=ufi>
-- <https://www.facebook.com/yoan.lin/posts/10152968537931715?_rdr>
 
 Standards:
 
