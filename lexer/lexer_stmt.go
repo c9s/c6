@@ -129,7 +129,7 @@ func lexStmt(l *Lexer) stateFn {
 			return lexSelectors
 		}
 
-	} else if r == '[' || r == '*' || r == '>' || r == '&' || r == '#' || r == '.' || r == '+' || r == ':' {
+	} else if looksLikeSelector(r) {
 
 		return lexSelectors
 
@@ -143,4 +143,8 @@ func lexStmt(l *Lexer) stateFn {
 
 	}
 	return nil
+}
+
+func looksLikeSelector(r rune) bool {
+	return r == '[' || r == '*' || r == '>' || r == '&' || r == '#' || r == '.' || r == '+' || r == ':'
 }
