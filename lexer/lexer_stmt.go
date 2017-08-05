@@ -56,9 +56,20 @@ func lexStmt(l *Lexer) stateFn {
 		return lexStart
 
 	case '/':
-		if r2 == '*' || r2 == '/' {
-			lexComment(l, true)
+		if r2 == '*' {
+
+			lexCommentBlock(l, true)
 			return lexStmt
+
+		} else if r2 == '/' {
+
+			lexCommentLine(l, true)
+			return lexStmt
+
+		} else {
+
+			panic("unexpected token. expecing '*' or '/'")
+
 		}
 
 	case '#':
