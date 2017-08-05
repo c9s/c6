@@ -2,9 +2,8 @@ package lexer
 
 import (
 	"fmt"
-	"unicode"
-
 	"github.com/c9s/c6/ast"
+	"unicode"
 )
 
 type stateFn func(*Lexer) stateFn
@@ -15,31 +14,6 @@ const DIGITS = "1234567890"
 func (l *Lexer) errorf(msg string, r rune) {
 	var err = fmt.Errorf(msg, string(r))
 	panic(err)
-}
-
-func lexCommentLine(l *Lexer, emit bool) stateFn {
-	if !l.match("//") {
-		return nil
-	}
-	l.ignore()
-
-	var r = l.next()
-	for r != EOF {
-		if r == '\n' {
-			break
-		}
-		r = l.next()
-		if r == '\r' {
-			r = l.next()
-		}
-	}
-	l.backup()
-	if emit {
-		l.emit(ast.T_COMMENT_LINE)
-	} else {
-		l.ignore()
-	}
-	return lexStmt
 }
 
 /*
@@ -69,41 +43,6 @@ func lexUnicodeRange(l *Lexer) stateFn {
 		panic(fmt.Errorf("Unicode-range requires at least 4 characters, we got %d. see https://developer.mozilla.org/en-US/docs/Web/CSS/unicode-range for more information", l.length()))
 	}
 	l.emit(ast.T_UNICODE_RANGE)
-	return nil
-}
-
-func lexCommentBlock(l *Lexer, emit bool) stateFn {
-	if !l.match("/*") {
-		return nil
-	}
-	l.ignore()
-	var r = l.next()
-	for r != EOF {
-		if r == '*' && l.peek() == '/' {
-			l.backup()
-			if emit {
-				l.emit(ast.T_COMMENT_BLOCK)
-			} else {
-				l.ignore()
-			}
-			l.match("*/")
-			l.ignore()
-			return lexStmt
-		}
-		r = l.next()
-	}
-	l.errorf("Expecting comment end mark '*/'. Got '%c'", r)
-	return lexStmt
-}
-
-func lexComment(l *Lexer, emit bool) stateFn {
-	var r = l.peek()
-	var r2 = l.peekBy(2)
-	if r == '/' && r2 == '*' {
-		lexCommentBlock(l, emit)
-	} else if r == '/' && r2 == '/' {
-		lexCommentLine(l, emit)
-	}
 	return nil
 }
 
