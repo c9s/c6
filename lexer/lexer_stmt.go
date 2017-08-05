@@ -63,7 +63,7 @@ func lexStmt(l *Lexer) stateFn {
 
 		} else if r2 == '/' {
 
-			lexCommentLine(l, true)
+			lexCommentLine(l)
 			return lexStmt
 
 		} else {
@@ -75,8 +75,12 @@ func lexStmt(l *Lexer) stateFn {
 	case '#':
 		// make sure it's not an interpolation "#{" token
 		if r2 != '{' {
+			// looks like a selector
 			return lexSelectors
 		}
+
+	case '[', '*', '>', '&', '.', '+', ':':
+		return lexSelectors
 
 	}
 
@@ -85,14 +89,23 @@ func lexStmt(l *Lexer) stateFn {
 		l.emit(ast.T_CDOPEN)
 
 		return lexStmt
+	}
 
-	} else if l.match("-->") {
+	if l.match("-->") {
 
 		l.emit(ast.T_CDCLOSE)
 
 		return lexStmt
+	}
 
-	} else if unicode.IsLetter(r) || (r == '#') { // it might be -vendor- property or a property name or a selector
+	// If a line starts with a letter or a sharp,
+	// it might be a property name or selector, e.g.,
+	//
+	//    ul { }
+	//
+	//    -webkit-border-radius: 3px;
+	//
+	if unicode.IsLetter(r) || (r == '#') { // it might be -vendor- property or a property name or a selector
 
 		// detect selector syntax
 		l.remember()
@@ -139,18 +152,10 @@ func lexStmt(l *Lexer) stateFn {
 			return lexSelectors
 		}
 
-	} else if looksLikeSelector(r) {
-
-		return lexSelectors
-
 	} else {
 
 		l.errorf("Unexpected token: '%c'", r)
 
 	}
 	return nil
-}
-
-func looksLikeSelector(r rune) bool {
-	return r == '[' || r == '*' || r == '>' || r == '&' || r == '#' || r == '.' || r == '+' || r == ':'
 }

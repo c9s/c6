@@ -4,7 +4,7 @@ import (
 	"github.com/c9s/c6/ast"
 )
 
-func lexCommentLine(l *Lexer, emit bool) stateFn {
+func lexCommentLine(l *Lexer) stateFn {
 	if !l.match("//") {
 		return nil
 	}
@@ -21,11 +21,7 @@ func lexCommentLine(l *Lexer, emit bool) stateFn {
 		}
 	}
 	l.backup()
-	if emit {
-		l.emit(ast.T_COMMENT_LINE)
-	} else {
-		l.ignore()
-	}
+	l.ignore()
 	return lexStmt
 }
 
@@ -59,7 +55,7 @@ func lexComment(l *Lexer, emit bool) stateFn {
 	if r == '/' && r2 == '*' {
 		lexCommentBlock(l, emit)
 	} else if r == '/' && r2 == '/' {
-		lexCommentLine(l, emit)
+		lexCommentLine(l)
 	}
 	return nil
 }
