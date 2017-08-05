@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"github.com/c9s/c6/ast"
 	"github.com/c9s/c6/runtime"
-	"strings"
 )
 
 const (
