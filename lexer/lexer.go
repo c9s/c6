@@ -425,6 +425,25 @@ func (l *Lexer) ignoreSpaces() int {
 	return space
 }
 
+func (l *Lexer) ignoreComment() {
+	if l.match("/*") {
+		l.ignore()
+		r := l.next()
+		for ; r != EOF; r = l.next() {
+			if r == '\\' {
+				l.next()
+				continue
+			} else if r == '*' && l.peek() == '/' {
+				l.ignore()
+				l.next()
+			}
+		}
+		if r == EOF {
+			l.errorf("Expecting comment end mark '*/'. Got '%c'", r)
+		}
+	}
+}
+
 func (l *Lexer) DispatchFn(fn stateFn) stateFn {
 	for l.State = fn; l.State != nil; {
 		fn := l.State(l)

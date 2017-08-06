@@ -113,7 +113,7 @@ func lexAssignStmt(l *Lexer) stateFn {
 	// l.backup()
 
 	l.ignoreSpaces()
-	lexComment(l, false)
+	l.ignoreComment()
 	l.ignoreSpaces()
 
 	if l.accept(";") {

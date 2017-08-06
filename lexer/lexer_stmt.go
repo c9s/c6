@@ -65,11 +65,9 @@ func lexStmt(l *Lexer) stateFn {
 
 			return lexCommentLine
 
-		} else {
-
-			panic("unexpected token. expecing '*' or '/'")
-
 		}
+
+		panic("unexpected token. expecing '*' or '/'")
 
 	case '#':
 		// make sure it's not an interpolation "#{" token

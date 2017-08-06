@@ -146,6 +146,21 @@ func TestLexerRuleWithVariableAsPropertyValue(t *testing.T) {
 		ast.T_BRACE_CLOSE})
 }
 
+func TestLexerIgnoreComment(t *testing.T) {
+	AssertLexerTokenSequence(t, `
+	.test {
+	  color: #fff /* comment */;
+	}`, []ast.TokenType{
+		ast.T_CLASS_SELECTOR,
+		ast.T_BRACE_OPEN,
+		ast.T_PROPERTY_NAME_TOKEN,
+		ast.T_COLON,
+		ast.T_HEX_COLOR,
+		ast.T_SEMICOLON,
+		ast.T_BRACE_CLOSE,
+	})
+}
+
 func TestLexerCommentBlockBeforeRuleSet(t *testing.T) {
 	AssertLexerTokenSequence(t, `
 	/* comment block */
