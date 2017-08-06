@@ -121,7 +121,7 @@ func lexAssignStmt(l *Lexer) stateFn {
 	} else if l.accept("}") {
 		l.emit(ast.T_BRACE_CLOSE)
 	}
-	return lexStmt
+	return lexStart
 }
 
 func lexForStmt(l *Lexer) stateFn {
@@ -135,7 +135,7 @@ func lexForStmt(l *Lexer) stateFn {
 	for fn != nil {
 		fn = lexExpr(l)
 	}
-	return lexStmt
+	return lexStart
 }
 
 func lexHexColor(l *Lexer) stateFn {
@@ -190,7 +190,7 @@ func lexNumberUnit(l *Lexer) stateFn {
 	}
 
 	if l.peek() == ';' {
-		return lexStmt
+		return lexStart
 	}
 	return lexExpr
 }
@@ -236,8 +236,4 @@ func lexNumber(l *Lexer) stateFn {
 		l.emit(ast.T_INTEGER)
 	}
 	return lexNumberUnit
-}
-
-func lexStart(l *Lexer) stateFn {
-	return lexStmt
 }

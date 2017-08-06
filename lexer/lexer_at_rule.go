@@ -19,7 +19,7 @@ func lexAtRule(l *Lexer) stateFn {
 			l.ignoreSpaces()
 			for fn := lexExpr(l); fn != nil; fn = lexExpr(l) {
 			}
-			return lexStmt
+			return lexStart
 
 		case ast.T_PAGE:
 			l.ignoreSpaces()
@@ -28,32 +28,32 @@ func lexAtRule(l *Lexer) stateFn {
 			if l.peek() == ':' {
 				lexPseudoSelector(l)
 			}
-			return lexStmt
+			return lexStart
 
 		case ast.T_MEDIA:
 			for fn := lexExpr(l); fn != nil; fn = lexExpr(l) {
 			}
-			return lexStmt
+			return lexStart
 
 		case ast.T_CHARSET:
 			l.ignoreSpaces()
-			return lexStmt
+			return lexStart
 
 		case ast.T_IF:
 
 			for fn := lexExpr(l); fn != nil; fn = lexExpr(l) {
 			}
-			return lexStmt
+			return lexStart
 
 		case ast.T_ELSE_IF:
 
 			for fn := lexExpr(l); fn != nil; fn = lexExpr(l) {
 			}
-			return lexStmt
+			return lexStart
 
 		case ast.T_ELSE:
 
-			return lexStmt
+			return lexStart
 
 		case ast.T_FOR:
 
@@ -63,10 +63,10 @@ func lexAtRule(l *Lexer) stateFn {
 
 			for fn := lexExpr(l); fn != nil; fn = lexExpr(l) {
 			}
-			return lexStmt
+			return lexStart
 
 		case ast.T_CONTENT:
-			return lexStmt
+			return lexStart
 
 		case ast.T_EXTEND:
 			return lexSelectors
@@ -74,10 +74,10 @@ func lexAtRule(l *Lexer) stateFn {
 		case ast.T_FUNCTION, ast.T_RETURN, ast.T_MIXIN, ast.T_INCLUDE:
 			for fn := lexExpr(l); fn != nil; fn = lexExpr(l) {
 			}
-			return lexStmt
+			return lexStart
 
 		case ast.T_FONT_FACE:
-			return lexStmt
+			return lexStart
 
 		default:
 			var r = l.next()

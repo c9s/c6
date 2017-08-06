@@ -47,7 +47,7 @@ Nested properties
 
 - [ ] Allow declaration block after the colon of property name.
 - [ ] Allow declaration block after the property value.
-- [ ] `lexPropertyValue` should check if there is another '{' token, then we should go to `lexStmt` state.
+- [ ] `lexPropertyValue` should check if there is another '{' token, then we should go to `lexStart` state.
 
 `@my` statement
 

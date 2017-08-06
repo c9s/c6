@@ -114,7 +114,7 @@ func lexAttributeSelector(l *Lexer) stateFn {
 		if r == ']' {
 			l.next()
 			l.emit(ast.T_BRACKET_CLOSE)
-			return lexStmt
+			return lexStart
 		}
 
 	}
@@ -373,7 +373,7 @@ func lexSelectors(l *Lexer) stateFn {
 
 	} else if r == '{' || r == ';' {
 
-		return lexStmt
+		return lexStart
 
 	} else {
 		l.errorf("Unexpected token '%c' for lexing selector.", r)

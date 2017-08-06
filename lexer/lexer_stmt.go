@@ -5,7 +5,7 @@ import (
 	"unicode"
 )
 
-func lexStmt(l *Lexer) stateFn {
+func lexStart(l *Lexer) stateFn {
 	// strip the leading spaces of a statement
 	l.ignoreSpaces()
 
@@ -31,12 +31,12 @@ func lexStmt(l *Lexer) stateFn {
 	case '{':
 		l.next()
 		l.emit(ast.T_BRACE_OPEN)
-		return lexStmt
+		return lexStart
 
 	case '}':
 		l.next()
 		l.emit(ast.T_BRACE_CLOSE)
-		return lexStmt
+		return lexStart
 
 	case '$':
 		return lexAssignStmt
@@ -59,7 +59,7 @@ func lexStmt(l *Lexer) stateFn {
 		if r2 == '*' {
 
 			lexCommentBlock(l, true)
-			return lexStmt
+			return lexStart
 
 		} else if r2 == '/' {
 
@@ -85,14 +85,14 @@ func lexStmt(l *Lexer) stateFn {
 
 		l.emit(ast.T_CDOPEN)
 
-		return lexStmt
+		return lexStart
 	}
 
 	if l.match("-->") {
 
 		l.emit(ast.T_CDCLOSE)
 
-		return lexStmt
+		return lexStart
 	}
 
 	// If a line starts with a letter or a sharp,

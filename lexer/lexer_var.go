@@ -37,7 +37,7 @@ func lexVariableName(l *Lexer) stateFn {
 		} else if r == '}' {
 			l.backup()
 			l.emit(ast.T_VARIABLE)
-			return lexStmt
+			return lexStart
 			///XXX break
 		} else if unicode.IsSpace(r) || r == ';' {
 			break
@@ -51,5 +51,5 @@ func lexVariableName(l *Lexer) stateFn {
 		l.emit(ast.T_VARIABLE_LENGTH_ARGUMENTS)
 	}
 
-	return lexStmt
+	return lexStart
 }
