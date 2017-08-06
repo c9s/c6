@@ -254,6 +254,19 @@ links:
 - <https://www.facebook.com/cindylinz/posts/10202186527405801?hc_location=ufi>
 - <https://www.facebook.com/yoan.lin/posts/10152968537931715?_rdr>
 
+To handle this kind of interpolation, we define a type of token named template:
+
+```
+#{$name}:before a {
+
+}
+```
+
+In the above code, `#{$name}:before a` is treated as `T_SELECTOR_TEMPLATE` token, which
+type will be resolved at the runtime.
+
+
+
 
 
 

@@ -63,8 +63,7 @@ func lexStmt(l *Lexer) stateFn {
 
 		} else if r2 == '/' {
 
-			lexCommentLine(l)
-			return lexStmt
+			return lexCommentLine
 
 		} else {
 
