@@ -9,6 +9,13 @@ func lexStart(l *Lexer) stateFn {
 	// strip the leading spaces of a statement
 	l.ignoreSpaces()
 
+	// TODO: lookahead for the interpolation before the next space
+	// and emit the interpolation token if #{ expr } is found.
+	l.remember()
+	for r := l.next(); r != EOF; r = l.next() {
+
+	}
+
 	var r, r2 = l.peek2()
 
 	// lex simple statements
@@ -17,12 +24,11 @@ func lexStart(l *Lexer) stateFn {
 	case EOF:
 		return nil
 
-	case '@':
-		return lexAtRule
 	case '(':
 		l.next()
 		l.emit(ast.T_PAREN_OPEN)
 		return lexStart
+
 	case ')':
 		l.next()
 		l.emit(ast.T_PAREN_CLOSE)
@@ -38,22 +44,25 @@ func lexStart(l *Lexer) stateFn {
 		l.emit(ast.T_BRACE_CLOSE)
 		return lexStart
 
-	case '$':
-		return lexAssignStmt
-
 	case ';':
 		l.next()
 		l.emit(ast.T_SEMICOLON)
 		return lexStart
 
-	case '-':
-		// Vendor prefix properties start with '-'
-		return lexProperty
-
 	case ',':
 		l.next()
 		l.emit(ast.T_COMMA)
 		return lexStart
+
+	case '$':
+		return lexAssignStmt
+
+	case '@':
+		return lexAtRule
+
+	case '-':
+		// Vendor prefix properties start with '-'
+		return lexProperty
 
 	case '/':
 		if r2 == '*' {
