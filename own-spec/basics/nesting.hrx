@@ -8,4 +8,39 @@
   a: b;
 }
 
+<===> basic/replace/input.scss
+a {
+  & {
+    h: x;
+  }
+}
+
+<===> basic/replace/output.css
+a {
+  h: x;
+}
+
+<===> basic/catesian/input.scss
+a,b {
+  o: b;
+
+  c,d {
+    j: k;
+    e,f {
+      h: x;
+    }
+  }
+}
+
+<===> basic/catesian/output.css
+a, b {
+  o: b;
+}
+a c, a d, b c, b d {
+  j: k;
+}
+a c e, a c f, a d e, a d f, b c e, b c f, b d e, b d f {
+  h: x;
+}
+
 <===>

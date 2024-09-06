@@ -9,8 +9,8 @@ type StmtList struct {
 	Stmts []Stmt
 }
 
-func (list *StmtList) Append(stm Stmt) {
-	list.Stmts = append(list.Stmts, stm)
+func (list *StmtList) Append(stm ...Stmt) {
+	list.Stmts = append(list.Stmts, stm...)
 }
 
 func (list *StmtList) AppendList(stm *StmtList) {
