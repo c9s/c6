@@ -70,12 +70,20 @@ func RunSpecs(t *testing.T, hrxPath string, testFiles []string, testOnly string,
 				outputFname := path.Join(baseName, "output.css")
 
 				var expectedError string
+				var expectedWarning string
 
 				if _, err := fs.Stat(archive, errFname); err == nil {
 					expected, err := fs.ReadFile(archive, errFname)
 
 					require.NoErrorf(t, err, "[example %s] Input: %s", fname, errFname)
 					expectedError = string(expected)
+				}
+
+				if _, warn := fs.Stat(archive, warnFname); warn == nil {
+					expected, warn := fs.ReadFile(archive, warnFname)
+
+					require.NoError(t, warn, "[example %s] Input: %s", fname, warnFname)
+					expectedWarning = string(expected)
 				}
 
 				var stmts, parseErr = parser.ParseFile(archive, input)
@@ -96,12 +104,19 @@ func RunSpecs(t *testing.T, hrxPath string, testFiles []string, testOnly string,
 				}
 
 				var b bytes.Buffer
-				var compiler = compiler.NewPrettyCompiler(&b)
+				var warn bytes.Buffer
+
+				wr := func(msg any) {
+					// that's a silly implementation
+					warn.WriteString(fmt.Sprintf("%s", msg))
+				}
+
+				var compiler = compiler.NewPrettyCompiler(&b, compiler.WithWarn(wr), compiler.WithDebug(wr))
 
 				compileErr := compiler.Compile(stmts)
 
 				if _, err := fs.Stat(archive, warnFname); err == nil {
-					if !assert.True(t, false, "[example %s] Input: %s - warning is expected, but we don't handle that yet", fname, input) {
+					if !assert.Equal(t, expectedWarning, warn.String(), "[example %s] Input: %s - warning is expected", fname, input) {
 						addFailure(fname, input, "unhandled_warning")
 						return
 					}

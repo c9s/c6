@@ -2088,7 +2088,7 @@ func (parser *Parser) ParseLogStmt() (ast.Stmt, error) {
 			ll = ast.LogLevelError
 		}
 
-		expr, err := parser.ParseExpr(false)
+		expr, err := parser.ParseString()
 		if err != nil {
 			return nil, err
 		}
@@ -2101,7 +2101,7 @@ func (parser *Parser) ParseLogStmt() (ast.Stmt, error) {
 
 	}
 	return nil, SyntaxError{
-		Reason:      "Expecting @error, @warn, @info directive",
+		Reason:      "Expecting @error, @warn, @debug directive",
 		ActualToken: parser.peek(),
 	}
 }

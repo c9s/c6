@@ -58,6 +58,24 @@ func lexAtRule(l *Lexer) (stateFn, error) {
 			l.ignoreSpaces()
 			return lexStart, nil
 
+		case ast.T_DEBUG:
+			fallthrough
+		case ast.T_WARN:
+			fallthrough
+		case ast.T_ERROR:
+			l.ignoreSpaces()
+			for {
+				fn, err := lexExpr(l)
+				if err != nil {
+					return nil, err
+				}
+
+				if fn == nil {
+					break
+				}
+			}
+			return lexStart, nil
+
 		case ast.T_IF:
 
 			for {

@@ -221,6 +221,10 @@ func (r *Runtime) executeIfStmt(scope *Scope, stmt *ast.IfStmt) (*ast.StmtList, 
 }
 
 func (r *Runtime) executeLogStmt(scope *Scope, stmt *ast.LogStmt) error {
+	if stmt.Expr == nil {
+		return fmt.Errorf("Expected expression")
+	}
+
 	v, err := EvaluateExpr(stmt.Expr, scope)
 
 	if err != nil {
